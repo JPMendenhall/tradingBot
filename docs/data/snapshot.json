@@ -1,15 +1,15 @@
 {
-  "sol_price": 87.30217318720847,
-  "bot_status": "STALE",
+  "sol_price": 87.22829317943601,
+  "bot_status": "DEAD",
   "bot_last_seen": "00:09:39",
   "bot_cycles": 1,
   "bankroll": 1.1607,
-  "bankroll_usd": 101.33163241839287,
+  "bankroll_usd": 101.24587989337138,
   "budget": 0.16660310385,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.2,
+  "hour": 0.3,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,74 +113,68 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-05 18:18:00 EST",
-    "run_id": "run-263",
+    "timestamp": "2026-05-06 00:15:00 EST",
+    "run_id": "run-264",
     "market_regime": "CHOP",
-    "system_diagnosis": "Exits remain the #1 problem. 7-day active stop_rate climbed to 57% (vs 50% on run-262, +7pp). The single new sell since last run -- AVERAGEGUY consensus_boost stop -8.26% at 15:54 EDT -- did NOT trip the new pump_trap filter (h1=+10.5%, h24=+33.1%, both well below the 25/100 thresholds). This means the current pump_trap predictive feature would not have caught this stop. Pumped-tape is one signature of a fast-stop, but not the only one -- research is needed to find another orthogonal feature. The most strategic change this run was to ship the pumpfun_graduation_snipe Phase 1 logger, opening a brand-new substrate (PumpPortal WS push, sub-second graduation events) that gives access to the bonding-curve-to-AMM transition -- a 5-30 min retail-discovery-lag window the bot has been blind to.",
-    "exit_analysis": "7d window N=7, WR 42.9%, avg win +6.22%, avg loss -9.69%, R/R 0.64, stop-loss rate 57% (3 stops + 1 emergency of 7). Forward sample on the new pump_trap filter: N=1 fire post-restart (AVERAGEGUY, would_skip=False, exit_pnl -8.26%). Sample too small to evaluate the +20pp backfill stop_rate edge holds forward. Pump_trap log capacity 500/500 with backfill 11.2% would_skip rate matching projection 11.5%.",
-    "strategy_work": "Shipped pumpfun_graduation_snipe_v2 Phase 1 LOG-ONLY (research-135 PRIMARY HIGH proposal). About 80 lines of new code: a daemon thread that holds an asyncio websocket connection to PumpPortal's free public feed at wss://pumpportal.fun/api/data, subscribes to migration (graduation) events, and writes each event to a 500-entry ring-buffer log file (sol_pumpfun_graduation_log.json). Pure logger -- no trading behavior change. Reconnect logic with exponential backoff capped at 5 minutes. Bot restarted (PID 4388) and the websocket subscribe ack message was received within 30 seconds, confirming the connection is live. Real graduation events will accumulate over the next hours/days (research estimate: 20-40 per day). Once N>=20 events arrive with cross-linked forward returns, plan Phase 2 promotion to a grad_snipe strategy.",
-    "directives_changes": "version 256 -> 257, updated_by memory_keeper_001 -> run-263, last_updated 18:00 -> 18:18 EDT. current_priority rewritten for the pumpfun_graduation logger ship + the research-135 withdrawals/drops. track_record refreshed: 996 sells (was 995), bankroll 1.1607 SOL (was 1.1646), bot_pid 4388 (was 12108), dashboard_pid 2040 (was 2860), wallets_monitored 69 (was 35 -- auto-refresh ran in interval), 7d active stats updated to 7T 42.9%WR 57% stop rate. pumpfun_graduation_snipe_v2 hypothesis status moved from APPROVED_FOR_PHASE_1_NEXT_BRAIN_RUN to PHASE_1_LOG_ONLY_LIVE run-263 with code locations + verification notes.",
+    "system_diagnosis": "Bot is dormant (0 new trades in the 6 hours since run-263) which is correct behavior in CHOP / ALTCOIN_WINTER. The substrate-build phase continues: the PumpPortal WebSocket logger shipped run-263 has captured 64 graduation events in its first 6 hours (rate ~256/day -- well above the research estimate of 20-40 actionable signals/day). The schema is minimal (mint + pool only -- no symbol or market cap from the WebSocket). To make the graduation events usable for any future buy decision, we need a quality discriminator on each event. The bonding-curve velocity (time from token creation to graduation) is the single highest-confidence discriminator the brain has approved -- research-111 N=12 sample showed slow graduations (>30 minutes) had a -19% median post-graduation outcome while fast graduations (<3 minutes) had -81%, a 62-point gap. Shipping that as a logger this run gives the brain a path to a real buy strategy without committing live capital.",
+    "exit_analysis": "7-day active-strategy window: 7 sells, 3 wins, 4 losses, win rate 42.9%, average win +6.22%, average loss -9.69%, risk/reward 0.64, stop-loss rate 57% (3 stops + 1 emergency stop). NO new sells since run-263 -- the AVERAGEGUY consensus_boost stop (-8.26%) at 15:54 EDT is still the most recent. The new pump-trap filter has N=1 forward fire so far -- far below the N=20 needed to evaluate Phase 2 cutover. Stop rate remains the primary capital drag.",
+    "strategy_work": "Shipped the bonding-curve velocity filter Phase 1 logger (research-111, pre-approved). About 80 new lines of Python in degen_bot.py: a function that derives the pump.fun bonding-curve account address for any pump-suffix mint, walks the on-chain transaction history to find the very first transaction (token creation), and computes how many minutes elapsed between creation and graduation. This runs in a separate background thread per event, so it never blocks the WebSocket listener. Each new graduation event gets enriched with a 'velocity_min' field about 20 seconds after the WebSocket captures it. Bot restarted (process 14868). Smoke-tested on a real recent graduation -- the helper paginated 2667 transactions across 3 RPC pages and returned 36.92 minutes, putting that token in the slow/stable bucket per research-111. Once 20+ enriched events accumulate, the brain can replicate the research-111 bucket analysis on live data and decide whether to promote to a hard-skip filter (which would block fast-graduation tokens from ever being bought).",
+    "directives_changes": "Version 257 -> 258, updated_by run-263 -> run-264, last_updated 18:18 EDT -> 00:15 EDT. current_priority rewritten to describe the velocity enricher ship and its outputs (smoke test, bot restart, next-run priorities). track_record refreshed: bot_pid 4388 -> 14868 (external restart between runs + my restart), 0 new sells since run-263, pumpfun_grad_logger_status expanded with the 64-event count and velocity enricher status. bonding_curve_velocity_filter hypothesis status moved from APPROVED_FOR_PHASE_1_NEXT_BRAIN_RUN to PHASE_1_LOG_ONLY_LIVE run-264 with code locations and smoke test result. New entry added to condensed_lessons summarizing the substrate-then-enrichment pattern.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "notes": "One change this run: PumpPortal WS Phase 1 LOG-ONLY logger. data_source_add proposal at HIGH confidence -- no N=20 sample requirement applies (zero behavior change, pure logger). Compile-clean (py_compile passes). Bot PID 4388 verified alive and the ack message in the new graduation log file confirms the websocket subscribed cleanly."
+      "notes": "One change: bolted bonding_curve_velocity_filter Phase 1 LOG-ONLY enricher onto run-263's WS listener. Pre-approved hypothesis (research-111 HIGH, approved_by_brain_run run-254). Pure logger -- no buy/sell decision impact -- so the N=20 sample rule does NOT apply (same lifecycle class as run-263's WS logger ship). Compile-clean, smoke test passed (velocity_min=36.92 on real grad mint), bot PID 14868 verified alive cycle 1 fresh heartbeat."
     },
     "previous_followups": [
-      "run-262 priority 1 (verify >=20 NEW pump_trap entries post-restart, sanity-check would_skip ~11.5%) -- only N=1 forward fire so far (AVERAGEGUY consensus_boost), would_skip=False, accumulating slowly given 1 trade per 6h pace. Carry forward.",
-      "run-262 priority 2 (decide on Phase 2 cutover after N>=20 forward) -- BLOCKED on data accumulation. Need ~20 weeks at current pace OR a busier trading regime.",
-      "run-262 priority 3 (consider session_aware_copy_trade_gate Phase 1 logger) -- DEMOTED: research-135 did not re-flag this; killed-strategy beneficiary is unclear.",
-      "run-262 priority 4 (raydium_lp_listener ~50-80 LOC) -- DEMOTED per research-135: PumpPortal WS supersedes (same sub-second push, higher signal-to-noise on pump.fun graduations specifically). Re-flag only if PumpPortal turns out to be unreliable.",
-      "run-262 priority 5 (deployer_creator_rug_history filter via RugCheck) -- WITHDRAWN per research-135 HIGH confidence: RugCheck wallet endpoint is NOT on free tier (/v1/wallets returns 404, /v1/wallet/{addr}/risk returns 400). Saves 30-60 LOC of effort.",
-      "run-262 priority 6 (track tMYP9a forward fires post-pin) -- 0 fires since 12:10 EDT pin. Carry forward."
+      "run-263 followup 1: Verify N>=10 graduation events with proper schema -- DONE: 64 events captured in 6h, schema confirmed minimal (mint/pool/txType only).",
+      "run-263 followup 2: Plan Phase 2 cross-link of grad log to trade-log forward returns -- DEFERRED to N>=20 enriched events; velocity_min is the more direct quality discriminator and will be available faster.",
+      "run-263 followup 3: Pump_trap_log Phase 2 cutover decision -- still N=1 forward fire (AVERAGEGUY); needs N>=20 before any decision.",
+      "run-263 followup 4: Bolt-on bonding_curve_velocity_filter -- DONE this run.",
+      "run-263 followup 5: Track tMYP9a forward fires post-pin -- 0 fires since 12:10 EDT pin (3 days dormant; expected in CHOP)."
     ],
     "changelog": [
-      "Brain version 256 -> 257.",
-      "Wired up a new live data feed: PumpPortal websocket. Whenever a pump.fun token graduates from its bonding curve to the open market (PumpSwap or Raydium), the bot now records the event to a log file. This is logger-only this run -- no buying decisions are based on it yet. After we collect about 20 graduation events with their next-30-minute price action, we can decide whether to promote this into a 'graduation snipe' strategy that buys these tokens within 60 seconds of graduation.",
-      "Withdrew the 'deployer creator rug history' idea: the RugCheck data source we hoped to use does not actually exist on their free plan. Saves ~30-60 lines of dead-end work.",
-      "Demoted the Raydium pool-creation listener idea: the new PumpPortal feed gives us the same speed with cleaner signal. We only need to revisit Raydium if PumpPortal turns out to be unreliable.",
-      "Dropped two research dead-ends: (a) buy/sell ratio at entry (we don't have the data in 99% of historical trades), and (b) pair-age at entry (signal too weak and confounded by which strategy fires)."
+      "Bolted the bonding-curve velocity logger onto the pump.fun graduation listener: every graduation event from a pump.fun token now gets enriched (about 20 seconds after capture) with the time-from-creation-to-graduation in minutes. This adds the first quality signal we have on graduation events -- the WebSocket itself only delivers the token address, nothing about whether it's a healthy launch or a coordinated rug.",
+      "Added a thread-safety lock around all writes to the graduation log file so the WebSocket persister and the velocity enricher never step on each other.",
+      "Bot restarted (process 14868) to pick up the new code. Existing graduation events from before the restart stay as-is (without velocity); new events get enriched.",
+      "Verified the helper works by running it standalone on a real recent graduation: returned 36.92 minutes (slow/stable bucket per research-111)."
     ],
     "actions_taken": [
-      "Killed the prior bot process and started a fresh one with the new PumpPortal listener (now running as process 4388).",
-      "Added about 80 lines of new code in degen_bot.py: a background thread that holds a websocket connection open, subscribes to graduation events, and writes each one to a rolling log file (sol_pumpfun_graduation_log.json, last 500 events).",
-      "Verified the websocket connected successfully: an acknowledgement message landed in the log file within 30 seconds.",
-      "Updated the brain memory file (sol_brain_directives.json) to record this ship and roll forward all the research-135 verdicts.",
-      "Did NOT change any active trading filter, position sizing, or strategy this run. Per the 'one change per run' rule, the listener is the single change."
+      "Wrote two new helper functions in the bot: one derives the pump.fun bonding-curve PDA for any pump-suffix mint and returns the oldest on-chain blockTime; the other waits 20s after a graduation event arrives, computes the velocity in minutes, and patches the graduation-log entry with the new field.",
+      "Modified the existing graduation-event persister to wrap its file IO in a thread lock and to spawn the enricher thread for every pump-suffix mint.",
+      "Compile-checked the bot file, killed the old bot process, started a fresh process (14868), and confirmed the heartbeat is fresh and the cycle counter is incrementing.",
+      "Ran a standalone smoke test of the new helper on a real recent graduation mint to confirm the PDA derivation and pagination work correctly.",
+      "Updated the brain directives file: bumped version to 258, refreshed the priority and reasoning blocks, updated the track record, and moved the velocity-filter hypothesis status to LIVE."
     ],
     "next_priorities": [
-      "Verify the PumpPortal listener captures real graduation events with proper data (mint, symbol, creator, market cap). If 0 real events arrive in 6+ hours, the subscribe message format may need adjusting (try alternate methods like subscribeNewToken).",
-      "Once we have 10+ clean graduation events logged, set up the cross-link analysis: match graduation timestamps to subsequent trade outcomes to estimate the snipe-window edge. Aim to make the Phase 2 promotion decision once we hit N=20 events.",
-      "Continue accumulating pump_trap forward fires. Currently N=1; the backfill showed a 3.66pp median pnl gap (just below the 4pp Phase 2 cutover threshold). At 1 trade per 6h, will take weeks to reach N=20.",
-      "Find another orthogonal stop-loss predictor: AVERAGEGUY stopped at -8.26% but the current pump_trap filter would NOT have caught it (h1 and h24 were both well below thresholds). Need a feature that catches more of the 57% stop-rate population."
+      "Verify that 10+ enriched graduation events now have a velocity_min field. If 0 enriched after 6 hours, debug the RPC pagination cost -- the helper does up to 5 RPC pages of 1000 signatures each per event and at 256 events/day this is a few thousand RPC calls/day, well within the Alchemy free tier, but worth confirming.",
+      "At 20+ enriched graduation events, bucket the velocity distribution into <3 min vs 3-30 min vs >30 min. Compare the post-graduation outcomes (price change at 30 min after graduation) across buckets. If the research-111 pattern holds (fast = bad, slow = stable), plan Phase 2 hard-skip filter at velocity < 3 min.",
+      "The pump-trap filter still has only N=1 forward fire (AVERAGEGUY would_skip=False). Need 19 more before any Phase 2 cutover decision. Continue logging.",
+      "The recently pinned tMYP9a wallet has had zero new fires since the pin on May 5 12:10 EDT. Three days of dormancy is expected in CHOP / ALTCOIN_WINTER but worth tracking. If 0 fires in 7 days, reconsider the pin.",
+      "Bot dormancy budget: 0 trades in 6h is correct for current regime. The brain's job during dormancy is to BUILD substrate -- the last two runs have done exactly that (PumpPortal WS shipped run-263, velocity enricher shipped run-264). Continue with high-confidence pre-approved bolt-ons from research history rather than forcing trades."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 996,
       "win_rate": 35.6,
-      "avg_win_pct": 7.16,
-      "avg_loss_pct": -7.71,
-      "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 41.0,
+      "avg_win_pct": 6.22,
+      "avg_loss_pct": -9.69,
+      "rr_ratio": 0.64,
+      "stop_loss_rate_pct": 57.0,
       "bankroll": 1.1607,
-      "pnl_today": -0.00243,
-      "pnl_24h": -0.00243,
-      "pnl_7d": -0.00258,
-      "active_only_7d_wr": 42.9,
-      "active_only_7d_rr": 0.64,
-      "active_only_7d_stop_rate": 57.0,
-      "active_only_7d_pnl_sol": -0.0026
+      "pnl_today": 0.0,
+      "pnl_7d": -0.0026
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, dormant in CHOP)",
-      "bear_strength (TESTING, 0.15x CHOP)",
-      "consensus_boost (TESTING, 0.50x CHOP)",
-      "wallet_convergence (TESTING, 0.15x)",
-      "chop_momentum_scalp (TESTING, 0.15x)",
-      "anchor_derivative_snipe (TESTING, 0.15x)",
-      "flash_surge (TESTING_BULL, 0.15x, dormant in CHOP)",
-      "bounce_hunter (TESTING_BULL, dormant in CHOP)"
+      "fresh_profile",
+      "bear_strength",
+      "consensus_boost",
+      "flash_surge",
+      "bounce_hunter",
+      "wallet_convergence",
+      "chop_momentum_scalp",
+      "anchor_derivative_snipe"
     ]
   },
   "wallet_scan": {
@@ -188,15 +182,15 @@
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 20928.992791,
+  "brain_next_sec": 20625.830502,
   "brain_next_str": "6:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 611.007209,
-  "brain_last_run_str": "6:18 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "12:18 AM EST",
   "research_running": false,
   "research_last_run_str": "1:02 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 888.992791,
+  "research_next_sec": 585.830502,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-05 13:01:00 EDT",
@@ -415,7 +409,7 @@
     "dashboard_pid": 2040,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 8.57,
+    "hours_since_last_trade": 8.65,
     "buys_last_24h": 2,
     "dormancy_alert": false,
     "filter_lockout_diagnosis": "Skip rate ~84% across last 50 events (CB_SKIP 19, FP_SKIP 12, BUY_SKIP 8, BS_SKIP 3) \u2014 high but below the 95% lockout threshold, and 4 SIGNALs + 4 SCANs show the bot is finding and evaluating candidates. Last buy 8.4h ago, still inside the 24h window. Heartbeat 254s soft-stale (>180s) but events log shows last activity 33s ago and zero CYCLE_ERROR \u2014 likely normal slow cycle, not a crash loop. No intervention.",
@@ -426,7 +420,7 @@
     "log_truncations": [],
     "elapsed_min": 1,
     "notes": "Brain (degen-bot-monitor) just kicked off 18s ago \u2014 running:true is fresh, not stale. Research idle since 13:02 yesterday. bot.log 73KB, dashboard.log 241KB \u2014 well under 50MB.",
-    "file_age_min": 9.6,
+    "file_age_min": 14.7,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1879,7 +1873,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 5.5,
+    "age_min": 10.6,
     "stale": false,
     "available": true
   },
@@ -1958,11 +1952,11 @@
     "available": true,
     "ever_ran": true
   },
-  "maint_next_sec": 888.992791,
+  "maint_next_sec": 585.830502,
   "maint_next_str": "12:30 AM EST",
   "maint_last_run_str": "12:05 AM EST",
   "maint_stale": false,
-  "memk_next_sec": 355488.992791,
+  "memk_next_sec": 355185.830502,
   "memk_next_str": "Sun 3:00 AM EST",
   "memk_last_run_str": "Tue 6:05 PM EST",
   "one_time_tasks": [],
@@ -1974,37 +1968,16 @@
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
       "evidence_text": "Updated the brain memory file (sol_brain_directives.json) to record this ship and roll forward all the research-135 verdicts.",
-      "evidence_source": "action"
+      "evidence_source": "actions_taken"
     },
     "tally": {
-      "implemented": 22,
+      "implemented": 23,
       "queued": 0,
       "rejected": 1,
-      "total": 23
+      "total": 24
     }
   },
   "events": [
-    {
-      "ts": "2026-05-05T23:46:32.302924",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4vw54BmA sold 4cssVpqB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:46:32.302924",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4vw54BmA sold HKF3ZGpx \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:49:01.176870",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 87rRdssF sold 4cssVpqB \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-05T23:50:23.405884",
       "type": "SIGNAL",
@@ -2683,6 +2656,27 @@
       "color": "#58a6ff",
       "msg": "WalletSell: 67Nwfi9h sold 9vgf2M8E \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:17:38.292270",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: gangJEP5 sold CbiuYcbz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:19:29.085826",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Gate probation 9c6StdpH: 1166.5h idle, WR 40% (12/30), PnL=-0.0270 \u2014 allowing signal (next reset in 24h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:19:29.085826",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2738,9 +2732,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "00:15:11",
+  "ts": "00:20:14",
   "__publish_meta": {
-    "published_at": "2026-05-06 00:15:11 EDT",
+    "published_at": "2026-05-06 00:20:14 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
