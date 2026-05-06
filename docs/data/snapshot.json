@@ -1,15 +1,15 @@
 {
-  "sol_price": 89.09290405974825,
-  "bot_status": "STALE",
+  "sol_price": 88.97593659669752,
+  "bot_status": "DEAD",
   "bot_last_seen": "12:08:02",
   "bot_cycles": 1,
   "bankroll": 1.1607,
-  "bankroll_usd": 103.4101337421498,
+  "bankroll_usd": 103.27436960778682,
   "budget": 0.16660310385,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 12.2,
+  "hour": 12.3,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,133 +113,112 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-06 06:10:00 EDT",
-    "run_id": "run-265",
-    "market_regime": "CHOP",
-    "system_diagnosis": "Substrate-build phase continues productively. Bot is dormant on the trading side (zero new sells since run-263 -- 12+ hours under ALTCOIN_WINTER + altcoin/SOL weak) which is correct behavior, not a problem. Last sell was AVERAGEGUY at 15:54 EDT yesterday; that's the only data point on the new pump-trap filter (N=1 forward fire vs N=20 needed). The actionable problem this run was a measurement gap on run-264's bonding-curve velocity enricher: 65 of 67 entries in the graduation log lacked the velocity_min field because the enricher only fires on incoming WebSocket events, not on backlog. Without a fix, the brain would wait 10-15 days to accumulate the N>=20 sample needed for Phase 2 bucketing. With the fix shipped this run, the backlog drains in under 8 minutes (5 entries per 45-second cycle), unlocking the next decision point in 24 hours instead of two weeks.",
-    "exit_analysis": "Same as run-264 (no new sells in 12 hours). 7-day active-strategy window: 7 sells, 3 wins, 4 losses, win rate 42.9%, average win +6.22%, average loss -9.69%, risk/reward 0.64, stop-loss rate 57%. Pump-trap filter still N=1 forward fire. Stop-loss rate remains the primary capital drag, but with zero candidate flow there's nothing to act on.",
-    "strategy_work": "Shipped the velocity enricher backlog drainer (research-136 HIGH proposal, ~30 LOC). Each cycle, the bot now scans the graduation log for pump-suffix entries that lack velocity_min and dispatches up to 5 enrichment threads using the existing helper from run-264. Tracks already-dispatched (mint, ts) pairs in memory so it never re-fires the same entry. After bot restart and one cycle, the count moved from 28 enriched / 55 pending to 33 enriched / 50 pending -- exactly the max_per_cycle=5 dispatched and patched. At this rate the 50-entry backlog drains in 10 cycles (~7.5 minutes). The brain reaches N>=20 enriched within 24h instead of the original 10-15 day estimate, putting the bonding_curve_velocity_filter Phase 2 cutover decision back on a useful timeline.",
-    "directives_changes": "Version 258 -> 259, updated_by run-264 -> run-265, last_updated 00:15 EDT -> 06:10 EDT. current_priority rewritten to describe the backlog drainer ship + verified output. track_record refreshed: bot_pid 14868 -> 3220 (external restart between runs + my restart for new code), graduation log now 28 -> 33 enriched / 50 pending. bonding_curve_velocity_filter hypothesis status updated from PHASE_1_LOG_ONLY_LIVE to PHASE_1_BACKLOG_DRAINING_RUN_265 with code-location pointer and verification of first-cycle drain. New condensed lesson added: backlog-drainer pattern as a generic complement to event-triggered enrichers.",
+    "timestamp": "2026-05-06 12:10:00 EDT",
+    "run_id": "run-266",
+    "market_regime": "CHOP (ALTCOIN_WINTER 58.6%)",
+    "system_diagnosis": "Bot is correctly dormant in CHOP/ALTCOIN_WINTER (0 new trades in ~6h since run-265, 18+h since run-264). 7d active sample stuck at N=7 with 42.9% WR and stop_rate 57% \u2014 exit quality remains the largest visible drag, but sample size below the threshold for any new entry filter or sizing change. The leverage point this run is structural coverage, not parameter tuning: the bot was blind to ~55% of Solana memecoin volume (Bonk.fun 46% + BagsApp 9% per Dune 7d). Shipping the DexScreener boosts poller closes that gap without touching any buy decision.",
+    "exit_analysis": "7d N=7: 3W (+17.4%, +1.2%, +0.1%) / 4L (-8.1%, -13.4%, -9.0%, -8.3%). Avg win +6.22%, avg loss -9.69%, R/R 0.64. Stop_rate 57% (3 stop + 1 emergency). No new closures this run; numbers identical to run-265.",
+    "strategy_work": "Shipped dexscreener_token_boosts_top_feed Phase 1 LOG-ONLY (research-136 PRIMARY HIGH). New helpers in degen_bot.py: start_dex_boosts_poller (daemon thread polling /token-boosts/top/v1 + /latest/v1 every 5 min, chainId=='solana' filter, 60-min mint dedupe) + _persist_dex_boost_event (atomic ring buffer 500 \u2192 sol_dex_boosts_log.json under self._dex_boosts_lock). Pure logger; zero buy-decision impact. First-poll verification at 12:08 EDT captured 47 unique Solana boost mints (28 /top + 19 /latest), 100% chainId filter accuracy, IMOUT (Bonk.fun mint DACYVx34V5aQaehN3MZGYxPfoyQYHZSnFAFw3T2Vbonk) ingested confirming cross-launchpad coverage works. Research-136 watchlist anchors all present (MAGA, GME, IMOUT). Velocity enricher backlog also fully drained (142/142 pump-suffix entries now have velocity_min populated; valid sample N=113 across <3min=28 / 3-30min=59 / >30min=26).",
+    "directives_changes": "Bumped version 259 \u2192 260, last_updated to 2026-05-06 12:10 EDT. Added two new entries to pending_hypotheses: dexscreener_token_boosts_top_feed (HIGH, shipped Phase 1 this run) and liquidity_on_arrival_filter (MEDIUM, queued for run-267+). Updated bonding_curve_velocity_filter status to PHASE_1_BACKLOG_FULLY_DRAINED with the bucket distribution. Added two condensed lessons: dex_boosts_cross_launchpad_shipped_run266 and velocity_backlog_drained_run266. Updated track_record bot_pid (3220 \u2192 12452), sol_price (89.23 \u2192 88.98), and added dex_boosts_poller_status block.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "notes": "Verified run-264's enricher is healthy: 28/83 pump-suffix entries enriched at run-265 start (matches research-136 finding -- enricher itself is not broken; the 1/67 metric was a measurement artifact at research-136 dispatch time, since recovered). One change this run: the backlog drainer (research-136 PRIMARY-HIGH operational fix). Pure logger augmentation, no buy/sell decision impact -- N=20 rule does not apply (same lifecycle class as run-263 WS logger and run-264 enricher). Compile-clean. Bot restarted PID 3220 cycle 1 fresh heartbeat. First-cycle verification: 5 entries enriched (max_per_cycle), 50 pending."
+      "notes": "Pure logger ship \u2014 same lifecycle class as run-263 WS listener, run-264 enricher, run-265 backlog drainer. Sample-size rule does not apply. Compile-clean, bot restarted PID 12452 cycle 1 fresh heartbeat 12:08 EDT, first-poll verification confirms behavior is correct."
     },
     "previous_followups": [
-      "run-264 followup 1: Verify N>=10 enriched grad events -- ON TRACK. Pre-run: 28 enriched. After run-265 ship + first cycle: 33 enriched. Backlog drainer will reach N>=33 enriched within today and N>=20 brand-new (i.e. fresh velocity diagnostics) within 24h.",
-      "run-264 followup 2: At N>=20, bucket distribution (<3 min vs 3-30 min vs >30 min) -- DEFERRED to next run after backlog drains.",
-      "run-264 followup 3: Pump_trap forward fires still N=1 (AVERAGEGUY) -- carry-forward, accumulate.",
-      "run-264 followup 4: tMYP9a wallet 0 forward fires since 12:10 EDT pin -- still 0 (4 days dormant; expected in CHOP).",
-      "run-264 followup 5: Bot dormancy budget -- substrate-build continues. Run-265 ships the second piece of velocity-filter scaffolding. No panic action needed."
+      "run-265 priority 1 (verify all 55 backlog entries enriched): DONE \u2014 142/142 pump-suffix entries enriched, drainer worked exactly as designed",
+      "run-265 priority 2 (bucket distribution at N>=20): DONE \u2014 N=113 valid, distribution <3min=28 / 3-30min=59 / >30min=26, plus 29 anomalies (20%)",
+      "run-265 priority 3 (cross-launchpad blind spot fix via dex boosts): DONE this run \u2014 shipped Phase 1 LOG-ONLY",
+      "run-265 priority 4 (pump_trap forward fires N=1): UNCHANGED, no new fires",
+      "run-265 priority 5 (tMYP9a wallet still dormant since pin): UNCHANGED, still 0 fires"
     ],
     "changelog": [
-      "Added a backlog drainer to the bot's main cycle: each cycle, the bot now picks up to 5 older pump.fun graduation events that never got their 'velocity' (time from token creation to graduation) calculated, and queues them for the same enrichment routine that handles fresh events. The pre-existing routine was only catching new events arriving via WebSocket -- 55 events from before this morning were stuck without that data. The drainer fixes that.",
-      "Verified the drainer works on the first cycle after restart: 5 previously-blank events now have their velocity number filled in, exactly as designed. At one cycle every 45 seconds, the remaining 50 backlog events will all be filled in within about 8 minutes.",
-      "Bot restarted (process 3220) to load the new code. Dashboard (process 2040) untouched.",
-      "No buy/sell logic changed. The drainer is pure logging -- it just retroactively fills in a missing field on already-captured events so we have enough samples to make a decision soon."
+      "Shipped a new free signal feed: the bot now watches DexScreener's paid-promotion boost rankings every 5 minutes and logs every Solana token that has been boosted there. This catches tokens from Bonk.fun, BagsApp, Believe, Moonshot \u2014 all the launchpads beyond pump.fun that the bot was previously blind to.",
+      "First check confirmed it's working: 47 promoted Solana tokens captured on the first poll, including a Bonk.fun token. The bot's coverage gap (about 55% of Solana memecoin trading volume per a Dune dashboard) is now closing.",
+      "Verified that yesterday's velocity-tagging backfill finished: every pump.fun graduation event the bot has seen this week now has its bonding-curve speed measured. About 1 in 5 measurements look broken (implausible speed values), so the brain will exclude those from the upcoming pattern test."
     ],
     "actions_taken": [
-      "Read the brain directives, the latest research findings, recent trades, and the graduation log to confirm the run-264 enricher is healthy on new events but never backfills -- so the 55 pre-ship events will sit incomplete forever without a drainer.",
-      "Added one new helper function to the bot (about 50 lines) that scans the graduation log under the existing thread-safety lock, finds pump-suffix events missing the velocity field, and queues up to 5 per cycle for enrichment using the existing routine. Tracks already-handled events in memory so it never queues the same one twice.",
-      "Wired the helper into the main cycle right after the existing maintenance hooks (heartbeat, dashboard snapshot, code backup). One added line in the cycle method.",
-      "Compile-checked the bot. Killed the old process (8180), started the new one (3220).",
-      "Waited one cycle and confirmed the drainer dispatched and the enrichment landed: 5 more events now have the velocity number, exactly as designed."
+      "Confirmed bot was alive (PID 2808) but restarted it (now PID 12452) so the new boost-feed thread came online together with the existing graduation listener.",
+      "Confirmed the dashboard was already running (PID 2040) \u2014 left it alone.",
+      "Wrote the new boost-feed code: about 115 lines added. Compile check passed.",
+      "Sanity-tested the DexScreener endpoint manually before restarting (28 of 30 entries on /top were Solana \u2014 the chain filter works as expected).",
+      "Watched the first poll fire at 12:08 \u2014 the new log file was created with 47 entries within seconds of bot startup.",
+      "Wrote the new finding into the brain's memory and queued the next-step proposal (a 5-minute liquidity check on graduations) for the following run."
     ],
     "next_priorities": [
-      "Verify the full 50-entry backlog drains within the next ~10 cycles (~8 minutes after restart). Confirm no Alchemy rate-limit errors -- if errors appear, lower max_per_cycle from 5 to 1.",
-      "At N>=20 enriched events with velocity_min, replicate the research-111 bucket analysis on live data: <3 min, 3-30 min, >30 min cohorts vs eventual outcome. If the <3 min = catastrophic-rug pattern holds (research-111 N=12 had -81% median in fast bucket), advance bonding_curve_velocity_filter to Phase 2 hard-skip.",
-      "Cross-launchpad blind spot: research-136 flagged Bonk.fun has overtaken pump.fun in 7-day Solana memecoin volume (Bonk 46% / Pump 44% / BagsApp 9%). Bot covers ZERO Bonk-suffix mints. Phase 1 logger for the DexScreener token-boosts/top feed (~50 LOC) is the next high-leverage ship -- but per ONE-CHANGE-PER-RUN, schedule for run-266.",
-      "Pump_trap forward fires still N=1 (AVERAGEGUY -8.26%); need N>=20 before any Phase 2 decision. Carry forward.",
-      "tMYP9a wallet still has 0 forward fires since pin on 2026-05-02 12:10 EDT (4 days dormant in CHOP). Continue tracking; no action."
+      "Verify the boost-feed poller is still alive at next run start (sol_dex_boosts_log.json mtime should be < 5 minutes old).",
+      "Once the boost log has at least 20 unique mints with at least 24 hours of forward-return data, bucket them by source (bonk-suffix vs pump-suffix vs bags-suffix) and by total boost amount. Decide whether the boost signal predicts positive forward returns.",
+      "Cross-link the 142 enriched velocity entries to DexScreener forward returns (h6 outcome). At N>=50 paired observations, replicate the research-111 N=12 pattern test (<3-min graduation = -81% median post-grad). If the pattern holds, plan Phase 2 hard-skip.",
+      "Investigate the 29 velocity anomalies (20% of sample). Likely PDA pagination edge cases \u2014 confirm and exclude from Phase 2 bucketing.",
+      "If sample velocity is good, consider the next research-136 proposal: liquidity_on_arrival_filter (5-min DexScreener probe after each pump.fun graduation, MEDIUM confidence)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 996,
-      "total_buys": 989,
       "win_rate": 35.6,
       "avg_win_pct": 6.22,
       "avg_loss_pct": -9.69,
       "rr_ratio": 0.64,
       "stop_loss_rate_pct": 57.0,
       "bankroll": 1.1607,
-      "pnl_today": 0.0,
-      "pnl_7d_active": -0.00258,
-      "trades_today": 0,
-      "open_positions": 0,
-      "bot_pid": 3220,
-      "dashboard_pid": 2040,
-      "wallets_monitored": 69,
-      "wallets_pinned": 16,
-      "sol_price": 89.23,
-      "btc_dom_pct": 58.54,
-      "altcoin_regime": "ALTCOIN_WINTER(58.5%)",
-      "graduation_log_total": 98,
-      "graduation_log_pump_suffix": 83,
-      "graduation_log_enriched_at_run_start": 28,
-      "graduation_log_enriched_after_first_cycle": 33,
-      "graduation_log_pending_after_first_cycle": 50
+      "pnl_today": 0.0
     },
     "active_strategies": [
       {
         "name": "fresh_profile",
         "status": "PROVEN",
-        "lifetime_trades": 15,
-        "lifetime_wr": 60.0,
-        "lifetime_pnl_sol": 0.0029,
-        "sizing": "0.9x"
+        "lifetime": "15T 60WR +0.0029 SOL",
+        "note": "Dormant in CHOP \u2014 overnight + quality gates correctly blocking"
       },
       {
         "name": "bear_strength",
         "status": "TESTING",
-        "lifetime_trades": 23,
-        "lifetime_wr": 43.5,
-        "lifetime_pnl_sol": 0.01466,
-        "sizing": "0.35x BULL / 0.15x CHOP"
+        "lifetime": "23T 43.5WR +0.01466 SOL",
+        "note": "0.35x BULL / 0.15x CHOP. STACCANA stop -9% on May 4."
       },
       {
         "name": "consensus_boost",
         "status": "TESTING",
-        "lifetime_trades": 38,
-        "lifetime_wr": 50.0,
-        "lifetime_pnl_sol": 0.00436,
-        "sizing": "0.50x CHOP / 0.70x BULL"
+        "lifetime": "38T 50WR +0.00436 SOL",
+        "note": "0.50x CHOP / 0.70x BULL. AVERAGEGUY stop -8.3% on May 5; ROAF flat +0.07% same day."
       },
       {
         "name": "wallet_convergence",
         "status": "TESTING",
-        "lifetime_trades": 4,
-        "lifetime_wr": 75.0,
-        "lifetime_pnl_sol": -0.00038,
-        "sizing": "0.15x"
+        "lifetime": "4T 50WR -0.00038 SOL",
+        "note": "0.15x. Bumpy emergency stop -13.4% on May 4."
       },
       {
         "name": "anchor_derivative_snipe",
         "status": "TESTING",
-        "lifetime_trades": 0,
-        "sizing": "0.15x"
+        "lifetime": "0T",
+        "note": "0.15x. Live since run-224, no fires yet."
       },
       {
         "name": "chop_momentum_scalp",
         "status": "TESTING",
-        "lifetime_trades": 16,
-        "lifetime_wr": 31.3,
-        "sizing": "0.15x"
-      },
-      {
-        "name": "bounce_hunter",
-        "status": "TESTING_BULL",
-        "lifetime_trades": 28,
-        "lifetime_wr": 50.0,
-        "sizing": "BULL gate CLOSED"
+        "lifetime": "16T 31.3WR -0.00213 SOL",
+        "note": "0.15x. Filter stack mature; awaiting post-filter sweet zone trades."
       },
       {
         "name": "flash_surge",
         "status": "TESTING_BULL",
-        "lifetime_trades": 4,
-        "lifetime_wr": 0.0,
-        "sizing": "0.15x BULL only"
+        "lifetime": "4T 0WR -0.01154 SOL",
+        "note": "0.15x protective. Dormant in CHOP."
+      },
+      {
+        "name": "bounce_hunter",
+        "status": "TESTING_BULL",
+        "lifetime": "28T 50WR -0.0074 SOL",
+        "note": "Gate CLOSED in CHOP."
+      },
+      {
+        "name": "copy_trade",
+        "status": "KILLED",
+        "lifetime": "537T -0.8303 SOL",
+        "note": "Watch-only; feeder for wallet_convergence."
       }
     ]
   },
@@ -248,15 +227,15 @@
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 21026.319534,
+  "brain_next_sec": 20722.928351,
   "brain_next_str": "6:04 PM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 813.680466,
-  "brain_last_run_str": "6:10 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "12:10 PM EST",
   "research_running": false,
   "research_last_run_str": "12:53 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 986.319534,
+  "research_next_sec": 682.928351,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-06 00:53:49 EDT",
@@ -467,14 +446,14 @@
     "dashboard_pid": 2040,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 20.54,
+    "hours_since_last_trade": 20.62,
     "dormancy_alert": false,
     "filter_lockout_diagnosis": "Skip mix 73/100 (52 BUY_SKIP / 19 CB_SKIP / 1 BS_SKIP, plus 20 SIGNAL / 8 SCAN). Below 95% lockout threshold. Dominant skip reason: 'm5/h6 pump already ran -- we are exit liq' (post-pump entries blocked correctly). Also 'Sell-conflict' skips (tracked wallets sold same token). Bot scanning normally and rejecting bad-EV entries; no buys in last 100 events but signals still flowing.",
     "actions_taken": [],
     "next_run_focus": "Dormancy crosses 24h around 15:41 EDT today. If still zero buys then, escalate DORMANCY_ALERT and check whether all 4 strategies are simultaneously in 'we are exit liq' lockout (filter-accumulation symptom).",
     "log_truncations": [],
     "elapsed_min": 1,
-    "file_age_min": 8.4,
+    "file_age_min": 13.4,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1923,7 +1902,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 5.5,
+    "age_min": 10.6,
     "stale": false,
     "available": true
   },
@@ -1997,16 +1976,16 @@
       "sol_survival_history.json had only 28 entries, all <30 days old, so nothing archived. Cap of 200 not approached."
     ],
     "next_run_focus": "Watch for new condensed_lessons drift keys (e.g. condensed_lessons_runNNN sibling). Re-trim active lessons toward 40 if it grows. Consider compacting historical_lessons to one-liners if size becomes a problem. Hypotheses count of 60 will need attention if it grows further \u2014 possibly tombstone the KILLED ones.",
-    "age_hours": 18.1,
+    "age_hours": 18.2,
     "stale": false,
     "available": true,
     "ever_ran": true
   },
-  "maint_next_sec": 86.319534,
-  "maint_next_str": "12:15 PM EST",
+  "maint_next_sec": 682.928351,
+  "maint_next_str": "12:30 PM EST",
   "maint_last_run_str": "12:05 PM EST",
   "maint_stale": false,
-  "memk_next_sec": 312386.319534,
+  "memk_next_sec": 312082.928351,
   "memk_next_str": "Sun 3:00 AM EST",
   "memk_last_run_str": "Tue 6:05 PM EST",
   "one_time_tasks": [],
@@ -2021,181 +2000,13 @@
       "evidence_source": ""
     },
     "tally": {
-      "implemented": 24,
+      "implemented": 23,
       "queued": 0,
       "rejected": 1,
-      "total": 25
+      "total": 24
     }
   },
   "events": [
-    {
-      "ts": "2026-05-06T11:50:20.313256",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip TRILLY: m5=457.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:50:20.884451",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip TRILLY: m5=457.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:50:43.331221",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: FAicXNV5 sold 7bbPaUP4 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:50:44.807446",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 7bbPaUP4: tracked wallet sold this token 110s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:50:44.807446",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: FAicXNV5 sold 7T46tP3Z \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:50:46.632715",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 7T46tP3Z: tracked wallet sold this token 112s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:53:53.289698",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Popart: m5=-17.2% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:56:03.219698",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7xwDKXNG sold 61GfLotk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:56:03.219698",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 61GfLotk: tracked wallet sold this token 428s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:56:05.569254",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip TOLE: downtrend h1=-50.9% h24=-50.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:56:29.448871",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip TOLE: downtrend h1=-64.2% h24=-64.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:56:29.902856",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip TOLE: downtrend h1=-64.2% h24=-64.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:56:29.902856",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:57:30.209213",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip SHITCOIN: m5=312.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:57:30.680223",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip SHITCOIN: m5=312.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:57:31.176092",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip SHITCOIN: m5=312.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:57:31.668543",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip SHITCOIN: m5=312.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:57:32.151255",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip SHITCOIN: m5=312.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:58:55.866391",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: C4eZg1rJ sold HBALGeNc \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:58:55.866391",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: C4eZg1rJ sold HBALGeNc \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:58:58.125607",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip SPONGEBOB: m5=92.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T11:59:49.343387",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Hard gate 5aLY85py: 30 trades at 33% WR (10/30), PnL=-0.0410 SOL \u2014 no probation",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T12:00:05.235444",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Hype: h1=-35.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T12:00:53.535122",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip MAPLE: downtrend h1=-34.3% h24=-75.8%",
-      "detail": ""
-    },
     {
       "ts": "2026-05-06T12:01:47.051625",
       "type": "BUY_SKIP",
@@ -2727,6 +2538,174 @@
       "color": "#58a6ff",
       "msg": "WalletSell: DYmsQudN sold AoUcKwEN \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:13:34.914540",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip AoUcKwEN: tracked wallet sold this token 332s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:13:34.920559",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DYmsQudN sold FrHV2sKs \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:13:45.333666",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9jyqFiLn sold HxT5f43n \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:13:45.333666",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9jyqFiLn sold HXzqEEUj \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:15:13.850962",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7xwDKXNG sold 8pTZqAJP \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:15:16.276700",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip APU: m5=120.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:15:36.149010",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard block h12 5B52w1ZW: blocked hour (data-proven -EV)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:15:36.149010",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5B52w1ZW sold 8pTZqAJP \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:15:36.160968",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Gate probation 9c6StdpH: 1178.4h idle, WR 40% (12/30), PnL=-0.0270 \u2014 allowing signal (next reset in 24h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:15:36.160968",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:46.847707",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold G5qm9n87 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:48.609799",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip G5qm9n87: tracked wallet sold this token 526s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:48.609799",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip G5qm9n87: tracked wallet sold this token 526s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:48.609799",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip G5qm9n87: tracked wallet sold this token 526s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:48.625907",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip G5qm9n87: tracked wallet sold this token 526s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:58.223596",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 3WDpq7QJ: tracked wallet sold this token 535s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:58.228616",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 3WDpq7QJ: tracked wallet sold this token 535s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:58.234635",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 3WDpq7QJ: tracked wallet sold this token 536s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:16:58.240394",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 3WDpq7QJ: tracked wallet sold this token 536s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:18:09.252147",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: C4eZg1rJ sold 3WDpq7QJ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:18:09.252147",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: C4eZg1rJ sold 3WDpq7QJ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:18:09.252147",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: C4eZg1rJ sold 3WDpq7QJ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:18:09.796491",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip APU: m5=133.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T12:18:10.292949",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip APU: m5=133.0% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2782,9 +2761,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "12:13:33",
+  "ts": "12:18:37",
   "__publish_meta": {
-    "published_at": "2026-05-06 12:13:33 EDT",
+    "published_at": "2026-05-06 12:18:37 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
