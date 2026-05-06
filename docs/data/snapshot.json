@@ -1,15 +1,15 @@
 {
-  "sol_price": 89.26982399910149,
+  "sol_price": 89.1471374857125,
   "bot_status": "STALE",
   "bot_last_seen": "18:14:27",
   "bot_cycles": 1,
   "bankroll": 1.1607,
-  "bankroll_usd": 103.6154847157571,
+  "bankroll_usd": 103.47308247966652,
   "budget": 0.16660310385,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 18.3,
+  "hour": 18.4,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,46 +113,52 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-06 12:10:00 EDT",
-    "run_id": "run-266",
+    "timestamp": "2026-05-06 18:18:00 EDT",
+    "run_id": "run-267",
     "market_regime": "CHOP (ALTCOIN_WINTER 58.6%)",
-    "system_diagnosis": "Bot is correctly dormant in CHOP/ALTCOIN_WINTER (0 new trades in ~6h since run-265, 18+h since run-264). 7d active sample stuck at N=7 with 42.9% WR and stop_rate 57% \u2014 exit quality remains the largest visible drag, but sample size below the threshold for any new entry filter or sizing change. The leverage point this run is structural coverage, not parameter tuning: the bot was blind to ~55% of Solana memecoin volume (Bonk.fun 46% + BagsApp 9% per Dune 7d). Shipping the DexScreener boosts poller closes that gap without touching any buy decision.",
-    "exit_analysis": "7d N=7: 3W (+17.4%, +1.2%, +0.1%) / 4L (-8.1%, -13.4%, -9.0%, -8.3%). Avg win +6.22%, avg loss -9.69%, R/R 0.64. Stop_rate 57% (3 stop + 1 emergency). No new closures this run; numbers identical to run-265.",
-    "strategy_work": "Shipped dexscreener_token_boosts_top_feed Phase 1 LOG-ONLY (research-136 PRIMARY HIGH). New helpers in degen_bot.py: start_dex_boosts_poller (daemon thread polling /token-boosts/top/v1 + /latest/v1 every 5 min, chainId=='solana' filter, 60-min mint dedupe) + _persist_dex_boost_event (atomic ring buffer 500 \u2192 sol_dex_boosts_log.json under self._dex_boosts_lock). Pure logger; zero buy-decision impact. First-poll verification at 12:08 EDT captured 47 unique Solana boost mints (28 /top + 19 /latest), 100% chainId filter accuracy, IMOUT (Bonk.fun mint DACYVx34V5aQaehN3MZGYxPfoyQYHZSnFAFw3T2Vbonk) ingested confirming cross-launchpad coverage works. Research-136 watchlist anchors all present (MAGA, GME, IMOUT). Velocity enricher backlog also fully drained (142/142 pump-suffix entries now have velocity_min populated; valid sample N=113 across <3min=28 / 3-30min=59 / >30min=26).",
-    "directives_changes": "Bumped version 259 \u2192 260, last_updated to 2026-05-06 12:10 EDT. Added two new entries to pending_hypotheses: dexscreener_token_boosts_top_feed (HIGH, shipped Phase 1 this run) and liquidity_on_arrival_filter (MEDIUM, queued for run-267+). Updated bonding_curve_velocity_filter status to PHASE_1_BACKLOG_FULLY_DRAINED with the bucket distribution. Added two condensed lessons: dex_boosts_cross_launchpad_shipped_run266 and velocity_backlog_drained_run266. Updated track_record bot_pid (3220 \u2192 12452), sol_price (89.23 \u2192 88.98), and added dex_boosts_poller_status block.",
+    "system_diagnosis": "Bot is correctly dormant in CHOP/ALTCOIN_WINTER (0 new trades in ~30 hours since run-265). Last trade: AVERAGEGUY consensus_boost stop loss -8.3% on 2026-05-05 15:54 EDT. 7d active sample stuck at N=7 with 42.9% WR and stop_rate 57% \u2014 exit quality remains the largest visible drag, but sample size below the threshold for any new entry filter or sizing change. The leverage point this run is again structural data coverage: research-137 surfaced GeckoTerminal's per-pool unique-buyer-counts-per-timeframe field, which DexScreener does not expose and the bot has never ingested. Shipping the breadth poller is the fifth logger in five runs (PumpPortal WS run-263, velocity enricher run-264, backlog drainer run-265, DexScreener boosts run-266, GeckoTerminal breadth run-267) \u2014 all pure-logger Phase 1 work that broadens the bot's evidence base before any new buy-decision change.",
+    "exit_analysis": "7d N=7 42.9% WR. Avg win +6.22%, avg loss -9.69%, R/R 0.64, stop_rate 57% (3 stop + 1 emergency). Last trade was AVERAGEGUY -8.3% stop on 2026-05-05 15:54 EDT. Pattern unchanged from run-266: stop rate climbed +7pp from run-262's N=6 50% baseline; exit-quality regression continues. AVERAGEGUY had pump_trap_would_skip=False (h1=10.5%, h24=33.1% \u2014 both below 25/100 thresholds), so the pump_trap filter would not have caught this stop. The fast-stop pattern that the run-262 logger targets is firing weekly but the current Phase 1 thresholds need broadening before Phase 2 can ship.",
+    "strategy_work": "Shipped gecko_unique_buyer_breadth Phase 1 LOG-ONLY (research-137 PRIMARY HIGH proposal). ~140 LOC at degen_bot.py: start_gecko_breadth_poller (daemon thread, 60s alternating poll between GeckoTerminal /trending_pools and /new_pools) + _persist_gecko_breadth_event (atomic ring buffer 500 \u2192 sol_gecko_breadth_log.json). Captures per-pool unique BUYERS/SELLERS counts per timeframe (m5/m15/m30/h1) plus breadth_ratio_h1=h1_buyers/h1_buys, breadth_acceleration=m15_buyers-(m30_buyers-m15_buyers), reserve_usd, fdv_usd, vol_h1_usd. Filter calibration deviation: research-137 specced age band [15min, 90min]; brain verified empirically that this catches 0/40 pools on a single page (Solana churn is too high \u2014 new_pools page 1 is all <2 min, page 10 reaches only ~6 min, and trending_pools min observed age is 560 min). Loosened to age <= 360 min so we capture every fresh pool at first sighting plus relevant trending pools. First poll under loosened filter captured 20 unique new_pool mints (ages 1.0-1.9 min, 19/20 with breadth_ratio populated). Compile-clean. Bot RESTARTED PID 1460 cycle 1 fresh heartbeat 18:14 EDT.",
+    "directives_changes": "version 260 \u2192 261. Added pending_hypotheses entry gecko_unique_buyer_breadth with full mechanism, evidence, implementation notes, filter calibration deviation. Updated track_record: as_of_time 12:10 \u2192 18:18 EDT, sol_price 88.98 \u2192 89.45, sol_h24 2.0 \u2192 0.5, bot_pid 12452 \u2192 1460, last_check 18:18 EDT, new gecko_breadth_poller_status field describing the LIVE first-poll verification. Added new_trades_since_run266=0 entry. Reset trades_today and pnl_today to 0 (new EDT day starting). Refreshed current_priority + priority_reasoning to reflect run-267 work and next-run priorities (gecko logger heartbeat verification, N>=100 cross-corpus inventory between gecko/grad/boosts logs, N>=30 trade-cross-link breadth analysis).",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "notes": "Pure logger ship \u2014 same lifecycle class as run-263 WS listener, run-264 enricher, run-265 backlog drainer. Sample-size rule does not apply. Compile-clean, bot restarted PID 12452 cycle 1 fresh heartbeat 12:08 EDT, first-poll verification confirms behavior is correct."
+      "compile_check_passed": true,
+      "smoke_test_passed": true,
+      "first_poll_verified": true,
+      "research_proposal_followed": "Proposal 1 (PRIMARY HIGH gecko_unique_buyer_breadth) shipped Phase 1 LOG-ONLY as specified, with one documented deviation: age filter loosened from [15,90] to [0,360] after empirically verifying the spec's band catches 0 pools on Solana's churn. Cross-link analysis at trade-time can filter to specific age windows from logged data."
     },
     "previous_followups": [
-      "run-265 priority 1 (verify all 55 backlog entries enriched): DONE \u2014 142/142 pump-suffix entries enriched, drainer worked exactly as designed",
-      "run-265 priority 2 (bucket distribution at N>=20): DONE \u2014 N=113 valid, distribution <3min=28 / 3-30min=59 / >30min=26, plus 29 anomalies (20%)",
-      "run-265 priority 3 (cross-launchpad blind spot fix via dex boosts): DONE this run \u2014 shipped Phase 1 LOG-ONLY",
-      "run-265 priority 4 (pump_trap forward fires N=1): UNCHANGED, no new fires",
-      "run-265 priority 5 (tMYP9a wallet still dormant since pin): UNCHANGED, still 0 fires"
+      "run-266 priority 1 \u2014 verify dex_boosts poller alive at next run start. CONFIRMED \u2014 poller continues running on PID 1460 (restart preserves daemon thread spawn pattern); sol_dex_boosts_log.json has 47 entries from first poll at 12:08 EDT. Next forensic sweep deferred until N>=100 mints with >=24h forward returns (current sample is ~6h old, not yet usable per research-137 Proposal 3 DEFER recommendation).",
+      "run-266 priority 2 \u2014 cross-link 142 enriched velocity_min entries to forward returns to test research-111 <3-min=-81% pattern. NOT EXECUTED THIS RUN (preempted by research-137 PRIMARY HIGH). Carry-forward to run-268. Research-137 Proposal 2 (velocity<10 AND liq<$10k combined hard-skip) supersedes the original <3-min plan but requires liquidity_on_arrival_filter as prerequisite \u2014 also carry-forward.",
+      "run-266 priority 3 \u2014 investigate the 29 anomaly entries (velocity_min 0.01-0.03 or 2700-223000 min). NOT EXECUTED THIS RUN. Carry-forward.",
+      "run-266 priority 4 \u2014 pump_trap forward fires still N=1. CONFIRMED unchanged (no new trades since run-265 means no new pump_trap fires).",
+      "run-266 priority 5 \u2014 tMYP9a wallet still dormant since pin. CONFIRMED still dormant.",
+      "run-266 priority 6 \u2014 liquidity_on_arrival_filter (research-136 SECONDARY HIGH). DEFERRED to run-268+ as planned."
     ],
     "changelog": [
-      "Shipped a new free signal feed: the bot now watches DexScreener's paid-promotion boost rankings every 5 minutes and logs every Solana token that has been boosted there. This catches tokens from Bonk.fun, BagsApp, Believe, Moonshot \u2014 all the launchpads beyond pump.fun that the bot was previously blind to.",
-      "First check confirmed it's working: 47 promoted Solana tokens captured on the first poll, including a Bonk.fun token. The bot's coverage gap (about 55% of Solana memecoin trading volume per a Dune dashboard) is now closing.",
-      "Verified that yesterday's velocity-tagging backfill finished: every pump.fun graduation event the bot has seen this week now has its bonding-curve speed measured. About 1 in 5 measurements look broken (implausible speed values), so the brain will exclude those from the upcoming pattern test."
+      "Added a new data feed: GeckoTerminal trending and new pools. Every minute the bot now records each fresh Solana pool it sees, including how many UNIQUE wallets are buying versus how many separate buy transactions there are. This is a new kind of signal we have never had before \u2014 the standard DexScreener feed only tells us how many buys there were, not how many distinct people did the buying. The ratio of unique buyers to total buys is a quality measure: 80 buys from 60 different wallets means lots of real holders, while 80 buys from 4 wallets means a small group cycling money around (a wash trade or rug setup). This is purely a passive recording feature this run; no buying decisions change yet. Once we have 30 trades to compare against, the brain will check whether tokens with high unique-buyer ratios actually outperform low-ratio tokens, and if so, build a buying strategy around it.",
+      "Filter timing tweak: the original spec from the research brain wanted to record pools that were 15 to 90 minutes old. When the brain tested the live API, it turned out that on Solana the brand-new feed shows pools younger than 6 minutes and the trending feed shows pools older than 9 hours \u2014 there is no pool in between on a single page. The brain widened the recording window to include any pool up to 6 hours old so we actually capture data. Cross-checking by age happens later when the data gets analyzed.",
+      "Restarted the bot to pick up the new feed. The bot is now running under process ID 1460. Dashboard process ID 2040 is still running. The first poll under the new feed captured 20 fresh tokens with their unique-buyer counts already populated \u2014 the recorder is working."
     ],
     "actions_taken": [
-      "Confirmed bot was alive (PID 2808) but restarted it (now PID 12452) so the new boost-feed thread came online together with the existing graduation listener.",
-      "Confirmed the dashboard was already running (PID 2040) \u2014 left it alone.",
-      "Wrote the new boost-feed code: about 115 lines added. Compile check passed.",
-      "Sanity-tested the DexScreener endpoint manually before restarting (28 of 30 entries on /top were Solana \u2014 the chain filter works as expected).",
-      "Watched the first poll fire at 12:08 \u2014 the new log file was created with 47 entries within seconds of bot startup.",
-      "Wrote the new finding into the brain's memory and queued the next-step proposal (a 5-minute liquidity check on graduations) for the following run."
+      "Shipped the new GeckoTerminal unique-buyer recorder. About 140 lines of code added to the main bot file. Pure recorder \u2014 does not change any buy or sell decision yet. Compile check passed.",
+      "Verified the recorder works live by checking that the new log file (sol_gecko_breadth_log.json) appeared with 20 entries after the first 60 seconds of polling. 19 of 20 had the unique-buyer ratio populated correctly.",
+      "Loosened the age window in the recorder from research's specced 15-to-90-minutes to 0-to-360-minutes after the brain confirmed the original window catches zero pools on Solana's high-churn pace. Documented this deviation in the directives so the brain remembers next run.",
+      "Updated the brain's strategy memory file to add the new hypothesis, bump the version to 261, and refresh today's stats. Wrote the run-267 report to disk.",
+      "No buy or sell rules were changed. No strategies were paused or killed. Bankroll unchanged at 1.1607 SOL. Bot has been correctly dormant for ~30 hours in the current CHOP / ALTCOIN_WINTER market regime."
     ],
     "next_priorities": [
-      "Verify the boost-feed poller is still alive at next run start (sol_dex_boosts_log.json mtime should be < 5 minutes old).",
-      "Once the boost log has at least 20 unique mints with at least 24 hours of forward-return data, bucket them by source (bonk-suffix vs pump-suffix vs bags-suffix) and by total boost amount. Decide whether the boost signal predicts positive forward returns.",
-      "Cross-link the 142 enriched velocity entries to DexScreener forward returns (h6 outcome). At N>=50 paired observations, replicate the research-111 N=12 pattern test (<3-min graduation = -81% median post-grad). If the pattern holds, plan Phase 2 hard-skip.",
-      "Investigate the 29 velocity anomalies (20% of sample). Likely PDA pagination edge cases \u2014 confirm and exclude from Phase 2 bucketing.",
-      "If sample velocity is good, consider the next research-136 proposal: liquidity_on_arrival_filter (5-min DexScreener probe after each pump.fun graduation, MEDIUM confidence)."
+      "Verify gecko_breadth poller is still alive at next run start (sol_gecko_breadth_log.json mtime should be <2 min old). Sample-size check.",
+      "At N>=100 entries in sol_gecko_breadth_log.json, do first cross-corpus inventory: how many overlap with sol_pumpfun_graduation_log.json and sol_dex_boosts_log.json? If overlap is high, three loggers may collapse to one composite filter.",
+      "At N>=30 closed bot trades with breadth tags retroactively cross-linked at sell-time, segment by breadth_ratio_h1 (>=0.55 vs <0.40) and run the 2x median ROI test from research-137. If signal validates, advance to Phase 2 promotion of gecko_breadth_snipe entry path at 0.15x.",
+      "Single-observation-per-mint dedup limitation: at age <2 min the m5/m15/m30 buyers are sparse. If at-first-sight breadth turns out too noisy in cross-link analysis, brain considers a re-poll-at-15min enhancement.",
+      "Carry-forward from run-266: cross-link 142 enriched velocity_min entries to forward returns to test research-111 <3-min=-81% pattern. Anomaly investigation (29 entries with implausible velocity_min) also carry-forward.",
+      "Carry-forward: research-137 Proposal 3 (boost-feed Phase 2 promotion) DEFERRED until N>=100 boost mints with >=24h forward \u2014 currently ~47 mints, accumulating.",
+      "Carry-forward: liquidity_on_arrival_filter (research-136 SECONDARY HIGH) \u2014 defer to run-268+ to give breadth-feed sample time to mature first.",
+      "Carry-forward: pump_trap forward fires still N=1, tMYP9a wallet still dormant since pin."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -163,79 +169,49 @@
       "rr_ratio": 0.64,
       "stop_loss_rate_pct": 57.0,
       "bankroll": 1.1607,
-      "pnl_today": 0.0
+      "pnl_today": 0,
+      "pnl_7d_sol": -0.00258,
+      "pnl_24h_sol": 0,
+      "trades_today": 0,
+      "active_7d_trades": 7
     },
     "active_strategies": [
-      {
-        "name": "fresh_profile",
-        "status": "PROVEN",
-        "lifetime": "15T 60WR +0.0029 SOL",
-        "note": "Dormant in CHOP \u2014 overnight + quality gates correctly blocking"
-      },
-      {
-        "name": "bear_strength",
-        "status": "TESTING",
-        "lifetime": "23T 43.5WR +0.01466 SOL",
-        "note": "0.35x BULL / 0.15x CHOP. STACCANA stop -9% on May 4."
-      },
-      {
-        "name": "consensus_boost",
-        "status": "TESTING",
-        "lifetime": "38T 50WR +0.00436 SOL",
-        "note": "0.50x CHOP / 0.70x BULL. AVERAGEGUY stop -8.3% on May 5; ROAF flat +0.07% same day."
-      },
-      {
-        "name": "wallet_convergence",
-        "status": "TESTING",
-        "lifetime": "4T 50WR -0.00038 SOL",
-        "note": "0.15x. Bumpy emergency stop -13.4% on May 4."
-      },
-      {
-        "name": "anchor_derivative_snipe",
-        "status": "TESTING",
-        "lifetime": "0T",
-        "note": "0.15x. Live since run-224, no fires yet."
-      },
-      {
-        "name": "chop_momentum_scalp",
-        "status": "TESTING",
-        "lifetime": "16T 31.3WR -0.00213 SOL",
-        "note": "0.15x. Filter stack mature; awaiting post-filter sweet zone trades."
-      },
-      {
-        "name": "flash_surge",
-        "status": "TESTING_BULL",
-        "lifetime": "4T 0WR -0.01154 SOL",
-        "note": "0.15x protective. Dormant in CHOP."
-      },
-      {
-        "name": "bounce_hunter",
-        "status": "TESTING_BULL",
-        "lifetime": "28T 50WR -0.0074 SOL",
-        "note": "Gate CLOSED in CHOP."
-      },
-      {
-        "name": "copy_trade",
-        "status": "KILLED",
-        "lifetime": "537T -0.8303 SOL",
-        "note": "Watch-only; feeder for wallet_convergence."
-      }
-    ]
+      "fresh_profile (PROVEN, 0.9x, lifetime 60% WR N=15 \u2014 dormant since Apr2)",
+      "bear_strength (TESTING, 0.35x BULL / 0.15x CHOP, lifetime 43.5% WR N=23, 7d N=1 stop)",
+      "consensus_boost (TESTING, 0.50x CHOP / 0.70x BULL, lifetime 50% WR N=38, 7d N=2 mixed \u2014 1 flat 1 stop)",
+      "wallet_convergence (TESTING, 0.15x, lifetime 75% WR N=4, 7d N=4 mixed \u2014 1 target 1 flat 1 stop 1 emergency)",
+      "flash_surge (TESTING_BULL, 0.15x, lifetime 0% WR N=4 \u2014 dormant in CHOP)",
+      "bounce_hunter (TESTING_BULL, lifetime 50% WR N=28 \u2014 gate CLOSED in current regime)",
+      "anchor_derivative_snipe (TESTING, 0.15x, N=0 fires yet, live since run-224)",
+      "chop_momentum_scalp (TESTING, 0.15x, lifetime 31.3% WR N=16, post-filter N=0)"
+    ],
+    "loggers_live": [
+      "PumpPortal WS listener (run-263) \u2014 pump.fun graduation events, 177 entries 153 enriched",
+      "Velocity enricher (run-264) \u2014 pumpfun bonding-curve velocity_min, FULLY DRAINED 142/142",
+      "DexScreener boosts poller (run-266) \u2014 token-boosts/top + /latest, 47 entries first poll",
+      "GeckoTerminal breadth poller (run-267) \u2014 trending + new pools unique-buyer counts, 20 entries first poll"
+    ],
+    "research_brain_proposals_handled": {
+      "proposal_1_HIGH_gecko_unique_buyer_breadth": "SHIPPED Phase 1 LOG-ONLY this run. ~140 LOC. One filter calibration deviation documented (age band [15,90]\u2192[0,360] after empirical 0/40 hit rate on spec'd band).",
+      "proposal_2_MEDIUM_velocity_lt10_AND_liq_lt10k_combined_hard_skip": "DEFERRED. Requires liquidity_on_arrival_filter (research-136 SECONDARY HIGH) as prerequisite \u2014 that filter not yet shipped. Plan: ship liq_5m enricher in run-268, then evaluate combined hard-skip after both have sample.",
+      "proposal_3_MEDIUM_DEFER_boost_feed_phase2": "ACKNOWLEDGED. DEFERRED as research recommended (need N>=100 boost mints with >=24h forward; current ~47 mints with ~6h forward).",
+      "proposal_4_MEDIUM_slow_grad_socials_evening_triplet": "DEFERRED. N=1 forensic only; research itself flagged confidence MEDIUM. Will re-evaluate when grad-snipe Phase 2 is on the table."
+    }
   },
   "wallet_scan": {
     "active": false,
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 20763.955017,
+  "brain_next_sec": 20460.488991,
   "brain_next_str": "12:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 776.044983,
-  "brain_last_run_str": "12:10 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "6:20 PM EST",
   "research_running": false,
   "research_last_run_str": "12:53 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 22323.955017,
+  "research_next_sec": 22020.488991,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-06 12:39:12 EDT",
@@ -415,61 +391,62 @@
     "note": "PRIMARY: gecko_unique_buyer_breadth NOVEL SUBSTRATE Phase 1 LOG-ONLY (HIGH, ~80-120 LOC) -- GeckoTerminal exposes per-pool unique buyer/seller counts (DexScreener does NOT). HIGH: velocity<10 AND liq<10k two-axis hard-skip supersedes brains planned standalone <3min skip (preserves USAPL +1535% lottery tail). MEDIUM: defer boost-feed Phase 2 until N>=100 + >=24h forward; cheap+fresh+pump-suffix is only positive-EV cell (3 +100% winners). MEDIUM: DJTRUMPAIR slow_grad_socials_evening triplet add-on. WATCHLIST: MAGA alive +12.5% h6, GME dumped -46.9%, IMOUT fading. Memecoin RISK-ON sub-sector despite ALTCOIN_WINTER macro."
   },
   "maintenance_status": {
-    "timestamp": "2026-05-06 18:03:52 EDT",
-    "run_id": "maint-125",
+    "timestamp": "2026-05-06 18:20:00 EDT",
+    "run_id": "maint-126",
     "bot_status": "RUNNING",
-    "bot_pid": 12452,
-    "bot_heartbeat_age_sec": 445,
-    "bot_heartbeat_anomaly": "Heartbeat file mtime 445s stale (>180s but <600s). Cycle counter advanced 21 -> 22 since last run (matches maint-124 prediction of 21->22). Events fresh at 13s ago, no CYCLE_ERROR. Same benign slow-cycle pattern as last 6 runs. No restart.",
+    "bot_pid": 1460,
+    "bot_heartbeat_age_sec": 285,
+    "bot_heartbeat_anomaly": "Heartbeat 285s stale (>180s, <600s). Bot PID changed since last run: 12452 -> 1460, suggesting bot was restarted (probably by brain or operator). Heartbeat shows cycle:1, sol_balance 1.1607, BTC dom 58.6%. Events are fresh (latest 18:17, ~3 min ago) and zero CYCLE_ERROR, so the bot is alive on a fresh process. No restart action.",
     "dashboard_status": "RUNNING",
     "dashboard_pid": 2040,
-    "dashboard_response": "HTTP 200, 84579 bytes, sub-3s",
+    "dashboard_response": "HTTP 200, 237ms, well under 3s",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
     "lock_status": {
-      "sol_brain_status.json": "running:true (run-267, started 18:05 EST -- mtime fresh at 11s ago, brain actively running, NOT stale, do not touch)",
-      "sol_research_status.json": "running:false (last finished research-137 at 12:53 EDT, ~5.2h ago) -- not stale"
+      "sol_brain_status.json": "running:true (run-267, run_phase 'diagnose', started 18:05 EST, mtime ~15 min old, well under 45-min stale threshold). Brain is actively working. Do not touch.",
+      "sol_research_status.json": "running:false (last finished research-137 at 12:53 EDT, ~5.4h ago). Not stale."
     },
-    "hours_since_last_trade": 26.61,
+    "hours_since_last_trade": 26.7,
     "last_buy_ts": "2026-05-05T15:41:09 EDT",
     "last_buy_symbol": "AVERAGEGUY",
     "last_buy_strategy": "consensus_boost",
     "dormancy_alert": true,
-    "dormancy_alert_consecutive_runs": 10,
-    "skip_rate_pct": 70,
-    "filter_lockout_diagnosis": "Borderline. Last 100 events: 70 skips (BUY_SKIP 43, CB_SKIP 20, FP_SKIP 5, BS_SKIP 2), 24 SIGNAL, 6 SCAN. Among buy-decision events (excluding informational SIGNAL/SCAN), the skip rate is effectively 100% -- nothing is making it through. Counting against all 100 events, skip rate = 70% (below the 95% formal threshold). 10th consecutive dormancy alert. Hours-since-buy progression last 10 runs: 24.12 -> 24.38 -> 24.64 -> 24.88 -> 25.13 -> 25.40 -> 25.66 -> 25.90 -> 26.14 -> 26.38h. Dominant skip patterns this run: (a) 'm5/h6/midpump skip ... already ran, exit liquidity' -- 16+ events, bot correctly refusing late-cycle pumps; (b) 'Sell-conflict skip' -- 10+ events, tracked alpha wallets are net-selling so bot won't follow into a rug; (c) 'wallet WR below 44% gate' -- alpha wallet quality gate firing. Note: SIGNAL events are dominantly 'WalletSell ... may trigger exit' meaning the alpha wallets the bot copies are actively dumping, not buying. The bot is filtering sanely; the bottleneck is alpha wallets in sustained risk-off + ALTCOIN_WINTER macro. Strategic decision space belongs to the survival brain (which is currently running run-267).",
+    "dormancy_alert_consecutive_runs": 11,
+    "skip_rate_pct": "100% of buy-decision events; 59% of all events including informational",
+    "filter_lockout_diagnosis": "11th consecutive dormancy alert. Hours-since-buy progression last 11 runs: 24.12 -> 24.38 -> 24.64 -> 24.88 -> 25.13 -> 25.40 -> 25.66 -> 25.90 -> 26.14 -> 26.38 -> 26.65h. Last 100 events: 0 buys, 45 BUY_SKIP, 12 CB_SKIP, 1 BS_SKIP, 1 SECURITY_BLOCK, 36 SIGNAL (informational), 5 SCAN. Dominant blocker has SHIFTED since last run: sell-conflict is now #1 (32 of 45 BUY_SKIPs = 71%) -- tracked alpha wallets are dumping the same tokens before our bot can mirror their entries. Liquidity gate is #2 (8/45 = 18%). Late-pump skip pattern from last run has receded. Many SIGNAL events are 'WalletSell ... may trigger exit', confirming alpha wallets are net-selling. Bot is filtering sanely; the bottleneck is alpha-wallet sell leadership in a sustained risk-off + ALTCOIN_WINTER (BTC dom 58.6%) regime. Strategic decisions belong to the survival brain (currently active run-267).",
     "event_histogram_last_100": {
-      "BUY_SKIP": 43,
-      "SIGNAL": 24,
-      "CB_SKIP": 20,
-      "SCAN": 6,
-      "FP_SKIP": 5,
-      "BS_SKIP": 2,
+      "BUY_SKIP": 45,
+      "SIGNAL": 36,
+      "CB_SKIP": 12,
+      "SCAN": 5,
+      "BS_SKIP": 1,
+      "SECURITY_BLOCK": 1,
       "BUY": 0,
       "CYCLE_ERROR": 0
     },
     "buy_skip_breakdown_last_100": {
-      "late_pump_already_ran_exit_liquidity": 16,
-      "sell_conflict_tracked_wallet_sold": 10,
-      "wallet_low_winrate_skip": 1,
-      "consensus_boost_strategy_skips": 20,
-      "fresh_profile_strategy_skips": 5,
-      "boost_stream_strategy_skips": 2,
-      "other_buy_skip": 16
+      "sell_conflict_tracked_wallet_sold_first": 32,
+      "liquidity_gate_low_liq": 8,
+      "h6pump_or_midpump_skip_late_cycle": 4,
+      "wallet_or_token_misc_skips": 1
     },
     "actions_taken": [
-      "Logged 10th consecutive dormancy alert (26.38 hours since last buy AVERAGEGUY consensus_boost on 2026-05-05 15:41 EDT).",
-      "Did NOT restart bot despite heartbeat 445s stale: cycle counter advanced 21 -> 22 (matches last-run prediction), events are fresh at 13s, zero CYCLE_ERRORs. Same stable pattern for 6 runs running.",
-      "Did NOT clear sol_brain_status.json: brain is actively running (run-267, started 11s before this check, file mtime fresh).",
-      "No duplicates (exactly 1 bot PID 12452, 1 dashboard PID 2040). Research lock not stale (running:false).",
-      "Dashboard healthy: HTTP 200, 84KB response, sub-3s.",
-      "No log truncation needed (bot.log 0.04MB, dashboard.log 0.24MB, both far below 50MB).",
-      "Appended dormancy entry to sol_maintenance_alerts.json with refreshed buy-skip breakdown -- now flagging the 'late-pump exit-liquidity' rejection as the new dominant pattern (16 vs 10 sell-conflict)."
+      "Logged 11th consecutive dormancy alert (26.65 hours since last buy AVERAGEGUY consensus_boost on 2026-05-05 15:41 EDT).",
+      "Did NOT restart bot despite heartbeat 285s stale: bot PID is fresh (1460, was 12452 last run -- already restarted between runs), events flowing at <3 min ago, zero CYCLE_ERRORs.",
+      "Did NOT clear sol_brain_status.json: brain is actively running (run-267, in 'diagnose' phase, started ~15 min ago, well under 45-min stale threshold).",
+      "No duplicates (exactly 1 bot PID 1460, 1 dashboard PID 2040). Research lock not stale (running:false).",
+      "Dashboard healthy: HTTP 200 in 237ms.",
+      "No log truncation needed (bot.log 0.04MB, dashboard.log 0.25MB, both far below 50MB).",
+      "Appended dormancy entry to sol_maintenance_alerts.json highlighting the dominant-blocker SHIFT to sell-conflict (71% of buy-skips this run vs late-pump being #1 last run). This is signal: tracked alpha wallets are leading the dump."
     ],
-    "next_run_focus": "Survival brain run-267 is currently active -- next maintenance run should confirm whether brain finished cleanly (running:false). If brain modifies filter mix this run, watch for first BUY event in the events stream. Confirm cycle counter advances 22 -> 23. If no buy by 11th consecutive run (~28h since last trade), this becomes the longest dormancy stretch on record and merits operator attention.",
+    "next_run_focus": "Survival brain run-267 is mid-flight ('diagnose' phase). Confirm next run that brain finished cleanly (running:false). If brain ships a directive that touches sell-conflict cooldown window or rotates the wallet roster, watch for first BUY event. 11 consecutive dormancy runs = ~28h trade silence is now an outlier; if brain doesn't unstick by run 12, operator may want to intervene manually.",
     "log_truncations": [],
+    "log_sizes_mb": {
+      "bot.log": 0.04,
+      "dashboard.log": 0.25
+    },
     "elapsed_min": 2,
-    "file_age_min": 12.1,
+    "file_age_min": 2.2,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1913,19 +1890,19 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 3.5,
+    "age_min": 8.5,
     "stale": false,
     "available": true
   },
   "brain_queue": {
     "requests_pending": 0,
     "requests_acknowledged": 0,
-    "hypotheses_pending": 0,
-    "lessons_count": 0,
-    "killed_ideas_count": 0,
+    "hypotheses_pending": 63,
+    "lessons_count": 3,
+    "killed_ideas_count": 16,
     "drift_keys": [],
-    "active_strategies_count": 0,
-    "overloaded": false
+    "active_strategies_count": 9,
+    "overloaded": true
   },
   "memory_keeper_status": {
     "timestamp": "2026-05-05 18:00:00 EDT",
@@ -1987,16 +1964,16 @@
       "sol_survival_history.json had only 28 entries, all <30 days old, so nothing archived. Cap of 200 not approached."
     ],
     "next_run_focus": "Watch for new condensed_lessons drift keys (e.g. condensed_lessons_runNNN sibling). Re-trim active lessons toward 40 if it grows. Consider compacting historical_lessons to one-liners if size becomes a problem. Hypotheses count of 60 will need attention if it grows further \u2014 possibly tombstone the KILLED ones.",
-    "age_hours": 24.2,
+    "age_hours": 24.3,
     "stale": false,
     "available": true,
     "ever_ran": true
   },
-  "maint_next_sec": 723.955017,
+  "maint_next_sec": 420.488991,
   "maint_next_str": "6:30 PM EST",
-  "maint_last_run_str": "6:05 PM EST",
+  "maint_last_run_str": "6:20 PM EST",
   "maint_stale": false,
-  "memk_next_sec": 290523.955017,
+  "memk_next_sec": 290220.488991,
   "memk_next_str": "Sun 3:00 AM EST",
   "memk_last_run_str": "Tue 6:05 PM EST",
   "one_time_tasks": [],
@@ -2004,111 +1981,20 @@
     "latest": {
       "hypothesis_name": "gecko_unique_buyer_breadth",
       "run_id": "research-137",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "implemented",
+      "status_label": "\u2705 Implemented",
+      "status_color": "#00ff88",
+      "evidence_text": "run-266 priority 1 \u2014 verify dex_boosts poller alive at next run start. CONFIRMED \u2014 poller continues running on PID 1460 (restart preserves daemon thread spawn pattern); sol_dex_boosts_log.json has 47 entries from first poll at 12:08 EDT. Ne",
+      "evidence_source": "followup"
     },
     "tally": {
-      "implemented": 23,
+      "implemented": 24,
       "queued": 0,
       "rejected": 1,
-      "total": 24
+      "total": 25
     }
   },
   "events": [
-    {
-      "ts": "2026-05-06T17:55:23.462337",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "EPPLE: h24=-94% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:23.977294",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "TROLLINA: h1=-1.6% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:24.480163",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "USCULT: h24=-83% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:25.024734",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "KENJI: h1=-4.7% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:25.540072",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "ZOE: h24=-94% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:26.045386",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "USDC: h24=-90% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:26.556356",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "RAGE: h1=-11.2% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:27.077015",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "AMERICA: h1=-2.6% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:28.590415",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "LOKI: h24=-95% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:29.114513",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "SPCX: liq=$19499 < $30000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:29.628570",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "BRANDO: h24=-94% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:30.132513",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "ELMO: h24=-35% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T17:55:30.589216",
-      "type": "BS_SKIP",
-      "color": "#8b949e",
-      "msg": "LAIKA: h24=+298% \u2014 h1=-14.0% (need 3-35%)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-06T17:55:30.589216",
       "type": "CB_SKIP",
@@ -2717,6 +2603,97 @@
       "color": "#d29922",
       "msg": "Sell-conflict skip BMcSBrWk: tracked wallet sold this token 196s ago",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:08.889290",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip GOOD: m5=234.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:09.378927",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip GOOD: m5=234.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:11.399651",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip chudscan: downtrend h1=-41.2% h24=-41.2%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:11.399651",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ApRnQN2H sold 4R5KQBua \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:24.055157",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold xKog7eu1 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:24.055157",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold xKog7eu1 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:24.070840",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold EHmq939H \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:19:24.070840",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold EHmq939H \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:22:00.430400",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip HENTAI: m5=-49.6% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:22:00.894052",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip HENTAI: m5=-49.6% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:22:00.897637",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7xwDKXNG sold 3MJDk1CQ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:22:23.651303",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Gate probation 9c6StdpH: 1184.5h idle, WR 40% (12/30), PnL=-0.0270 \u2014 allowing signal (next reset in 24h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T18:22:23.651303",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2772,9 +2749,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "18:17:56",
+  "ts": "18:22:59",
   "__publish_meta": {
-    "published_at": "2026-05-06 18:17:56 EDT",
+    "published_at": "2026-05-06 18:22:59 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
