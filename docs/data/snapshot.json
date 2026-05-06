@@ -1,0 +1,2748 @@
+{
+  "sol_price": 86.37021593938277,
+  "bot_status": "RUNNING",
+  "bot_last_seen": "20:37:52",
+  "bot_cycles": 1,
+  "bankroll": 1.1607,
+  "bankroll_usd": 100.2499096408416,
+  "budget": 0.16757369354999999,
+  "pnl_today": -0.0013746317063404003,
+  "deployed": 0,
+  "trades_today": 2,
+  "hour": 20.6,
+  "positions": [],
+  "num_positions": 0,
+  "pnl_24h": {
+    "pnl": -0.002433,
+    "trades": 3,
+    "wins": 1,
+    "losses": 2,
+    "wr": 33
+  },
+  "pnl_7d": {
+    "pnl": -0.002582,
+    "trades": 7,
+    "wins": 3,
+    "losses": 4,
+    "wr": 43
+  },
+  "pnl_all": {
+    "pnl": -1.165835,
+    "trades": 996,
+    "wins": 354,
+    "losses": 642,
+    "wr": 36
+  },
+  "best": 0.031883,
+  "worst": -0.059143,
+  "recent_trades": [
+    {
+      "action": "sell",
+      "symbol": "AVERAGEGUY",
+      "sol": 0.016719,
+      "time": "15:54",
+      "pnl_sol": -0.001382,
+      "pnl_pct": -8.26,
+      "reason": "Stop loss AVERAGEGUY (-8.3%)"
+    },
+    {
+      "action": "buy",
+      "symbol": "AVERAGEGUY",
+      "sol": 0.016719,
+      "time": "15:41"
+    },
+    {
+      "action": "sell",
+      "symbol": "ROAF",
+      "sol": 0.010892,
+      "time": "10:18",
+      "pnl_sol": 7e-06,
+      "pnl_pct": 0.07,
+      "reason": "Flat exit ROAF (29m, +0.1%)"
+    },
+    {
+      "action": "buy",
+      "symbol": "ROAF",
+      "sol": 0.010892,
+      "time": "09:48"
+    },
+    {
+      "action": "sell",
+      "symbol": "STACCANA",
+      "sol": 0.011769,
+      "time": "22:47",
+      "pnl_sol": -0.001058,
+      "pnl_pct": -8.99,
+      "reason": "Stop loss STACCANA (-9.0%)"
+    },
+    {
+      "action": "buy",
+      "symbol": "STACCANA",
+      "sol": 0.011769,
+      "time": "22:34"
+    },
+    {
+      "action": "sell",
+      "symbol": "Bumpy",
+      "sol": 0.005061,
+      "time": "17:25",
+      "pnl_sol": -0.00068,
+      "pnl_pct": -13.43,
+      "reason": "EMERGENCY STOP Bumpy (-13.4%)"
+    },
+    {
+      "action": "buy",
+      "symbol": "Bumpy",
+      "sol": 0.005061,
+      "time": "17:13"
+    },
+    {
+      "action": "sell",
+      "symbol": "WINNING",
+      "sol": 0.005074,
+      "time": "03:01",
+      "pnl_sol": 5.8e-05,
+      "pnl_pct": 1.15,
+      "reason": "Flat exit WINNING (31m, +1.2%)"
+    },
+    {
+      "action": "buy",
+      "symbol": "WINNING",
+      "sol": 0.005074,
+      "time": "02:30"
+    }
+  ],
+  "survival_report": {
+    "timestamp": "2026-05-05 18:18:00 EST",
+    "run_id": "run-263",
+    "market_regime": "CHOP",
+    "system_diagnosis": "Exits remain the #1 problem. 7-day active stop_rate climbed to 57% (vs 50% on run-262, +7pp). The single new sell since last run -- AVERAGEGUY consensus_boost stop -8.26% at 15:54 EDT -- did NOT trip the new pump_trap filter (h1=+10.5%, h24=+33.1%, both well below the 25/100 thresholds). This means the current pump_trap predictive feature would not have caught this stop. Pumped-tape is one signature of a fast-stop, but not the only one -- research is needed to find another orthogonal feature. The most strategic change this run was to ship the pumpfun_graduation_snipe Phase 1 logger, opening a brand-new substrate (PumpPortal WS push, sub-second graduation events) that gives access to the bonding-curve-to-AMM transition -- a 5-30 min retail-discovery-lag window the bot has been blind to.",
+    "exit_analysis": "7d window N=7, WR 42.9%, avg win +6.22%, avg loss -9.69%, R/R 0.64, stop-loss rate 57% (3 stops + 1 emergency of 7). Forward sample on the new pump_trap filter: N=1 fire post-restart (AVERAGEGUY, would_skip=False, exit_pnl -8.26%). Sample too small to evaluate the +20pp backfill stop_rate edge holds forward. Pump_trap log capacity 500/500 with backfill 11.2% would_skip rate matching projection 11.5%.",
+    "strategy_work": "Shipped pumpfun_graduation_snipe_v2 Phase 1 LOG-ONLY (research-135 PRIMARY HIGH proposal). About 80 lines of new code: a daemon thread that holds an asyncio websocket connection to PumpPortal's free public feed at wss://pumpportal.fun/api/data, subscribes to migration (graduation) events, and writes each event to a 500-entry ring-buffer log file (sol_pumpfun_graduation_log.json). Pure logger -- no trading behavior change. Reconnect logic with exponential backoff capped at 5 minutes. Bot restarted (PID 4388) and the websocket subscribe ack message was received within 30 seconds, confirming the connection is live. Real graduation events will accumulate over the next hours/days (research estimate: 20-40 per day). Once N>=20 events arrive with cross-linked forward returns, plan Phase 2 promotion to a grad_snipe strategy.",
+    "directives_changes": "version 256 -> 257, updated_by memory_keeper_001 -> run-263, last_updated 18:00 -> 18:18 EDT. current_priority rewritten for the pumpfun_graduation logger ship + the research-135 withdrawals/drops. track_record refreshed: 996 sells (was 995), bankroll 1.1607 SOL (was 1.1646), bot_pid 4388 (was 12108), dashboard_pid 2040 (was 2860), wallets_monitored 69 (was 35 -- auto-refresh ran in interval), 7d active stats updated to 7T 42.9%WR 57% stop rate. pumpfun_graduation_snipe_v2 hypothesis status moved from APPROVED_FOR_PHASE_1_NEXT_BRAIN_RUN to PHASE_1_LOG_ONLY_LIVE run-263 with code locations + verification notes.",
+    "self_audit": {
+      "checked_last_change": true,
+      "sample_size_met": true,
+      "one_change_only": true,
+      "code_verified": true,
+      "notes": "One change this run: PumpPortal WS Phase 1 LOG-ONLY logger. data_source_add proposal at HIGH confidence -- no N=20 sample requirement applies (zero behavior change, pure logger). Compile-clean (py_compile passes). Bot PID 4388 verified alive and the ack message in the new graduation log file confirms the websocket subscribed cleanly."
+    },
+    "previous_followups": [
+      "run-262 priority 1 (verify >=20 NEW pump_trap entries post-restart, sanity-check would_skip ~11.5%) -- only N=1 forward fire so far (AVERAGEGUY consensus_boost), would_skip=False, accumulating slowly given 1 trade per 6h pace. Carry forward.",
+      "run-262 priority 2 (decide on Phase 2 cutover after N>=20 forward) -- BLOCKED on data accumulation. Need ~20 weeks at current pace OR a busier trading regime.",
+      "run-262 priority 3 (consider session_aware_copy_trade_gate Phase 1 logger) -- DEMOTED: research-135 did not re-flag this; killed-strategy beneficiary is unclear.",
+      "run-262 priority 4 (raydium_lp_listener ~50-80 LOC) -- DEMOTED per research-135: PumpPortal WS supersedes (same sub-second push, higher signal-to-noise on pump.fun graduations specifically). Re-flag only if PumpPortal turns out to be unreliable.",
+      "run-262 priority 5 (deployer_creator_rug_history filter via RugCheck) -- WITHDRAWN per research-135 HIGH confidence: RugCheck wallet endpoint is NOT on free tier (/v1/wallets returns 404, /v1/wallet/{addr}/risk returns 400). Saves 30-60 LOC of effort.",
+      "run-262 priority 6 (track tMYP9a forward fires post-pin) -- 0 fires since 12:10 EDT pin. Carry forward."
+    ],
+    "changelog": [
+      "Brain version 256 -> 257.",
+      "Wired up a new live data feed: PumpPortal websocket. Whenever a pump.fun token graduates from its bonding curve to the open market (PumpSwap or Raydium), the bot now records the event to a log file. This is logger-only this run -- no buying decisions are based on it yet. After we collect about 20 graduation events with their next-30-minute price action, we can decide whether to promote this into a 'graduation snipe' strategy that buys these tokens within 60 seconds of graduation.",
+      "Withdrew the 'deployer creator rug history' idea: the RugCheck data source we hoped to use does not actually exist on their free plan. Saves ~30-60 lines of dead-end work.",
+      "Demoted the Raydium pool-creation listener idea: the new PumpPortal feed gives us the same speed with cleaner signal. We only need to revisit Raydium if PumpPortal turns out to be unreliable.",
+      "Dropped two research dead-ends: (a) buy/sell ratio at entry (we don't have the data in 99% of historical trades), and (b) pair-age at entry (signal too weak and confounded by which strategy fires)."
+    ],
+    "actions_taken": [
+      "Killed the prior bot process and started a fresh one with the new PumpPortal listener (now running as process 4388).",
+      "Added about 80 lines of new code in degen_bot.py: a background thread that holds a websocket connection open, subscribes to graduation events, and writes each one to a rolling log file (sol_pumpfun_graduation_log.json, last 500 events).",
+      "Verified the websocket connected successfully: an acknowledgement message landed in the log file within 30 seconds.",
+      "Updated the brain memory file (sol_brain_directives.json) to record this ship and roll forward all the research-135 verdicts.",
+      "Did NOT change any active trading filter, position sizing, or strategy this run. Per the 'one change per run' rule, the listener is the single change."
+    ],
+    "next_priorities": [
+      "Verify the PumpPortal listener captures real graduation events with proper data (mint, symbol, creator, market cap). If 0 real events arrive in 6+ hours, the subscribe message format may need adjusting (try alternate methods like subscribeNewToken).",
+      "Once we have 10+ clean graduation events logged, set up the cross-link analysis: match graduation timestamps to subsequent trade outcomes to estimate the snipe-window edge. Aim to make the Phase 2 promotion decision once we hit N=20 events.",
+      "Continue accumulating pump_trap forward fires. Currently N=1; the backfill showed a 3.66pp median pnl gap (just below the 4pp Phase 2 cutover threshold). At 1 trade per 6h, will take weeks to reach N=20.",
+      "Find another orthogonal stop-loss predictor: AVERAGEGUY stopped at -8.26% but the current pump_trap filter would NOT have caught it (h1 and h24 were both well below thresholds). Need a feature that catches more of the 57% stop-rate population."
+    ],
+    "current_stage": "SURVIVE",
+    "stats": {
+      "total_sells": 996,
+      "win_rate": 35.6,
+      "avg_win_pct": 7.16,
+      "avg_loss_pct": -7.71,
+      "rr_ratio": 0.79,
+      "stop_loss_rate_pct": 41.0,
+      "bankroll": 1.1607,
+      "pnl_today": -0.00243,
+      "pnl_24h": -0.00243,
+      "pnl_7d": -0.00258,
+      "active_only_7d_wr": 42.9,
+      "active_only_7d_rr": 0.64,
+      "active_only_7d_stop_rate": 57.0,
+      "active_only_7d_pnl_sol": -0.0026
+    },
+    "active_strategies": [
+      "fresh_profile (PROVEN, dormant in CHOP)",
+      "bear_strength (TESTING, 0.15x CHOP)",
+      "consensus_boost (TESTING, 0.50x CHOP)",
+      "wallet_convergence (TESTING, 0.15x)",
+      "chop_momentum_scalp (TESTING, 0.15x)",
+      "anchor_derivative_snipe (TESTING, 0.15x)",
+      "flash_surge (TESTING_BULL, 0.15x, dormant in CHOP)",
+      "bounce_hunter (TESTING_BULL, dormant in CHOP)"
+    ]
+  },
+  "wallet_scan": {
+    "active": false,
+    "result": "Saved 20 wallets in 32m 21s",
+    "completed": "2026-05-04T01:41:38.867292"
+  },
+  "brain_next_sec": 12365.558912,
+  "brain_next_str": "12:04 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "6:20 PM EST",
+  "research_running": false,
+  "research_last_run_str": "1:02 PM EST",
+  "research_next_str": "12:30 AM EST",
+  "research_next_sec": 13925.558912,
+  "research_elapsed_sec": 0,
+  "research_findings": {
+    "timestamp": "2026-05-05 13:01:00 EDT",
+    "run_id": "research-135",
+    "version": 1,
+    "headline": "NOVEL SUBSTRATE: pumpfun_graduation_snipe via PumpPortal WebSocket -- subagent C verified wss://pumpportal.fun/api/data is FREE / NO-AUTH / PUSH-BASED for pump.fun graduation events (the bonding-curve-to-PumpSwap/Raydium transition). This is a strictly-better replacement for the 3-run-stalled raydium_lp_creation_realtime substrate: same sub-second latency, FAR higher signal-to-noise (curated graduation events only, not every initialize_pool noise), zero marginal infra cost, and works alongside our existing ALCHEMY_SOLANA_RPC. ~30-60 LOC for a new ws-subscriber thread + ring-buffered log. ALSO: pump_trap_log ring buffer is AT CAPACITY (500/500, oldest 2026-03-19, newest 2026-05-05 09:48, 56 would_skip=true / 11.2%) -- matches research-134 backfill. Brain has enough data to plan Phase 2 cutover decision. ALSO: deployer_creator_rug_history (research-134 HIGH proposal) is NOT FEASIBLE via free RugCheck -- subagent C confirmed /v1/wallets returns 404 and /v1/wallet/{addr}/risk returns 400; only /v1/tokens/{mint}/report/summary works. WITHDRAW that proposal. ALSO: live tape narratives the bot has not touched: PolitiFi resurgence (TRUMP cluster), AI-Agent v2 (PIPPIN/FARTCOIN), NFT-IP brand tokens (PENGU + Pudgy World game). Buys/sells imbalance and pair-age hypotheses both DROPPED on testing -- buys/sells data missing in 99% of trade-log records (only logged in pump_trap ring buffer post-shipment), pair-age cohorts show only +4-8pp delta below 10pp threshold. REGIME: ALTCOIN_WINTER classifier persists (BTC dom 58.85%) but Solana memes selectively alive (Solana meme cap +5.6% 24h, pump.fun DEX vol $2B/day ATH).",
+    "new_hypothesis": {
+      "name": "pumpfun_graduation_snipe_via_pumpportal_ws",
+      "mechanism": "Pump.fun tokens graduate to PumpSwap/Raydium when their bonding-curve market cap crosses ~$69k. At the moment of graduation, the token's liquidity transitions from a constant-product bonding curve (heavily front-loaded for the first ~50 buyers) to a true AMM pool. Three things happen in the next 5-30 minutes: (a) bonding-curve early buyers and ruggers exit aggressively (their cost basis is pennies; the AMM is exit liquidity); (b) DexScreener / Birdeye / Jupiter indexers ingest the new pair after a 30-90s lag, opening retail discovery; (c) FOMO inflow from new buyers who could not previously access the token via Jupiter/Phantom drives a 5-30 minute pump window before either momentum exhausts or the rug fires. Bots that wait for DexScreener to surface the pair miss the early window. PumpPortal WS pushes the graduation event sub-second, allowing entry inside the early-discovery window before retail liquidity arrives.",
+      "persistence": "Three structural durability layers. (1) MECHANIC: pump.fun's bonding-curve-to-AMM transition is a permanent platform feature. As long as pump.fun exists and routes graduations to PumpSwap/Raydium, the discovery-lag-window persists. (2) RETAIL DELAY: DexScreener / Birdeye / aggregator indexer lag is fundamental to their architecture (they poll on-chain state, often via free RPC, with 30-90s cycles); PumpPortal WS is push-based and has no equivalent in the retail tooling stack. The latency edge is structural, not arbitraged. (3) COMPETITION SHAPE: institutional MEV bots target jito-bundle-cobuyer patterns (different signal); retail snipers buy from DexScreener (slower); PumpPortal WS sits between, accessible to anyone but currently unused by our bot. As long as PumpPortal stays free for pump.fun events (their fee model is post-graduation PumpSwap data at 0.01 SOL/10k trades, NOT graduation events), this is sustainable.",
+      "entry_rules": "Phase 1 LOG-ONLY (~30-60 LOC): spawn a websocket-subscriber thread in degen_bot.py main loop. Subscribe to wss://pumpportal.fun/api/data with subscribeNewToken/subscribeMigration message (PumpPortal docs). On each graduation event, log to sol_pumpfun_graduation_log.json (ring buffer 500, atomic write): {ts, mint, symbol, market_cap_at_grad, creator, sol_in_pool_at_grad, time_since_creation_min, pumpportal_event_type}. Phase 2 (after N>=20 graduation events with forward-return data via separate trade-log mining): if forward 5/15/30-minute returns are positive >=60% of the time, promote to a new strategy 'pumpfun_grad_snipe' that triggers BUY within 60 seconds of graduation IF: (a) RugCheck token report passes (existing security gate), (b) sol_in_pool >= 30 SOL (~$2.5k floor), (c) creator does not appear in trade-log as a prior loss-creator. Phase 3: tune thresholds. Caveat: must dedupe with existing wallet_convergence / fresh_profile strategies (a graduation-snipe should NOT also fire if a target wallet just bought the same token).",
+      "data_required": "ZERO new external paid APIs. Single free websocket: wss://pumpportal.fun/api/data. Subscribe message format documented at pumpportal.fun. Existing ALCHEMY_SOLANA_RPC remains mandatory for ANY supplementary RPC calls (per research-112 root-cause; do not use api.mainnet-beta.solana.com). New file: sol_pumpfun_graduation_log.json (ring buffer 500). Optional cross-link: at sell-time, look up whether the bought token came from a graduation event for forward-return analysis.",
+      "estimated_fires_per_day": 20,
+      "priority": "HIGH",
+      "evidence": "Subagent C verified: (a) pump.fun's frontend-api endpoint returns HTTP 403 (Cloudflare) -- confirms no free public REST graduation feed exists. (b) PumpPortal WS at wss://pumpportal.fun/api/data is FREE, no auth, push-based for pump.fun trades and creations. PumpPortal's published fee model: trading API takes 0.5% fee; PumpSwap (post-graduation) data costs 0.01 SOL/10k trades; pump.fun WS data including graduation events is free. (c) Bitquery offers a paid alternative (DEXPools filter Base.PostAmount: 206900000) confirming the ~$69k graduation threshold. (d) Helius webhooks (100k credits/mo free) is a poll-based alternative but slower. (e) Solana meme cap +5.6% 24h, pump.fun DEX vol at $2B/day ATH per beincrypto.com -- the substrate has high event volume right now. Estimated fires/day: pump.fun historically averages 50-200 graduations/day; even with security-gate filtering, expect 20-40 actionable signals/day."
+    },
+    "watchlist": [
+      {
+        "mint": "WATCHLIST_NARRATIVE_PolitiFi_TRUMP_cluster",
+        "symbol": "POLITIFI-NARRATIVE",
+        "reason": "Subagent C: PolitiFi resurgence (TRUMP-led cluster) named as one of three live narratives the bot has NOT touched. Bot's existing strategy filters do not differentiate political memes; track for opportunity to add political-meme narrative tag if a name appears in fresh_profile candidate set. No specific mints surfaced -- watchlist tag for next-run focus.",
+        "expires_at": "2026-05-06 13:00 EDT"
+      },
+      {
+        "mint": "WATCHLIST_NARRATIVE_AI_Agent_v2",
+        "symbol": "AIAGENTV2-NARRATIVE",
+        "reason": "Subagent C: AI-Agent v2 narrative is alive (PIPPIN, FARTCOIN). Differs from the bot's prior 'AI-agent' narrative tag (which is stale, per research-134). Track if these mints surface in candidate flow.",
+        "expires_at": "2026-05-06 13:00 EDT"
+      },
+      {
+        "mint": "WATCHLIST_NARRATIVE_NFT_IP_brand_tokens",
+        "symbol": "NFT-IP-NARRATIVE",
+        "reason": "Subagent C: NFT-IP brand tokens (PENGU + Pudgy World game launch, MEW underdog-cat) are a fresh narrative cluster the bot has not been exposed to. PENGU 24h vol $218M+, $385M peak; Pudgy World browser game is a fresh catalyst. Larger market caps so consensus_boost / wallet_convergence likely the relevant strategies.",
+        "expires_at": "2026-05-06 13:00 EDT"
+      },
+      {
+        "mint": "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+        "symbol": "TROLL",
+        "reason": "Subagent C: TROLL is COOLING after research-134's +62% extension flag. Narrative now bifurcated (Trollface IP deal + Binance US listing supportive vs. fading momentum). Continue to track but DO NOT chase. SOL_MEME_THAW classifier from research-133/134 still partially valid -- meme cap +5.6% 24h indicates pockets of life within ALTCOIN_WINTER backdrop.",
+        "expires_at": "2026-05-06 13:00 EDT"
+      },
+      {
+        "mint": "PUMP_TRAP_LOG_AT_CAPACITY",
+        "symbol": "OPS-NOTE",
+        "reason": "Subagent A: sol_pump_trap_log.json is AT CAPACITY (500/500). Oldest entry 2026-03-19 09:07, newest 2026-05-05 09:48. 56 would_skip=true (11.2%), matching research-134 backfill expectation of ~11.5%. Brain has sufficient data to plan Phase 2 cutover (the median-gap >=4pp criterion). Recommend brain decide on Phase 2 within next 1-2 runs based on pump_trap log analysis (cross-link mint+ts to trade_log sells for forward-return).",
+        "expires_at": "2026-05-12 13:00 EDT"
+      }
+    ],
+    "proposals_for_survival_brain": [
+      {
+        "type": "data_source_add",
+        "target": "PRIMARY THIS RUN: pumpfun_graduation_snipe_via_pumpportal_ws Phase 1 LOG-ONLY (~30-60 LOC). Spawn a new websocket-subscriber thread in degen_bot.py main loop. Connect to wss://pumpportal.fun/api/data, subscribe to graduation/migration events. On each event, atomic-write to sol_pumpfun_graduation_log.json (ring buffer 500): {ts, mint, symbol, market_cap_at_grad, creator, sol_in_pool_at_grad, time_since_creation_min}. Strictly better substrate than the 3-run-stalled raydium_lp_creation_realtime: same sub-second latency, MUCH higher signal-to-noise (curated pump.fun graduations only, not every initialize_pool event), free + no-auth, no Cloudflare blocks. Zero behavior change in Phase 1 -- pure logger.",
+        "justification": "Subagent C verified the substrate: pumpportal.fun WS is free, no-auth, push-based. Pump.fun DEX volume at $2B/day ATH (beincrypto.com) means graduation event rate is high. raydium_lp_listener (3-run-stalled) catches all initialize_pool events including non-pump.fun noise; PumpPortal WS catches only pump.fun graduations -- the curated subset where pre-graduation snipers extract retail FOMO post-graduation. The bonding-curve-to-AMM transition is a structural mechanic, persistence is durable.",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "Per sol_strategy_stats.json all_time: total trades=995, WR=35.6%, R/R=0.79, pnl_sol=-1.16. No current pump.fun graduation detection in degen_bot.py (subagent A grep verified zero matches for pumpportal/migration/wss://pumpportal). fresh_profile is the closest existing strategy in spirit (entry into recently-launched tokens) but has no graduation-event awareness; rolling_7d N=0.",
+        "expected_effect": "Phase 1 (this proposal): zero effect on trades, just logging. Expect 20-40 graduation events logged per day given pump.fun DEX volume ATH. Phase 2 (after N>=20 logged events with cross-linked forward returns): predicted graduation-snipe strategy WR 45-60% based on the 5-30 minute discovery-lag window; predicted +0.001-0.003 SOL/day if Phase 2 ships at ~10 trades/day. Phase 1 itself produces NO trade effect -- just substrate that competes with raydium_lp_listener for that slot.",
+        "kill_criteria": "Phase 1 has no kill criteria (always-on logger). Phase 2 cutover trip: if rolling-20 graduation-snipe trades has WR < 30% post-cutover, revert to log-only. Hard kill: if graduation-snipe fires on any rug at >2x pop-average rug rate (>=20% rug-vs-current ~10% rug-rate baseline), revert immediately.",
+        "min_sample_size": "Phase 2 cutover: N>=20 graduation events with closed forward-return data (at minimum 30-min forward returns).",
+        "regime_scope": "ANY -- the bonding-curve-to-AMM transition is a platform mechanic, not regime-dependent. The retail discovery lag is structural. PumpPortal WS works in ALTCOIN_WINTER and BULL alike.",
+        "rollback_plan": "Disable the PumpPortal WS subscriber thread; leave the log file in place. Existing strategy and security-gate logic untouched. ~3-line revert.",
+        "risk_if_wrong": "Phase 1 risk: zero (logger only). Phase 2 risk if wrong: 20-40 buys/day at 3% sizing = ~0.7 SOL daily exposure x typical -8% loss x WR<30% = ~-0.0008 to -0.0015 SOL/day. Recoverable in days; kill_criteria trips at N>=20 trades within ~2-3 days at expected 10 trades/day."
+      },
+      {
+        "type": "kill_strategy",
+        "target": "WITHDRAW research-134 deployer_creator_rug_history filter via RugCheck wallet endpoint. Subagent C verified the endpoint does NOT exist on free RugCheck tier: /v1/wallets returns 404, /v1/wallet/{addr}/risk returns 400. Only /v1/tokens/{mint}/report/summary is publicly accessible (token-level, not wallet/creator-level). The proposal as written is INFEASIBLE via the auth path I claimed. Brain should NOT spend a ship slot on it.",
+        "justification": "research-134's claim that 'RugCheck has wallet-risk endpoint, free tier exists' was unverified at proposal time and is now disproved. Apologies for the wasted brain attention; correcting now.",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "Not applicable -- withdrawal of prior proposal.",
+        "expected_effect": "Saves brain from spending ~30-60 LOC ship effort on an infeasible filter. Frees the slot for pumpfun_graduation_snipe substrate (this run's PRIMARY).",
+        "kill_criteria": "Not applicable.",
+        "min_sample_size": "Not applicable.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "Not applicable -- nothing was implemented.",
+        "risk_if_wrong": "If the brain shipped this filter despite the withdrawal, it would 400/404 on every call and the bot would either crash or silently no-op. Catching it pre-ship is the win."
+      },
+      {
+        "type": "data_source_add",
+        "target": "RE-FLAG (4th run): raydium_lp_creation_realtime listener via Solana logsSubscribe over existing ALCHEMY_SOLANA_RPC. Subagent A grep: zero matches for logsSubscribe / init_pc_amount / initialize_pool / wss:// in degen_bot.py. ~50-80 LOC. NOTE: pumpfun_graduation_snipe (this run's PRIMARY) is a STRICTLY BETTER substrate -- if the brain ships PumpPortal WS, it should DROP raydium_lp_listener entirely (PumpPortal already covers the high-signal subset). Re-flag only as a fallback IF PumpPortal turns out to be unreliable in production.",
+        "justification": "Substrate ship-velocity is a critical bottleneck per research-132/133/134. raydium_lp_listener has been re-flagged 3 runs without ship. PumpPortal WS now offers a strictly-better alternative; the brain's optimal action is to ship PumpPortal and drop raydium_lp.",
+        "confidence": "MEDIUM (downgraded from HIGH last run)",
+        "addresses_request": null,
+        "baseline": "Per sol_strategy_stats.json: zero LP-event detection logic in degen_bot.py.",
+        "expected_effect": "If shipped IN ADDITION to PumpPortal WS: marginal additional coverage of non-pump.fun token launches (e.g. Raydium-direct launches). If ONLY raydium_lp shipped (PumpPortal not shipped): sub-second LP detection but lower signal-to-noise than PumpPortal.",
+        "kill_criteria": "If post-shipment N>=20 LP-listener-triggered buys have WR < 30%, revert.",
+        "min_sample_size": "N>=20 LP-listener-triggered buys with closed forward returns.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "Disable the LP listener; leave RPC connection logic in place.",
+        "risk_if_wrong": "Worst case: LP listener fires too eagerly on noise events; bot opens marginal positions. Limited by daily budget cap."
+      },
+      {
+        "type": "new_filter",
+        "target": "OPS NOTE: pump_trap_log ring buffer is AT CAPACITY (500/500, oldest 2026-03-19, newest 2026-05-05 09:48 -- ~47 days). 56 would_skip=true (11.2%), matching research-134 backfill rate (11.5%). Brain should plan Phase 2 cutover decision: cross-link pump_trap entries to sol_trade_log sells (mint + ts proximity) and compute median-pnl-gap between flagged/unflagged. Research-134 cutover criterion: median gap >=4pp sustained over N>=20 flagged buys. Backfill showed 3.66pp median gap (just below threshold). Forward fires post-shipment add ~30 days of fresh data; brain should re-evaluate within 1-2 runs.",
+        "justification": "Subagent A verified ring buffer at capacity. The next pump_trap entry will evict the oldest (2026-03-19); brain has a finite analysis window before March data is lost. Recommend brain do the cross-link analysis next survival-brain run.",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "Backfill on N=994 trades: flagged N=114 stop_rate 68.4% median pnl -7.35%; unflagged N=878 stop_rate 48.3% median -3.69%. Median gap 3.66pp (below 4pp Phase 2 cutover threshold).",
+        "expected_effect": "Phase 2 cutover (if median gap holds at >=4pp on forward sample): predicted -3 to -5pp stop_loss_rate, -1 to -2pp mean_loss_pct.",
+        "kill_criteria": "If forward-sample median gap drops below 3pp, KILL Phase 2 plan -- the backfill signal was overstated.",
+        "min_sample_size": "N>=20 NEW would_skip=true buys (post-shipment 2026-05-05 12:10) with closed forward returns. Bot has been fired 0 BUYs since pump_trap shipped per subagent A events check; need a few weeks at current 5 trades/7d pace to accumulate.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "If Phase 2 cutover fails forward validation: comment out SKIP gate, leave logger active.",
+        "risk_if_wrong": "Logger is zero-risk (this is just an analysis-decision OPS NOTE, not a code change)."
+      },
+      {
+        "type": "pause_strategy",
+        "target": "DROP HYPOTHESIS (negative result, save future brain attention): buys-vs-sells imbalance ratio (buys_h1/sells_h1 at entry) as a predictive feature. Subagent B mined sol_trade_log.json: <1% of records (7-9 paired trades out of 994) have this field logged. Hypothesis is UNTESTABLE on existing trade log. NOTE: pump_trap log (subagent A confirmed) DOES capture buys_h1/sells_h1 in every entry post-2026-03-19. Future research can revisit by cross-linking pump_trap entries to trade_log sells once N>=200 closed entries accumulate. Until then, brain should NOT chase this hypothesis.",
+        "justification": "Subagent B: 7 paired trades total for buys_h1/sells_h1; n=1 in extreme buy cohort. No actionable signal at this sample size. Negative result documented to save future research-brain runs from re-mining the same data.",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "Trade-log buys_h1/sells_h1 coverage: <1%. Pump_trap_log coverage: 100% post-2026-03-19, but only 500-entry ring (no historical depth beyond that).",
+        "expected_effect": "Saves brain from chasing this hypothesis until pump_trap log accumulates N>=200 closed entries (~30-60 more days at current 5 trades/7d pace).",
+        "kill_criteria": "Re-test ONLY when pump_trap_log has >=200 entries with cross-linked forward-return data.",
+        "min_sample_size": "Re-mine threshold: N>=200 closed paired entries via pump_trap-log <-> trade-log cross-link.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "Not applicable -- negative result documentation only.",
+        "risk_if_wrong": "Risk if dropped wrongly: miss a real edge. Mitigated by the planned future re-mine when pump_trap accumulates."
+      },
+      {
+        "type": "pause_strategy",
+        "target": "DROP HYPOTHESIS (negative result, save future brain attention): pair_age_hours at entry as a predictive feature. Subagent D mined sol_trade_log.json: 414 paired trades have pair_age logged. Cohort analysis: VERY_FRESH (<30min) N=1, FRESH (30min-2h) N=6, YOUNG (2-12h) N=82, MEDIUM (12-72h) N=232, AGED (>72h) N=93. Active-strategies-only: MEDIUM (+4pp) and AGED (+8pp) WR delta over baseline -- BELOW 10pp signal threshold. Strategy confounding dominates (consensus_boost 62.5h mean age, fresh_profile 16.1h mean age -- pair-age effects are strategy-specific not feature-universal). Top-10 wins/losses show no pair-age clustering.",
+        "justification": "Subagent D: 414 paired trades, N adequate, no >=10pp delta in any cohort, top-10 wins/losses no pair-age cluster. Strategy x pair-age confounding makes feature-level gating misfire. Negative result documented.",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "Active-strategies pair_age cohort WR: FRESH 33.3% (N=3), YOUNG 47.4% (N=19), MEDIUM 48.6% (N=74), AGED 52.4% (N=21). Baseline 44.4% (N=117).",
+        "expected_effect": "Saves brain from chasing this hypothesis. If brain wants strategy-specific pair-age tuning, that is per-strategy work (not a general feature gate).",
+        "kill_criteria": "Re-test ONLY if pair-age coverage rises to >=80% of buys AND a single active strategy shows >=10pp WR delta in a pair-age cohort within itself.",
+        "min_sample_size": "Re-mine threshold: per-strategy pair_age stratification N>=20 in EACH active strategy x cohort cell.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "Not applicable -- negative result documentation only.",
+        "risk_if_wrong": "Low. Active-strategy pair-age effects, if real, are intrinsic to strategy design (e.g. fresh_profile by definition takes young pairs)."
+      },
+      {
+        "type": "pause_strategy",
+        "target": "DATA-ACCUMULATION CARRY-FORWARD (no new evidence): pumpfun_creator field N=1 paired close; holder_top10 / holder_top1 N=1 (per research-134 carry). Re-mine schedule unchanged: 14-21 days from log shipment date. session_aware_copy_trade_gate Phase 1 logger STILL UNSHIPPED (3rd-flag, subagent A confirmed) but research-134 brain note suggests brain may intentionally demote this -- DO NOT re-flag this run unless brain explicitly asks. Loggers in pump_trap, m5, etc all working per research-133/134 verification.",
+        "justification": "Schedule preservation only. No new evidence.",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "N=1 closed paired trade with pumpfun_creator and holder_top10 fields populated.",
+        "expected_effect": "None -- carry-forward only.",
+        "kill_criteria": "Not applicable.",
+        "min_sample_size": "N>=20 closed paired trades for pumpfun_creator and holder_top10 fields.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "Not applicable.",
+        "risk_if_wrong": "Not applicable."
+      }
+    ],
+    "request_responses": [],
+    "subagents_dispatched": [
+      {
+        "role": "Ship-status verifier (degen_bot.py grep + sol_pump_trap_log.json freshness + sol_pinned_wallets.json + sol_heartbeat/events)",
+        "finding": "ALL research-134 PRIMARY shipments confirmed live. pump_trap logger at line 3638 (def _persist_pump_trap_event), called at line 3601 in log_buy. pump_trap_log AT CAPACITY 500/500, oldest 2026-03-19, newest 2026-05-05 09:48, 56 would_skip=true (11.2% matches backfill). tMYP9a wallet pinned at line 657 in sol_pinned_wallets.json with full address 9c6StdpHGRUFmuPPPtXk5wyvk52t2HFD45nz4xtMYP9a. ALL 4 multi-run unshipped items confirmed STILL ABSENT (session_aware, raydium_lp, jito_realtime cobuyer, deployer_creator_rug). Bot alive PID 12108 cycle 3, heartbeat 4.3 min age, 55 BUY / 59 SKIP in 100-event ring."
+      },
+      {
+        "role": "Buys/sells imbalance miner (sol_trade_log.json field-coverage scan + cohort analysis)",
+        "finding": "HYPOTHESIS DROPPED. <1% of trade-log records (7-9 of 994) have buys_h1/sells_h1 logged. n=1 in extreme buy cohort. Sample sizes far below threshold. Pump_trap_log DOES have full coverage post-2026-03-19 (per subagent A) -- future re-mine becomes possible after N>=200 cross-linked closed entries accumulate."
+      },
+      {
+        "role": "Live tape + new substrate scout (DexScreener trending, pump.fun frontend-api, PumpPortal docs/fees, RugCheck wallet endpoints, GMGN/Birdeye leaderboards)",
+        "finding": "MAJOR SUBSTRATE FINDING: PumpPortal WS at wss://pumpportal.fun/api/data is FREE / NO-AUTH / PUSH-BASED for pump.fun graduation events. Higher signal-to-noise than raydium_lp_listener (3-run-stalled). RugCheck wallet endpoint NOT FEASIBLE (/v1/wallets 404, /v1/wallet/{addr}/risk 400) -- only token-level /v1/tokens/{mint}/report/summary works -- WITHDRAW research-134 deployer_creator_rug_history proposal. Birdeye/GMGN leaderboards Cloudflare-blocked (HTTP 403) -- need different scrape path. DexScreener trending HTTP 530 -- frontend rate-limit evidence; bot's existing pair-fetch path likely still works. Live narratives bot has not touched: PolitiFi (TRUMP cluster), AI-Agent v2 (PIPPIN/FARTCOIN), NFT-IP brand tokens (PENGU + Pudgy World)."
+      },
+      {
+        "role": "Pair-age cohort miner (sol_trade_log.json pair_age_hours analysis, 414 paired trades)",
+        "finding": "HYPOTHESIS DROPPED. 414 paired trades with pair_age. Active-strategies cohort WR deltas: MEDIUM (+4pp), AGED (+8pp) -- BELOW 10pp threshold. Strategy x pair-age confounding (consensus_boost mean 62.5h, fresh_profile mean 16.1h) makes feature-level gating misfire. Top-10 wins/losses no pair-age cluster. Negative result documented to save future brain attention."
+      }
+    ],
+    "data_sources_used": [
+      "sol_brain_directives.json (read-only, last_updated=2026-05-05 12:10 EDT, version=256, run-262 -- BRAIN HEALTHY)",
+      "sol_brain_status.json (running:false, run-262 finished 12:11, fast_stop_pump_trap_filter Phase 1 + tMYP9a pin shipped)",
+      "sol_research_status.json (own status -- claimed lock at run start)",
+      "sol_research_findings.json (research-134 carry-forward synthesis)",
+      "sol_research_history.json (12 entries pre-run; appending research-135)",
+      "sol_heartbeat.json (cycle 3, PID 12108, SOL $85.27, BTC dom 58.85% ALTCOIN_WINTER, 4.3min age)",
+      "sol_strategy_stats.json (computed_from_trades=2010, rolling_24h N=3 WR=33.3%, rolling_7d N=6 WR=50%, all_time N=995 WR=35.6%)",
+      "sol_trade_log.json (1.1MB, subagent B field-coverage scan, subagent D 414-pair_age analysis)",
+      "sol_pinned_wallets.json (subagent A tMYP9a verification)",
+      "sol_pump_trap_log.json (subagent A: 500/500 ring at capacity, 56 would_skip=true)",
+      "sol_events.json (100-entry ring, subagent A: 55 BUY / 59 SKIP)",
+      "degen_bot.py (subagent A grep verification of 5+ ship statuses)",
+      "WebSearch (subagent C: pump.fun graduation API, PumpPortal pricing, Solana memecoin trending 2026-05-05)",
+      "WebFetch (subagent C: pumpportal.fun, dexscreener.com, frontend-api.pump.fun, api.rugcheck.xyz, gmgn.ai, birdeye.so)"
+    ],
+    "next_run_focus": "(1) PRIORITY-1: verify pumpfun_graduation_snipe_via_pumpportal_ws Phase 1 LOG-ONLY ship status -- grep degen_bot.py for pumpportal/migration/wss://pumpportal/sol_pumpfun_graduation_log. If shipped, verify the WS thread is live (look for graduation events accumulating in sol_pumpfun_graduation_log.json). (2) PRIORITY-1: pump_trap log Phase 2 cutover decision -- by next run brain should have done the cross-link analysis (pump_trap entries vs trade_log sells). Check sol_brain_directives.json for the verdict. If brain decided to ship Phase 2, verify the SKIP gate in degen_bot.py. If still log-only, accumulate forward fires. (3) PRIORITY-1: tMYP9a wallet -- check if any new fires post-pin (2026-05-05 12:10). At current 5 trades/7d pace, may be 1-2 fires by next run. Capture forward-return data. (4) PRIORITY-2: If PumpPortal WS shipped, plan Phase 2 promotion criteria for pumpfun_grad_snipe strategy -- need N>=20 graduation events with cross-linked forward returns. (5) PRIORITY-2: re-flag raydium_lp_listener ONLY IF PumpPortal WS doesn't ship within next 2 runs (PumpPortal supersedes it). (6) PRIORITY-2: Live tape continuation -- check if PolitiFi, AI-Agent v2, NFT-IP brand narratives have produced new mints in candidate flow. PENGU, Kedaenge specifically. (7) PRIORITY-2: re-mine buys_h1/sells_h1 hypothesis when pump_trap log accumulates N>=200 cross-linkable entries (~30-60 days post-shipment at current pace -- skip until then). (8) PRIORITY-3: investigate WHY active-strategy 7d trade volume is 6 trades/7d -- is the recent fast-stop wave (Bumpy EMERG, STACCANA stop) a regime signal or filter-mismatch? (9) PRIORITY-3: deployer_creator_rug_history -- if brain wants to revisit, the alternative path is on-chain creator-tx tracing via existing ALCHEMY_SOLANA_RPC + getSignaturesForAddress on creator wallet (filter for initializeMint instructions). Build creator-history table from on-chain data, not RugCheck. ~80-150 LOC.",
+    "meta": {
+      "elapsed_min": 23,
+      "subagent_count": 4,
+      "subagent_failed": 0,
+      "web_calls_estimate": 13,
+      "new_tokens_scouted": 5,
+      "narratives_scouted": 3,
+      "lock_override": false,
+      "brain_lock_status": "HEALTHY: directives last_updated 2026-05-05 12:10 EDT (~30min ago), brain shipped this run's PRIMARY proposals (fast_stop_pump_trap_filter Phase 1 + tMYP9a pin). 60+ hour stale alarm cleared.",
+      "bot_heartbeat_age_sec_at_dispatch": 6,
+      "key_finding_1": "pumpfun_graduation_snipe_via_pumpportal_ws -- wss://pumpportal.fun/api/data is FREE, NO-AUTH, PUSH-BASED for pump.fun graduation events. Strictly better substrate than 3-run-stalled raydium_lp_creation_realtime. ~30-60 LOC Phase 1 logger. NOVEL.",
+      "key_finding_2": "WITHDRAW research-134 deployer_creator_rug_history -- RugCheck wallet endpoint does NOT exist on free tier (/v1/wallets 404, /v1/wallet/{addr}/risk 400). research-134's auth claim was unverified. Saves brain ~30-60 LOC ship effort.",
+      "key_finding_3": "pump_trap_log AT CAPACITY (500/500, 47-day window). Brain has sufficient data for Phase 2 cutover decision. Backfill median gap 3.66pp (just below 4pp criterion); forward sample needed.",
+      "key_finding_4": "Buys/sells imbalance hypothesis DROPPED -- <1% trade-log coverage. Pair-age hypothesis DROPPED -- below 10pp WR delta + strategy confounding. Negative results saved to prevent future re-mining.",
+      "key_finding_5": "Live narratives bot has not touched: PolitiFi (TRUMP cluster), AI-Agent v2 (PIPPIN/FARTCOIN), NFT-IP brand tokens (PENGU + Pudgy World game catalyst, $218M+ 24h vol). Solana meme cap +5.6% 24h, pump.fun DEX vol $2B/day ATH.",
+      "key_finding_6": "Birdeye/GMGN leaderboards HTTP 403 (Cloudflare-blocked) -- prior research-brain proposals to scrape these via WebFetch are non-functional. Need different path (paid API or headless browser)."
+    }
+  },
+  "research_status": {
+    "running": false,
+    "last_run_id": "research-135",
+    "finished_at": "2026-05-05 13:02:30 EDT",
+    "note": "PRIMARY: pumpfun_graduation_snipe_via_pumpportal_ws -- free no-auth push WS substrate. WITHDREW research-134 deployer_creator_rug (RugCheck wallet endpoint infeasible). Pump_trap log at capacity (500/500, 47d window). Buys/sells + pair-age hypotheses dropped on data."
+  },
+  "maintenance_status": {
+    "timestamp": "2026-05-05 20:35:30 EDT",
+    "run_id": "maint-039",
+    "bot_status": "RUNNING",
+    "bot_pid": 12012,
+    "bot_heartbeat_age_sec": 78,
+    "dashboard_status": "RUNNING",
+    "dashboard_pid": 2040,
+    "duplicates_killed": [],
+    "stale_locks_cleared": [],
+    "hours_since_last_trade": 4.95,
+    "buys_last_24h": 3,
+    "dormancy_alert": false,
+    "filter_lockout_diagnosis": "Not in lockout. Last 100 events: 38 BUY_SKIP, 27 SIGNAL, 17 CB_SKIP, 7 FP_SKIP, 6 SCAN, 4 BS_SKIP, 1 SECURITY_BLOCK, 0 CYCLE_ERROR. Skip mix matches the normal selectivity profile of recent runs.",
+    "actions_taken": [
+      "Confirmed exactly one bot (PID 12012) and one dashboard (PID 2040) \u2014 no duplicates.",
+      "Heartbeat fresh at 78s (well under 180s soft threshold) \u2014 recovered from the 315\u2013337s creep flagged in maint-037/038.",
+      "Dashboard /api/state returned HTTP 200 with an 84KB body in well under 3s \u2014 healthy.",
+      "Brain status running:false (last finished 18:20 EDT). Research status running:false (last finished 13:02 EDT). No stale locks to clear.",
+      "Logs tiny: bot.log 0.07MB, dashboard.log 0.21MB \u2014 no truncation needed."
+    ],
+    "next_run_focus": "Heartbeat is fresh again \u2014 watch whether the slow-cycle creep returns. Trade dormancy at 4.9h is normal; flag if it crosses 12h. Keep watching dashboard latency (was oscillating between 230ms and 2.3s in earlier runs).",
+    "log_truncations": [],
+    "elapsed_min": 1,
+    "notes": "Clean run. Bot trading on cadence (3 buys / 24h, last 4.9h ago \u2014 AVERAGEGUY), signals flowing, no errors, dashboard fast, both lock files clean.",
+    "file_age_min": 1.9,
+    "watchdog_stale": false,
+    "severely_stale": false
+  },
+  "strategy_stats": {
+    "timestamp": "2026-05-05 20:37:52 EDT",
+    "computed_from_trades": 2012,
+    "total_buys": 995,
+    "total_sells": 996,
+    "rolling_24h": {
+      "trades": 3,
+      "wins": 1,
+      "losses": 2,
+      "win_rate": 0.333,
+      "pnl_sol": -0.002433,
+      "avg_win_pct": 0.07,
+      "avg_loss_pct": -8.62,
+      "avg_win_sol": 7e-06,
+      "avg_loss_sol": -0.00122,
+      "rr_ratio": 0.01,
+      "profit_factor": 0.0,
+      "stop_loss_rate_pct": 66.7
+    },
+    "rolling_7d": {
+      "trades": 7,
+      "wins": 3,
+      "losses": 4,
+      "win_rate": 0.429,
+      "pnl_sol": -0.002582,
+      "avg_win_pct": 6.22,
+      "avg_loss_pct": -9.7,
+      "avg_win_sol": 0.000317,
+      "avg_loss_sol": -0.000883,
+      "rr_ratio": 0.64,
+      "profit_factor": 0.27,
+      "stop_loss_rate_pct": 57.1
+    },
+    "all_time": {
+      "trades": 996,
+      "wins": 354,
+      "losses": 642,
+      "win_rate": 0.355,
+      "pnl_sol": -1.165835,
+      "avg_win_pct": 13.17,
+      "avg_loss_pct": -16.6,
+      "avg_win_sol": 0.002535,
+      "avg_loss_sol": -0.003214,
+      "rr_ratio": 0.79,
+      "profit_factor": 0.43,
+      "stop_loss_rate_pct": 50.5
+    },
+    "exit_mix_24h": {
+      "stop_loss": {
+        "count": 2,
+        "pct": 66.7
+      },
+      "other": {
+        "count": 1,
+        "pct": 33.3
+      }
+    },
+    "exit_mix_7d": {
+      "stop_loss": {
+        "count": 4,
+        "pct": 57.1
+      },
+      "other": {
+        "count": 2,
+        "pct": 28.6
+      },
+      "target": {
+        "count": 1,
+        "pct": 14.3
+      }
+    },
+    "exit_mix_all_time": {
+      "stop_loss": {
+        "count": 422,
+        "pct": 42.4
+      },
+      "time_exit": {
+        "count": 224,
+        "pct": 22.5
+      },
+      "target": {
+        "count": 146,
+        "pct": 14.7
+      },
+      "other": {
+        "count": 123,
+        "pct": 12.3
+      },
+      "trailing": {
+        "count": 81,
+        "pct": 8.1
+      }
+    },
+    "by_strategy": {
+      "bear_strength": {
+        "rolling_24h": {
+          "trades": 1,
+          "wins": 0,
+          "losses": 1,
+          "win_rate": 0.0,
+          "pnl_sol": -0.001058,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -8.99,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.001058,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 100.0
+        },
+        "rolling_7d": {
+          "trades": 1,
+          "wins": 0,
+          "losses": 1,
+          "win_rate": 0.0,
+          "pnl_sol": -0.001058,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -8.99,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.001058,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 100.0
+        },
+        "all_time": {
+          "trades": 25,
+          "wins": 10,
+          "losses": 15,
+          "win_rate": 0.4,
+          "pnl_sol": 0.011716,
+          "avg_win_pct": 22.64,
+          "avg_loss_pct": -9.01,
+          "avg_win_sol": 0.002456,
+          "avg_loss_sol": -0.000856,
+          "rr_ratio": 2.51,
+          "profit_factor": 1.91,
+          "stop_loss_rate_pct": 60.0
+        },
+        "exit_mix_7d": {
+          "stop_loss": {
+            "count": 1,
+            "pct": 100.0
+          }
+        }
+      },
+      "boosted_mom": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 28,
+          "wins": 12,
+          "losses": 16,
+          "win_rate": 0.429,
+          "pnl_sol": -0.017906,
+          "avg_win_pct": 18.83,
+          "avg_loss_pct": -17.03,
+          "avg_win_sol": 0.00688,
+          "avg_loss_sol": -0.006279,
+          "rr_ratio": 1.11,
+          "profit_factor": 0.82,
+          "stop_loss_rate_pct": 46.4
+        },
+        "exit_mix_7d": {}
+      },
+      "bounce_hunter": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 28,
+          "wins": 14,
+          "losses": 14,
+          "win_rate": 0.5,
+          "pnl_sol": -0.007438,
+          "avg_win_pct": 11.19,
+          "avg_loss_pct": -15.86,
+          "avg_win_sol": 0.002475,
+          "avg_loss_sol": -0.003006,
+          "rr_ratio": 0.71,
+          "profit_factor": 0.82,
+          "stop_loss_rate_pct": 64.3
+        },
+        "exit_mix_7d": {}
+      },
+      "chop_momentum_scalp": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 20,
+          "wins": 7,
+          "losses": 13,
+          "win_rate": 0.35,
+          "pnl_sol": -0.00255,
+          "avg_win_pct": 6.81,
+          "avg_loss_pct": -7.35,
+          "avg_win_sol": 0.000361,
+          "avg_loss_sol": -0.00039,
+          "rr_ratio": 0.93,
+          "profit_factor": 0.5,
+          "stop_loss_rate_pct": 60.0
+        },
+        "exit_mix_7d": {}
+      },
+      "consensus_boost": {
+        "rolling_24h": {
+          "trades": 2,
+          "wins": 1,
+          "losses": 1,
+          "win_rate": 0.5,
+          "pnl_sol": -0.001375,
+          "avg_win_pct": 0.07,
+          "avg_loss_pct": -8.26,
+          "avg_win_sol": 7e-06,
+          "avg_loss_sol": -0.001382,
+          "rr_ratio": 0.01,
+          "profit_factor": 0.01,
+          "stop_loss_rate_pct": 50.0
+        },
+        "rolling_7d": {
+          "trades": 2,
+          "wins": 1,
+          "losses": 1,
+          "win_rate": 0.5,
+          "pnl_sol": -0.001375,
+          "avg_win_pct": 0.07,
+          "avg_loss_pct": -8.26,
+          "avg_win_sol": 7e-06,
+          "avg_loss_sol": -0.001382,
+          "rr_ratio": 0.01,
+          "profit_factor": 0.01,
+          "stop_loss_rate_pct": 50.0
+        },
+        "all_time": {
+          "trades": 45,
+          "wins": 21,
+          "losses": 24,
+          "win_rate": 0.467,
+          "pnl_sol": -9.7e-05,
+          "avg_win_pct": 4.65,
+          "avg_loss_pct": -3.52,
+          "avg_win_sol": 0.000583,
+          "avg_loss_sol": -0.000514,
+          "rr_ratio": 1.32,
+          "profit_factor": 0.99,
+          "stop_loss_rate_pct": 17.8
+        },
+        "exit_mix_7d": {
+          "other": {
+            "count": 1,
+            "pct": 50.0
+          },
+          "stop_loss": {
+            "count": 1,
+            "pct": 50.0
+          }
+        }
+      },
+      "consol_breakout": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 17,
+          "wins": 6,
+          "losses": 11,
+          "win_rate": 0.353,
+          "pnl_sol": -0.056835,
+          "avg_win_pct": 20.16,
+          "avg_loss_pct": -18.59,
+          "avg_win_sol": 0.012304,
+          "avg_loss_sol": -0.011878,
+          "rr_ratio": 1.08,
+          "profit_factor": 0.57,
+          "stop_loss_rate_pct": 64.7
+        },
+        "exit_mix_7d": {}
+      },
+      "convergence": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 6,
+          "wins": 2,
+          "losses": 4,
+          "win_rate": 0.333,
+          "pnl_sol": -0.003855,
+          "avg_win_pct": 10.22,
+          "avg_loss_pct": -7.14,
+          "avg_win_sol": 0.000816,
+          "avg_loss_sol": -0.001372,
+          "rr_ratio": 1.43,
+          "profit_factor": 0.3,
+          "stop_loss_rate_pct": 66.7
+        },
+        "exit_mix_7d": {}
+      },
+      "copy_trade": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 537,
+          "wins": 181,
+          "losses": 356,
+          "win_rate": 0.337,
+          "pnl_sol": -0.830272,
+          "avg_win_pct": 14.7,
+          "avg_loss_pct": -20.32,
+          "avg_win_sol": 0.002455,
+          "avg_loss_sol": -0.00358,
+          "rr_ratio": 0.72,
+          "profit_factor": 0.35,
+          "stop_loss_rate_pct": 46.2
+        },
+        "exit_mix_7d": {}
+      },
+      "dexscr_momentum": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 19,
+          "wins": 3,
+          "losses": 16,
+          "win_rate": 0.158,
+          "pnl_sol": -0.009573,
+          "avg_win_pct": 14.78,
+          "avg_loss_pct": -7.88,
+          "avg_win_sol": 0.002103,
+          "avg_loss_sol": -0.000993,
+          "rr_ratio": 1.88,
+          "profit_factor": 0.4,
+          "stop_loss_rate_pct": 78.9
+        },
+        "exit_mix_7d": {}
+      },
+      "flag_bounce": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 1,
+          "wins": 0,
+          "losses": 1,
+          "win_rate": 0.0,
+          "pnl_sol": -0.003411,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -19.92,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.003411,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 100.0
+        },
+        "exit_mix_7d": {}
+      },
+      "flash_consensus": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_rate": 1.0,
+          "pnl_sol": 0.006528,
+          "avg_win_pct": 24.19,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.006528,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 6528000.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "exit_mix_7d": {}
+      },
+      "flash_surge": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 4,
+          "wins": 0,
+          "losses": 4,
+          "win_rate": 0.0,
+          "pnl_sol": -0.011452,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -21.51,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.002863,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 100.0
+        },
+        "exit_mix_7d": {}
+      },
+      "fresh_boost": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 22,
+          "wins": 9,
+          "losses": 13,
+          "win_rate": 0.409,
+          "pnl_sol": -0.025853,
+          "avg_win_pct": 14.42,
+          "avg_loss_pct": -18.02,
+          "avg_win_sol": 0.002179,
+          "avg_loss_sol": -0.003497,
+          "rr_ratio": 0.8,
+          "profit_factor": 0.43,
+          "stop_loss_rate_pct": 72.7
+        },
+        "exit_mix_7d": {}
+      },
+      "fresh_profile": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 15,
+          "wins": 9,
+          "losses": 6,
+          "win_rate": 0.6,
+          "pnl_sol": 0.002865,
+          "avg_win_pct": 13.2,
+          "avg_loss_pct": -11.31,
+          "avg_win_sol": 0.00263,
+          "avg_loss_sol": -0.003468,
+          "rr_ratio": 1.17,
+          "profit_factor": 1.14,
+          "stop_loss_rate_pct": 46.7
+        },
+        "exit_mix_7d": {}
+      },
+      "hturn": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 8,
+          "wins": 1,
+          "losses": 7,
+          "win_rate": 0.125,
+          "pnl_sol": -0.020662,
+          "avg_win_pct": 23.88,
+          "avg_loss_pct": -48.66,
+          "avg_win_sol": 0.004371,
+          "avg_loss_sol": -0.003576,
+          "rr_ratio": 0.49,
+          "profit_factor": 0.17,
+          "stop_loss_rate_pct": 50.0
+        },
+        "exit_mix_7d": {}
+      },
+      "momentum_continue": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 12,
+          "wins": 4,
+          "losses": 8,
+          "win_rate": 0.333,
+          "pnl_sol": -0.004053,
+          "avg_win_pct": 11.58,
+          "avg_loss_pct": -9.72,
+          "avg_win_sol": 0.002554,
+          "avg_loss_sol": -0.001784,
+          "rr_ratio": 1.19,
+          "profit_factor": 0.72,
+          "stop_loss_rate_pct": 83.3
+        },
+        "exit_mix_7d": {}
+      },
+      "new_listing": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 3,
+          "wins": 0,
+          "losses": 3,
+          "win_rate": 0.0,
+          "pnl_sol": -0.015318,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -9.76,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.005106,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 100.0
+        },
+        "exit_mix_7d": {}
+      },
+      "organic_surge": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 18,
+          "wins": 7,
+          "losses": 11,
+          "win_rate": 0.389,
+          "pnl_sol": -0.004862,
+          "avg_win_pct": 8.09,
+          "avg_loss_pct": -6.25,
+          "avg_win_sol": 0.000863,
+          "avg_loss_sol": -0.000991,
+          "rr_ratio": 1.29,
+          "profit_factor": 0.55,
+          "stop_loss_rate_pct": 44.4
+        },
+        "exit_mix_7d": {}
+      },
+      "profile_survivor": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 35,
+          "wins": 11,
+          "losses": 24,
+          "win_rate": 0.314,
+          "pnl_sol": -0.006817,
+          "avg_win_pct": 14.67,
+          "avg_loss_pct": -8.17,
+          "avg_win_sol": 0.001633,
+          "avg_loss_sol": -0.001033,
+          "rr_ratio": 1.8,
+          "profit_factor": 0.72,
+          "stop_loss_rate_pct": 51.4
+        },
+        "exit_mix_7d": {}
+      },
+      "quiet_accum": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 27,
+          "wins": 9,
+          "losses": 18,
+          "win_rate": 0.333,
+          "pnl_sol": -0.000549,
+          "avg_win_pct": 11.07,
+          "avg_loss_pct": -5.44,
+          "avg_win_sol": 0.004534,
+          "avg_loss_sol": -0.002297,
+          "rr_ratio": 2.04,
+          "profit_factor": 0.99,
+          "stop_loss_rate_pct": 37.0
+        },
+        "exit_mix_7d": {}
+      },
+      "quiet_breakout": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 5,
+          "wins": 0,
+          "losses": 5,
+          "win_rate": 0.0,
+          "pnl_sol": -0.001963,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -5.04,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.000393,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 20.0
+        },
+        "exit_mix_7d": {}
+      },
+      "surv_surge": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 6,
+          "wins": 1,
+          "losses": 5,
+          "win_rate": 0.167,
+          "pnl_sol": -0.003787,
+          "avg_win_pct": 6.12,
+          "avg_loss_pct": -10.05,
+          "avg_win_sol": 0.000625,
+          "avg_loss_sol": -0.000882,
+          "rr_ratio": 0.61,
+          "profit_factor": 0.14,
+          "stop_loss_rate_pct": 100.0
+        },
+        "exit_mix_7d": {}
+      },
+      "survivor_mom": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 34,
+          "wins": 14,
+          "losses": 20,
+          "win_rate": 0.412,
+          "pnl_sol": -0.029106,
+          "avg_win_pct": 9.15,
+          "avg_loss_pct": -14.17,
+          "avg_win_sol": 0.001554,
+          "avg_loss_sol": -0.002543,
+          "rr_ratio": 0.65,
+          "profit_factor": 0.43,
+          "stop_loss_rate_pct": 76.5
+        },
+        "exit_mix_7d": {}
+      },
+      "trend_cont": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 3,
+          "wins": 0,
+          "losses": 3,
+          "win_rate": 0.0,
+          "pnl_sol": -0.013965,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -10.33,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.004655,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 100.0
+        },
+        "exit_mix_7d": {}
+      },
+      "veteran_momentum": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 17,
+          "wins": 6,
+          "losses": 11,
+          "win_rate": 0.353,
+          "pnl_sol": -0.011139,
+          "avg_win_pct": 10.96,
+          "avg_loss_pct": -10.3,
+          "avg_win_sol": 0.001672,
+          "avg_loss_sol": -0.001925,
+          "rr_ratio": 1.06,
+          "profit_factor": 0.47,
+          "stop_loss_rate_pct": 70.6
+        },
+        "exit_mix_7d": {}
+      },
+      "vol_accel": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 2,
+          "wins": 0,
+          "losses": 2,
+          "win_rate": 0.0,
+          "pnl_sol": -0.044824,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -55.44,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.022412,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 50.0
+        },
+        "exit_mix_7d": {}
+      },
+      "voldiv_v2": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 50,
+          "wins": 21,
+          "losses": 29,
+          "win_rate": 0.42,
+          "pnl_sol": -0.058908,
+          "avg_win_pct": 8.45,
+          "avg_loss_pct": -13.63,
+          "avg_win_sol": 0.002473,
+          "avg_loss_sol": -0.003822,
+          "rr_ratio": 0.62,
+          "profit_factor": 0.47,
+          "stop_loss_rate_pct": 52.0
+        },
+        "exit_mix_7d": {}
+      },
+      "voldiv_v3": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "all_time": {
+          "trades": 1,
+          "wins": 0,
+          "losses": 1,
+          "win_rate": 0.0,
+          "pnl_sol": -0.001894,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": -7.67,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": -0.001894,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 100.0
+        },
+        "exit_mix_7d": {}
+      },
+      "wallet_convergence": {
+        "rolling_24h": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "win_rate": 0.0,
+          "pnl_sol": 0.0,
+          "avg_win_pct": 0.0,
+          "avg_loss_pct": 0.0,
+          "avg_win_sol": 0.0,
+          "avg_loss_sol": 0.0,
+          "rr_ratio": 0.0,
+          "profit_factor": 0.0,
+          "stop_loss_rate_pct": 0.0
+        },
+        "rolling_7d": {
+          "trades": 4,
+          "wins": 2,
+          "losses": 2,
+          "win_rate": 0.5,
+          "pnl_sol": -0.000149,
+          "avg_win_pct": 9.29,
+          "avg_loss_pct": -10.77,
+          "avg_win_sol": 0.000472,
+          "avg_loss_sol": -0.000547,
+          "rr_ratio": 0.86,
+          "profit_factor": 0.86,
+          "stop_loss_rate_pct": 50.0
+        },
+        "all_time": {
+          "trades": 7,
+          "wins": 5,
+          "losses": 2,
+          "win_rate": 0.714,
+          "pnl_sol": 0.000145,
+          "avg_win_pct": 4.87,
+          "avg_loss_pct": -10.77,
+          "avg_win_sol": 0.000248,
+          "avg_loss_sol": -0.000547,
+          "rr_ratio": 0.45,
+          "profit_factor": 1.13,
+          "stop_loss_rate_pct": 28.6
+        },
+        "exit_mix_7d": {
+          "stop_loss": {
+            "count": 2,
+            "pct": 50.0
+          },
+          "target": {
+            "count": 1,
+            "pct": 25.0
+          },
+          "other": {
+            "count": 1,
+            "pct": 25.0
+          }
+        }
+      }
+    },
+    "strategies_seen_count": 29,
+    "last_buy": {
+      "timestamp": "2026-05-05T15:41:09.185936",
+      "hours_ago": 4.95,
+      "symbol": "AVERAGEGUY",
+      "strategy": "consensus_boost"
+    },
+    "best_trade": {
+      "pnl_sol": 0.031883,
+      "pnl_pct": 39.77,
+      "symbol": "CIA",
+      "strategy": "consol_breakout",
+      "timestamp": "2026-03-20T13:58:59.310622"
+    },
+    "worst_trade": {
+      "pnl_sol": -0.059143,
+      "pnl_pct": -100.0,
+      "symbol": "Aliens",
+      "strategy": "voldiv_v2",
+      "timestamp": "2026-03-23T01:41:52.639625"
+    },
+    "cycle": 1,
+    "age_min": 0.0,
+    "stale": false,
+    "available": true
+  },
+  "brain_queue": {
+    "requests_pending": 0,
+    "requests_acknowledged": 0,
+    "hypotheses_pending": 60,
+    "lessons_count": 3,
+    "killed_ideas_count": 16,
+    "drift_keys": [],
+    "active_strategies_count": 9,
+    "overloaded": false
+  },
+  "memory_keeper_status": {
+    "timestamp": "2026-05-05 18:00:00 EDT",
+    "run_id": "memkeep-001",
+    "snapshot_path": "sol_brain_directives.json.bak.2026-05-05",
+    "lessons_before": 146,
+    "lessons_after": 40,
+    "lessons_trimmed_for_length": 29,
+    "lessons_demoted_historical": 106,
+    "historical_lessons_count": 106,
+    "drift_keys_merged": [
+      "cms_first_data",
+      "cms_sweet_zone",
+      "operations",
+      "exit_mechanics",
+      "research_data_contamination",
+      "vol_liq_regime_dependency",
+      "cb_7d_chop_only_reality",
+      "missing_fields_implemented",
+      "h24_overbought_ceiling",
+      "cms_m5_research_finding",
+      "chop_dead_zone",
+      "wallet_convergence_bug",
+      "cms_m5_ceiling",
+      "confidence_score_inversion_artifact",
+      "dead_zone_already_live",
+      "unified_pda_decode_helper",
+      "research_data_contamination_v2_run250",
+      "research_100_funder_diversity_received_run250",
+      "research_carry_forward_false_flags_run260",
+      "dow_gate_phase1_shipped_run260",
+      "research_carryforward_verification",
+      "fast_stop_pump_trap_pattern",
+      "(from condensed_lessons_run228) avg_buy_size_logging_live",
+      "(from condensed_lessons_run228) h1_at_buy_already_logged",
+      "(from condensed_lessons_run228) cms_m5_sweet_zone_regime_problem",
+      "(from condensed_lessons_run228) bs_inadvertent_chop_gate",
+      "(from condensed_lessons_run228) 18h_silence_diagnosis"
+    ],
+    "hypotheses_before": 97,
+    "hypotheses_after": 60,
+    "hypotheses_dedup_dropped": 0,
+    "hypotheses_capped_dropped": 37,
+    "killed_ideas_audited": 16,
+    "killed_ideas_needs_origin": 16,
+    "killed_idea_revival_conflicts": [],
+    "history_entries_archived": 0,
+    "history_size_before": 28,
+    "history_size_after": 28,
+    "requests_archived": 12,
+    "requests_remaining": 0,
+    "elapsed_min": 12,
+    "hypotheses_cap_overflow_note": "Cap target is 50 but final count is 60 \u2014 the 60 remaining are all post-RESEARCHING/PROPOSED_BY_RESEARCH (LIVE, IMPLEMENTED, KILLED, MONITORING). Per prompt rule we only drop oldest RESEARCHING-status first; further dropping would lose shipped state. Bias-to-keep applied. Next run: consider archiving KILLED hypotheses to a tombstone field if cap pressure persists.",
+    "notes_for_operator": [
+      "First memory-keeper run. Heavy curation: 146 lessons -> 40 active + 106 historical (full text preserved for cap-dropped, 1-line for stale-culled).",
+      "Detected and merged TWO sources of condensed_lessons drift: 22 sibling keys at condensed_lessons root + entire condensed_lessons_run228 split-key. Both merged into condensed_lessons.entries; the run228 key was deleted.",
+      "killed_ideas_permanent had 16 entries as plain strings; converted each to a dict with `audit: needs_origin` so future runs can fill in run-id. NEVER removed any entry.",
+      "All 12 requests_for_research were status=completed* with added_run >=4 brain-runs old (run-243..run-255). Archived to requests_for_research_archive (new field).",
+      "sol_survival_history.json had only 28 entries, all <30 days old, so nothing archived. Cap of 200 not approached."
+    ],
+    "next_run_focus": "Watch for new condensed_lessons drift keys (e.g. condensed_lessons_runNNN sibling). Re-trim active lessons toward 40 if it grows. Consider compacting historical_lessons to one-liners if size becomes a problem. Hypotheses count of 60 will need attention if it grows further \u2014 possibly tombstone the KILLED ones.",
+    "age_hours": 2.5,
+    "stale": false,
+    "available": true,
+    "ever_ran": true
+  },
+  "maint_next_sec": 425.558912,
+  "maint_next_str": "8:45 PM EST",
+  "maint_last_run_str": "8:35 PM EST",
+  "maint_stale": false,
+  "memk_next_sec": 368525.558912,
+  "memk_next_str": "Sun 3:00 AM EST",
+  "memk_last_run_str": "Tue 6:05 PM EST",
+  "one_time_tasks": [],
+  "research_action_status": {
+    "latest": {
+      "hypothesis_name": "pumpfun_graduation_snipe_via_pumpportal_ws",
+      "run_id": "research-135",
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Updated the brain memory file (sol_brain_directives.json) to record this ship and roll forward all the research-135 verdicts.",
+      "evidence_source": "action"
+    },
+    "tally": {
+      "implemented": 22,
+      "queued": 0,
+      "rejected": 1,
+      "total": 23
+    }
+  },
+  "events": [
+    {
+      "ts": "2026-05-05T20:12:55.257902",
+      "type": "BS_SKIP",
+      "color": "#8b949e",
+      "msg": "GME: h24=+1679% \u2014 h1=-2.0% (need 3-35%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:55.257902",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "GME: h24=+1679% > 200% CB cap",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:55.781638",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "CQUANTUM: h24=-94% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:56.297272",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "BF: h24=-94% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:56.834783",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "TROLLUDI: h24=-89% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:57.338764",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "ROAF: h1=+0.1% (need 3-15%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:57.860484",
+      "type": "BS_SKIP",
+      "color": "#8b949e",
+      "msg": "GUIN: h24=+307% \u2014 age=4h (need 24-168h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:57.860484",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "GUIN: h24=+307% > 200% CB cap",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:58.378500",
+      "type": "BS_SKIP",
+      "color": "#8b949e",
+      "msg": "AI: h24=+224% \u2014 h1=+949.0% (need 3-35%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:58.378500",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "AI: h24=+224% > 200% CB cap",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:12:59.671128",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "PEPPLE: h24=-94% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:00.205688",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "TONKA: h24=-49% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:00.713759",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "DISCO: h24=-4% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:01.248996",
+      "type": "BS_SKIP",
+      "color": "#8b949e",
+      "msg": "COSMIC: h24=+230% \u2014 h1=-2.6% (need 3-35%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:01.248996",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "COSMIC: h24=+230% > 200% CB cap",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:01.891840",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "HENRY: buy_ratio=0.9x < 1.5x",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:02.616188",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "IMOUT: h24=-27% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:03.116261",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "KEKCOIN: h24=-61% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:03.131983",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "ConsensusBoost: 1 signal(s)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:03.131983",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "ConsensusBoost: 1 signal(s)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:03.131983",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "Signal: MIB",
+      "detail": "BearStrength: MIB macro-immune outlier 30h old | h24=+262% | h1=+18.5% | m5=+2.2% | Liq $31,303 | clean"
+    },
+    {
+      "ts": "2026-05-05T20:13:03.634516",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "lp_concentration_skip: MIB 100% in 1 pool n=1",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:56.248141",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Macro overlay: ALTCOIN_WINTER(58.7%) | SOL h24=2.6%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:13:56.248141",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 69 wallets (cycle #10)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:14:15.744694",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: F9oqdWPu sold FJtB7uHW \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:14:17.417605",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FJtB7uHW: tracked wallet sold this token 21s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:14:30.257585",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CyaE1Vxv sold CyBYm3kh \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:14:31.827740",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip CyBYm3kh: tracked wallet sold this token 35s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:14:31.833761",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CyaE1Vxv sold CyBYm3kh \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:14:31.843800",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip CyBYm3kh: tracked wallet sold this token 35s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:15:17.836923",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Kidney: m5=61.3% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:15:17.842688",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FJtB7uHW: tracked wallet sold this token 81s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:15:17.848136",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FJtB7uHW: tracked wallet sold this token 81s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:15:17.853149",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FJtB7uHW: tracked wallet sold this token 81s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:17:46.763914",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4vw54BmA sold Fq78nZu1 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:18:53.024053",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip https: h6=108.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:19:39.812802",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip lolcat: deep24h h24=-50.4% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:21:55.901523",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8MaVa9kd sold FJtB7uHW \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:21:55.914362",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FJtB7uHW: tracked wallet sold this token 479s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:21:55.924779",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FJtB7uHW: tracked wallet sold this token 479s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:21:55.931461",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8MaVa9kd sold 959neUoT \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:23:09.853751",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:23:55.068147",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FJtB7uHW: tracked wallet sold this token 598s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:04.885525",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Kidney: m5=52.3% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:04.893448",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J9TYAsWW sold 7vanRN2o \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:04.903097",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J9TYAsWW sold 7vanRN2o \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:16.658425",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 3fD5quTr \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:19.408907",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip CLAUDIA: m5=69.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:20.277184",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip CLAUDIA: m5=69.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:21.051346",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip CLAUDIA: m5=69.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:24:51.098639",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard gate 5aLY85py: 30 trades at 33% WR (10/30), PnL=-0.0410 SOL \u2014 no probation",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:25:22.002329",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:25:24.579628",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=8.9% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:26:21.778910",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:26:22.573469",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=8.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:26:22.585533",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:26:23.066423",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=8.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:27:06.054204",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip kancler: h1=-12.4% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:27:08.835386",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip FWC: h1=0.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:27:08.848024",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HjLFpRto sold GC3T8Xbo \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:27:11.573158",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Scientology : softdown h1=-5.2% h24=-39.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:27:11.580885",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HjLFpRto sold 7WddhpM5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:28:48.616694",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold HopMHHPf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:28:48.632896",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold 6hKtz8FV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:29:09.759587",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked E4tPSmY1",
+      "detail": "Security check failed \u2014 both APIs unreachable"
+    },
+    {
+      "ts": "2026-05-05T20:29:09.776881",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold 7E9ZXEs8 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:29:55.819648",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip GOBALIEN: m5=14.8% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:30:09.179650",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip RJGN: m5=-16.3% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:30:09.712830",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip RJGN: m5=-16.3% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:30:09.728926",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7F8echag sold 7soYuSPe \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:30:09.728926",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7F8echag sold 9oxGicd5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:30:54.557157",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "No new signals",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:30:56.633519",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip XAnimals: m5=-27.8% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:30:59.264425",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Kidney: downtrend h1=-23.0% h24=-23.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:31:00.274412",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=6.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:05.385904",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "BounceHunter: 0/1020 passed \u2014 top fails: h24=848, h6=158, h1=10",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:05.924526",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "FreshProfile: 2 new profile(s) (14 young, 7 ready)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:06.514827",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "HE: m5=+12.8% out of range",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:07.155392",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "Hondius: buy_ratio=1.1x < 1.5x",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:07.805258",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "Sol: h24=-92.7% < -40.0% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:08.566388",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "USEM: buy_ratio=0.9x < 1.5x",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:09.087106",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "Billie: liq=$0 < $3000",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:09.633961",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "MEME: liq=$0 < $3000",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:32:10.168806",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "bag: liq=$0 < $3000",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:33:30.555254",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 71 wallets (cycle #1)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:06.651092",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CyaE1Vxv sold 8wUtXZkq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:08.399711",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 8wUtXZkq: tracked wallet sold this token 37s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:08.415817",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 8wUtXZkq: tracked wallet sold this token 37s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:21.075791",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold 9NvHVAcs \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:21.085577",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold 9NvHVAcs \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:22.814481",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 9NvHVAcs: tracked wallet sold this token 52s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:58.979540",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip XAnimals: m5=37.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:34:58.987539",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 2fg5QD1e sold W7DQVdoK \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:35:01.367789",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip W7DQVdoK: tracked wallet sold this token 90s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:35:01.378799",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip W7DQVdoK: tracked wallet sold this token 90s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:35:01.386373",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip W7DQVdoK: tracked wallet sold this token 90s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:37:18.941848",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 67Nwfi9h sold 6yKueBav \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:37:21.082668",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 6yKueBav: tracked wallet sold this token 230s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:37:21.088981",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 67Nwfi9h sold EVpgK7sk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-05T20:37:52.664514",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 71 wallets (cycle #1)",
+      "detail": ""
+    }
+  ],
+  "todos": [
+    {
+      "id": "todo-001",
+      "description": "Add JUPITER_API_KEY to .env \u2014 required for live swap execution (free key at portal.jup.ag). Without it the bot logs signals but cannot trade.",
+      "date_added": "2026-04-24",
+      "priority": "high",
+      "status": "done",
+      "source": "system",
+      "check_type": "env_var",
+      "check_value": "JUPITER_API_KEY",
+      "context": "Bot cannot execute any swaps without this key. All copy signals were being detected correctly but dropped silently at execution time, making the entire copy-trading loop a no-op.",
+      "follow_up_action": "Confirm live swap execution is working end-to-end: check next bot cycle for actual transaction signatures in sol_trade_log.json rather than just signal logs.",
+      "done_at": "2026-04-25 06:39:55",
+      "auto_resolved": "auto-verified: env_var=JUPITER_API_KEY"
+    },
+    {
+      "id": "todo-002",
+      "description": "Brain queued 'same_slot_bundle_detector' hypothesis \u2014 consider signing up for Helius API (helius.dev, free tier) and adding HELIUS_API_KEY to .env for enhanced transaction metadata needed to detect same-slot bundles",
+      "date_added": "2026-04-24",
+      "priority": "medium",
+      "status": "done",
+      "source": "brain",
+      "check_type": "env_var",
+      "check_value": "HELIUS_API_KEY",
+      "context": "Brain run research-008 proposed same_slot_bundle_detector: detect Jito bundle activity by finding 3+ wallets buying a token in the same Solana slot (~400ms window). This is a quality BOOST signal used by TrenchRadar. Free path via getSignaturesForAddress + slot comparison, but Helius free tier gives richer transaction metadata and higher rate limits than public RPC.",
+      "follow_up_action": "Re-evaluate same_slot_bundle_detector strategy now that HELIUS_API_KEY is available. Implement the ~30-line slot-comparison detector using Helius enhanced getSignaturesForAddress. Track bundle_detected flag on the next 20 trades and compare win rate vs non-bundle entries.",
+      "done_at": "2026-04-25 06:39:55",
+      "auto_resolved": "auto-verified: env_var=HELIUS_API_KEY"
+    },
+    {
+      "id": "todo-1777996083",
+      "description": "Wiring check verdict: 28/32 PASS, 1 FAIL fixed (stats writer staleness), 1 FAIL needs operator (degen-bot-maintenance task has not fired since 4/30 \u2014 toggle off+on)",
+      "date_added": "2026-05-05",
+      "priority": "high",
+      "status": "done",
+      "source": "wiring-check",
+      "context": "Full report at sol_wiring_check_report.json",
+      "done_at": "2026-05-05 13:14:30",
+      "auto_resolved": "maintenance task fired again at 13:05 EDT (run-009) \u2014 recreating the SKILL.md + bypass permissions resolved the harness failure.",
+      "check_type": "file_recent",
+      "check_value": "sol_maintenance_status.json|35"
+    },
+    {
+      "id": "todo-1778027809",
+      "description": "BRAIN SPLIT EVAL [KEEP_WITH_FIXES, MEDIUM confidence]: Refactor working. Memory keeper trimmed lessons 146->40 and hypotheses 97->60. Brain stopped writing maintenance/process-health diagnostics (0/2 post-change runs vs 3/27 pre-change). Brain consumed sol_strategy_stats.json successfully (exit_analysis numbers match rolling_7d to two decimals). Stats writer healthy (17 min old, schema intact). All 4 scheduled tasks present and on schedule. Two dashboard cosmetic bugs need patching: (1) brain_queue.lessons_count shows 3 instead of 40 -- it counts top-level condensed_lessons dict keys instead of len(condensed_lessons.entries); (2) bot_status shows DEAD though bot is actively writing events (heartbeat soft-stale because cycles run slow; maintenance bot correctly diagnoses RUNNING). Full report: sol_brain_split_evaluation.json",
+      "date_added": "2026-05-05",
+      "priority": "high",
+      "status": "pending",
+      "source": "brain-split-eval"
+    }
+  ],
+  "ts": "20:37:54",
+  "__publish_meta": {
+    "published_at": "2026-05-05 20:37:54 EDT",
+    "publisher": "publish_dashboard.py"
+  }
+}

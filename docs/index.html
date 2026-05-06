@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Solana Bot</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050508;color:#e0e0e0;font-family:'Segoe UI',-apple-system,sans-serif;
+       font-size:13px;padding:5px;max-width:900px;margin:0 auto;
+       -webkit-font-smoothing:antialiased;overflow-x:hidden;
+       overflow-wrap:break-word;word-break:break-word}
+  .mono{font-family:'Cascadia Code','SF Mono','Fira Code',monospace}
+
+  /* ---- Neon gradient border mixin ---- */
+  .neon{background:linear-gradient(#0a0a10,#0a0a10) padding-box,
+        linear-gradient(135deg,#00d4ff30,#00ff8830,#a855f730) border-box;
+        border:1px solid transparent;border-radius:10px}
+  .neon:hover{background:linear-gradient(#0c0c14,#0c0c14) padding-box,
+        linear-gradient(135deg,#00d4ff55,#00ff8855,#a855f755) border-box}
+
+  /* ---- Header ---- */
+  .hdr{display:flex;align-items:center;padding:7px 14px;margin-bottom:6px;gap:10px}
+  .hdr h1{font-size:14px;color:#fff;font-weight:800;letter-spacing:2px;
+          background:linear-gradient(90deg,#00d4ff,#00ff88);-webkit-background-clip:text;
+          -webkit-text-fill-color:transparent;white-space:nowrap}
+  .hdr .spacer{flex:1}
+  .hdr .sol-p{color:#444;font-size:10px;font-family:'Cascadia Code',monospace}
+  .hdr .meta{text-align:right;font-size:10px;color:#333;white-space:nowrap}
+
+  /* Status pill */
+  .st{padding:3px 10px;border-radius:20px;font-size:8px;font-weight:800;letter-spacing:1.5px;
+      margin-left:8px;-webkit-text-fill-color:initial}
+  .st-on{background:#00ff8812;color:#00ff88;border:1px solid #00ff8844;
+         box-shadow:0 0 8px #00ff8822}
+  .st-warn{background:#ffaa0012;color:#ffaa00;border:1px solid #ffaa0044;
+           box-shadow:0 0 8px #ffaa0022}
+  .st-off{background:#ff444412;color:#ff4444;border:1px solid #ff444444;
+          box-shadow:0 0 8px #ff444422;animation:blink 1.5s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* ---- Two-column layout ---- */
+  /* minmax(0,1fr) prevents grid items from forcing wider tracks when content
+     contains unbreakable strings (Solana addresses, monospace text, etc.) */
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:start}
+  .col{display:flex;flex-direction:column;gap:6px;min-width:0}
+
+  /* ---- Stat cards ---- */
+  .cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+  .c{padding:8px 11px;min-width:0;overflow-wrap:anywhere;word-break:break-word}
+  .c .lb{color:#555;font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+  .c .v{font-size:17px;font-weight:800;margin-top:2px;font-family:'Cascadia Code',monospace;letter-spacing:-0.5px}
+  .c .s{color:#444;font-size:10px;font-family:'Cascadia Code',monospace;margin-top:1px}
+
+  /* Colors */
+  .g{color:#00ff88} .r{color:#ff4444} .y{color:#ffaa00} .b{color:#00d4ff}
+
+  /* ---- Sections ---- */
+  .sec{padding:7px 11px;min-width:0;overflow-wrap:anywhere;word-break:break-word}
+  .sec-t{color:#00d4ff;font-size:9px;font-weight:800;margin-bottom:5px;
+         text-transform:uppercase;letter-spacing:1.5px}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse}
+  th{color:#333;text-align:left;padding:3px 6px;font-weight:700;font-size:8px;
+     text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #151520}
+  td{padding:4px 6px;border-bottom:1px solid #0c0c14;font-family:'Cascadia Code',monospace;font-size:11px}
+
+  /* Trade rows */
+  .tr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #111118}
+  .tr:last-child{border:none}
+  .bg{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.5px}
+  .bg-b{background:#00d4ff12;color:#00d4ff;border:1px solid #00d4ff33}
+  .bg-s{background:#ff444412;color:#ff4444;border:1px solid #ff444433}
+  .bg-w{background:#00ff8812;color:#00ff88;border:1px solid #00ff8833}
+
+  /* ---- LIVE FEED ---- */
+  .feed-sec{padding:7px 11px;display:flex;flex-direction:column;min-width:0;
+            overflow-wrap:anywhere;word-break:break-word}
+  .feed-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .feed-hdr .sec-t{margin-bottom:0}
+  .pulse{width:7px;height:7px;border-radius:50%;background:#00ff88;
+         box-shadow:0 0 6px #00ff8866;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 6px #00ff8866}50%{opacity:.3;box-shadow:none}}
+  .flt{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
+  .fb{background:#0a0a12;border:1px solid #1a1a2a;color:#555;padding:3px 10px;border-radius:20px;
+      font-size:9px;cursor:pointer;font-weight:700;transition:all .2s}
+  .fb:hover{border-color:#00d4ff55;color:#888}
+  .fb.on{background:linear-gradient(135deg,#00d4ff12,#00ff8812);color:#00d4ff;
+         border-color:#00d4ff55;box-shadow:0 0 6px #00d4ff22}
+  .feed{max-height:280px;overflow-y:auto}
+  .fi{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #0c0c14}
+  .fi:last-child{border:none}
+  .fi-time{color:#2a2a35;font-size:10px;width:52px;flex-shrink:0;
+           font-family:'Cascadia Code',monospace;padding-top:1px}
+  .fi-icon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;
+           justify-content:center;font-size:11px;flex-shrink:0;margin-top:0}
+  .fi-body{flex:1;min-width:0}
+  .fi-msg{font-size:12px;line-height:1.35;color:#ccc;overflow-wrap:anywhere;word-break:break-word}
+  .fi-detail{font-size:10px;color:#333;margin-top:1px;line-height:1.3;overflow-wrap:anywhere;word-break:break-word}
+  .fi-scan .fi-msg{color:#383845}
+
+  /* ---- Collapsible ---- */
+  .tog{cursor:pointer;user-select:none}
+  .tog .arr{transition:transform .2s;display:inline-block;font-size:8px;margin-right:4px}
+  .tog.open .arr{transform:rotate(90deg)}
+  .tog-body{max-height:0;overflow:hidden;transition:max-height .3s}
+  .tog-body.open{max-height:none}
+
+  .empty{color:#222;font-style:italic;padding:6px 0;font-size:11px}
+
+  /* Wallet scan progress */
+  .scan-bar-bg{height:8px;background:#111118;border-radius:4px;overflow:hidden;margin:6px 0 4px}
+  .scan-bar{height:100%;border-radius:4px;transition:width .8s ease;
+            background:repeating-linear-gradient(-45deg,#00d4ff,#00d4ff 8px,#00ff88 8px,#00ff88 16px);
+            background-size:22.6px 100%;animation:scan-stripe .8s linear infinite}
+  @keyframes scan-stripe{0%{background-position:0 0}100%{background-position:22.6px 0}}
+  .scan-detail{font-size:10px;color:#555;font-family:'Cascadia Code',monospace}
+  .scan-step{font-size:11px;color:#ccc;font-weight:600}
+  .scan-eta{color:#00d4ff;font-size:10px;font-family:'Cascadia Code',monospace}
+  .scan-elapsed{color:#555;font-size:10px;font-family:'Cascadia Code',monospace}
+  @keyframes scan-dot-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .scan-active{animation:scan-dot-pulse 1s infinite}
+
+  /* Brain countdown / status */
+  .brain-cd{font-size:12px;color:#777;font-family:'Cascadia Code',monospace;
+            margin-left:6px;letter-spacing:0;text-transform:none}
+  .brain-running-bar{height:6px;background:#111118;border-radius:3px;overflow:hidden;margin:6px 0 4px}
+  .brain-bar-fill{height:100%;border-radius:3px;
+    background:repeating-linear-gradient(-45deg,#a855f7,#a855f7 8px,#7c3aed 8px,#7c3aed 16px);
+    background-size:22.6px 100%;animation:brain-stripe .8s linear infinite;width:100%}
+  @keyframes brain-stripe{0%{background-position:0 0}100%{background-position:22.6px 0}}
+  .brain-pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:#a855f7;
+    box-shadow:0 0 6px #a855f766;animation:brain-dot-pulse 1s infinite;vertical-align:middle;margin-right:4px}
+  @keyframes brain-dot-pulse{0%,100%{opacity:1;box-shadow:0 0 6px #a855f766}50%{opacity:.3;box-shadow:none}}
+  .brain-schedule{font-size:11px;color:#666;font-family:'Cascadia Code',monospace;margin-top:4px}
+
+  /* Research running bar (orange variant) */
+  .research-running-bar{height:6px;background:#111118;border-radius:3px;overflow:hidden;margin:6px 0 4px}
+  .research-bar-fill{height:100%;border-radius:3px;
+    background:repeating-linear-gradient(-45deg,#ff9933,#ff9933 8px,#cc6600 8px,#cc6600 16px);
+    background-size:22.6px 100%;animation:research-stripe .8s linear infinite;width:100%}
+  @keyframes research-stripe{0%{background-position:0 0}100%{background-position:22.6px 0}}
+  .research-pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff9933;
+    box-shadow:0 0 6px #ff993366;animation:research-dot-pulse 1s infinite;vertical-align:middle;margin-right:4px}
+  @keyframes research-dot-pulse{0%,100%{opacity:1;box-shadow:0 0 6px #ff993366}50%{opacity:.3;box-shadow:none}}
+
+  /* Command Center rows */
+  .cc-row{padding:4px 0;min-width:0}
+  .cc-row + .cc-row{border-top:1px solid #111118;margin-top:4px;padding-top:8px}
+  .cc-status{font-size:11px;font-family:'Cascadia Code',monospace;
+             overflow-wrap:anywhere;word-break:break-word;line-height:1.5}
+  .cc-run{margin-top:2px}
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#00d4ff33,#00ff8833);border-radius:2px}
+
+  /* ---- To-do list ---- */
+  .todo-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid #111118}
+  .todo-item:last-child{border:none}
+  .todo-pri{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:800;
+            letter-spacing:.5px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+  .todo-pri-high{background:#ff444412;color:#ff4444;border:1px solid #ff444433}
+  .todo-pri-med{background:#ffaa0012;color:#ffaa00;border:1px solid #ffaa0033}
+  .todo-pri-low{background:#00d4ff12;color:#00d4ff;border:1px solid #00d4ff33}
+  .todo-done-btn{background:#0e0e16;border:1px solid #252535;color:#555;padding:3px 10px;
+                 border-radius:4px;font-size:9px;cursor:pointer;font-weight:700;transition:all .2s;
+                 white-space:nowrap;flex-shrink:0}
+  .todo-done-btn:hover{border-color:#00ff8855;color:#00ff88;background:#00ff8808}
+
+  /* ---- Mobile responsive ---- */
+  @media(max-width:600px){
+    body{max-width:100%;padding:4px;font-size:12px}
+    .grid{grid-template-columns:1fr !important}
+    .cards{grid-template-columns:1fr 1fr}
+    .hdr{flex-wrap:wrap;padding:6px 10px;gap:6px;margin-bottom:5px}
+    .hdr h1{font-size:12px}
+    .feed{max-height:240px}
+    .sec{padding:6px 10px}
+    table{font-size:11px}
+  }
+</style>
+</head><!-- public mirror banner injected by build_static_dashboard.py -->
+<body>
+<div style="background:#0a1422;border-bottom:1px solid #1f2c44;padding:6px 10px;font-size:11px;color:#7cd3ff;text-align:center;font-family:'Cascadia Code',monospace">PUBLIC READ-ONLY SNAPSHOT &middot; updates every minute &middot; <span id="snapshot-age" style="color:#888">checking…</span></div>
+
+<!-- HEADER -->
+<div class="hdr neon">
+  <h1>SOLANA BOT<span id="bot-status" class="st st-off">???</span></h1>
+  <div class="spacer"></div>
+  <div class="sol-p">SOL <span id="sol-price">--</span></div>
+  <div class="meta">
+    <span id="bot-info"></span>
+    <span id="ts">--</span>
+  </div>
+</div>
+
+<!-- TWO COLUMN GRID -->
+<div class="grid">
+
+  <!-- ====== FULL-WIDTH TO-DO LIST ====== -->
+  <div id="todo-section" class="sec neon" style="grid-column:1/-1;display:none;
+       background:linear-gradient(#0a0a10,#0a0a10) padding-box,
+       linear-gradient(135deg,#ffaa0040,#ff444030,#ffaa0020) border-box;
+       border:1px solid transparent">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="sec-t" style="color:#ffaa00;margin-bottom:0">&#9888; Action Required</div>
+      <div id="todo-count" style="font-size:9px;color:#555;font-family:'Cascadia Code',monospace"></div>
+    </div>
+    <div id="todo-list"></div>
+  </div>
+
+  <!-- ====== FULL-WIDTH CHART ROW ====== -->
+  <div class="c neon" style="grid-column:1/-1;padding:8px 12px">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:5px">
+      <div class="lb">Bankroll</div>
+      <div class="v" id="bankroll-sol" style="font-size:20px">--</div>
+      <div class="v" id="bankroll-usd" style="font-size:13px;color:#888">--</div>
+    </div>
+    <div style="position:relative;height:105px">
+      <canvas id="bankroll-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- ====== LEFT COLUMN ====== -->
+  <div class="col">
+    <!-- P/L Summary -->
+    <div class="sec neon">
+      <div class="sec-t">P/L Summary</div>
+      <table>
+        <tr><th></th><th>P/L</th><th>Trades</th><th>W/L</th></tr>
+        <tr id="pnl-24h"><td>24h</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr id="pnl-7d"><td>7d</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr id="pnl-all"><td>All</td><td>--</td><td>--</td><td>--</td></tr>
+      </table>
+    </div>
+
+    <!-- Open Positions -->
+    <div class="sec neon" id="section-positions">
+      <div class="sec-t">Open Positions <span style="color:#333;font-weight:400">—</span> <span id="pos-count-val">0</span><span style="color:#333"> / 5</span>
+        <span style="float:right;color:#333;font-size:8px;letter-spacing:0;text-transform:none" id="deployed">--</span></div>
+      <div id="positions"><div class="empty">No open positions</div></div>
+    </div>
+
+    <!-- Recent Trades (expanded by default — tap header to collapse) -->
+    <div class="sec neon">
+      <div class="sec-t tog open" id="trades-toggle"><span class="arr">&#9654;</span> Recent Trades</div>
+      <div class="tog-body open" id="trades-body"><div id="recent-trades"></div></div>
+    </div>
+
+    <!-- Maintenance Agent status (populated by renderMaintenance) -->
+    <div id="maintenance-section"></div>
+
+    <!-- Per-strategy stats (populated by renderStrategyStats) -->
+    <div id="strategy-stats-section"></div>
+
+    <!-- Brain memory pressure (populated by renderBrainQueue) -->
+    <div id="brain-queue-section"></div>
+
+    <!-- Memory keeper status (populated by renderMemoryKeeper) -->
+    <div id="memory-keeper-section"></div>
+
+    <!-- Research Lab panel (populated by renderResearchLab) — left column under Recent Trades -->
+    <div id="research-lab-section"></div>
+  </div>
+
+  <!-- ====== RIGHT COLUMN ====== -->
+  <div class="col">
+    <!-- Command Center (brain + research lab monitor) -->
+    <div class="sec neon">
+      <div class="sec-t">Command Center</div>
+
+      <!-- Brain row -->
+      <div class="cc-row">
+        <div id="brain-status-bar" class="cc-status"></div>
+        <div id="brain-running-section" class="cc-run" style="display:none">
+          <div class="brain-running-bar"><div class="brain-bar-fill"></div></div>
+          <div style="font-size:10px;color:#777" id="brain-running-elapsed"></div>
+        </div>
+      </div>
+
+      <!-- Research row -->
+      <div class="cc-row">
+        <div id="research-status-bar" class="cc-status"></div>
+        <div id="research-running-section" class="cc-run" style="display:none">
+          <div class="research-running-bar"><div class="research-bar-fill"></div></div>
+          <div style="font-size:10px;color:#777" id="research-running-elapsed"></div>
+        </div>
+      </div>
+
+      <!-- Maintenance row -->
+      <div class="cc-row">
+        <div id="maint-status-bar" class="cc-status"></div>
+      </div>
+
+      <!-- Memory Keeper row -->
+      <div class="cc-row">
+        <div id="memk-status-bar" class="cc-status"></div>
+      </div>
+
+      <!-- One-time scheduled tasks -->
+      <div class="cc-row" id="one-time-tasks-row" style="display:none">
+        <div id="one-time-tasks-bar"></div>
+      </div>
+    </div>
+
+    <!-- Brain Changes + Watching Next Cycle (rendered by JS) -->
+    <div id="brain-custom-sections"></div>
+
+    <!-- Subagents Deployed — slotted directly under Brain Changes -->
+    <div id="subagents-section"></div>
+
+    <div id="brain-next-sections"></div>
+
+    <!-- Wallet Scan Progress (hidden when not scanning) -->
+    <div class="sec neon" id="scan-section" style="display:none">
+      <div class="sec-t"><span class="scan-active" style="color:#00ff88">&#9679;</span> Wallet Scanner</div>
+      <div id="scan-content"></div>
+    </div>
+
+    <!-- Live Feed (bottom) -->
+    <div class="feed-sec neon" id="feed-sec">
+      <div class="feed-hdr">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="sec-t">Live Feed</div>
+          <div class="pulse" id="feed-pulse"></div>
+        </div>
+      </div>
+      <div class="flt" id="event-filter">
+        <button class="fb" data-filter="all">All</button>
+        <button class="fb" data-filter="BUY_OK,BUY_FAIL">Buys</button>
+        <button class="fb" data-filter="SELL_OK,SELL_FAIL,SELL_SKIP">Sells</button>
+        <button class="fb" data-filter="SECURITY_BLOCK,SESSION_BAN">Security</button>
+        <button class="fb on" data-filter="CYCLE_ERROR,DRAWDOWN_HALT,SELL_FAIL,BUY_FAIL">Errors</button>
+      </div>
+      <div class="feed" id="feed-list">
+        <div class="empty">Waiting for bot activity...</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid -->
+
+<script>
+function pc(v){return v>=0?'g':'r'}
+function fm(v,d=4){return (v>=0?'+':'')+v.toFixed(d)}
+function $(v){return '$'+(v>=0?'':'-')+Math.abs(v).toFixed(2)}
+function dual(usdVal,solVal){return $(usdVal)+' <span class="s">('+fm(solVal,4)+' SOL)</span>'}
+
+/* Collapsible toggle helper */
+document.querySelectorAll('.tog').forEach(el=>{
+  el.addEventListener('click',function(){
+    this.classList.toggle('open');
+    const body=this.nextElementSibling;
+    if(body)body.classList.toggle('open');
+  });
+});
+
+/* P/L rows */
+function renderPnlRow(id,data,sp){
+  const row=document.getElementById(id);if(!row)return;
+  const u=data.pnl*sp;
+  row.innerHTML=`<td>${row.id.replace('pnl-','')}</td>
+    <td class="${pc(data.pnl)}">${dual(u,data.pnl)}</td>
+    <td>${data.trades}</td><td>${data.wins}W/${data.losses}L</td>`;
+}
+
+/* Positions */
+function renderPositions(pos,sp){
+  const el=document.getElementById('positions');
+  document.getElementById('pos-count-val').textContent=pos.length;
+  if(!pos.length){el.innerHTML='<div class="empty">No open positions</div>';return}
+  let h='<table><tr><th>Token</th><th>Entry</th><th>P/L</th><th>Age</th></tr>';
+  pos.forEach(p=>{
+    const s=(Date.now()-new Date(p.entry_time).getTime())/1000;
+    const m=Math.floor(s/60);const age=m<60?m+'m':(m/60).toFixed(1)+'h';
+    const eu=((p.entry_sol||0)*sp).toFixed(2);
+    const pnl=p.pnl_pct||0;
+    const pnlCls=pnl>=0?'g':'r';
+    /* Dollar P/L: entry USD * pnl% */
+    const entryUsd=(p.entry_sol||0)*sp;
+    const plDollar=entryUsd*(pnl/100);
+    const plSign=plDollar>=0?'+':'-';
+    const plStr=`${plSign}$${Math.abs(plDollar).toFixed(2)} (${plSign}${Math.abs(pnl).toFixed(1)}%)`;
+    const trail=p.trailing_active?'<span style="color:#00d4ff;font-size:8px"> TRAIL</span>':'';
+    h+=`<tr>
+      <td style="color:#e0e0e0;font-weight:700">${p.token_symbol||'?'}${trail}</td>
+      <td>$${eu}<br><span class="s">${(p.entry_sol||0).toFixed(4)} SOL</span></td>
+      <td class="${pnlCls}" style="font-weight:700;font-size:13px">${plStr}</td>
+      <td>${age}</td></tr>`;
+  });
+  el.innerHTML=h+'</table>';
+}
+
+/* Recent trades */
+function renderTrades(trades,sp){
+  const el=document.getElementById('recent-trades');
+  if(!trades.length){el.innerHTML='<div class="empty">No trades yet</div>';return}
+  let h='';
+  trades.forEach(t=>{
+    const sell=t.action==='sell';
+    const profit=sell&&(t.pnl_sol||0)>0;
+    const bg=`<span class="bg ${sell?(profit?'bg-w':'bg-s'):'bg-b'}">${t.action.toUpperCase()}</span>`;
+    let right;
+    if(sell){
+      const solRecv=t.sol+(t.pnl_sol||0);
+      const usdRecv=(solRecv*sp).toFixed(2);
+      const cls=pc(t.pnl_sol||0);
+      right=`$${usdRecv} <span class="${cls}">${fm(t.pnl_pct||0,1)}%</span>`;
+    } else {
+      const solUsd=(t.sol*sp).toFixed(2);
+      right=`$${solUsd} <span class="s">(${t.sol.toFixed(4)} SOL)</span>`;
+    }
+    h+=`<div class="tr">
+      <div>${bg} <b>${t.symbol}</b> <span style="color:#333;font-size:10px">${t.time}</span></div>
+      <div class="mono" style="font-size:11px">${right}</div></div>`;
+  });
+  el.innerHTML=h;
+}
+
+/* ===== LIVE FEED ===== */
+const FEED_ICONS = {
+  BUY_OK:    {icon:'\u2197', bg:'#00ff8820', color:'#00ff88'},
+  BUY_FAIL:  {icon:'\u2717', bg:'#ff444420', color:'#ff4444'},
+  BUY_SKIP:  {icon:'\u2014', bg:'#ffaa0012', color:'#ffaa00'},
+  SELL_OK:   {icon:'\u2199', bg:'#00ff8820', color:'#00ff88'},
+  SELL_FAIL: {icon:'\u2717', bg:'#ff444420', color:'#ff4444'},
+  SELL_SKIP: {icon:'\u2014', bg:'#ffaa0012', color:'#ffaa00'},
+  SIGNAL:    {icon:'\u25C6', bg:'#00d4ff18', color:'#00d4ff'},
+  SECURITY_BLOCK:{icon:'\u2298', bg:'#ff444420', color:'#ff4444'},
+  SESSION_BAN:   {icon:'\u2298', bg:'#ff444420', color:'#ff4444'},
+  DRAWDOWN_HALT: {icon:'\u25A0', bg:'#ff444420', color:'#ff4444'},
+  CYCLE_ERROR:   {icon:'!',  bg:'#ff444420', color:'#ff4444'},
+  ORPHAN:    {icon:'?',  bg:'#ffaa0012', color:'#ffaa00'},
+  RECONCILE: {icon:'\u2261', bg:'#33333318', color:'#555'},
+  WALLET_REFRESH:{icon:'\u21BB', bg:'#00d4ff12', color:'#00d4ff'},
+  SCAN:      {icon:'\u00B7', bg:'transparent', color:'#2a2a35'},
+};
+let cFilt='CYCLE_ERROR,DRAWDOWN_HALT,SELL_FAIL,BUY_FAIL',_ev=[];
+
+function renderFeed(ev){
+  const el=document.getElementById('feed-list');
+  if(!ev||!ev.length){el.innerHTML='<div class="empty">Waiting for bot activity...</div>';return}
+  let f=ev;
+  if(cFilt!=='all'){const t=cFilt.split(',');f=ev.filter(e=>t.includes(e.type))}
+  f=[...f].reverse();
+  if(!f.length){el.innerHTML='<div class="empty">No matching events</div>';return}
+  let h='';
+  f.slice(0,50).forEach(e=>{
+    const t=(e.ts||'').slice(11,19);
+    const ic=FEED_ICONS[e.type]||{icon:'\u00B7',bg:'transparent',color:'#333'};
+    const scanCls=e.type==='SCAN'?' fi-scan':'';
+    const d=e.detail?`<div class="fi-detail">${e.detail}</div>`:'';
+    h+=`<div class="fi${scanCls}">
+      <div class="fi-time">${t}</div>
+      <div class="fi-icon" style="background:${ic.bg};color:${ic.color}">${ic.icon}</div>
+      <div class="fi-body"><div class="fi-msg">${e.msg||''}</div>${d}</div></div>`;
+  });
+  el.innerHTML=h;
+}
+
+document.getElementById('event-filter').addEventListener('click',function(e){
+  if(e.target.classList.contains('fb')){
+    document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+    e.target.classList.add('on');cFilt=e.target.dataset.filter;renderFeed(_ev);
+  }
+});
+
+/* Wallets */
+/* Brain */
+function applyDashboardHints(r){
+  const h=(r&&r.dashboard_hints)||{};
+  // Coerce any item shape (string, {content}, {body}, {title}) \u2192 text
+  const itemText=s=>typeof s==='string'?s:(s.content||s.body||s.title||'');
+  /* Brain Changes (with brain emoji) \u2014 summarized 1-2 sentences each */
+  const c=document.getElementById('brain-custom-sections');
+  if(c){
+    let x='';
+    const ac=(r&&r.actions_taken)||[];
+    const sa=(h.sections_add)||[];
+    const items=[...ac,...sa];
+    if(items.length){
+      x+='<div class="sec neon" style="margin-top:6px"><div class="sec-t" style="font-size:11px;color:#a855f7;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">\ud83e\udde0 Brain Changes</div>';
+      items.slice(0,8).forEach(s=>{
+        const t=summarize(itemText(s),2,200);
+        if(t)x+=`<div style="font-size:12px;color:#ccc;padding:2px 0;line-height:1.4">\u00b7 ${esc(t)}</div>`;
+      });
+      x+='</div>';
+      c.innerHTML=x;
+    }else{c.innerHTML=''}
+  }
+  /* Watching Next Cycle (with eye emoji) \u2014 summarized 1-2 sentences each */
+  const nc=document.getElementById('brain-next-sections');
+  if(nc){
+    const nx=(r&&r.next_priorities)||[];
+    let y='';
+    if(nx.length){
+      y+='<div class="sec neon" style="margin-top:6px"><div class="sec-t" style="font-size:11px;color:#00d4ff;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">\ud83d\udc41 Watching Next Cycle</div>';
+      nx.slice(0,8).forEach(p=>{
+        const t=summarize(itemText(p),2,200);
+        if(t)y+=`<div style="font-size:12px;color:#999;padding:2px 0;line-height:1.4">\u00b7 ${esc(t)}</div>`;
+      });
+      y+='</div>';
+    }
+    nc.innerHTML=y;
+  }
+}
+function renderSurvivalReport(r){/* handled by applyDashboardHints */}
+
+/* --- Research Lab panel --- */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ===== TO-DO LIST ===== */
+function renderTodos(todos){
+  const sec=document.getElementById('todo-section');
+  const el=document.getElementById('todo-list');
+  const cnt=document.getElementById('todo-count');
+  if(!sec||!el)return;
+  const pending=(todos||[]).filter(t=>t.status==='pending');
+  if(!pending.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  cnt.textContent=pending.length+' item'+(pending.length!==1?'s':'');
+  // Sort: high first, then medium, then low
+  const order={high:0,medium:1,low:2};
+  pending.sort((a,b)=>(order[a.priority]||1)-(order[b.priority]||1));
+  let h='';
+  pending.forEach(t=>{
+    const priCls=t.priority==='high'?'todo-pri-high':t.priority==='low'?'todo-pri-low':'todo-pri-med';
+    const priLabel=(t.priority||'medium').toUpperCase();
+    const date=t.date_added?(' \u00b7 '+t.date_added.slice(5)):'';
+    const src=t.source||'system';
+    const ctx=t.context?`<div style="font-size:10px;color:#888;margin-top:3px;line-height:1.4;font-style:italic">${esc(t.context)}</div>`:'';
+    h+=`<div class="todo-item">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;color:#e0e0e0;line-height:1.4">${esc(t.description)}</div>
+        ${ctx}
+        <div style="font-size:9px;color:#444;margin-top:2px;font-family:'Cascadia Code',monospace">${esc(src)}${date}</div>
+      </div>
+      <span class="todo-pri ${priCls}">${priLabel}</span>
+      <button class="todo-done-btn" onclick="markDone('${t.id}')">\u2713 Done</button>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+async function markDone(id){
+  try{
+    await fetch('/api/todos/'+encodeURIComponent(id)+'/done',{method:'POST'});
+    refresh();
+  }catch(e){console.error(e)}
+}
+/* Shorten Solana base58 wallet/mint addresses (32-44 chars of base58 alphabet)
+   to a 6…4 form, e.g. "6vXpuT…PSGb". This keeps them recognizable + clickable
+   in a block explorer but stops them from eating sentence budget. */
+function shortenAddrs(text){
+  if(!text||typeof text!=='string')return text||'';
+  return text.replace(/\b[1-9A-HJ-NP-Za-km-z]{32,44}\b/g,m=>m.slice(0,6)+'…'+m.slice(-4));
+}
+/* Summarize long agent text into 1-2 sentences, max ~180 chars.
+   First shortens any Solana wallet/mint addresses inline, then sentence-caps. */
+function summarize(text, maxSent=2, maxChars=180){
+  if(!text||typeof text!=='string')return '';
+  let s=shortenAddrs(text).replace(/\s+/g,' ').trim();
+  const parts=s.split(/(?<=[.!?])\s+/).filter(Boolean);
+  let out=parts.slice(0,maxSent).join(' ').trim();
+  if(out.length>maxChars){
+    out=out.slice(0,maxChars).replace(/[\s,;:\-]+\S*$/,'').trim()+'…';
+  }
+  return out;
+}
+
+/* --- Research Lab panel — compact view, expandable details --- */
+/* --- Maintenance Agent panel — operational health at a glance --- */
+function renderMaintenance(m){
+  const host=document.getElementById('maintenance-section');
+  if(!host)return;
+  if(!m||!m.timestamp){host.innerHTML='';return;}
+  const bot=String(m.bot_status||'?').toUpperCase();
+  const dash=String(m.dashboard_status||'?').toUpperCase();
+  const dormant=m.dormancy_alert===true||(m.hours_since_last_trade!=null&&m.hours_since_last_trade>=24);
+  const stale=(m.stale_locks_cleared||[]).length>0;
+  const watchdogStale=m.watchdog_stale===true;
+  const restarted=(bot.includes('RESTART')||dash.includes('RESTART'));
+  // Border: red if DEAD or watchdog dead, orange if dormant/restarts, green if clean
+  const border=bot==='DEAD'||dash==='DEAD'||watchdogStale?'#ff4444':(dormant||restarted||stale?'#ffaa00':'#00ff88');
+  const ts=String(m.timestamp||'').slice(11,16);
+  let x='<div class="sec neon" style="margin-top:6px;border-color:transparent;background:linear-gradient(#0a0a10,#0a0a10) padding-box,linear-gradient(135deg,'+border+'aa,'+border+'66) border-box;border:1px solid transparent">';
+  x+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">🛠 Maintenance</div>`;
+  x+=`<div style="font-size:9px;color:#555;font-family:'Cascadia Code',monospace">${esc(m.run_id||'')} · ${esc(ts)}</div>`;
+  x+='</div>';
+  if(watchdogStale){
+    const ageMin=m.file_age_min!=null?Math.round(m.file_age_min):'?';
+    x+=`<div style="font-size:11px;color:#ff4444;margin-bottom:6px;font-weight:700">⚠ Watchdog itself is stale (${esc(ageMin)} min) — maintenance task hasn't refreshed</div>`;
+  }
+  // One-line health summary
+  const botBadge=bot==='RUNNING'?`<span style="color:#00ff88">●</span> bot`:bot==='RESTARTED'?`<span style="color:#ffaa00">↻</span> bot restarted`:bot==='DEAD'?`<span style="color:#ff4444">✗</span> bot DEAD`:`<span style="color:#888">○</span> bot ${esc(bot)}`;
+  const dashBadge=dash==='RUNNING'?`<span style="color:#00ff88">●</span> dash`:dash==='RESTARTED'?`<span style="color:#ffaa00">↻</span> dash restarted`:dash==='DEAD'?`<span style="color:#ff4444">✗</span> dash DEAD`:`<span style="color:#888">○</span> dash ${esc(dash)}`;
+  const hbAge=m.bot_heartbeat_age_sec!=null?`(${esc(m.bot_heartbeat_age_sec)}s hb)`:'';
+  x+=`<div style="font-size:11px;color:#ccc;margin-bottom:6px">${botBadge} ${esc(hbAge)} <span style="color:#444">·</span> ${dashBadge}</div>`;
+  // Dormancy
+  if(m.hours_since_last_trade!=null){
+    const hrs=m.hours_since_last_trade;
+    const dColor=hrs>=24?'#ff6b35':hrs>=8?'#ffaa00':'#888';
+    x+=`<div style="font-size:11px;color:${dColor};margin-bottom:6px">⏱ Last trade: ${hrs.toFixed(1)}h ago${dormant?' <span style="font-weight:800;letter-spacing:1px">— DORMANCY ALERT</span>':''}</div>`;
+  }
+  // Filter lockout diagnosis (THE useful field — show in full, summarized)
+  if(m.filter_lockout_diagnosis){
+    x+=`<div style="font-size:11px;color:#bbb;line-height:1.4;padding:5px 7px;background:#1a1408;border-left:2px solid #ffaa00;border-radius:3px;margin-bottom:6px">${esc(summarize(m.filter_lockout_diagnosis,3,300))}</div>`;
+  }
+  // Stale locks cleared
+  if(stale){
+    x+='<div style="font-size:10px;color:#ffaa00;margin-bottom:4px">🔓 Cleared stale locks:</div>';
+    (m.stale_locks_cleared||[]).slice(0,4).forEach(s=>{x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(s,1,140))}</div>`;});
+  }
+  // Duplicates killed
+  if((m.duplicates_killed||[]).length){
+    x+='<div style="font-size:10px;color:#ffaa00;margin-top:4px">⚠ Killed duplicates:</div>';
+    m.duplicates_killed.forEach(s=>{x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(String(s),1,120))}</div>`;});
+  }
+  // Recent actions
+  const acts=m.actions_taken||[];
+  if(acts.length){
+    x+='<div style="font-size:10px;color:#7cd3ff;margin-top:6px;text-transform:uppercase;letter-spacing:1px">actions this run</div>';
+    acts.slice(0,5).forEach(a=>{x+=`<div style="font-size:11px;color:#bbb;padding:2px 0">· ${esc(summarize(String(a),1,160))}</div>`;});
+  }
+  x+='</div>';
+  host.innerHTML=x;
+}
+
+/* --- Subagents Deployed tile — relocated from Research Lab (Apr 2026)
+   to the right column directly under the Brain row in Command Center.
+   Reads research_findings.subagents_dispatched. --- */
+function renderSubagentsDeployed(findings){
+  const host=document.getElementById('subagents-section');
+  if(!host)return;
+  if(!findings||!findings.timestamp){host.innerHTML='';return;}
+  const agents=findings.subagents_dispatched||[];
+  const meta=findings.meta||{};
+  const border=agents.length?'#00d4ff':'#ffaa00';
+  let x=`<div class="sec neon" style="border:1px solid ${border}">`;
+  if(agents.length){
+    x+=`<div class="sec-t" style="font-size:11px;color:#00d4ff;text-transform:uppercase;letter-spacing:1.5px">🤖 Subagents Deployed (${agents.length})</div>`;
+    agents.forEach(a=>{
+      const role=a.role||'agent';
+      const finding=a.finding||'(no finding reported)';
+      x+='<div style="margin:5px 0;padding:5px 7px;background:#0a1422;border-left:2px solid #00d4ff;border-radius:3px">';
+      x+=`<div style="font-size:10px;color:#7cd3ff;font-weight:700;margin-bottom:2px;font-family:'Cascadia Code',monospace">${esc(role)}</div>`;
+      x+=`<div style="font-size:11px;color:#bbb;line-height:1.4">${esc(summarize(finding,2,220))}</div>`;
+      x+='</div>';
+    });
+  } else {
+    const deferred=meta.deferred_run||meta.defer_reason;
+    const why=deferred?String(meta.defer_reason||'deferred run').replace(/_/g,' '):'no subagents this run';
+    x+=`<div class="sec-t" style="font-size:11px;color:#ffaa00;text-transform:uppercase;letter-spacing:1.5px">🤖 Subagents Deployed (0)</div>`;
+    x+=`<div style="font-size:11px;color:#888;font-style:italic;padding:5px 7px;background:#1a1408;border-left:2px solid #ffaa00;border-radius:3px">${esc(why)} — next scheduled run will resume the hunt.</div>`;
+  }
+  x+='</div>';
+  host.innerHTML=x;
+}
+
+/* --- Per-strategy stats panel — pre-computed by degen_bot.py every ~5min --- */
+function renderStrategyStats(s){
+  const host=document.getElementById('strategy-stats-section');
+  if(!host)return;
+  if(!s||!s.available){host.innerHTML='';return;}
+  const stale=s.stale===true;
+  const border=stale?'#ff4444':'#7cd3ff';
+  const sub=s.age_min!=null?`${s.age_min.toFixed(1)} min ago`:'';
+  let x=`<div class="sec neon" style="border:1px solid ${border}">`;
+  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">📈 Per-Strategy (7d)</div>`;
+  if(stale){
+    x+=`<div style="font-size:11px;color:#ff4444;margin-bottom:6px;font-weight:700">⚠ Stats stale (${esc(sub)}) — bot writer broken or bot down</div>`;
+  } else {
+    x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">refreshed ${esc(sub)} · ${s.computed_from_trades||0} trades · ${s.strategies_seen_count||0} strategies seen</div>`;
+  }
+  // Aggregate pill
+  const agg=s.rolling_7d||{};
+  const aggColor=agg.pnl_sol>0?'#00ff88':agg.pnl_sol<0?'#ff6b35':'#888';
+  x+=`<div style="font-size:11px;color:${aggColor};margin-bottom:8px;padding:5px 7px;background:#0a1418;border-left:2px solid ${aggColor};border-radius:3px">`;
+  x+=`<b>7d agg:</b> ${agg.trades||0}T · WR ${((agg.win_rate||0)*100).toFixed(0)}% · R/R ${(agg.rr_ratio||0).toFixed(2)} · Stop ${(agg.stop_loss_rate_pct||0).toFixed(0)}% · ${(agg.pnl_sol||0).toFixed(4)} SOL`;
+  x+=`</div>`;
+  // Per-strategy rows — sort by 7d trade count desc, only show ones with activity
+  const bs=s.by_strategy||{};
+  const rows=Object.entries(bs)
+    .map(([name,v])=>({name,...v.rolling_7d||{}}))
+    .filter(r=>r.trades>0)
+    .sort((a,b)=>b.trades-a.trades);
+  if(!rows.length){
+    x+=`<div style="font-size:10px;color:#888">No 7d activity per strategy yet.</div>`;
+  } else {
+    rows.slice(0,12).forEach(r=>{
+      const pnl=r.pnl_sol||0;
+      const c=pnl>0?'#00ff88':pnl<0?'#ff6b35':'#888';
+      const wrPct=((r.win_rate||0)*100).toFixed(0);
+      const rr=(r.rr_ratio||0).toFixed(2);
+      x+=`<div style="font-size:11px;display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #1a1a1a">`;
+      x+=`<span style="color:#ccc">${esc(r.name)}</span>`;
+      x+=`<span style="color:${c}"><b>${r.trades}T</b> · WR ${wrPct}% · R/R ${rr} · ${pnl>=0?'+':''}${pnl.toFixed(4)}</span>`;
+      x+=`</div>`;
+    });
+  }
+  // Best/worst footer
+  if(s.best_trade||s.worst_trade){
+    x+=`<div style="font-size:10px;color:#666;margin-top:6px;padding-top:5px;border-top:1px solid #1a1a1a">`;
+    if(s.best_trade){x+=`<span style="color:#00ff88">▲ ${esc(s.best_trade.symbol||'?')} +${(s.best_trade.pnl_pct||0).toFixed(0)}%</span>`;}
+    x+=` <span style="color:#444">·</span> `;
+    if(s.worst_trade){x+=`<span style="color:#ff6b35">▼ ${esc(s.worst_trade.symbol||'?')} ${(s.worst_trade.pnl_pct||0).toFixed(0)}%</span>`;}
+    x+=`</div>`;
+  }
+  x+='</div>';
+  host.innerHTML=x;
+}
+
+/* --- Brain memory pressure panel — early warning for overload --- */
+function renderBrainQueue(q){
+  const host=document.getElementById('brain-queue-section');
+  if(!host||!q){host&&(host.innerHTML='');return;}
+  const overloaded=q.overloaded===true;
+  const drift=(q.drift_keys||[]).length>0;
+  const border=overloaded?'#ff6b35':drift?'#ffaa00':'#7cd3ff';
+  let x=`<div class="sec neon" style="border:1px solid ${border}">`;
+  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">🧠 Brain Memory Pressure</div>`;
+  if(overloaded){
+    x+=`<div style="font-size:11px;color:#ff6b35;margin-bottom:6px;font-weight:700">⚠ Brain overloaded — memory keeper should run</div>`;
+  }
+  if(drift){
+    x+=`<div style="font-size:11px;color:#ffaa00;margin-bottom:6px">↔ Drift keys detected: ${esc((q.drift_keys||[]).join(', '))}</div>`;
+  }
+  // Two-column metric grid
+  const metric=(label,val,warn)=>{
+    const c=warn?'#ff6b35':'#ccc';
+    return `<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0"><span style="color:#888">${esc(label)}</span><span style="color:${c};font-weight:600">${val}</span></div>`;
+  };
+  x+=metric('Pending requests', q.requests_pending||0, (q.requests_pending||0)>8);
+  x+=metric('Acknowledged requests', q.requests_acknowledged||0, false);
+  x+=metric('Pending hypotheses', q.hypotheses_pending||0, (q.hypotheses_pending||0)>60);
+  x+=metric('Condensed lessons', q.lessons_count||0, (q.lessons_count||0)>50);
+  x+=metric('Killed ideas', q.killed_ideas_count||0, false);
+  x+=metric('Active strategies', q.active_strategies_count||0, false);
+  x+='</div>';
+  host.innerHTML=x;
+}
+
+/* --- Memory keeper status — runs weekly --- */
+function renderMemoryKeeper(m){
+  const host=document.getElementById('memory-keeper-section');
+  if(!host){return;}
+  if(!m||!m.available){
+    // Show a placeholder so operator knows the agent exists but hasn't run yet
+    let x=`<div class="sec neon" style="border:1px solid #444">`;
+    x+=`<div class="sec-t" style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px">📚 Memory Keeper</div>`;
+    x+=`<div style="font-size:10px;color:#666">Weekly cleanup agent — has not run yet. First scheduled run: Sunday 03:00 EDT.</div>`;
+    x+='</div>';
+    host.innerHTML=x;
+    return;
+  }
+  const stale=m.stale===true;
+  const border=stale?'#ffaa00':'#00ff88';
+  let x=`<div class="sec neon" style="border:1px solid ${border}">`;
+  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">📚 Memory Keeper</div>`;
+  const ageStr=m.age_hours!=null?`${m.age_hours<24?(m.age_hours.toFixed(1)+'h'):(m.age_hours/24).toFixed(1)+'d'} ago`:'';
+  x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">Last run: ${esc(ageStr)}${stale?' <span style="color:#ffaa00">(overdue)</span>':''}</div>`;
+  if(m.lessons_before!=null && m.lessons_after!=null){
+    x+=`<div style="font-size:11px;color:#ccc">Lessons: ${m.lessons_before} → ${m.lessons_after}</div>`;
+  }
+  if(m.hypotheses_before!=null && m.hypotheses_after!=null){
+    x+=`<div style="font-size:11px;color:#ccc">Hypotheses: ${m.hypotheses_before} → ${m.hypotheses_after}</div>`;
+  }
+  if(m.history_size_before!=null && m.history_size_after!=null){
+    x+=`<div style="font-size:11px;color:#ccc">History: ${m.history_size_before} → ${m.history_size_after} (${m.history_entries_archived||0} archived)</div>`;
+  }
+  if((m.killed_idea_revival_conflicts||[]).length){
+    x+=`<div style="font-size:11px;color:#ff4444;margin-top:6px;font-weight:700">⚠ Killed-idea revival conflicts: ${(m.killed_idea_revival_conflicts||[]).length}</div>`;
+    (m.killed_idea_revival_conflicts||[]).slice(0,3).forEach(c=>{
+      x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(String(c),1,140))}</div>`;
+    });
+  }
+  if((m.drift_keys_merged||[]).length){
+    x+=`<div style="font-size:10px;color:#ffaa00;margin-top:4px">↔ Drift merged: ${esc((m.drift_keys_merged||[]).join(', '))}</div>`;
+  }
+  x+='</div>';
+  host.innerHTML=x;
+}
+
+function renderResearchLab(findings,status,actionStatus){
+  const host=document.getElementById('research-lab-section');
+  if(!host)return;
+  if(!findings||!findings.timestamp){host.innerHTML='';return;}
+  const running=status&&status.running;
+  const headline=findings.headline||'(no headline)';
+  const hyp=findings.new_hypothesis;
+  const wl=findings.watchlist||[];
+  const props=findings.proposals_for_survival_brain||[];
+  const agents=findings.subagents_dispatched||[];
+  const sources=findings.data_sources_used||[];
+  const nextFocus=findings.next_run_focus||'';
+  const meta=findings.meta||{};
+  const rid=findings.run_id||'';
+  const ts=findings.timestamp||'';
+  const action=(actionStatus&&actionStatus.latest)||{};
+  const tally=(actionStatus&&actionStatus.tally)||{};
+
+  // Preserve expanded state across renders so refresh doesn't collapse the user's view
+  if(typeof window._labExpanded==='undefined') window._labExpanded=false;
+  const expanded=window._labExpanded;
+
+  let x='<div class="sec neon" style="margin-top:6px;border-color:transparent;background:linear-gradient(#0a0a10,#0a0a10) padding-box,linear-gradient(135deg,#ff6b35aa,#ffd13388,#a855f7aa) border-box;border:1px solid transparent">';
+
+  // ── Header row: title + run id + time
+  x+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  x+='<div class="sec-t" style="font-size:11px;color:#ff9933;text-transform:uppercase;letter-spacing:1.5px">\ud83d\udd2c Research Lab';
+  if(running){x+=' <span style="color:#00ff88;font-size:9px;margin-left:6px;animation:blink 1.2s infinite">\u25cf HUNTING</span>';}
+  x+='</div>';
+  x+=`<div style="font-size:9px;color:#555;font-family:'Cascadia Code',monospace">${esc(rid)} \u00b7 ${esc(ts.slice(11,16))}</div>`;
+  x+='</div>';
+
+  // ── Headline (one bold sentence — the TL;DR, capped to 2 sentences)
+  x+=`<div style="font-size:13px;color:#ffd699;margin-bottom:10px;line-height:1.4;font-weight:600">${esc(summarize(headline,2,220))}</div>`;
+
+  // ── COMPACT: Latest hypothesis name + priority + status badge in ONE line
+  if(hyp&&hyp.name){
+    const prio=(hyp.priority||'').toUpperCase();
+    const prioColor=prio==='HIGH'?'#00ff88':prio==='MEDIUM'?'#ffaa00':'#888';
+    x+='<div style="background:#1a0f05;border-left:2px solid #ff9933;padding:8px 10px;margin:6px 0;border-radius:4px">';
+    // Single dense row: name | priority | brain action status
+    x+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
+    x+=`<span style="font-size:11px;color:#ffd699;font-weight:700;font-family:'Cascadia Code',monospace">\ud83d\udca1 ${esc(hyp.name)}</span>`;
+    x+=`<span style="font-size:9px;color:${prioColor};font-weight:800;letter-spacing:1px;padding:1px 6px;border:1px solid ${prioColor}55;border-radius:8px">${esc(prio)}</span>`;
+    if(action.status_label){
+      x+=`<span style="font-size:10px;color:${esc(action.status_color||'#888')};font-weight:700;margin-left:auto">${esc(action.status_label)}</span>`;
+    }
+    x+='</div>';
+    // What it does (1-2 sentence teaser from mechanism — collapsed view)
+    if(hyp.mechanism){
+      x+=`<div style="font-size:11px;color:#cfcfcf;margin-top:6px;line-height:1.45">${esc(summarize(hyp.mechanism,2,200))}</div>`;
+    }
+    // Entry rules teaser (one line)
+    if(hyp.entry_rules){
+      x+=`<div style="font-size:10px;color:#888;margin-top:4px"><span style="color:#666">→ Rule:</span> ${esc(summarize(hyp.entry_rules,1,140))}</div>`;
+    }
+    // Action evidence line — what the brain actually did
+    if(action.evidence_text){
+      x+=`<div style="font-size:10px;color:#aaa;margin-top:6px;padding:4px 6px;background:#0a1a0a;border-radius:3px;border-left:2px solid ${esc(action.status_color||'#444')}">\ud83e\udde0 <span style="color:#888">brain:</span> ${esc(summarize(action.evidence_text,2,200))}</div>`;
+    }
+    x+='</div>';
+  } else {
+    x+='<div style="font-size:11px;color:#888;font-style:italic;padding:4px 0">No hypothesis this run.</div>';
+  }
+
+  // ── COMPACT proposal pills (just type + target + confidence)
+  if(props.length){
+    x+='<div style="margin:8px 0">';
+    x+='<div style="font-size:10px;color:#a855f7;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;font-weight:700">📬 Proposals to Survival Brain ('+props.length+')</div>';
+    props.slice(0,8).forEach(p=>{
+      const conf=String(p.confidence||'').toUpperCase().split(' ')[0];
+      const confColor=conf.startsWith('HIGH')?'#00ff88':conf.startsWith('MED')?'#ffaa00':'#888';
+      const type=String(p.type||'').replace(/_/g,' ');
+      const target=String(p.target||'').slice(0,40);
+      const just=summarize(p.justification||'',1,160);
+      x+='<div style="margin:5px 0;padding:5px 7px;background:#15101e;border-left:2px solid '+confColor+';border-radius:3px">';
+      x+=`<div style="font-size:10px;margin-bottom:2px"><span style="color:${confColor};font-weight:800;letter-spacing:1px">${esc(conf)}</span> <span style="color:#888"> · </span><span style="color:#aaa;font-family:'Cascadia Code',monospace">${esc(type)}</span> <span style="color:#888"> · </span><strong style="color:#ffd699">${esc(target)}</strong></div>`;
+      if(just){x+=`<div style="font-size:11px;color:#bbb;line-height:1.4">${esc(just)}</div>`;}
+      x+='</div>';
+    });
+    x+='</div>';
+  }
+
+  // ── One-line summary stats
+  const stats=[];
+  if(meta.subagent_count!=null)stats.push(meta.subagent_count+'\ud83e\udd16');
+  if(meta.web_calls!=null)stats.push(meta.web_calls+'\ud83c\udf10');
+  if(meta.new_tokens_scouted!=null)stats.push(meta.new_tokens_scouted+'\ud83e\ude99');
+  if(tally.total)stats.push(`${tally.implemented}\u2713 of ${tally.total} acted`);
+  if(stats.length){
+    x+=`<div style="font-size:10px;color:#777;margin-top:4px;font-family:'Cascadia Code',monospace">${esc(stats.join(' \u00b7 '))}</div>`;
+  }
+
+  // (Subagents Deployed tile moved to right column, directly under the
+  // Brain row in Command Center — see renderSubagentsDeployed.)
+
+  // ── Toggle for full details (mechanism, persistence, watchlist, next-focus)
+  x+=`<div style="margin-top:8px;padding-top:6px;border-top:1px solid #222">`;
+  x+=`<button id="lab-toggle" style="background:none;border:none;color:#7cd3ff;font-size:10px;cursor:pointer;padding:0;font-family:inherit;text-decoration:underline">${expanded?'▾ hide details':'▸ show details (full mechanism, persistence, watchlist, next focus)'}</button>`;
+  x+='</div>';
+
+  // ── Expanded full details (only when expanded)
+  if(expanded){
+    x+='<div style="margin-top:8px;font-size:11px;color:#bbb;line-height:1.45">';
+    if(hyp){
+      if(hyp.mechanism){x+=`<div style="margin:4px 0"><span style="color:#888">Why it works:</span> ${esc(hyp.mechanism)}</div>`;}
+      if(hyp.entry_rules){x+=`<div style="margin:4px 0"><span style="color:#888">Entry rules (full):</span> ${esc(hyp.entry_rules)}</div>`;}
+      if(hyp.persistence){x+=`<div style="margin:4px 0"><span style="color:#888">Why edge persists:</span> ${esc(hyp.persistence)}</div>`;}
+      if(hyp.estimated_fires_per_day!=null){x+=`<div style="margin:4px 0"><span style="color:#888">Est fires/day:</span> ${esc(hyp.estimated_fires_per_day)}</div>`;}
+      if(hyp.data_required){x+=`<div style="margin:4px 0"><span style="color:#888">Data needed:</span> ${esc(hyp.data_required)}</div>`;}
+    }
+    if(wl.length){
+      x+='<div style="font-size:10px;color:#ff9933;text-transform:uppercase;letter-spacing:1px;margin-top:8px;margin-bottom:3px">\ud83d\udc41 Watchlist</div>';
+      wl.slice(0,6).forEach(w=>{x+=`<div style="margin:2px 0">\u00b7 <span style="color:#ffd699;font-weight:600">${esc(w.symbol||w.mint||'?')}</span> — ${esc(summarize(w.reason||'',1,160))}</div>`;});
+    }
+    if(nextFocus){x+=`<div style="margin-top:8px;color:#888"><span style="color:#666">Next run focus:</span> ${esc(nextFocus)}</div>`;}
+    if(sources.length){x+=`<div style="margin-top:4px;font-size:9px;color:#555;font-family:'Cascadia Code',monospace">sources: ${esc(sources.slice(0,6).join(', '))}</div>`;}
+    x+='</div>';
+  }
+
+  x+='</div>';
+  host.innerHTML=x;
+
+  // Wire up the toggle
+  const tbtn=document.getElementById('lab-toggle');
+  if(tbtn){tbtn.addEventListener('click',()=>{window._labExpanded=!window._labExpanded;renderResearchLab(findings,status,actionStatus);});}
+}
+
+/* Wallet Scan Progress */
+let _scanData=null,_scanFetchTime=0;
+function renderScanProgress(scan){
+  const sec=document.getElementById('scan-section');
+  const el=document.getElementById('scan-content');
+  if(!scan||!scan.active){
+    _scanData=null;
+    if(scan&&scan.result&&scan.completed){
+      sec.style.display='block';
+      el.innerHTML=`<div style="font-size:11px;color:#00ff88">\u2713 ${scan.result}</div>`;
+      const comp=new Date(scan.completed).getTime();
+      if(Date.now()-comp>60000)sec.style.display='none';
+    } else {
+      sec.style.display='none';
+    }
+    return;
+  }
+  sec.style.display='block';
+  _scanData=scan;_scanFetchTime=Date.now();
+  _renderScanFrame();
+}
+function _renderScanFrame(){
+  if(!_scanData)return;
+  const el=document.getElementById('scan-content');if(!el)return;
+  const scan=_scanData;
+  const pct=scan.pct||0;
+  const step=scan.step||1;
+  const stepName=scan.step_name||'Working...';
+  const detail=scan.detail||'';
+
+  // Live elapsed: server elapsed + time since last fetch
+  const serverElapsed=scan.elapsed_sec||0;
+  const sinceFetch=(Date.now()-_scanFetchTime)/1000;
+  const liveElapsed=Math.round(serverElapsed+sinceFetch);
+  const elM=Math.floor(liveElapsed/60);const elS=liveElapsed%60;
+
+  // ETA counts down live
+  const serverEta=scan.eta_sec||0;
+  const liveEta=Math.max(0,Math.round(serverEta-sinceFetch));
+  const etaM=Math.floor(liveEta/60);const etaS=liveEta%60;
+
+  let h=`<div class="scan-step">Step ${step}/3: ${stepName}</div>`;
+  h+=`<div class="scan-bar-bg"><div class="scan-bar" style="width:${Math.max(pct,2)}%"></div></div>`;
+  h+=`<div style="display:flex;justify-content:space-between">`;
+  h+=`<div class="scan-detail">${scan.current||0}/${scan.total||0} ${detail?'\u00b7 '+detail:''}</div>`;
+  h+=`<div><span class="scan-elapsed">${elM}m${String(elS).padStart(2,'0')}s</span>`;
+  if(serverEta>0)h+=` <span class="scan-eta">~${etaM}m${String(etaS).padStart(2,'0')}s left</span>`;
+  h+=`</div></div>`;
+  el.innerHTML=h;
+}
+setInterval(function(){if(_scanData)_renderScanFrame()},1000);
+
+/* Brain status & countdown */
+let _brainNextSec=null,_brainLastFetch=0,_brainRunning=false,_brainElapsed=0;
+let _brainNextStr='',_brainLastRunStr='';
+let _researchRunning=false,_researchLastRunStr='',_researchNextStr='';
+let _researchNextSec=null,_researchElapsed=0;
+let _maintNextSec=null,_maintNextStr='',_maintLastRunStr='',_maintStale=false;
+let _memkNextSec=null,_memkNextStr='',_memkLastRunStr='';
+let _oneTimeTasks=[];
+
+/* Render a Command Center status row — identical format for Brain and Research */
+function renderCcRow(opts){
+  const bar=document.getElementById(opts.barId);
+  const runSec=document.getElementById(opts.runId);
+  const runElapsed=document.getElementById(opts.elapsedId);
+  if(!bar)return;
+
+  const status=opts.running?'running':'idle';
+  const statusColor=opts.running?opts.accent:'#888';
+
+  /* Countdown to next run (only when idle) */
+  let cdText='';
+  if(!opts.running && opts.nextSec!==null){
+    const remaining=Math.max(0,Math.round(opts.nextSec-opts.sinceFetch));
+    if(remaining<=0){
+      cdText=' · due now';
+    } else {
+      const h=Math.floor(remaining/3600);
+      const m=Math.floor((remaining%3600)/60);
+      const s=remaining%60;
+      let txt=' · next in ';
+      if(h>0)txt+=h+'h '+m+'m';
+      else if(m>0)txt+=m+'m '+s+'s';
+      else txt+=s+'s';
+      cdText=txt;
+    }
+  }
+
+  /* Build status line: [pulse?] [icon] [name] · [status] · last run X · next Y */
+  const iconHtml=opts.running
+    ? '<span class="'+opts.pulseClass+'"></span> '
+    : '';
+  let parts=[];
+  if(opts.lastRunStr)parts.push('last run '+opts.lastRunStr);
+  if(opts.nextStr)parts.push('next '+opts.nextStr);
+  const trail=parts.length?' <span style="color:#666">· '+parts.join(' · ')+'</span>':'';
+
+  bar.innerHTML=iconHtml
+    +'<span style="color:'+opts.accent+';font-size:10px;text-transform:uppercase;letter-spacing:1px">'+opts.icon+' '+opts.label+'</span>'
+    +' <span style="color:'+statusColor+';font-weight:600">· '+status+'</span>'
+    +'<span style="color:#777">'+cdText+'</span>'
+    +trail;
+
+  /* Running animation bar + elapsed (skip if this row has no run section) */
+  if(runSec){
+    if(opts.running){
+      runSec.style.display='block';
+      const elapsed=Math.round(opts.elapsed+opts.sinceFetch);
+      const eM=Math.floor(elapsed/60);const eS=elapsed%60;
+      if(runElapsed)runElapsed.textContent=eM+'m '+String(eS).padStart(2,'0')+'s elapsed';
+    } else {
+      runSec.style.display='none';
+    }
+  }
+}
+
+function updateBrainDisplay(){
+  const sinceFetch=(Date.now()-_brainLastFetch)/1000;
+
+  renderCcRow({
+    barId:'brain-status-bar',
+    runId:'brain-running-section',
+    elapsedId:'brain-running-elapsed',
+    label:'Brain',
+    icon:'🧠',
+    accent:'#a855f7',
+    pulseClass:'brain-pulse',
+    running:_brainRunning,
+    elapsed:_brainElapsed,
+    lastRunStr:_brainLastRunStr,
+    nextStr:_brainNextStr,
+    nextSec:_brainNextSec,
+    sinceFetch:sinceFetch,
+  });
+
+  renderCcRow({
+    barId:'research-status-bar',
+    runId:'research-running-section',
+    elapsedId:'research-running-elapsed',
+    label:'Research',
+    icon:'🔬',
+    accent:'#ff9933',
+    pulseClass:'research-pulse',
+    running:_researchRunning,
+    elapsed:_researchElapsed,
+    lastRunStr:_researchLastRunStr,
+    nextStr:_researchNextStr,
+    nextSec:_researchNextSec,
+    sinceFetch:sinceFetch,
+  });
+
+  /* Maintenance row — every 15 min, no running indicator (too brief to matter).
+     If file mtime is older than 2× cron interval, render as STALE in red so
+     the operator sees the task isn't actually firing instead of a stale ghost
+     timestamp. */
+  renderCcRow({
+    barId:'maint-status-bar',
+    runId:null, elapsedId:null,
+    label:'Maintenance',
+    icon:'🛠',
+    accent:_maintStale?'#ff4444':'#7cd3ff',
+    pulseClass:'',
+    running:false, elapsed:0,
+    lastRunStr:_maintStale?'NOT FIRING':_maintLastRunStr,
+    nextStr:_maintNextStr,
+    nextSec:_maintNextSec,
+    sinceFetch:sinceFetch,
+  });
+
+  /* Memory Keeper row — weekly Sundays 03:00 EDT */
+  renderCcRow({
+    barId:'memk-status-bar',
+    runId:null, elapsedId:null,
+    label:'Memory Keeper',
+    icon:'📚',
+    accent:'#22c55e',
+    pulseClass:'',
+    running:false, elapsed:0,
+    lastRunStr:_memkLastRunStr||'never',
+    nextStr:_memkNextStr,
+    nextSec:_memkNextSec,
+    sinceFetch:sinceFetch,
+  });
+
+  /* One-time tasks row — show only when there are pending ones */
+  const otRow=document.getElementById('one-time-tasks-row');
+  const otBar=document.getElementById('one-time-tasks-bar');
+  if(otRow&&otBar){
+    if(_oneTimeTasks&&_oneTimeTasks.length){
+      otRow.style.display='block';
+      let h='<div style="font-size:10px;color:#a855f7;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">⏰ One-Time Tasks</div>';
+      _oneTimeTasks.forEach(t=>{
+        const stateColor=t.state==='OVERDUE'?'#ff4444':t.state==='FIRING'?'#ffaa00':'#7cd3ff';
+        h+=`<div style="font-size:11px;display:flex;justify-content:space-between;align-items:baseline;padding:2px 0">`;
+        h+=`<span style="color:#ccc">${esc(t.icon||'')} ${esc(t.label)}</span>`;
+        h+=`<span style="color:${stateColor};font-size:10px">${esc(t.fire_at_str)} <span style="color:#666">·</span> ${esc(t.rel_str)}</span>`;
+        h+=`</div>`;
+        h+=`<div style="font-size:10px;color:#666;padding-bottom:3px">${esc(t.purpose||'')}</div>`;
+      });
+      otBar.innerHTML=h;
+    } else {
+      otRow.style.display='none';
+    }
+  }
+}
+
+setInterval(updateBrainDisplay,1000);
+
+/* ===== REFRESH ===== */
+async function refresh(){
+  try{
+    const r=await fetch('data/snapshot.json?cb='+Date.now());const d=await r.json();
+    const sp=d.sol_price;
+    document.getElementById('sol-price').textContent='$'+sp.toFixed(2);
+    document.getElementById('ts').textContent=d.ts;
+
+    const se=document.getElementById('bot-status');
+    const st=d.bot_status||'DEAD';
+    se.textContent=st==='RUNNING'?'LIVE':st==='STALE'?'STALE':'DEAD';
+    se.className='st '+(st==='RUNNING'?'st-on':st==='STALE'?'st-warn':'st-off');
+    const pulse=document.getElementById('feed-pulse');
+    if(pulse)pulse.style.background=st==='RUNNING'?'#00ff88':st==='STALE'?'#ffaa00':'#ff4444';
+
+    document.getElementById('bot-info').textContent=
+      d.bot_last_seen?'#'+d.bot_cycles+' @ '+d.bot_last_seen+' \u00b7 ':'';
+
+    document.getElementById('bankroll-sol').textContent=d.bankroll.toFixed(4)+' SOL';
+    document.getElementById('bankroll-usd').textContent='$'+d.bankroll_usd.toFixed(2);
+
+    document.getElementById('deployed').textContent=d.trades_today+' trades \u00b7 $'+(d.deployed*sp).toFixed(2)+' deployed';
+
+    renderPnlRow('pnl-24h',d.pnl_24h,sp);
+    renderPnlRow('pnl-7d',d.pnl_7d,sp);
+    renderPnlRow('pnl-all',d.pnl_all,sp);
+    renderPositions(d.positions,sp);
+    renderTrades(d.recent_trades,sp);
+    renderTodos(d.todos);
+    _ev=d.events||[];renderFeed(_ev);
+    renderSurvivalReport(d.survival_report);
+    applyDashboardHints(d.survival_report);
+    renderMaintenance(d.maintenance_status);
+    renderStrategyStats(d.strategy_stats);
+    renderBrainQueue(d.brain_queue);
+    renderMemoryKeeper(d.memory_keeper_status);
+    renderSubagentsDeployed(d.research_findings);
+    renderResearchLab(d.research_findings,d.research_status,d.research_action_status);
+    renderScanProgress(d.wallet_scan);
+    _brainNextSec=d.brain_next_sec;_brainLastFetch=Date.now();
+    _brainRunning=d.brain_running||false;
+    _brainElapsed=d.brain_elapsed_sec||0;
+    _brainNextStr=d.brain_next_str||'';
+    _brainLastRunStr=d.brain_last_run_str||'';
+    _researchRunning=d.research_running||false;
+    _researchLastRunStr=d.research_last_run_str||'';
+    _researchNextStr=d.research_next_str||'';
+    _researchNextSec=d.research_next_sec;
+    _researchElapsed=d.research_elapsed_sec||0;
+    _maintNextSec=d.maint_next_sec;
+    _maintNextStr=d.maint_next_str||'';
+    _maintLastRunStr=d.maint_last_run_str||'';
+    _maintStale=d.maint_stale===true;
+    _memkNextSec=d.memk_next_sec;
+    _memkNextStr=d.memk_next_str||'';
+    _memkLastRunStr=d.memk_last_run_str||'';
+    _oneTimeTasks=d.one_time_tasks||[];
+    updateBrainDisplay();
+  }catch(e){console.error(e)}
+}
+refresh();setInterval(refresh,10000);
+
+// --- Bankroll history chart ---
+let _brChart=null;
+function loadBankrollChart(){
+  fetch('data/bankroll_history.json?cb='+Date.now()).then(r=>r.json()).then(d=>{
+    if(!d.points||!d.points.length)return;
+    const labels=d.points.map(p=>p.date.slice(5));  // MM-DD
+    const vals=d.points.map(p=>p.bankroll);
+    const depositSet=new Set((d.deposits||[]).filter(dp=>dp.amount>0).map(dp=>dp.date));
+    // Deposit markers: green circle with $ sign
+    const depImg=(function(){const c=document.createElement('canvas');c.width=20;c.height=20;const x=c.getContext('2d');x.beginPath();x.arc(10,10,9,0,Math.PI*2);x.fillStyle='#00ff88';x.fill();x.strokeStyle='#00cc66';x.lineWidth=1.5;x.stroke();x.fillStyle='#000';x.font='bold 12px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('$',10,10);return c})();
+    const pointStyle=d.points.map(p=>depositSet.has(p.date)?depImg:false);
+    const pointR=d.points.map(p=>depositSet.has(p.date)?10:0);
+    const pointBorder=d.points.map(p=>'transparent');
+
+    const ctx=document.getElementById('bankroll-chart');
+    if(!ctx)return;
+    if(_brChart){_brChart.destroy()}
+    _brChart=new Chart(ctx,{
+      type:'line',
+      data:{
+        labels:labels,
+        datasets:[{
+          data:vals,
+          borderColor:'#00d4ff',
+          borderWidth:2,
+          pointStyle:pointStyle,
+          pointBorderColor:pointBorder,
+          pointRadius:pointR,
+          pointHoverRadius:12,
+          tension:0.3,
+          fill:true,
+          backgroundColor:function(ctx){
+            const chart=ctx.chart;
+            const{ctx:c,chartArea}=chart;
+            if(!chartArea)return'transparent';
+            const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom);
+            g.addColorStop(0,'rgba(0,212,255,0.15)');
+            g.addColorStop(1,'rgba(0,212,255,0.01)');
+            return g;
+          }
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            backgroundColor:'#111118',
+            borderColor:'#00d4ff44',
+            borderWidth:1,
+            titleColor:'#888',
+            bodyColor:'#e0e0e0',
+            bodyFont:{family:"'Cascadia Code',monospace",size:11},
+            callbacks:{
+              label:function(ctx){
+                const i=ctx.dataIndex;
+                const pt=d.points[i];
+                let lbl=pt.bankroll.toFixed(4)+' SOL';
+                if(depositSet.has(pt.date)){
+                  const dep=d.deposits.find(dp=>dp.date===pt.date);
+                  if(dep)lbl+='\n+'+dep.amount.toFixed(4)+' SOL deposit';
+                }
+                return lbl;
+              }
+            }
+          }
+        },
+        scales:{
+          x:{
+            ticks:{color:'#333',font:{size:9,family:"'Cascadia Code',monospace"},maxTicksLimit:8,maxRotation:0},
+            grid:{color:'#111118'}
+          },
+          y:{
+            min:0,
+            ticks:{color:'#333',font:{size:9,family:"'Cascadia Code',monospace"},
+              callback:function(v){return v.toFixed(1)}},
+            grid:{color:'#111118'}
+          }
+        }
+      }
+    });
+  }).catch(e=>console.error('bankroll chart error:',e));
+}
+loadBankrollChart();setInterval(loadBankrollChart,120000);
+</script>
+
+<script>
+/* Public-mirror snapshot age tracker — independent of dashboard.js refresh */
+(function(){
+  function updateAge(){
+    fetch('data/snapshot.json?cb='+Date.now(),{method:'HEAD'})
+      .then(r=>{
+        const lm=r.headers.get('last-modified');
+        if(!lm){document.getElementById('snapshot-age').textContent='age unknown';return;}
+        const ageMs=Date.now()-new Date(lm).getTime();
+        const m=Math.floor(ageMs/60000);
+        const s=Math.floor((ageMs%60000)/1000);
+        const el=document.getElementById('snapshot-age');
+        if(!el)return;
+        el.textContent='snapshot '+(m>0?m+'m '+s+'s':s+'s')+' old';
+        el.style.color=m>=5?'#ff6b35':m>=2?'#ffaa00':'#00ff88';
+      }).catch(()=>{});
+  }
+  updateAge();
+  setInterval(updateAge,15000);
+})();
+</script>
+
+</body></html>

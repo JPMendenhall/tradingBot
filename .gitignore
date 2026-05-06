@@ -1,0 +1,47 @@
+# =============================================================================
+# DENY-BY-DEFAULT GITIGNORE
+# =============================================================================
+# This is a SAFETY-CRITICAL file. The repo owner's wallet private key lives in
+# .env. If git ever tracks .env, the wallet WILL get drained. We deny EVERY
+# file by default and explicitly whitelist only what's safe to publish.
+#
+# To add a new file to git, ADD AN EXPLICIT WHITELIST LINE BELOW. Do not
+# remove lines from this file without understanding why they're here.
+# =============================================================================
+
+# 1. Deny everything
+*
+
+# 2. Re-allow directories so git can descend into them (without this, the
+#    whitelist lines below can't reach files inside subdirectories).
+!*/
+
+# 3. Whitelist: meta files
+!.gitignore
+!README.md
+!LICENSE
+
+# 4. Whitelist: public dashboard ONLY (this is what gets served via GitHub Pages)
+!docs/
+!docs/**
+
+# 5. Whitelist: the publisher script (no secrets — just snapshot builder)
+!publish_dashboard.py
+
+# 6. Whitelist: the static-dashboard build helper
+!build_static_dashboard.py
+
+# =============================================================================
+# EXPLICITLY DENY (belt-and-suspenders against the rules above):
+# =============================================================================
+.env
+.env.*
+*.pem
+*.key
+*-credentials.json
+thebigshortbus*.json
+secrets/
+__pycache__/
+*.pyc
+node_modules/
+cloudflared.exe
