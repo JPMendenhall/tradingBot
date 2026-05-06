@@ -1,15 +1,15 @@
 {
-  "sol_price": 87.22829317943601,
+  "sol_price": 87.10919059271123,
   "bot_status": "DEAD",
   "bot_last_seen": "00:09:39",
   "bot_cycles": 1,
   "bankroll": 1.1607,
-  "bankroll_usd": 101.24587989337138,
+  "bankroll_usd": 101.10763752095993,
   "budget": 0.16660310385,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.3,
+  "hour": 0.4,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -182,7 +182,7 @@
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 20625.830502,
+  "brain_next_sec": 20322.627872,
   "brain_next_str": "6:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
@@ -190,7 +190,7 @@
   "research_running": false,
   "research_last_run_str": "1:02 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 585.830502,
+  "research_next_sec": 282.627872,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-05 13:01:00 EDT",
@@ -400,27 +400,31 @@
     "note": "PRIMARY: pumpfun_graduation_snipe_via_pumpportal_ws -- free no-auth push WS substrate. WITHDREW research-134 deployer_creator_rug (RugCheck wallet endpoint infeasible). Pump_trap log at capacity (500/500, 47d window). Buys/sells + pair-age hypotheses dropped on data."
   },
   "maintenance_status": {
-    "timestamp": "2026-05-06 00:05:34 EDT",
-    "run_id": "maint-053",
+    "timestamp": "2026-05-06 00:20:30 EDT",
+    "run_id": "maint-054",
     "bot_status": "RUNNING",
-    "bot_pid": 14112,
-    "bot_heartbeat_age_sec": 254,
+    "bot_pid": 14868,
+    "bot_heartbeat_age_sec": 649,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 2040,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 8.65,
+    "hours_since_last_trade": 8.74,
     "buys_last_24h": 2,
     "dormancy_alert": false,
-    "filter_lockout_diagnosis": "Skip rate ~84% across last 50 events (CB_SKIP 19, FP_SKIP 12, BUY_SKIP 8, BS_SKIP 3) \u2014 high but below the 95% lockout threshold, and 4 SIGNALs + 4 SCANs show the bot is finding and evaluating candidates. Last buy 8.4h ago, still inside the 24h window. Heartbeat 254s soft-stale (>180s) but events log shows last activity 33s ago and zero CYCLE_ERROR \u2014 likely normal slow cycle, not a crash loop. No intervention.",
+    "filter_lockout_diagnosis": "Skip rate elevated but bot is in fresh cycle #1 after brain restart \u2014 only 30 signals seen so far, all skipped (sell-conflict, PnL gate probation). Last 100 events: SIGNAL 30, BUY_SKIP 30, CB_SKIP 19, FP_SKIP 12, BS_SKIP 3, SCAN 6. Too early to call lockout \u2014 let cycle #1 complete.",
     "actions_taken": [
-      "None \u2014 system healthy."
+      "Confirmed bot PID 14868 (new \u2014 replaced PID 14112 during brain run-264 restart) and dashboard PID 2040 are the only python processes.",
+      "Heartbeat is 649s stale, but events file mtime is only 59s \u2014 bot is alive in long first scan cycle (75 wallets + new PumpPortal WS enricher), no CYCLE_ERROR. Held off on restart per 'when unsure, don't'.",
+      "Brain status already clean (running:false, completed at 00:18). Research status already clean (running:false since 2026-05-05). No locks to clear.",
+      "Dashboard /api/state returned HTTP 200 in 0.84s.",
+      "Log files tiny (bot.log 73KB, dashboard.log 241KB) \u2014 no truncation needed."
     ],
-    "next_run_focus": "Watch for dormancy crossing 24h. If skips climb past 95% or buys stay at 0, escalate. Heartbeat softness has been recurring across recent runs \u2014 note if it ever crosses 600s.",
+    "next_run_focus": "Verify heartbeat catches up after cycle #1 finishes (should be within next 5 min). If heartbeat still >600s stale AND events file also stale (>180s), bot is genuinely hung \u2014 kill PID 14868 and restart. Also re-check skip rate once a fuller event window accumulates.",
     "log_truncations": [],
     "elapsed_min": 1,
-    "notes": "Brain (degen-bot-monitor) just kicked off 18s ago \u2014 running:true is fresh, not stale. Research idle since 13:02 yesterday. bot.log 73KB, dashboard.log 241KB \u2014 well under 50MB.",
-    "file_age_min": 14.7,
+    "notes": "PID changed from 14112 (run-053) to 14868 \u2014 brain run-264 restarted bot to load new bonding_curve_velocity_filter Phase 1 LOG-ONLY enricher. Cycle #1 of fresh bot is long (~10 min) but actively producing events.",
+    "file_age_min": 4.0,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1873,7 +1877,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 10.6,
+    "age_min": 15.6,
     "stale": false,
     "available": true
   },
@@ -1947,16 +1951,16 @@
       "sol_survival_history.json had only 28 entries, all <30 days old, so nothing archived. Cap of 200 not approached."
     ],
     "next_run_focus": "Watch for new condensed_lessons drift keys (e.g. condensed_lessons_runNNN sibling). Re-trim active lessons toward 40 if it grows. Consider compacting historical_lessons to one-liners if size becomes a problem. Hypotheses count of 60 will need attention if it grows further \u2014 possibly tombstone the KILLED ones.",
-    "age_hours": 6.2,
+    "age_hours": 6.3,
     "stale": false,
     "available": true,
     "ever_ran": true
   },
-  "maint_next_sec": 585.830502,
+  "maint_next_sec": 282.627872,
   "maint_next_str": "12:30 AM EST",
-  "maint_last_run_str": "12:05 AM EST",
+  "maint_last_run_str": "12:21 AM EST",
   "maint_stale": false,
-  "memk_next_sec": 355185.830502,
+  "memk_next_sec": 354882.627872,
   "memk_next_str": "Sun 3:00 AM EST",
   "memk_last_run_str": "Tue 6:05 PM EST",
   "one_time_tasks": [],
@@ -1978,160 +1982,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-05T23:50:23.405884",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: gangJEP5 sold 9KgHFs32 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:50:25.097492",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 9KgHFs32: tracked wallet sold this token 428s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:50:25.113317",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: gangJEP5 sold Df6FLjJV \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:52:04.924337",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Blind: downtrend h1=-33.8% h24=-33.8%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:52:05.365270",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Blind: downtrend h1=-33.8% h24=-33.8%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:52:05.807670",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Blind: downtrend h1=-33.8% h24=-33.8%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:52:05.807670",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:52:52.290247",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip HKF3ZGpx: tracked wallet sold this token 575s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:53:11.361021",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold 4w4Xb7RU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:53:11.361021",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold 4w4Xb7RU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:53:11.376950",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold 4w4Xb7RU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:53:11.376950",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold 4w4Xb7RU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:53:11.376950",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold 4w4Xb7RU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:54:26.190459",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Hard gate 5aLY85py: 30 trades at 33% WR (10/30), PnL=-0.0410 SOL \u2014 no probation",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:55:53.650363",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:55:56.290166",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=4.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:56:44.884272",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold 7soYuSPe \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:56:44.888283",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold Hb2RkLca \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:56:44.894298",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold BhCuLLN3 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:56:44.898052",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold 7NhbGMU1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:56:48.282702",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip TripleP: deep24h h24=-49.9% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-05T23:57:34.875452",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold CvmRz15W \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-05T23:57:34.891444",
       "type": "SIGNAL",
@@ -2677,6 +2527,160 @@
       "color": "#d29922",
       "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:20:39.608161",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 8aXFpgie \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:20:39.608161",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 8aXFpgie \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:20:39.624109",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 8aXFpgie \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:20:39.624109",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 8aXFpgie \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:20:40.248017",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip PETDEX: h1=-14.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:21:54.244551",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Alzheimers: h6=280.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:22:12.186557",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold E8BqqXaV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:22:12.202384",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold pACMKYiC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:01.354081",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard gate 5aLY85py: 30 trades at 33% WR (10/30), PnL=-0.0410 SOL \u2014 no probation",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:11.118959",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6E4897rJ sold 3ykiZQei \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:11.118959",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6E4897rJ sold 6evj8rWm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:32.283228",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:34.517617",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=1.5% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:34.517617",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:34.976189",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=1.5% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:23:34.976189",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:24:19.742718",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip DJT: m5=7.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:24:20.221965",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip DJT: m5=7.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:24:20.826241",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip DJT: m5=7.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:24:22.958635",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip dolphins: deep24h h24=-61.4% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:24:38.214676",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T00:24:38.785354",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=1.2% (below 15% momentum threshold, run115)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2732,9 +2736,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "00:20:14",
+  "ts": "00:25:17",
   "__publish_meta": {
-    "published_at": "2026-05-06 00:20:14 EDT",
+    "published_at": "2026-05-06 00:25:17 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
