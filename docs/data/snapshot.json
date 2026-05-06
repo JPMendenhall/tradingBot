@@ -1,15 +1,15 @@
 {
-  "sol_price": 89.61160201566909,
-  "bot_status": "RUNNING",
-  "bot_last_seen": "06:34:18",
-  "bot_cycles": 1,
+  "sol_price": 89.55065768772762,
+  "bot_status": "STALE",
+  "bot_last_seen": "06:35:08",
+  "bot_cycles": 2,
   "bankroll": 1.1607,
-  "bankroll_usd": 104.01218645958713,
+  "bankroll_usd": 103.94144837814545,
   "budget": 0.16660310385,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 6.6,
+  "hour": 6.7,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -248,7 +248,7 @@
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 19760.162024,
+  "brain_next_sec": 19456.785525,
   "brain_next_str": "12:04 PM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
@@ -256,7 +256,7 @@
   "research_running": false,
   "research_last_run_str": "12:53 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 21320.162024,
+  "research_next_sec": 21016.785525,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-06 00:53:49 EDT",
@@ -458,33 +458,33 @@
     "note": "PRIMARY: dexscreener_token_boosts_top_feed cross-launchpad logger (closes 55% Bonk+BagsApp blind spot). HIGH: velocity enricher NOT broken (artifact -- 65/67 pre-ship); recommended backlog drainer ~30 LOC. HIGH: liquidity_on_arrival_filter for grad-snipe Phase 2 (N=12 forward returns: liq>$15k = +405% h6, liq<$5k = 6/6 rug). MEDIUM: creator_reputation_async_cache feasible cached/async only. DROP: pool hypothesis (60/60 pump-amm)."
   },
   "maintenance_status": {
-    "timestamp": "2026-05-06 06:20:31 EDT",
-    "run_id": "maint-078",
-    "bot_status": "RESTARTED",
+    "timestamp": "2026-05-06 06:35:30 EDT",
+    "run_id": "maint-079",
+    "bot_status": "RUNNING",
     "bot_pid": 2808,
-    "bot_heartbeat_age_sec": 5,
+    "bot_heartbeat_age_sec": 928,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 2040,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 14.89,
+    "hours_since_last_trade": 14.98,
     "dormancy_alert": false,
-    "filter_lockout_diagnosis": "Not applicable \u2014 under 24h dormancy threshold (last buy 14.6h ago, last sell 14.4h ago). Skip mix is normal ALTCOIN_WINTER/CHOP filtering: midpump h1<15%, m5 dump active sell-off, sell-conflict (tracked wallet exiting), hard 30-trade WR gates.",
+    "filter_lockout_diagnosis": "Not in lockout. Skip rate ~95% but rejections are legitimate ALTCOIN_WINTER/CHOP behavior, not filter accumulation. Top skip reasons last 100 events: sell-conflict (tracked wallet exited 200-450s before us), m5 pump already-ran (we'd be exit liquidity), midpump h1<15% momentum gate. Zero CYCLE_ERROR. Bot producing fresh events every <30s.",
     "actions_taken": [
-      "Killed stalled bot PID 3220 \u2014 heartbeat 722s old (well past 600s dead threshold). Process was alive but only the wallet-poll thread was emitting events; main scan loop hadn't refreshed heartbeat since the survival brain's 06:06 restart that deployed the velocity_enricher_backlog_drainer Phase 1 release.",
-      "Started a fresh degen_bot.py --continuous as PID 2808. Heartbeat refreshed within 5s \u2014 the new instance is healthy.",
-      "No lock cleanup needed: brain status already running:false (run-265 finished 06:12), research status running:false (research-136 finished 5h+ ago).",
-      "No log truncation: bot.log 30KB, dashboard.log 239KB \u2014 well under 50MB threshold."
+      "Verified PID 2808 (the bot maint-078 restarted 15min ago) is healthy: most recent event 06:35:08 (22s fresh), bot.log mtime 06:30:48, cycle 1 completed normally with 'No copy signals this cycle'. NOT restarting despite 928s heartbeat staleness \u2014 same per-cycle write cadence pattern that maint-076/077 documented across 16 prior consecutive runs on PID 8180.",
+      "Dashboard PID 2040 returned HTTP 200 in 0.86s \u2014 healthy, no restart needed.",
+      "No stale locks: brain run-265 finished 06:12 (running:false), research-136 finished 00:53 (running:false). Both within hygiene thresholds.",
+      "No log truncation: bot.log 2.4 KB, dashboard.log 245 KB \u2014 both well under 50 MB threshold."
     ],
-    "next_run_focus": "Verify PID 2808 heartbeat stays fresh on subsequent cycles. If heartbeat goes stale again after this restart, the velocity_enricher_backlog_drainer release (run-265) likely introduced a main-loop blocker \u2014 flag it for the survival brain to revert rather than continuing the restart loop. Also: dormancy_alert will trigger at ~15:41 EDT when last buy crosses 24h.",
+    "next_run_focus": "Watch for the dormancy crossover: last buy was 2026-05-05 15:41 EDT, so DORMANCY_ALERT will fire on the run that lands after ~15:41 EDT today (likely maint-082 or maint-083). When it fires, document the dominant skip reason so the survival brain can decide whether to relax a gate. Also confirm cycle 2 heartbeat refreshes \u2014 if heartbeat stays at the same 06:20:04 timestamp three runs from now, the per-cycle write may genuinely be broken on the run-265 build (vs. just slow).",
     "log_truncations": [],
-    "elapsed_min": 4,
-    "file_age_min": 13.7,
+    "elapsed_min": 2,
+    "file_age_min": 4.1,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-05-06 06:20:04 EDT",
+    "timestamp": "2026-05-06 06:35:08 EDT",
     "computed_from_trades": 2012,
     "total_buys": 995,
     "total_sells": 996,
@@ -1913,7 +1913,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-05-05T15:41:09.185936",
-      "hours_ago": 14.65,
+      "hours_ago": 14.9,
       "symbol": "AVERAGEGUY",
       "strategy": "consensus_boost"
     },
@@ -1931,8 +1931,8 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 1,
-    "age_min": 14.6,
+    "cycle": 2,
+    "age_min": 4.6,
     "stale": false,
     "available": true
   },
@@ -2006,16 +2006,16 @@
       "sol_survival_history.json had only 28 entries, all <30 days old, so nothing archived. Cap of 200 not approached."
     ],
     "next_run_focus": "Watch for new condensed_lessons drift keys (e.g. condensed_lessons_runNNN sibling). Re-trim active lessons toward 40 if it grows. Consider compacting historical_lessons to one-liners if size becomes a problem. Hypotheses count of 60 will need attention if it grows further \u2014 possibly tombstone the KILLED ones.",
-    "age_hours": 12.5,
+    "age_hours": 12.6,
     "stale": false,
     "available": true,
     "ever_ran": true
   },
-  "maint_next_sec": 620.162024,
+  "maint_next_sec": 316.785525,
   "maint_next_str": "6:45 AM EST",
-  "maint_last_run_str": "6:20 AM EST",
+  "maint_last_run_str": "6:35 AM EST",
   "maint_stale": false,
-  "memk_next_sec": 332720.162024,
+  "memk_next_sec": 332416.785525,
   "memk_next_str": "Sun 3:00 AM EST",
   "memk_last_run_str": "Tue 6:05 PM EST",
   "one_time_tasks": [],
@@ -2037,41 +2037,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-06T05:53:10.232760",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "Scanning 75 wallets (cycle #19)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T05:56:58.599678",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Av3xWHJ5 sold GwjZcDag \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T05:57:00.315452",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip GwjZcDag: tracked wallet sold this token 230s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T05:57:00.315452",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Av3xWHJ5 sold EZwhKZQx \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-06T05:57:01.778952",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip EZwhKZQx: tracked wallet sold this token 231s ago",
-      "detail": ""
-    },
     {
       "ts": "2026-05-06T05:57:01.784713",
       "type": "SIGNAL",
@@ -2736,6 +2701,41 @@
       "color": "#555555",
       "msg": "FreshProfile: initialized cache (4 seen, 22 young pending, 577 pre-cached)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-06T06:35:08.105882",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 78 wallets (cycle #2)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T06:38:56.010142",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Av3xWHJ5 sold 5NPJ4FRU \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T06:38:57.779380",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 5NPJ4FRU: tracked wallet sold this token 229s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T06:38:57.791955",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Av3xWHJ5 sold 5NPJ4FRU \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-06T06:38:57.791955",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 5NPJ4FRU: tracked wallet sold this token 229s ago",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2791,9 +2791,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "06:34:39",
+  "ts": "06:39:43",
   "__publish_meta": {
-    "published_at": "2026-05-06 06:34:39 EDT",
+    "published_at": "2026-05-06 06:39:43 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
