@@ -1,15 +1,15 @@
 {
-  "sol_price": 88.54142748654033,
+  "sol_price": 88.38203556418759,
   "bot_status": "RUNNING",
   "bot_last_seen": "12:42:44",
   "bot_cycles": 3,
   "bankroll": 1.1578,
-  "bankroll_usd": 102.51326474391638,
+  "bankroll_usd": 102.32872077621639,
   "budget": 0.16660310385,
   "pnl_today": -0.0006537999362568747,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 12.7,
+  "hour": 12.8,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -232,203 +232,169 @@
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 18608.28004,
+  "brain_next_sec": 18304.761273,
   "brain_next_str": "6:04 PM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
   "brain_last_run_str": "12:10 PM EST",
-  "research_running": true,
-  "research_last_run_str": "",
+  "research_running": false,
+  "research_last_run_str": "12:55 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 41768.28004,
-  "research_elapsed_sec": 816.71996,
+  "research_next_sec": 41464.761273,
+  "research_elapsed_sec": 0,
   "research_findings": {
-    "timestamp": "2026-05-07 00:46:20 EDT",
-    "run_id": "research-138",
-    "version": 1,
-    "headline": "NOVEL TIMING SIGNAL: copy_trade 10:00-13:00 ET shows WR=20% mean -14% on N=70 vs baseline WR=36% mean -5.8% (\u0394 -15.9pp WR / -8.2pp mean ROI) -- time-of-day is a feature dimension the bot has NEVER mined; one blackout window would have recovered ~9.8 SOL in backward simulation. PLUS: first true cross-link audit of gecko_breadth log validates Phase 2 promotion BUT the cleanest threshold is 0.70 NOT 0.55 (N=36 median +40.5% WR=69% above 0.70; N=10 median -17% WR=40% in 0.55-0.70 band). PLUS: BAGS suffix is the ONLY positive-EV launchpad in our trade log (N=13 mean +3.12% WR=46% vs pump N=847 -6.45% / 35.5%, vs bonk N=13 -7.51% / 23%). PLUS: GameStop/eBay M&A meme cluster active (KITTY +55% May 4) and AI-agent narrative beyond PIPPIN (AstroGrok, Artificial Inu) -- two FRESH narratives the bot doesn't tag. CHOP regime persists (SOL $85 h24 +0.5%, bot dormant 32+h since AVERAGEGUY -8.3%); brain has been correctly conservative.",
+    "timestamp": "2026-05-07 12:54:30 EDT",
+    "run_id": "research-139",
+    "version": 139,
+    "headline": "TWO-EDGE RUN (CHOP/altcoin-winter): (1) DEX-boosts 'top'-feed gated by liq>$50k is a LIVE independent signal \u2014 22% rate of >+50% h24 winners (CWU, GMAR, AMERICA, mask, douse) vs 75% rugs on 'latest' feed; near-zero overlap with existing watchlist = genuinely new edge. (2) Deployer-recidivism blacklist would have prevented ~45% of post-loss losing-SOL across 73 same-deployer follow-on trades. BONUS: research-111 'velocity_min<3 = -81% rugs' hypothesis is REFUTED on fresh n=30 \u2014 slow graduations (>30 min) are the actual trap (80% rug, -76.7% h24).",
     "new_hypothesis": {
-      "name": "intraday_alpha_session_filter",
-      "mechanism": "Copied alpha wallets exhibit different signal quality across the trading day. The 10:00-13:00 ET window is when US morning overlaps with EU close-of-day; wallets buying memes in this window are catching the second half of an Asia/EU pre-market pump that's already rolling over. The bot mirrors them late, takes the dump, and stops out. Stop-loss exit share in the 10-13 ET window is 47.3% (vs 38.9% rest-of-day) -- direct mechanistic confirmation. The MIRROR window 04:00-07:00 ET shows the same pattern (WR 22%, mean -17.5%) -- this is when Asia is winding down and US/EU haven't woken up; copied trades are chasing dead Asian tape. Symmetrically, late-evening US (23:00-02:00 ET, copy_trade WR=40.9%) is when fresh tape boots up for the new global day -- alpha is calling rather than chasing.",
-      "persistence": "Three durability layers. (1) BEHAVIORAL EDGE: this is a copy-trading-specific phenomenon (signal lag from session handoffs), not a public market signal -- competitors don't time-stratify their copying because they assume 'alpha is alpha.' (2) ZERO-COMPUTE: the rule uses wall-clock time, no API; cannot be arbitraged by faster execution. (3) STRUCTURAL: Asia-EU-US session handoffs are physical (workday hours) and persist as long as global markets keep their current trading rhythm. Edge persists until alpha wallets themselves stop trading 10-13 ET, which would simply collapse the problem (no fires to skip). The rule degrades gracefully.",
-      "entry_rules": "Phase 1 (HIGH-confidence cell): block ALL copy_trade entries when local Eastern hour in [10, 11, 12]. Phase 2 (after Phase 1 forward N>=20 outside blackout confirms baseline holds): widen blackout to also include hours [4, 5, 6] -- the symmetric Asia-wind-down cell. Implementation: ~3 LOC gate in copy_trade entry path, datetime.now().hour check before passing to security gate. NOT a regime filter -- applies in any regime. Strategies other than copy_trade have insufficient per-hour N (no other strategy reached N>=20 in any 3-hour window) so the rule applies only to copy_trade for now; revisit when sample grows.",
-      "data_required": "ZERO new data sources. Wall-clock time only (Eastern). No new APIs, no new files, no logger required. The rule is a pure local conditional in degen_bot.py's copy_trade entry path.",
-      "estimated_fires_per_day": 0,
+      "name": "boosts_top_feed_breakout",
+      "mechanism": "DexScreener 'top'-tier paid promotional boosts act as a liquidity-and-intent filter: projects that buy into the 'top' tier (vs the cheaper 'latest' feed) self-select for higher capital and broader marketing reach. Boost spend creates a short attention window (6-24h) where retail discovery flows into the token via the trending pages, producing a pump tail. Filtering the feed by liquidity > $50k removes the rug-tier majority and keeps the projects with genuine market depth.",
+      "persistence": "DexScreener 'top' boosts cost real $ and most degens never look at the boosts feed (they look at trending or pump.fun directly), so the audience reading boosts is small. Boosts are also a TimedAttentionEvent \u2014 only fresh boosts get traffic, so the window is naturally brief and not arbitraged by HFT. The bot already has the boosts poller live (sol_dex_boosts_log.json, run-266 onward) so infrastructure cost is zero.",
+      "entry_rules": "TRIGGER: new boost entry in sol_dex_boosts_log.json with source=='top' AND age < 90 min. GATE: DexScreener pulls liquidity.usd > $50k AND fdv < $50M AND priceChange.h6 > -10% (not already dumping) AND priceChange.h24 > -30% (not already rugged) AND existing security gate passes (RugCheck+GoPlus). SIZE: 2% of bankroll (sub-baseline 3% because new strategy). TAKE: trailing stop activated +10%, hard stop -8% (default risk).",
+      "data_required": "sol_dex_boosts_log.json (already collecting). DexScreener token endpoint (already used). No new infrastructure.",
+      "estimated_fires_per_day": 4,
       "priority": "HIGH",
-      "evidence": "Subagent A (time-of-day miner) processed N=993 closed trades from sol_trade_log.json (last 1000), 0.3% unmatched, 0% malformed timestamps. copy_trade 10-13 ET: N=70, WR=20.0%, median ROI -6.79%, mean ROI -13.98%. copy_trade all other hours: N=465, WR=35.9%, mean -5.76%. Delta WR -15.9pp. Three adjacent loss windows (04-07 ET WR=22% mean -17.5%; 05-08 ET WR=21.3% mean -18.6%; 10-13 ET WR=20% mean -14%) confirm this is not a single-cell outlier. Stop_loss exit share is 47.3% in 10-13 ET vs 38.9% baseline -- mechanism direct evidence (we are stopping out, not winning then giving back). Best windows: 23-02 ET WR=40.9%, 07-10 ET WR=39.7%, 08-11 ET WR=39.3%. Day-of-week signal weak (4.9pp spread; Tuesday best WR=39.1%, Thursday worst WR=31.4% but Thursday N=70 small). The pattern is internally robust across three independent adjacent samples. NOTE: only copy_trade reached N>=20 in any 3-hour window in last-1000 sample so other-strategy hour cells were unreliable; pattern may generalize but cannot be claimed across strategies yet."
+      "evidence": "Sample of 38 boosted Solana mints (>6h after boost) split source='top' n=18 vs source='latest' n=20. 'top' median h24=-12.1%, median liq $70.6k, rug rate 44%, 22% big-winners (>+50%): CWU +227% liq $904k, GMAR +174% liq $157k, AMERICA +112% liq $73k, FAAV (in top 5), GME-Sol. 'latest' median h24=-28.3%, median liq $7.4k, rug rate 75%. Watchlist overlap: only GME, MAGA, HANTA appeared in 500 boost entries \u2014 UNOS, USDPT, YEP, IMOUT, $AI absent \u2192 boost feed is independent of bot's existing channels."
     },
     "watchlist": [
       {
-        "mint": "DpgaPddKXaGFRfZd5R9UsdADonNwG7uCwfsJqj43WLhN",
-        "symbol": "UNOS",
-        "reason": "Gecko-breadth audit cross-link winner. Logged at age 2.4min, breadth_ratio_h1=0.69 (high cohort), h1_buys=111, vol@log $103k, currently h1 +37.8%, liq $163k, MC $94k, ALIVE. Concrete proof point that high-breadth signal predicts forward drift (caveat: 53min logger window is partly circular).",
-        "expires_at": "2026-05-07 12:00 EDT"
+        "mint": "D8sHpS6x...",
+        "symbol": "mask",
+        "reason": "DEX-boosts winner h24 +1466% (top-feed). Verify still healthy and not rugged in last 6h.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       },
       {
-        "mint": "H6qN9x6JfZekFtcDSEJBeNLjH4KcDkGJRP6sKYFGM92t",
-        "symbol": "USDPT",
-        "reason": "Gecko-breadth audit cross-link winner. Logged at age 1.9min, breadth_ratio_h1=0.67, h1_buys=57, h1 NOW +219%. Anchor evidence for breadth>=0.70 cohort.",
-        "expires_at": "2026-05-07 12:00 EDT"
+        "mint": "FEkNf6yL...",
+        "symbol": "douse",
+        "reason": "DEX-boosts winner h24 +454% (latest-feed). Test case for 'latest' that worked despite lower liq.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       },
       {
-        "mint": "FbigNotNDa8WB8v1tvGHoiAWSsMQA6BHj6Wr82q55cTt",
-        "symbol": "UNOS",
-        "reason": "Second UNOS pool (different pool address from primary). Breadth_ratio_h1=0.61, h1_buys=92, NOW h1 +271%. Multiple-pool signal worth flagging -- second pool may be wash or organic forking.",
-        "expires_at": "2026-05-07 12:00 EDT"
+        "mint": "CmVUoJUt...",
+        "symbol": "CWU",
+        "reason": "DEX-boosts top-feed winner h24 +227% liq $904k FDV $126M \u2014 proof that high-liq top boosts are tradable.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       },
       {
-        "mint": "2UZ2GtUJkbGQa1SLJ8zsQznCQvb2z4EJ2g9ZxCT3pump",
-        "symbol": "YEP",
-        "reason": "Fresh-tape May 7 highest-momentum on GeckoTerminal trending. MC $2.45M, h24 vol $10.3M, h6 +308%. Vol/MC = 4.2x = retail FOMO live. Already moved -- buy only on pullback to ~$1.5M MC. Ape-lineage meme.",
-        "expires_at": "2026-05-08 00:46 EDT"
+        "mint": "H3fneDN1...",
+        "symbol": "GMAR",
+        "reason": "DEX-boosts top-feed winner h24 +174% liq $157k FDV $15.4M.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       },
       {
-        "mint": "Gv2i54czMSYbkygCKhLRYc59JNVtfrofFwd9mPqZpump",
-        "symbol": "AI (Artificial Inu)",
-        "reason": "Cleanest size for entry in new AI-agent narrative beyond PIPPIN. Sub-$500k MC ($432k) + $1.81M h24 vol = pre-breakout. Claims 'first official X cashtag' (verify before trusting).",
-        "expires_at": "2026-05-08 00:46 EDT"
+        "mint": "AVA8YuCs...",
+        "symbol": "AMERICA",
+        "reason": "DEX-boosts top-feed winner h24 +112% liq $73k FDV $702k \u2014 sub-$1M FDV winner with deep enough liq.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       },
       {
-        "mint": "35Lod8esDj2c1QuzceUYMRhBwTJuEzoYD4fqttk1pump",
-        "symbol": "GME Solana",
-        "reason": "Stock-event meme cluster. GameStop $55B eBay bid May 4 lit up GME memes -- KITTY surged +55%. NOTE: research-137 had GME on a do-NOT-chase list after -46.9% h6 dump; this is a DIFFERENT catalyst window (M&A bid is a fresh leg). Re-rates on each Cohen/eBay headline.",
-        "expires_at": "2026-05-08 00:46 EDT"
+        "mint": "HANTA-mint-tbd",
+        "symbol": "HANTA",
+        "reason": "GeckoTerminal #1 by vol/liq ratio (35x). $9.7M vol, +67.9%, $268k liq. Asia-region cult-meme narrative. Already on prior watchlist \u2014 re-flag.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       },
       {
-        "mint": "GtXvZ85zmcYr5p6uccMiL4jfKv2Hs7RoH8f2Sg8Vkua6",
-        "symbol": "eBay Solana",
-        "reason": "M&A counterparty meme. Less crowded than GME, same catalyst cluster. Asymmetric play if more headlines drop.",
-        "expires_at": "2026-05-08 00:46 EDT"
+        "mint": "USDUC-mint-tbd",
+        "symbol": "USDUC",
+        "reason": "Nihilist 'Unstable Coin' meme +52.8% h24, $20.7M vol, $780k liq. Anti-stablecoin satire narrative leader.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       },
       {
-        "mint": "BAGS_LAUNCHPAD_RESEARCH_NOTE",
-        "symbol": "BAGS-FM",
-        "reason": "Bags.fm is the ONLY positive-EV launchpad in our trade log. N=13 sells, mean +3.12%, median 0.00%, WR 46.2%. vs pump N=847 -6.45%/35.5%, vs bonk N=13 -7.51%/23.1%. No public free graduation feed found this run. NEXT-RUN priority: investigate Bags.fm graduation criteria, fee structure, deployer commitment requirements -- understand WHY suffix is positive-EV.",
-        "expires_at": "2026-05-21 00:46 EDT"
-      },
-      {
-        "mint": "MEME_MACMINI_KUCOIN_ALPHA",
-        "symbol": "OPS-NOTE",
-        "reason": "KuCoin Alpha listings for MEME and MACMINI on Solana early May per fresh-tape. Tier-2 CEX listings reliably pump 30-80% within 6h pre-listing. Watch order book / DEX vol delta on both tickers next 48h.",
-        "expires_at": "2026-05-09 00:46 EDT"
+        "mint": "RYOTARO-mint-tbd",
+        "symbol": "RYOTARO",
+        "reason": "Only true >100% h24 gainer with sustained traction; Asia/cult-meme.",
+        "expires_at": "2026-05-08T12:54:30-04:00"
       }
     ],
     "proposals_for_survival_brain": [
       {
-        "type": "new_filter",
-        "target": "PRIMARY THIS RUN: copy_trade intraday blackout. Add a wall-clock gate to copy_trade entry path: skip new copy_trade buys when datetime.now().hour in [10, 11, 12] (US/Eastern). Phase 2 (after N>=20 forward copy_trade fires confirm baseline holds outside blackout): extend blackout to also include hours [4, 5, 6]. ~3 LOC delta. No new files, no new APIs.",
-        "justification": "Subagent A mined N=993 closed trades from sol_trade_log.json. copy_trade 10-13 ET: N=70 WR=20% mean -14% (vs baseline WR=35.9% mean -5.8%, delta -15.9pp WR / -8.2pp mean ROI). Stop_loss share in window is 47.3% vs 38.9% baseline, direct mechanism evidence. Three adjacent loss cells (04-07, 05-08, 10-13 ET) all show WR 20-22% confirming structural intraday cycle. Mechanism: copied alpha lags Asia-pre-EU-close session handoff; bot mirrors faded tape and stops out. Backward simulation: removing ~70 trades at avg -14% on 0.016 SOL sizing recovers ~9.8 SOL.",
-        "confidence": "HIGH",
-        "addresses_request": null,
-        "baseline": "Per direct trade-log mining (sol_strategy_stats.json does not stratify by hour-of-day): copy_trade all-hours last-1000 N=535 WR=33.8% mean -6.86%. copy_trade 10-13 ET sub-cell N=70 WR=20.0% mean -13.98% median ROI -6.79%. Stop-loss exit share in window 47.3% vs 38.9% rest-of-day.",
-        "expected_effect": "Phase 1 blackout removes ~13% of copy_trade flow (70/535 in last-1000 sample). Predicted lift: copy_trade WR remaining hours 35.9% -> stays ~36% (no degradation since we're cutting the worst cell). Predicted mean ROI improves from -6.86% to ~-5.8% on remaining flow. Predicted P/L recovery on backward sim: ~9.8 SOL over 70-day historical window if sizing is 0.016 SOL/trade. In current dormant-CHOP regime: zero immediate effect (no fires anyway); the rule activates when CHOP ends.",
-        "kill_criteria": "If forward N>=20 copy_trade entries OUTSIDE the 10-13 ET blackout show WR <30% (i.e., the savings don't materialize and copy_trade is broken everywhere, not just in the blackout window), revert blackout and investigate full copy_trade kill. If forward N>=20 copy_trade entries DURING the blackout window were artificially blocked but post-hoc DexScreener forward-return check shows blocked-cohort would have had WR >=35%, revert blackout. Soft trip: if 30 calendar days pass with zero copy_trade fires (Phase 1 collateral damage too high), relax to single-hour blackout 11:00-12:00 ET only.",
-        "min_sample_size": "N>=20 forward copy_trade fires (in non-blackout hours) for in-window evaluation. N>=20 simulated blocked entries (forward DexScreener pull at hour+6) for blackout-cohort evaluation.",
-        "regime_scope": "ANY -- intraday session-handoff cycle is structural to global market hours, not regime-dependent. CHOP is the ambient regime; rule applies the moment CHOP ends and copy_trade fires resume.",
-        "rollback_plan": "Comment out the 3-line gate; copy_trade resumes 24/7 firing.",
-        "risk_if_wrong": "Worst case: alpha actually fires on a catalyst news day at 11 ET (e.g., FOMC release). We miss those rare wins. Acceptable given baseline -14% mean ROI in window. Misses on average ~1 fire/day (in active regime); if that 1 fire would have won at typical R/R 0.79, expected miss is +0.001-0.002 SOL/day -- much smaller than baseline -0.014 SOL bleed in window."
-      },
-      {
-        "type": "new_filter",
-        "target": "REFINEMENT of research-137 PROPOSAL 1: change gecko_breadth Phase 2 promotion threshold from breadth_ratio_h1 >= 0.55 to breadth_ratio_h1 >= 0.70. The cohort separation is real but the 0.55-0.70 band is a noisy mid-zone (N=10 median -17%, WR=40%) that contaminates the signal. The 0.70+ cell is clean (N=36 median +40.5%, WR=69%).",
-        "justification": "Subagent B did first cross-link audit of sol_gecko_breadth_log.json (500 entries, 53min span, 68 unique mints with h1_buys>=40). Cohort separation IS real: high (>=0.55) median +32.8% WR=63%; low (<0.40) median -79% WR=6%; ~110pp gap. BUT finer sweep shows 0.45-0.55 band has only N=2 (one massive outlier giving median +1332% which is unreliable), and 0.55-0.70 band has N=10 median -17% WR=40% -- not actionable. The clean cell is breadth_ratio_h1 >= 0.70 (N=36, median +40.5%, WR=69%, rug-rate 81% but the 19% wins are massive multiples, barbell distribution). Sample is partly circular (logger has only run 53min so 'forward' h1 == 'logged' h1) -- need 24h+ logger uptime before live promotion, but the threshold refinement holds regardless of forward window.",
-        "confidence": "HIGH",
-        "addresses_request": null,
-        "baseline": "Per sol_gecko_breadth_log.json cross-link audit (research-138 Subagent B): h1_buys>=40 cohort N=68, breadth>=0.55 cell median h1 +32.8% WR=63%, breadth 0.55-0.70 cell median -17% WR=40%, breadth>=0.70 cell median +40.5% WR=69%. Per sol_strategy_stats.json all_time: gecko_breadth_snipe strategy not yet shipped (Phase 1 LOG-ONLY active).",
-        "expected_effect": "Threshold refinement only -- no new strategy ships. When Phase 2 cutover happens (after research-137 N>=30 condition), expected fires/day drops ~30% (high cohort 36/68 -> ~25/68 above 0.70). Predicted WR uplift on filtered cohort: 63% -> 69% (+6pp). Predicted mean ROI uplift: +32.8% -> +40.5%. Cleaner barbell -- stop-loss won't help (76-81% rug rate even in best cell), trailing-stop captures the multiples.",
-        "kill_criteria": "Inherits research-137 Proposal 1 kill criteria. If cohort >=0.70 forward N>=20 doesn't show median ROI >= 2x cohort 0.40-0.55, revert to threshold 0.55 OR abandon Phase 2 entirely. If logger 24h-uptime audit shows the >=0.70 cell collapses (median <0% on truly forward data), abandon Phase 2.",
-        "min_sample_size": "N>=30 closed bot trades with breadth tags (existing research-137 gate). For the threshold-refinement evaluation specifically: N>=15 forward fires with breadth>=0.70 vs N>=15 with 0.55-0.70 to confirm separation persists.",
-        "regime_scope": "ANY -- breadth quality is structural distribution measure.",
-        "rollback_plan": "Revert threshold from 0.70 to 0.55 (one-number change). Revert Phase 2 entirely if needed: comment out promotion gate.",
-        "risk_if_wrong": "Tighter filter -> ~30% fewer fires/day. Risk if 0.70 too tight: barbell tail concentrates in 0.55-0.70 band somehow on truly forward data -> we miss winners. Misses ~1-2 candidates/day. Acceptable given Phase 1 still logs everything."
-      },
-      {
         "type": "data_source_add",
-        "target": "MEDIUM PROPOSAL: launchpad-suffix logger augmentation. On every bot buy, capture a `launchpad_suffix` tag (pump|bonk|bags|moon|other-suffix) and a `launchpad_inferred` field (pump.fun|letsbonk|bags.fm|moonshot|raydium-direct|other) derived from the suffix and the deployer-program address. ~15 LOC delta. Pure additive enrichment, no buy-logic changes. Goal: grow N on bags-suffix to test whether the +3.12% mean / 46% WR (current N=13) holds at larger sample.",
-        "justification": "Subagent D launchpad analysis on sol_trade_log.json all-time closed sells: pump (N=847) mean -6.45% WR=35.5%, bags (N=13) mean +3.12% WR=46.2%, bonk (N=13) mean -7.51% WR=23.1%, other-suffix (N=120) mean -3.93% WR=36.7%. BAGS is the ONLY positive-EV launchpad. N=13 is small but the directional separation (+3.12% vs -6.45% = ~10pp delta) is large. Mechanism hypothesis: Bags.fm requires higher creator commitment/stake or has different graduation criteria, selecting for committed projects -- unverified, needs research. No public free Bags.fm feed found this run, so we can't actively monitor it; but we CAN tag retrospectively from trade-log mints we already buy through other paths (DexScreener trending, boost feed). Pump market share has eroded from 98% to ~57% so launchpad diversity matters.",
+        "target": "boosts_top_feed_breakout (NEW STRATEGY \u2014 paper-trial first)",
+        "justification": "Independent from existing strategies; live sample n=18 'top' boosts shows 22% big-winner rate (>+50% h24) at 44% rug rate vs 75% on 'latest'. Liquidity > $50k filter eliminates the worst sub-tier. Boosts poller already running, zero infra cost.",
         "confidence": "MEDIUM",
         "addresses_request": null,
-        "baseline": "Per sol_trade_log.json suffix breakdown: pump 85.3% of buys, bonk 1.3%, bags 1.3%, other-suffix 12.1%. No `launchpad_suffix` field currently in trade_log entries. Per sol_strategy_stats.json: no launchpad-stratified stats exist anywhere in the pipeline.",
-        "expected_effect": "Phase 1 (this proposal): pure logger, zero trade effect. Goal: 30 calendar days to grow bags-suffix N from 13 to ~25-35 (assuming bags share stays ~1-3% of buys). Phase 2 (separate proposal, NOT now): if bags-suffix N>=30 holds mean ROI >0% AND WR >=40%, propose a `bags_suffix_priority` rule that gives bags-suffix mints +25% sizing or relaxes one filter axis.",
-        "kill_criteria": "Phase 1 has no kill criteria (logger only). Phase 2 future evaluation: if bags-suffix N>=30 falls to mean ROI <0% OR WR <35%, abandon as a signal; if pump-suffix similarly tightens to mean ROI >=0% (overall bot health improves), the relative edge collapses and the signal is moot.",
-        "min_sample_size": "N>=30 bags-suffix closed trades for Phase 2 evaluation.",
-        "regime_scope": "ANY -- launchpad-quality signal is structural.",
-        "rollback_plan": "Remove the 2-3 lines that write launchpad_suffix to trade_log entries; existing entries keep the tag harmlessly.",
-        "risk_if_wrong": "Zero risk in Phase 1 (logger only). Phase 2 risk if shipped: ~1-3 bags-suffix buys/day at 1.25x sizing. If signal dies, ~+0.0001 SOL/day extra exposure -- tiny."
+        "baseline": "No current 'boosts'-driven strategy exists. Closest analogue: voldiv_v2 (volume-divergence, all_time N=50 WR=42% RR=0.62 pnl=-0.0589 SOL) and fresh_profile (all_time N=15 WR=60% RR=1.17 pnl=+0.0029 SOL, currently inactive). Direct analog in research sample: 'top'-feed boost mints n=18 median h24=-12.1%, big-winner rate 22%, rug rate 44%.",
+        "expected_effect": "Paper-trial WR 30-40%, RR 1.5+ (target+trailing tail dominates median return), 4 fires/day, +0.0010 SOL/day net if 22% big-winner rate holds and stops cap downside. Worst-case net -0.0008 SOL/day.",
+        "kill_criteria": "Rolling 20-trade WR < 30% OR rolling 20-trade RR < 0.80 OR rolling 20-trade pnl_sol < -0.005 SOL \u2192 kill strategy. Big-winner rate (h24 > +50% in any held trade) < 15% by N=20 \u2192 kill.",
+        "min_sample_size": "N=20 paper-trade fires before any size increase. Real-money trial only after paper N=20 with WR>=35%.",
+        "regime_scope": "ANY (boost-driven, not regime-correlated). Initial trial CHOP-only (current regime) to constrain risk.",
+        "rollback_plan": "Disable boosts_top_feed_breakout strategy in degen_bot.py STRATEGY_REGISTRY; boosts poller continues for future research.",
+        "risk_if_wrong": "Adds ~4 stops/day at -8% on 2% positions = -0.0064 SOL/day for \u22645 days before kill_criteria trip = ~-0.032 SOL absolute downside (~3% of bankroll). Capped because 2% size and tight rolling kill. Far less than copy_trade has been losing."
       },
       {
-        "type": "data_source_add",
-        "target": "LOW-PRIORITY PROPOSAL: enable bonk-suffix migration filter on existing PumpPortal subscribeMigration websocket -- the bot already subscribes to that endpoint for pump.fun grads, but bonk-launchpad migration events come through the same stream. Route bonk events to a SHADOW (paper-trade) bucket for 30-50 sample trades only, NOT live capital. Tag as source: letsbonk_migration. ~10 LOC.",
-        "justification": "Subagent D launchpad ecosystem mapping: LetsBonk (Bonk.fun) is #2 Solana launchpad with 50-285 graduations/day, ~9.5k cumulative graduates. Free public feed available via SAME PumpPortal websocket the bot already uses (`subscribeMigration` method). Trade-log evidence is mixed: bonk-suffix N=13 mean -7.51% WR=23% is WORSE than pump baseline. BUT the N=13 is small AND those bonk mints came in via DexScreener/boost paths, NOT via direct migration capture (which is a different event window -- migration gives <60s lead vs DexScreener which lags 5-15min). Need to test the migration-event path separately in shadow mode before any live capital. Pump.fun share has dropped to ~57% so a second feed hedges concentration risk.",
-        "confidence": "LOW",
+        "type": "new_filter",
+        "target": "GLOBAL \u2014 deployer-recidivism blacklist (cross-strategy)",
+        "justification": "Deployer-cluster mining of 80 stratified mints found 51% of post-first-loss follow-on trades on the same deployer were also losses, AND avoidable-loss magnitude was -0.4115 SOL = 45% of all real-deployer losses in the resolved sample. Brain has NEVER mined deployer-wallet patterns. The bot already has token-level cooldown after 2 stop-outs/24h \u2014 extend to deployer-wallet cooldown. Supplements existing token-level rules without overriding them.",
+        "confidence": "HIGH",
         "addresses_request": null,
-        "baseline": "Per sol_trade_log.json: bonk-suffix N=13 mean -7.51% WR=23.1% (worse than pump). PumpPortal subscribeMigration is FREE; the migration-event path for bonk is currently unfiltered/unused (bot only routes pump-suffix events). No new connection cost (same WS).",
-        "expected_effect": "Phase 1 (this proposal): zero live trade effect; shadow logging only. Generates 30-50 sample trades over ~1-2 weeks for bonk-migration-path forward returns. Phase 2 (separate future proposal): only if shadow ROI >= pump baseline (-6.45%) AND WR >= 30% over N>=30 -- THEN promote to live with conservative 1.5% sizing.",
-        "kill_criteria": "If shadow N>=30 bonk-migration trades show median ROI <-15% OR rug rate >70%, abandon. If migration-event payload is identical to pump and we can't differentiate platform without an extra Solana-RPC lookup that's expensive, abandon.",
-        "min_sample_size": "N>=30 shadow bonk-migration trades.",
-        "regime_scope": "ANY.",
-        "rollback_plan": "Disable bonk-event handler in subscribeMigration callback (~5 LOC).",
-        "risk_if_wrong": "Phase 1 zero risk (shadow only). Phase 2 risk if mistakenly shipped to live: 1-2 buys/day at 1.5% sizing on a -7.5% mean signal = ~-0.0008 SOL/day for ~3-5 days before kill_criteria trip. Recoverable."
+        "baseline": "all_time N=997 WR=35.5% RR=0.79 stop_loss_rate=50.6% pnl=-1.1665 SOL. Existing token-level rule: 24h ban after 2 stop-outs on same mint. No deployer-level rule.",
+        "expected_effect": "Reduce stop-loss count by ~10-15% (back-of-envelope: 51% recidivism \u00d7 73 trades = 37 losses avoidable; if extrapolated to full log ~280 lifetime same-deployer losses, blacklist could prevent ~10% of total stops). Predicted: stop_loss_rate 50.6% \u2192 46-48%, all_time WR 35.5% \u2192 ~37-38%, all_time pnl improves by ~+0.10 SOL over the next 200 trades.",
+        "kill_criteria": "Rolling 50-trade post-deploy: false-positive rate (deployer-blacklisted mint that would have won) > 30% \u2192 loosen filter or kill. Net SOL change after N=50 < +0.005 SOL \u2192 kill. Implementation bug indicator: blacklist file blows past 200 wallets in < 7d \u2192 review.",
+        "min_sample_size": "N=50 post-implementation trades to evaluate, regime-stratified if possible. Soft check at N=20.",
+        "regime_scope": "ANY",
+        "rollback_plan": "Remove deployer-blacklist gate in _process_signal of degen_bot.py; clear sol_deployer_blacklist.json. Token-level cooldown retained.",
+        "risk_if_wrong": "False-positive blacklist denies entries that would have won \u2014 at most 30-40% of new-deployer flow gated, but only if first trade was a loss. Net cost \u2264 ~3 missed wins/week \u00d7 +6% = -0.018 SOL/week opportunity cost, which is < the ~0.10 SOL stops avoided. Asymmetric upside.",
+        "implementation_hint": "Resolve deployer wallet from token's first transaction signer (Alchemy getSignaturesForAddress oldest tx \u2192 signer[0]; the subagent already wrote mint_creators.json). Maintain sol_deployer_blacklist.json with {wallet: first_loss_timestamp}. Block any new buy if mint's deployer is in blacklist within last 7 days. Filter out pump.fun infrastructure addresses (CoPyPPWd..., gasBidSW..., rEFuNDR...) \u2014 these are program-owned, NOT human deployers."
+      },
+      {
+        "type": "new_filter",
+        "target": "PUMP_FUN_GRAD path \u2014 invert velocity_min filter",
+        "justification": "Research-111 hypothesis 'velocity_min<3 = -81% returns' is REFUTED by fresh n=30 stratified sample. Real signal is INVERTED: velocity_min > 30 min has 80% rug rate / -76.7% mean h24, while velocity_min < 3 has 50% rug / -50.9% mean h24 (still -EV but less bad). A defensive filter blacklisting graduations with velocity_min > 30 min is a small but clean risk reducer once any pump.fun grad strategy goes live.",
+        "confidence": "MEDIUM",
+        "addresses_request": null,
+        "baseline": "No live pump.fun graduation entry strategy. velocity_min field is enriched and live in sol_pumpfun_graduation_log.json (142/142 backlog drained per run-266 status). Cross-link to forward returns is NEW data point this run.",
+        "expected_effect": "If/when a graduation strategy is launched, gating to velocity_min < 30 min would remove 33% of candidates (10/30 in sample) at the cost of 33% of all rugs (8 of 23 rugs in sample were vmin>30). That's a clean 1:1 \u2014 but vmin>30 also contains the worst tail (-99%/-97% rugs), so removing them improves variance more than it improves median.",
+        "kill_criteria": "If a graduation strategy gets implemented and the rolling 20-trade rug rate of vmin<30 candidates is NOT lower than vmin>30 in live data (allowing for n=30 noise) \u2192 drop the filter.",
+        "min_sample_size": "N=60 graduation forward returns before promoting from defensive filter to entry signal.",
+        "regime_scope": "ANY (graduation dynamics are not regime-specific in current data).",
+        "rollback_plan": "Remove the vmin filter from graduation pipeline; revert to research-111 spec OR remove the strategy entirely if it had no entry signal beyond this filter.",
+        "risk_if_wrong": "DEFENSIVE-ONLY filter \u2014 if wrong, costs ~33% of candidates we would've held off on, but those candidates were 80% rugs anyway. Negligible opportunity-cost downside. Save for next-time-grad-strategy-is-active; do NOT change anything live now."
       }
     ],
     "request_responses": [],
     "subagents_dispatched": [
       {
-        "role": "Time-of-day pattern miner (N=993 closed trades from sol_trade_log.json, hour-cell pivot by strategy)",
-        "finding": "copy_trade 10-13 ET cell N=70 WR=20% mean -14% vs baseline N=465 WR=35.9% mean -5.8% (delta -15.9pp WR / -8.2pp mean ROI). Three adjacent loss windows (04-07, 05-08, 10-13 ET) all 20-22% WR. Stop_loss exit share 47.3% in window vs 38.9% baseline = mechanism evidence. Best windows: 23-02 ET WR=40.9%, 07-10 WR=39.7%, 08-11 WR=39.3%. DOW signal weak. Only copy_trade has N>=20 in any 3h cell so other-strategy hour patterns unverifiable. Concrete proposal: blackout copy_trade 10:00-13:00 ET."
+        "role": "pump.fun grad forward-return",
+        "finding": "n=30 stratified sample REFUTES research-111 'vmin<3=-81%' hypothesis \u2014 slow graduations (vmin>30) are actually the trap (80% rug rate, -76.7% mean h24). Inverted filter recommendation."
       },
       {
-        "role": "Gecko-breadth log cross-link miner (500 entries, 53min span, 68 unique mints with h1_buys>=40)",
-        "finding": "Cohort separation real and large (110pp gap between high-breadth +32.8% / WR=63% and low-breadth -79% / WR=6%). Cleanest threshold is breadth>=0.70 (N=36 median +40.5% WR=69%), NOT >=0.55 (the 0.55-0.70 band is N=10 median -17% WR=40% -- noisy mid-zone). 76-81% rug rate even in best cohort = barbell distribution; trailing-stop captures multiples, stop-loss won't save you. Sample partly circular (53min log = forward h1 == logged h1) -- need 24h+ logger uptime before live promotion. Watchlist 3 mints currently mooning (UNOS +37.8%, USDPT +219%, second-UNOS +271%)."
+        "role": "DEX boosts predictiveness",
+        "finding": "n=38 boosted mints split top/latest. 'top' feed with liq>$50k has 22% big-winner rate (>+50% h24); 'latest' is 75% rug. CWU +227%, GMAR +174%, AMERICA +112% are the proof-of-edge cases. Watchlist overlap with bot's existing channels is near-zero (3/8 known watchlist tickers found across 500 boost entries)."
       },
       {
-        "role": "May-7 fresh-tape narrative scout (DexScreener trending + boost-feed + GeckoTerminal trending + WebSearch on May 2026 Solana memes)",
-        "finding": "Three fresh narratives: (1) Stock-event memes: GameStop $55B eBay bid May 4 lit GME/KITTY/eBay clusters (KITTY +55%); (2) AI-agent memes beyond PIPPIN: AstroGrok, Artificial Inu; (3) PolitiFi sub-rotation off TRUMP into Cohen/activist-investor tickers. 5 actionable mints in $200k-$5M MC sweet spot: YEP, HANTA, AI/Artificial Inu, GME-Solana, eBay-Solana. Catalyst next 24-72h: KuCoin Alpha listings for MEME and MACMINI. Anti-list: dog-themed clones, generic PEPE-on-Solana copycats."
+        "role": "narrative regime scout",
+        "finding": "May 7 2026 SOL CHOP/altcoin-winter (BTC.D 58.4%) \u2014 pump.fun $2B/day ATH despite suppressed broad alts. Live narratives: nihilist memes (USDUC, RETARDCOIN), animal mascot revival (FWOG, BERT, PENGU), Asian cult-meme (HANTA, RYOTARO). Selective-loosen regime, fresh_profile + gecko_breadth_phase2 are right tools, copy_trade + bear_strength wrong-regime."
       },
       {
-        "role": "Cross-launchpad ecosystem scout (web research on Bonk.fun/LetsBonk/Believe/Moonshot/Bags.fm + suffix breakdown of sol_trade_log.json)",
-        "finding": "PRIMARY: BAGS suffix is the ONLY positive-EV launchpad in our trade log (N=13 mean +3.12% WR=46.2% vs pump N=847 -6.45%/35.5%, vs bonk N=13 -7.51%/23%, vs other N=120 -3.93%/36.7%). BAGS has no public free graduation feed. SECONDARY: LetsBonk graduations come through SAME PumpPortal websocket via subscribeMigration -- effectively free to enable but our own bonk-suffix data is bad (N=13). Pump.fun share has eroded from 98% to ~57% (diversification matters). Ranked: pump.fun > letsbonk > believe (cooled) > moonshot. Recommend: shadow-mode test bonk-migration path; investigate Bags.fm mechanics next run."
+        "role": "deployer cluster mining",
+        "finding": "Of 80 stratified mints with deployer wallet resolved, 51% of post-first-loss recidivist trades were also losses, with -0.4115 SOL avoidable = 45% of total real-deployer losses. Identified false 'lap-shark' (CoPyPPWd... is pump.fun migration program \u2014 program-owned, must be filtered). Two real lap-sharks (AXmnRBrN.. -0.022 SOL across 3 mints, JBVpuKD4.. -0.055 SOL across 3 mints / 11% WR / 9 trades). HIGH-confidence tradable deployer-blacklist filter."
       }
     ],
     "data_sources_used": [
-      "sol_brain_directives.json (read-only, requests_for_research empty, current_priority gecko Phase 1 validated)",
-      "sol_brain_status.json (running:false, run-268 finished 00:18 EDT, doc-only run, bot dormant 32+h)",
-      "sol_research_findings.json (research-137 carry-forward: gecko Phase 1 shipped & bimodal-validated by brain run-268)",
-      "sol_research_status.json (claimed lock at run start 00:40:08 EDT)",
-      "sol_research_history.json (15 entries pre-run; appending research-138)",
-      "sol_strategy_stats.json (all-strategies 7d=N=0 -- bot dormant; baseline drawn from raw trade log)",
-      "sol_heartbeat.json (594s stale at run start -- ops note for survival brain, NOT my headline)",
-      "sol_trade_log.json (~993 last-1000 closed trades mined for hour-of-day + suffix patterns)",
-      "sol_gecko_breadth_log.json (500 entries / 53min span / 68 unique mints with h1_buys>=40 cross-linked to current DexScreener)",
-      "sol_dex_boosts_log.json (alive, 84s old)",
-      "sol_pumpfun_graduation_log.json (alive, 74s old)",
-      "WebSearch (subagents C+D: solana memecoin May 2026 narratives, PIPPIN AI memecoin, GameStop eBay merger meme cluster, KuCoin Alpha listings May 2026, LetsBonk API, pump.fun competitor launchpad 2026, bonk.fun graduation, moonshot solana memecoin, believe.app)",
-      "WebFetch (subagents B+C+D: ~70+ DexScreener /latest/dex/tokens calls for forward-return cross-link, GeckoTerminal trending_pools verification, dexscreener.com/solana trending pages, pumpportal.fun bonk-fun-data-api, bitquery.io letsbonk-api, theblock.co pump-fun-vs-letsbonk market share)",
-      "DexScreener API (Subagent B: ~68 forward-return fetches; Subagent C: 5 watchlist verifications)",
-      "GeckoTerminal API (Subagent C: trending_pools for fresh tape)"
+      "dexscreener_token_api",
+      "twitter_websearch",
+      "geckoterminal",
+      "pump.fun_graduation_log_local",
+      "dex_boosts_log_local",
+      "trade_log_local",
+      "alchemy_solana_rpc"
     ],
-    "next_run_focus": "(1) PRIORITY-1: verify intraday_alpha_session_filter (copy_trade 10-13 ET blackout) ship status -- grep degen_bot.py for 'blackout_hours' or 'session_filter'. If shipped, audit forward N>=20 in non-blackout hours to confirm baseline holds. (2) PRIORITY-1: verify gecko_breadth threshold is 0.70 (not 0.55) in survival brain's Phase 2 promotion plan -- check sol_brain_directives.json pending_hypotheses. (3) PRIORITY-2: investigate Bags.fm launchpad mechanics -- WebFetch bags.fm API docs, check if there's a free graduation feed, characterize creator-stake / fee structure / curation criteria; understand WHY bags-suffix is the only positive-EV launchpad in our log. (4) PRIORITY-2: re-mine sol_gecko_breadth_log.json once logger has run >=24h continuous. Truly forward window (log at age 15-60min, measure h6 6+ hours later) is the real test of breadth>=0.70 cell. (5) PRIORITY-2: identify canonical Solana PIPPIN mint (still pending from research-137); verify Artificial Inu mint and AstroGrok mint via DexScreener. (6) PRIORITY-3: test whether the time-of-day pattern generalizes beyond copy_trade -- as other strategies grow N, re-run hour-cell pivot. (7) PRIORITY-3: investigate launchpad-suffix logger ship status if survival brain takes proposal 3. (8) PRIORITY-3: heartbeat staleness recurring (594s at this run start, was 885s last run); maintenance note for survival brain.",
+    "next_run_focus": "(1) If brain ships boosts_top_feed_breakout, audit live performance after N>=10 paper trades \u2014 does the liq>$50k gate hold up? (2) Run a FULL trade-log deployer resolve (~592 mints) to confirm the 45% avoidable-loss figure on the full sample, not just the 80-mint stratified subset. (3) Investigate the regime-flip thesis: when BTC.D crosses below 56%, do altcoin strategies recover? Build a BTC.D-conditioned strategy on/off table from the trade log. (4) Re-mine pump.fun grad log at N>=60 forward returns to confirm vmin>30 inversion. (5) Watch for narrative drift \u2014 is the nihilist-meme wave (USDUC, RETARDCOIN) still active or rolled to next theme?",
     "meta": {
-      "elapsed_min": 8,
+      "elapsed_min": 14,
       "subagent_count": 4,
-      "subagent_failed": 0,
-      "web_calls_estimate": 18,
-      "new_tokens_scouted": 8,
-      "narratives_scouted": 3,
-      "lock_override": false,
-      "brain_lock_status": "HEALTHY: sol_brain_status.json running:false, run-268 finished 00:18 EDT, no overlap.",
-      "bot_heartbeat_age_sec_at_dispatch": 594,
-      "key_finding_1": "INTRADAY SESSION EDGE (NOVEL TIMING SIGNAL): copy_trade 10-13 ET cell N=70 WR=20% mean -14% vs baseline 35.9%/-5.8% (delta -15.9pp WR). Stop_loss share 47.3% in window vs 38.9% baseline = mechanism. ~9.8 SOL recoverable on backward sim. Bot has NO time-of-day awareness -- this is structurally novel.",
-      "key_finding_2": "GECKO BREADTH THRESHOLD REFINEMENT: clean cell is breadth_ratio_h1>=0.70 (N=36 median +40.5% WR=69%), NOT 0.55 (0.55-0.70 band N=10 median -17% WR=40% -- noisy mid). Cohort separation 110pp on N=63 in 53min audit. Need 24h+ logger uptime for true forward-window test before live promotion.",
-      "key_finding_3": "BAGS LAUNCHPAD POSITIVE-EV: bags-suffix N=13 mean +3.12% WR=46.2% is ONLY positive-EV launchpad (vs pump -6.45%/35.5%, bonk -7.51%/23%). N small but directional separation 10pp+ is large. No public free Bags.fm feed found -- next-run priority to investigate mechanics.",
-      "key_finding_4": "FRESH NARRATIVE CLUSTER (May 7 2026): GameStop/eBay M&A meme cluster (KITTY +55% May 4), AI-agent memes beyond PIPPIN (AstroGrok, Artificial Inu), PolitiFi sub-rotation off TRUMP. 5 mid-cap mints in $200k-$5M sweet spot. KuCoin Alpha listings MEME+MACMINI as 24-72h catalyst.",
-      "key_finding_5": "GECKO BREADTH WATCHLIST WINNERS: UNOS (DpgaPddKXaG... +37.8% h1), USDPT (H6qN9x6Jf... +219% h1), second-UNOS pool (FbigNotND... +271% h1). All logged at age <3min with breadth_ratio>=0.61 -- anchor evidence the breadth signal works AT FIRST OBSERVATION (caveat: 53min logger window means partly circular; need 24h+ for true forward test)."
+      "web_calls": 12,
+      "new_tokens_scouted": 38,
+      "regime_at_run": "CHOP / ALTCOIN_WINTER (BTC.D 58.4%, SOL $88.16 h24 -0.59%)",
+      "bot_state_at_run": "DORMANT ~9h since AVERAGEGUY -8.3% stop. PID 4720 cycle 1. 0 open positions. Bankroll 1.1578 SOL. 7d N=8 WR=37.5% pnl=-0.0032 SOL stop_rate=62.5%."
     }
   },
   "research_status": {
-    "running": true,
-    "started_at": "2026-05-07 12:40:15 EDT",
-    "run_id": "research-139"
+    "running": false,
+    "last_run_id": "research-139",
+    "finished_at": "2026-05-07 12:55:10 EDT",
+    "note": "PRIMARY: boosts_top_feed_breakout NEW STRATEGY (HIGH, paper-trial). 'top'-feed boosts with liq>$50k = 22% big-winner rate (CWU +227%, GMAR +174%, AMERICA +112%) vs 75% rugs on 'latest'. Near-zero watchlist overlap = independent edge. Boosts poller already live (run-266+). HIGH: deployer-recidivism blacklist (cross-strategy filter) \u2014 51% recidivism rate on 73 post-loss same-deployer trades = -0.4115 SOL avoidable (45% of real-deployer losses). Tighten existing 24h/2-stop token-cooldown to 7d/1-stop deployer-cooldown. MEDIUM: research-111 vmin<3 hypothesis REFUTED on fresh n=30; INVERTED \u2014 vmin>30 is the trap (80% rug). Defensive-only filter for future grad strategy. WATCHLIST: HANTA (vol/liq 35x), USDUC (nihilist meme +52.8%), RYOTARO (+103.5%), CWU/GMAR/AMERICA (boost-feed proof-of-edge). REGIME: CHOP/ALTCOIN_WINTER BTC.D 58.4% \u2014 pump.fun $2B/day ATH; selective-loosen, not full-loosen. fresh_profile + gecko_breadth right tools, copy_trade + bear_strength wrong-regime. Bot dormant ~9h. 4 subagents 0 failures, elapsed 14min."
   },
   "maintenance_status": {
     "timestamp": "2026-05-07 12:06:00 EDT",
@@ -440,7 +406,7 @@
     "dashboard_pid": 14184,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 10.08,
+    "hours_since_last_trade": 10.16,
     "dormancy_alert": false,
     "filter_lockout_diagnosis": "Not in lockout. Last buy was 'soothsayer' 9.3h ago. Bot is mid-cycle #7 (started 11:54:06, scanning 88 wallets) with live activity through 12:05:05 \u2014 SIGNAL/BUY_SKIP/SCAN/SECURITY_BLOCK events all flowing. Skip mix is healthy filter behavior in ALTCOIN_WINTER regime: midpump h1<15% threshold, sell-conflict (tracked wallet exits), m5 already-ran exit-liq guards, downtrend rejections, security-API outage block. Not stale-config dormancy.",
     "actions_taken": [
@@ -472,7 +438,7 @@
     "next_run_focus": "Heartbeat 642s old this run vs 339s last run \u2014 cycle #7 scanning 88 wallets is taking ~11 min end-to-end. This is the third consecutive run (151, 153, 154) with stale heartbeat + live events; pattern is consistent with long cycles in ALTCOIN_WINTER, NOT a stalled bot. If next run shows >900s heartbeat age WITH no fresh events in last 3 min, then restart. Also re-check efficiency lab triggers \u2014 lab will eligible to fire again in ~11h once 24h throttle clears.",
     "log_truncations": [],
     "elapsed_min": 1,
-    "file_age_min": 47.1,
+    "file_age_min": 52.2,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1921,7 +1887,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 3,
-    "age_min": 11.1,
+    "age_min": 16.2,
     "stale": false,
     "available": true
   },
@@ -1970,27 +1936,27 @@
     "requests_archived": 0,
     "elapsed_min": 5,
     "next_run_focus": "Lesson trim is due: condensed_lessons.entries has 44 (cap 40). Brain ships 1 logger per run accumulating new entries each time. Next lab run should trim oldest single-evidence shipped-note entries by ~5 to historical_lessons. Hypotheses at 50/50 cap, watch for status-stale carry-forward dead entries.",
-    "age_hours": 13.7,
+    "age_hours": 13.8,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 368.28004,
+  "maint_next_sec": 64.761273,
   "maint_next_str": "1:00 PM EST",
   "maint_last_run_str": "",
   "maint_stale": true,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "13.7h ago",
+  "memk_last_run_str": "13.8h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "intraday_alpha_session_filter",
-      "run_id": "research-138",
-      "status": "not_acknowledged",
-      "status_label": "\u2753 Not acknowledged",
-      "status_color": "#ff9933",
+      "hypothesis_name": "boosts_top_feed_breakout",
+      "run_id": "research-139",
+      "status": "pending_brain_run",
+      "status_label": "\u23f3 Pending next brain run",
+      "status_color": "#7cd3ff",
       "evidence_text": "",
       "evidence_source": ""
     },
@@ -2002,286 +1968,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-07T12:33:10.178779",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 8CZiGbHd: tracked wallet sold this token 452s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:36:03.193257",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold 49nruXUr \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:36:05.676784",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip TON: downtrend h1=-56.5% h24=-56.5%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:10.617583",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip wfh: m5=65.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:11.128599",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip wfh: m5=65.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:11.614816",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip wfh: m5=65.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:11.630912",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ECa6q9uC sold 7yhAgk2n \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:11.630912",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ECa6q9uC sold G82xfjUy \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:18.786470",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip PSYOP: downtrend h1=-65.7% h24=-65.7%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:21.105643",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Lockdown: deep24h h24=-51.6% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:42.083502",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Hard gate 5aLY85py: 30 trades at 33% WR (10/30), PnL=-0.0410 SOL \u2014 no probation",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:56.564110",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip GMAR: h6=45.3% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:58.802113",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip pistons: h1=11.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:59.263422",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip pistons: h1=11.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:37:59.723368",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip pistons: h1=11.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:11.752026",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:13.799778",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=-5.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:13.817650",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:14.345281",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=-5.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:47.077699",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip ODAI: deep24h h24=-45.1% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:59.128768",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:59.645603",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=-4.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:38:59.661723",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:39:00.147089",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=-4.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:39:00.147089",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:39:39.085578",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip cabbit: h1=-16.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:39:41.795984",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Nigel: h1=-16.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:39:41.805032",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold 7qbSRkHE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:39:44.616196",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip NICE: deep24h h24=-46.0% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:39:44.624182",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold 4pzuXZwn \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:15.513521",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold C4uKznf7 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:15.517530",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold 6Xipib7U \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:17.736085",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip OCCA: softdown h1=-10.4% h24=-28.3%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:20.276013",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip LFG: softdown h1=-5.1% h24=-28.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:20.286086",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold ENsfLWCf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:46.898973",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip HANTAHOUSE: h1=-32.9% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:46.898973",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7F8echag sold nn944oFM \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:47.414191",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip NICE: deep24h h24=-46.0% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:49.744921",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip ADA: h1=-16.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T12:40:51.914514",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip NOTHING: h1=-15.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-07T12:41:40.836587",
       "type": "SCAN",
@@ -2701,6 +2387,286 @@
       "color": "#58a6ff",
       "msg": "WalletSell: 5B79fMkc sold EkbbYkvP \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:53:53.668058",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Hondius: m5=-16.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:53:54.219705",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip HANTA: h6=433.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:53:54.689242",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip HANTA: h6=433.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:30.855491",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5t9xBNuD sold 3UitvHHB \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:32.952084",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Rat: m5=28.9% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:33.455589",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Rat: m5=28.9% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:33.455589",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5t9xBNuD sold 3UitvHHB \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:45.390741",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ECa6q9uC sold Gj6BTYw4 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:45.405289",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ECa6q9uC sold ACKahaSD \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:47.415390",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip HERO: m5=-61.1% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:47.993325",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip POTATO: downtrend h1=-37.9% h24=-60.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:54:48.445873",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip HERO: m5=-61.1% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:02.832728",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip ElNINO: m5=99.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:02.832728",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8DGbkGgQ sold 6qY3FEW7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:02.832728",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8DGbkGgQ sold 6qY3FEW7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:26.885761",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard gate 5aLY85py: 30 trades at 33% WR (10/30), PnL=-0.0410 SOL \u2014 no probation",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:41.288407",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip WCOR: downtrend h1=-35.2% h24=-35.2%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:41.304337",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6E4897rJ sold 9kpwQXPs \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:43.587072",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h24neg skip DARTH: h24=-28.8% (overall declining, run104)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:43.587072",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6E4897rJ sold 3xQtkaBX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:55.599342",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:57.621102",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=0.4% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:57.629069",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:55:58.100213",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=0.4% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:56:40.125854",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BRm3B1LM sold 3TYgKwkE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:56:40.577384",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BULL: h1=0.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:19.027694",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Retardcoin: h1=-13.2% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:19.027694",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HjLFpRto sold DRtvTCzf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:21.467737",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip TripleT: h1=3.2% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:21.467737",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HjLFpRto sold J1UpPrMT \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:54.233312",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BRO: h1=-13.4% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:56.801639",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip MOOYOR: h1=-9.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:58.840514",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip SCAM: h1=-28.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:57:58.840514",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold 7XdCaKpq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:58:01.043627",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip JOBS: downtrend h1=-13.5% h24=-32.2%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:58:25.692402",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7F8echag sold ENsfLWCf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:58:25.700394",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7F8echag sold 5Ut5hBBs \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:58:28.033865",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip BIAO: downtrend h1=-55.0% h24=-55.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:58:28.033865",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7F8echag sold 3vz82EWY \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T12:58:28.033865",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7F8echag sold skDGuSDy \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2756,9 +2722,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "12:53:51",
+  "ts": "12:58:55",
   "__publish_meta": {
-    "published_at": "2026-05-07 12:53:51 EDT",
+    "published_at": "2026-05-07 12:58:55 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
