@@ -259,7 +259,7 @@
     <!-- Brain memory pressure (populated by renderBrainQueue) -->
     <div id="brain-queue-section"></div>
 
-    <!-- Memory keeper status (populated by renderMemoryKeeper) -->
+    <!-- Efficiency Lab status (populated by renderMemoryKeeper — fn name is legacy) -->
     <div id="memory-keeper-section"></div>
 
     <!-- Research Lab panel (populated by renderResearchLab) — left column under Recent Trades -->
@@ -295,7 +295,7 @@
         <div id="maint-status-bar" class="cc-status"></div>
       </div>
 
-      <!-- Memory Keeper row -->
+      <!-- Efficiency Lab row (was Memory Keeper — same purpose, on-demand) -->
       <div class="cc-row">
         <div id="memk-status-bar" class="cc-status"></div>
       </div>
@@ -723,7 +723,7 @@ function renderBrainQueue(q){
   let x=`<div class="sec neon" style="border:1px solid ${border}">`;
   x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">🧠 Brain Memory Pressure</div>`;
   if(overloaded){
-    x+=`<div style="font-size:11px;color:#ff6b35;margin-bottom:6px;font-weight:700">⚠ Brain overloaded — memory keeper should run</div>`;
+    x+=`<div style="font-size:11px;color:#ff6b35;margin-bottom:6px;font-weight:700">⚠ Brain overloaded — Efficiency Lab will fire next maintenance run</div>`;
   }
   if(drift){
     x+=`<div style="font-size:11px;color:#ffaa00;margin-bottom:6px">↔ Drift keys detected: ${esc((q.drift_keys||[]).join(', '))}</div>`;
@@ -745,13 +745,15 @@ function renderBrainQueue(q){
 
 /* --- Memory keeper status — runs weekly --- */
 function renderMemoryKeeper(m){
+  // Note: function name kept (memory-keeper) for backwards compat in calling code,
+  // but the panel itself is now "Efficiency Lab" — same purpose, on-demand trigger.
   const host=document.getElementById('memory-keeper-section');
   if(!host){return;}
   if(!m||!m.available){
-    // Show a placeholder so operator knows the agent exists but hasn't run yet
+    // Placeholder until the lab fires for the first time
     let x=`<div class="sec neon" style="border:1px solid #444">`;
-    x+=`<div class="sec-t" style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px">📚 Memory Keeper</div>`;
-    x+=`<div style="font-size:10px;color:#666">Weekly cleanup agent — has not run yet. First scheduled run: Sunday 03:00 EDT.</div>`;
+    x+=`<div class="sec-t" style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px">🧪 Efficiency Lab</div>`;
+    x+=`<div style="font-size:10px;color:#666">On-demand brain hygienist — fires from the maintenance bot when overload is detected. Has not fired yet.</div>`;
     x+='</div>';
     host.innerHTML=x;
     return;
@@ -759,9 +761,9 @@ function renderMemoryKeeper(m){
   const stale=m.stale===true;
   const border=stale?'#ffaa00':'#00ff88';
   let x=`<div class="sec neon" style="border:1px solid ${border}">`;
-  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">📚 Memory Keeper</div>`;
+  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">🧪 Efficiency Lab</div>`;
   const ageStr=m.age_hours!=null?`${m.age_hours<24?(m.age_hours.toFixed(1)+'h'):(m.age_hours/24).toFixed(1)+'d'} ago`:'';
-  x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">Last run: ${esc(ageStr)}${stale?' <span style="color:#ffaa00">(overdue)</span>':''}</div>`;
+  x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">Last fired: ${esc(ageStr)}${stale?' <span style="color:#ffaa00">(brain overloaded but lab not firing)</span>':''}</div>`;
   if(m.lessons_before!=null && m.lessons_after!=null){
     x+=`<div style="font-size:11px;color:#ccc">Lessons: ${m.lessons_before} → ${m.lessons_after}</div>`;
   }
@@ -1082,18 +1084,18 @@ function updateBrainDisplay(){
     sinceFetch:sinceFetch,
   });
 
-  /* Memory Keeper row — weekly Sundays 03:00 EDT */
+  /* Efficiency Lab row — on-demand, triggered by maintenance bot */
   renderCcRow({
     barId:'memk-status-bar',
     runId:null, elapsedId:null,
-    label:'Memory Keeper',
-    icon:'📚',
+    label:'Efficiency Lab',
+    icon:'🧪',
     accent:'#22c55e',
     pulseClass:'',
     running:false, elapsed:0,
     lastRunStr:_memkLastRunStr||'never',
-    nextStr:_memkNextStr,
-    nextSec:_memkNextSec,
+    nextStr:_memkNextStr,  // "on-demand" string from backend
+    nextSec:null,          // no countdown — event-driven
     sinceFetch:sinceFetch,
   });
 
