@@ -619,16 +619,30 @@ function renderMaintenance(m){
     x+='<div style="font-size:10px;color:#ffaa00;margin-top:4px">⚠ Killed duplicates:</div>';
     m.duplicates_killed.forEach(s=>{x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(String(s),1,120))}</div>`;});
   }
-  // GitHub Pages mirror status — surfaces if the public dashboard has gone stale
+  // GitHub Pages mirror status — surfaces if the public dashboard went stale
+  // and whether maintenance actively healed it.
   const gh=m.github_mirror||null;
-  if(gh && gh.status){
-    const statusColor=gh.status==='HEALTHY'?'#00ff88':
-                      gh.status==='WARN'?'#ffaa00':
-                      gh.status==='CRITICAL'?'#ff4444':
-                      gh.status==='UNREACHABLE'?'#ff4444':'#888';
+  if(gh && (gh.pre_heal_status || gh.status)){
+    // Backwards-compat: old runs used `status`/`mirror_age_min`. New runs use
+    // pre_heal_*/post_heal_*. Display the most recent meaningful state.
+    const finalStatus=gh.post_heal_status==='HEALED'?'HEALED':
+                      gh.post_heal_status==='STILL_BROKEN'?'STILL_BROKEN':
+                      gh.post_heal_status==='NOT_NEEDED'?(gh.pre_heal_status||gh.status):
+                      (gh.pre_heal_status||gh.status);
+    const finalAge=gh.post_heal_age_min!=null?gh.post_heal_age_min:
+                   (gh.pre_heal_age_min!=null?gh.pre_heal_age_min:gh.mirror_age_min);
+    const statusColor=(finalStatus==='HEALTHY'||finalStatus==='HEALED')?'#00ff88':
+                      finalStatus==='WARN'?'#ffaa00':
+                      (finalStatus==='CRITICAL'||finalStatus==='STILL_BROKEN'||finalStatus==='UNREACHABLE')?'#ff4444':'#888';
     x+='<div style="font-size:10px;color:#7cd3ff;margin-top:6px;text-transform:uppercase;letter-spacing:1px">github mirror</div>';
-    const ageStr=gh.mirror_age_min!=null?` · ${gh.mirror_age_min.toFixed(1)} min old`:'';
-    x+=`<div style="font-size:11px;color:${statusColor};padding:2px 0"><b>${esc(gh.status)}</b><span style="color:#888">${esc(ageStr)}</span></div>`;
+    const ageStr=finalAge!=null?` · ${Number(finalAge).toFixed(1)} min old`:'';
+    x+=`<div style="font-size:11px;color:${statusColor};padding:2px 0"><b>${esc(String(finalStatus))}</b><span style="color:#888">${esc(ageStr)}</span></div>`;
+    // If maintenance healed it this run, show the recovery line
+    if(gh.heal_attempted && gh.post_heal_status==='HEALED'){
+      x+=`<div style="font-size:10px;color:#00ff88;padding:1px 0">↻ healed: ${esc(String(gh.pre_heal_age_min||0).slice(0,5))} min stale → fixed by manual publish</div>`;
+    } else if(gh.heal_attempted && gh.post_heal_status==='STILL_BROKEN'){
+      x+=`<div style="font-size:10px;color:#ff4444;padding:1px 0">↻ heal FAILED — publisher script error (see note)</div>`;
+    }
     if(gh.note){x+=`<div style="font-size:10px;color:#888;padding:1px 0">${esc(summarize(String(gh.note),1,140))}</div>`;}
   }
   // Recent actions
