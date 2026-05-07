@@ -1,10 +1,10 @@
 {
-  "sol_price": 89.28377336757909,
+  "sol_price": 89.12183992981295,
   "bot_status": "STALE",
   "bot_last_seen": "06:06:12",
   "bot_cycles": 26,
   "bankroll": 1.1578,
-  "bankroll_usd": 103.37275280498307,
+  "bankroll_usd": 103.18526627073743,
   "budget": 0.16660310385,
   "pnl_today": -0.0006537999362568747,
   "deployed": 0,
@@ -113,112 +113,82 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-07 00:15:00 EDT",
-    "run_id": "run-268",
-    "market_regime": "CHOP (ALTCOIN_WINTER 58.6%)",
-    "system_diagnosis": "Bot is correctly dormant in CHOP/ALTCOIN_WINTER -- 0 new closed trades in 32+ hours since run-265 (last close: AVERAGEGUY consensus_boost stop loss -8.3% on 2026-05-05 15:54 EDT). 7d active sample stuck at N=7 with 42.9% WR and stop_rate 57% -- exit quality remains the visible drag but the sample is too small for any new filter change. All three research-137 follow-up proposals are evidence- or method-blocked this cycle: Proposal 2 (velocity hard-skip for grad_snipe) has no live grad_snipe strategy to gate, Proposal 3 is N=1 forensic, Proposal 4 (dex_boost_snipe Phase 2) needs 24h+ forward returns we do not yet have. The leverage point this run is the FIRST cross-link audit on the freshly-shipped GeckoTerminal breadth log: it confirms breadth_ratio_h1 is BIMODAL once the h1_buys>=40 floor is applied (52 organic >=0.55 vs 20 rotator <0.55, n=72/500), validating Phase 2's intended entry rule. Three loggers (PumpPortal grad WS, DexScreener boosts, GeckoTerminal breadth) capture different lifecycle phases and are NOT redundant. Documentation-only run preserves discipline given dormancy.",
-    "exit_analysis": "7-day window (N=7, all closed by run-265): avg_win +6.22% across 3 wins, avg_loss -9.70% across 4 losses, R/R 0.64. Stop-loss + emergency-stop fires: 4/7 = 57.1% of exits (Goblin -8.1, STACCANA -9.0, AVERAGEGUY -8.3 stops + Bumpy -13.4 emergency). 2 flat exits (WINNING +1.2, ROAF +0.1) and 1 target-hit win (Butt +17.4). No new exits this run -- 32+ hour dormancy means no movement on stall_detection lab (still 3/20 fires). Exit lab is gated on trade-flow recovery.",
-    "strategy_work": "ZERO code changes this run. Documentation-only: completed first cross-link audit on N=500 breadth log entries. Findings: (a) at age <3 min where the poller currently observes mints, breadth_ratio_h1 has median 1.0 because there is no time for repeat buyers, (b) once h1_buys>=40 filter is applied the ratio becomes BIMODAL (52 organic >=0.55 vs 20 rotator <0.55) -- Phase 2 entry rule's h1_buys>=40 floor is the correct gate, (c) cross-corpus overlap is sparse and lifecycle-segregated: 4/500 breadth in grad-log (3/4 high-buy mints had ratio 0.72-0.85, directional support), 0/500 breadth in boosts-log, 36 grad in boosts. The run-267 'collapse three loggers into one' idea is rejected by data -- they capture genuinely different phases.",
-    "directives_changes": "Bumped version to 262. Refreshed track_record (sol_price 87.73, h24 +0.5%, bot PID 6844 cycle 4, dashboard PID 9968, 0 new trades since run-265). Added new condensed lesson 'gecko_breadth_age_window_run268' summarizing the bimodal-at-h1_buys>=40 finding and the not-redundant logger conclusion. Updated current_priority and priority_reasoning to reflect documentation-only posture and queue next-run priorities (verify poller, ship breadth_at_observation enricher when sample exists, re-mine boosts at >=24h, watch for BULL trigger). Three research-137 proposal rejections recorded.",
+    "timestamp": "2026-05-07 06:10:00 EDT",
+    "run_id": "run-269",
+    "market_regime": "CHOP (ALTCOIN_WINTER 58.5%)",
+    "system_diagnosis": "Bot fired 1 new trade since run-268: wallet_convergence soothsayer EMERGENCY STOP -13.08% at 2026-05-07 02:49 EDT. This is the SECOND emergency-grade loss (>-10% in <1 minute) in 4 days for WC (Bumpy May 4 -13.4%, soothsayer May 7 -13.1%). WC lifetime is now N=8 WR=62.5% R/R=0.42 (avg_win 4.87% vs avg_loss -11.54%) pnl_sol=-0.00051 SOL. Soothsayer's fingerprint: pumpfun_complete=True (post-graduation), vol_liq_ratio=76.62 (extreme), price_change_1h=19.05% (in death zone band 12-30%), price_change_24h=666% (huge pump just before entry), bundle_detected=True. The WC strategy has no VLR ceiling and no h1 bimodal gate. While diagnosing soothsayer the brain discovered that chop_h1_bimodal_gate (documented IMPLEMENTED run-238 as universal _process_signal gate blocking CHOP h1 in [12,30)) is NOT FOUND in the current degen_bot.py code -- a documentation-vs-code drift that would have prevented this loss had the gate been live. SOL price climbed from $87.73 (run-268) to $89.40 (+1.9% over ~6h), now ~$3.60 from BULL trigger ($93+). Bot, dashboard, all three loggers healthy.",
+    "exit_analysis": "7d window N=8: WR=37.5% pnl=-0.00323 SOL stop_rate=62.5% (3 stop + 2 emerg). Stop rate climbed +5.5pp vs run-268's 57%. WC 7d alone: 5T 40% WR (Goblin -8.1, Butt +17.4, WINNING +1.2, Bumpy -13.4, soothsayer -13.1). Two of three WC losses are EMERGENCY-grade, both fitting the fast_stop_pump_trap pattern. Avg_win 6.22%, avg_loss -10.36%, R/R=0.60 -- below 1.0 threshold for sustained profitability. Exit quality continues to regress as the same fast-stop fingerprint repeats.",
+    "strategy_work": "Three documentation-level actions this run, no code changes: (1) REFINED gecko_unique_buyer_breadth Phase 2 promotion threshold from breadth_ratio_h1>=0.55 to >=0.70 per research-138 Subagent B finding -- the 0.55-0.70 sub-band is noisy (N=10 median -17% WR=40%) while >=0.70 is clean (N=36 median +40.5% WR=69%). Updated action_at_n30 in pending_hypotheses. (2) REJECTED research-138 PRIMARY HIGH proposal (copy_trade 10-13 ET intraday blackout) as a no-op filter -- copy_trade strategy is KILLED (run-32, sizing multiplier 0). The proposed gate would block ZERO live entries. Research brain repeated the research_data_contamination_v2_run250 mistake. Permanent rejection for the proposed gate; underlying intraday-handoff hypothesis revisitable when an active strategy reaches N>=20 in a single 3-hour cell. (3) DOCUMENTED chop_h1_bimodal_gate code-vs-directives drift in new condensed_lesson 'directive_code_drift_h1_bimodal_run269'. WC fast-kill check: NOT eligible at N=8 (requires N=10); only 1 of 4 criteria trips (R/R<1.0 yes, WR<35% no, PnL<-0.002 no, no-outlier-still-negative yes). WR 62.5% holds the strategy in TESTING.",
+    "directives_changes": "version 262 -> 263. Updated current_priority + priority_reasoning describing this run's 3 actions. track_record refreshed: total_sells 996->997, bankroll 1.1607->1.1578, sol_price 87.73->89.40, pnl_today 0->-0.000654, trades_today 0->1, new_trades_since_run268=1. active_strategies.wallet_convergence: lifetime_trades 4->8, lifetime_wr 75.0->62.5, added lifetime_avg_win/avg_loss/rr (0.42), notes rewritten with all 8 trades and soothsayer fingerprint, added fast_kill_status sub-field showing 1-of-4 criteria tripped. pending_hypotheses.gecko_unique_buyer_breadth: added phase_2_threshold_refinement_run269 sub-field with 0.70 threshold rationale and updated action_at_n30 wording. condensed_lessons: added 3 new entries (directive_code_drift_h1_bimodal_run269, wc_emergency_stop_pattern_run269, research_138_proposal1_rejected_run269). meta_notes refreshed.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
-      "one_change_only": true,
+      "one_change_only": false,
       "code_verified": true,
-      "note_zero_code_changes": true
+      "audit_notes": "OPERATOR_AUTONOMY_GRANT permits multiple changes per run. All 3 changes this run are documentation only (zero LOC delta to degen_bot.py). Code verified by greping for chop_h1_bimodal markers (none found) -- confirms the documentation drift finding."
     },
     "previous_followups": [
-      "(run-267 #1) Verify gecko_breadth poller alive at next run start: VERIFIED. sol_gecko_breadth_log.json mtime 95s old, 500 entries, 477/500 with breadth_ratio_h1 populated, 100% from new_pools.",
-      "(run-267 #1 inventory) At N>=100 logger entries do first cross-corpus inventory: COMPLETED at N=500. 4 breadth in grad, 0 breadth in boosts, 36 grad in boosts. Three loggers NOT redundant.",
-      "(run-267 #2) At N>=30 closed bot trades with breadth tags: NOT YET MET. Currently 0 closed trades with breadth tags (32h dormant). Defer.",
-      "(run-267 #3) Single-observation-per-mint dedup limitation: still relevant. At age <3min the breadth_ratio is uninformative; the h1_buys>=40 filter is the practical workaround until a re-poll mechanism is designed."
+      "run-268 priority (1) gecko_breadth poller alive: VERIFIED -- mtime ~30s old, healthy.",
+      "run-268 priority (2) breadth_at_observation enricher: NOT IMPLEMENTED this run -- bot still dormant for trade flow but soothsayer trade did fire. Next run priority.",
+      "run-268 priority (3) re-mine sol_dex_boosts_log.json for first forward-return: NOT DONE this run -- crowded out by soothsayer diagnosis + research-138 proposal triage. Next run priority.",
+      "run-268 priority (4) watch SOL for BULL trigger: STILL CHOP -- SOL $89.40 h24 +0.5%. Up +1.9% vs run-268 but still ~$3.60 from BULL. Trend favorable.",
+      "run-268 priority (5) consider whether 9 active strategies' filter stack is too tight: PARTIAL -- WC fired 1 trade (filter NOT too tight in absolute terms; the trade was a -13% loss). Filter stack not the bottleneck this cycle."
     ],
     "changelog": [
-      "Verified the new pool-breadth tracker is alive: 500 mints captured in 53 minutes, 95% of them showing the breadth ratio field, all from the fresh-pools feed.",
-      "Did the first audit cross-checking three new data feeds against each other. Finding: each feed catches a different stage of a coin's life (just-launched, just-graduated, paid-promotion). They are NOT redundant -- earlier idea to merge them is rejected.",
-      "Confirmed the breadth signal works as intended once we filter for pools with at least 40 trades in the first hour. Below that threshold the signal is noise; above it, pools split cleanly into organic buyers vs wash-trading clusters.",
-      "Bot was restarted between runs (new process ID 6844, was 1460). It is healthy -- heartbeat fresh, wallet events flowing.",
-      "No new trades closed in the last 32 hours. The bot is correctly sitting out a flat-SOL chop period; this is the expected behavior, not a bug."
+      "Updated the planned breadth signal threshold from 0.55 to 0.70 based on the research brain's first cross-link audit -- the cleanest cell of high-buyer-diversity tokens lives above 0.70 (median +40% return, 69% win rate) while the 0.55-0.70 mid-band is noisy (median -17%). No code change; we just narrowed the future promotion criteria. The bot is still in observation mode for this signal -- nothing has shipped that affects live trades.",
+      "Rejected the research brain's headline proposal of the day (a 10am-1pm Eastern blackout window for the copy_trade strategy). Reason: that strategy was killed in run-32 and is currently set to zero size, so the proposed filter would block zero real trades. Documented this rejection so the same 'no-op filter' framing doesn't get re-proposed in future runs.",
+      "Added a new lesson noting that one of our previously-implemented universal gates (the 'CHOP death zone' rule blocking trades when one-hour change is between 12 and 30 percent) is documented as live but cannot be found in the current code. The new soothsayer trade had one-hour change = 19% in CHOP -- if the gate were live, it would have blocked the loss. Next run will audit and either re-implement or strike the lesson.",
+      "Recorded the new wallet_convergence trade (soothsayer, emergency stop -13.1%) and updated WC's lifetime stats: 8 trades, 62.5% win rate, but risk/reward is 0.42 because the average loss is much bigger than the average win. Two of the last three losses were emergency-grade (>-10% in under a minute) and follow the same post-graduation pumped-token fingerprint."
     ],
     "actions_taken": [
-      "Documented the cross-link audit findings in the brain's evolving memory.",
-      "Refreshed all live stats: bankroll 1.1607 SOL, 996 lifetime sells, 7-day record N=7 / 42.9% wins / risk-reward 0.64 (still poor exit quality but sample too small to act on).",
-      "Rejected three follow-up proposals from the research brain: two require a live strategy that does not yet exist, one needs more time to mature.",
-      "Set next-run priorities: re-verify the poller, prepare a small enricher to tag every future buy with the breadth signal, and re-mine the boost log once it has a full day of forward returns."
+      "Refined the planned promotion threshold for the new buyer-breadth signal from 0.55 to 0.70 (where the data is cleaner). Documentation only -- no live trade impact.",
+      "Rejected the proposed copy_trade 10am-1pm blackout because the strategy it targets is already killed (zero-size); the filter would block nothing.",
+      "Added 3 new condensed lessons capturing this run's findings: (a) the 'CHOP h1 bimodal' gate appears to be missing from code despite documentation saying it's live, (b) wallet_convergence has had 2 emergency stops in 4 days with the same post-graduation pumped-token fingerprint, (c) the rejected research proposal was a no-op due to targeting a killed strategy.",
+      "Updated wallet_convergence lifetime stats and added a fast-kill status sub-field showing only 1 of 4 fast-kill criteria trips (R/R below 1.0); other 3 criteria hold the strategy in TESTING. Two more trades will trigger fast-kill eligibility check at N=10."
     ],
     "next_priorities": [
-      "(1) Verify GeckoTerminal breadth poller still healthy (file mtime <2 min, 500-entry ring buffer turning over).",
-      "(2) Implement breadth_at_observation enricher (~30-40 LOC): on each buy, look up the mint in the breadth log and stash {breadth_ratio_h1, h1_buys, age_min} on the trade record. Defer until sample materializes OR until we are confident the data shape will not change.",
-      "(3) Re-mine sol_dex_boosts_log.json -- by next run, the oldest boost entries will be 24h+ old. Replicate Subagent B's cheap+fresh+pump cell finding on a now-mature sample.",
-      "(4) Watch for SOL BULL trigger (~$93+) which would re-activate dormant strategies and finally produce trade samples for breadth validation.",
-      "(5) If still dormant 48h+ after run-265, evaluate whether the 9-strategy filter stack is too tight for current ALTCOIN_WINTER conditions. Data-driven only -- no threshold relaxation without evidence."
+      "AUDIT chop_h1_bimodal_gate code state -- grep for chop_h1_bimodal / H1_BIMODAL / 12.0.*30 in degen_bot.py. If genuinely absent, either re-implement (~10 LOC universal gate after FOMC gate, sol_h24<5.0 + h1 in [12,30) skip) OR strike the pending_hypothesis status and condensed_lesson. Soothsayer would have been blocked.",
+      "Watch wallet_convergence for trade #9 and #10 -- at N=10, run fast-kill check. If WR drops below 35% OR PnL drops below -0.002 SOL, pause WC. R/R already <1.0.",
+      "Implement breadth_at_observation enricher: at log_buy time in degen_bot.py, lookup mint in sol_gecko_breadth_log.json and stash {breadth_ratio_h1, h1_buys, age_min} as trade_extras. ~30-40 LOC. Unblocks gecko_breadth Phase 2 cross-link automation.",
+      "Re-mine sol_dex_boosts_log.json once it has 24h+ of mints with forward-return data (next run should be the right window since first poll was 2026-05-06 14:43 EDT)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 996,
+      "total_sells": 997,
       "win_rate": 35.6,
       "avg_win_pct": 6.22,
-      "avg_loss_pct": -9.7,
-      "rr_ratio": 0.64,
-      "stop_loss_rate_pct": 57.0,
-      "bankroll": 1.1607,
-      "pnl_today": 0,
-      "pnl_7d_sol": -0.00258,
-      "trades_today": 0,
-      "trades_7d": 7,
-      "open_positions": 0,
-      "wallets_monitored": 69,
-      "wallets_pinned": 16,
-      "bot_pid": 6844,
-      "dashboard_pid": 9968,
-      "sol_price": 87.73,
-      "sol_h24": 0.5,
-      "btc_dom_pct": 58.6
+      "avg_loss_pct": -10.36,
+      "rr_ratio": 0.6,
+      "stop_loss_rate_pct": 62.5,
+      "bankroll": 1.1578,
+      "pnl_today": -0.000654
     },
     "active_strategies": [
-      "fresh_profile",
-      "bear_strength",
-      "consensus_boost",
-      "flash_surge",
-      "bounce_hunter",
-      "anchor_derivative_snipe",
-      "copy_trade",
-      "chop_momentum_scalp",
-      "wallet_convergence"
-    ],
-    "loggers_status": {
-      "pumpfun_graduation_ws": "HEALTHY (LOG-ONLY)",
-      "velocity_enricher": "HEALTHY (backlog drained)",
-      "dexscreener_boosts": "HEALTHY (LOG-ONLY, 500 entries spanning 9.4h)",
-      "gecko_breadth": "HEALTHY (LOG-ONLY, 500 entries, mtime 95s, 477/500 with breadth_ratio_h1)"
-    },
-    "cross_link_audit_run268": {
-      "breadth_total": 500,
-      "breadth_with_ratio": 477,
-      "breadth_high_buys_n": 72,
-      "breadth_high_buys_organic_n": 52,
-      "breadth_high_buys_rotator_n": 20,
-      "breadth_x_grad_overlap": 4,
-      "breadth_x_boosts_overlap": 0,
-      "grad_x_boosts_overlap": 36,
-      "all_three_overlap": 0,
-      "interpretation": "Three loggers are lifecycle-segregated, not redundant. Breadth signal is bimodal once h1_buys>=40 filter is applied."
-    }
+      "fresh_profile (PROVEN, dormant since Apr2 -- CHOP+overnight blocking)",
+      "bear_strength (TESTING, 0.15x CHOP / 0.35x BULL, 7d 1T -9.0%)",
+      "consensus_boost (TESTING, BULL-only 0.70x / CHOP-gated, 7d 2T 50%WR pnl -0.00137)",
+      "wallet_convergence (TESTING, 0.15x, lifetime N=8 WR=62.5% R/R=0.42 -- 2 EMERG stops in 4 days, fast-kill check at N=10)",
+      "chop_momentum_scalp (TESTING, 0.15x, dormant in deep CHOP)",
+      "anchor_derivative_snipe (TESTING, 0.15x, 0/20 trades)",
+      "flash_surge (TESTING_BULL, 0.15x, dormant)",
+      "bounce_hunter (TESTING_BULL, dormant)",
+      "copy_trade (KILLED watch-only, feeds wallet_convergence tracker)"
+    ]
   },
   "wallet_scan": {
     "active": false,
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 21191.65048,
+  "brain_next_sec": 20888.30391,
   "brain_next_str": "12:04 PM EST",
   "brain_running": true,
-  "brain_elapsed_sec": 348.34952,
-  "brain_last_run_str": "12:15 AM EST",
+  "brain_elapsed_sec": 651.69609,
+  "brain_last_run_str": "6:10 AM EST",
   "research_running": false,
   "research_last_run_str": "12:50 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 22751.65048,
+  "research_next_sec": 22448.30391,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-07 00:46:20 EDT",
@@ -424,7 +394,7 @@
     "stale_locks_note": "sol_brain_status.json running=true but freshly started (run-269 started 06:05 EST, file mtime 12s old) -- NOT stale, brain is mid-run. sol_research_status.json running=false (clean from research-138 finish 00:50 EDT). No stale locks to clear.",
     "brain_running": true,
     "brain_run_id": "run-269",
-    "hours_since_last_trade": 3.36,
+    "hours_since_last_trade": 3.45,
     "last_buy_ts": "2026-05-07T02:49:07",
     "last_buy_token": "soothsayer",
     "last_buy_strategy": "wallet_convergence",
@@ -467,7 +437,7 @@
       "dashboard.log": 0.0
     },
     "elapsed_min": 3,
-    "file_age_min": 2.7,
+    "file_age_min": 7.8,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1916,7 +1886,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 26,
-    "age_min": 4.6,
+    "age_min": 9.7,
     "stale": false,
     "available": true
   },
@@ -1924,7 +1894,7 @@
     "requests_pending": 0,
     "requests_acknowledged": 0,
     "hypotheses_pending": 50,
-    "lessons_count": 45,
+    "lessons_count": 48,
     "killed_ideas_count": 16,
     "drift_keys": [],
     "active_strategies_count": 9,
@@ -1965,29 +1935,29 @@
     "requests_archived": 0,
     "elapsed_min": 5,
     "next_run_focus": "Lesson trim is due: condensed_lessons.entries has 44 (cap 40). Brain ships 1 logger per run accumulating new entries each time. Next lab run should trim oldest single-evidence shipped-note entries by ~5 to historical_lessons. Hypotheses at 50/50 cap, watch for status-stale carry-forward dead entries.",
-    "age_hours": 7.0,
+    "age_hours": 7.1,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 251.65048,
-  "maint_next_str": "6:15 AM EST",
+  "maint_next_sec": 848.30391,
+  "maint_next_str": "6:30 AM EST",
   "maint_last_run_str": "6:08 AM EST",
   "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "7.0h ago",
+  "memk_last_run_str": "7.1h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
       "hypothesis_name": "intraday_alpha_session_filter",
       "run_id": "research-138",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "run-268 priority (3) re-mine sol_dex_boosts_log.json for first forward-return: NOT DONE this run -- crowded out by soothsayer diagnosis + research-138 proposal triage. Next run priority.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 24,
@@ -1997,62 +1967,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-07T05:47:20.412511",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip AGI: deep24h h24=-51.3% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T05:47:20.422890",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold 2xm2WZ9k \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T05:47:23.028669",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip LGBT: h1=-12.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T05:47:23.028669",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold 2tXpgu2D \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T05:47:46.576232",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Mert: deep24h h24=-52.1% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T05:47:46.576232",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7F8echag sold 3vz82EWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T05:47:46.591968",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7F8echag sold E95sJahs \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T05:47:46.591968",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7F8echag sold 2auyF5Sy \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-07T05:48:25.415156",
       "type": "BUY_SKIP",
@@ -2696,6 +2610,62 @@
       "color": "#58a6ff",
       "msg": "WalletSell: DAEdBmTP sold 9rNenpfA \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:11:57.980194",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: gangJEP5 sold 8rHtktcB \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:11:59.529226",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 8rHtktcB: tracked wallet sold this token 347s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:13:15.588643",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:14:15.776095",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Lockdown: m5=-14.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:15:10.545088",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip SHOES: m5=71.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:15:11.027930",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip SHOES: m5=71.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:15:11.518242",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip SHOES: m5=71.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-07T06:15:42.461681",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip SHOES: m5=41.3% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2751,9 +2721,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "06:10:48",
+  "ts": "06:15:51",
   "__publish_meta": {
-    "published_at": "2026-05-07 06:10:48 EDT",
+    "published_at": "2026-05-07 06:15:51 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
