@@ -619,6 +619,18 @@ function renderMaintenance(m){
     x+='<div style="font-size:10px;color:#ffaa00;margin-top:4px">⚠ Killed duplicates:</div>';
     m.duplicates_killed.forEach(s=>{x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(String(s),1,120))}</div>`;});
   }
+  // GitHub Pages mirror status — surfaces if the public dashboard has gone stale
+  const gh=m.github_mirror||null;
+  if(gh && gh.status){
+    const statusColor=gh.status==='HEALTHY'?'#00ff88':
+                      gh.status==='WARN'?'#ffaa00':
+                      gh.status==='CRITICAL'?'#ff4444':
+                      gh.status==='UNREACHABLE'?'#ff4444':'#888';
+    x+='<div style="font-size:10px;color:#7cd3ff;margin-top:6px;text-transform:uppercase;letter-spacing:1px">github mirror</div>';
+    const ageStr=gh.mirror_age_min!=null?` · ${gh.mirror_age_min.toFixed(1)} min old`:'';
+    x+=`<div style="font-size:11px;color:${statusColor};padding:2px 0"><b>${esc(gh.status)}</b><span style="color:#888">${esc(ageStr)}</span></div>`;
+    if(gh.note){x+=`<div style="font-size:10px;color:#888;padding:1px 0">${esc(summarize(String(gh.note),1,140))}</div>`;}
+  }
   // Recent actions
   const acts=m.actions_taken||[];
   if(acts.length){
