@@ -1,15 +1,15 @@
 {
-  "sol_price": 88.28132320741098,
+  "sol_price": 88.44236998469775,
   "bot_status": "RUNNING",
   "bot_last_seen": "04:59:39",
   "bot_cycles": 15,
   "bankroll": 1.1578,
-  "bankroll_usd": 102.21211600954042,
+  "bankroll_usd": 102.39857596828305,
   "budget": 0.16617003675,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 3.5,
+  "hour": 3.6,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -247,7 +247,7 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 3564.026637,
+  "brain_next_sec": 3260.67535,
   "brain_next_str": "6:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
@@ -255,7 +255,7 @@
   "research_running": false,
   "research_last_run_str": "12:59 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 26724.026637,
+  "research_next_sec": 26420.67535,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-08 00:59:23 EDT",
@@ -450,51 +450,72 @@
     "finished_at": "2026-05-08 00:59:23 EDT"
   },
   "maintenance_status": {
-    "timestamp": "2026-05-08 04:11:18 EDT",
-    "run_id": "maint-170",
+    "timestamp": "2026-05-08 05:04:08 EDT",
+    "run_id": "maint-171",
     "bot_status": "RUNNING",
     "bot_pid": 9292,
-    "bot_heartbeat_age_sec": 435,
-    "bot_heartbeat_note": "Heartbeat write age is 7+ min (above 180s stalled threshold) but events file is 6s fresh and the bot is actively producing BUY_SKIP/SIGNAL events \u2014 bot is alive, the heartbeat write cadence appears to lag behind the event stream. NOT restarting. Watch next run: if heartbeat age exceeds 600s while events flow, the heartbeat writer is probably broken (cosmetic). If both go silent, then real stall.",
+    "bot_heartbeat_age_sec": 269,
+    "bot_heartbeat_note": "Heartbeat is 269s old, technically over the 180s 'stalled' threshold, but bot is verifiably mid-cycle: cycle #15 began at 04:59:40 and event ring shows fresh BUY_SKIP/SIGNAL writes at 05:04:00 (8 sec before this snapshot). No CYCLE_ERROR events. Heartbeat is updated once per cycle, and cycles are running ~18 min apart while scanning 97 wallets. Healthy \u2014 no restart taken.",
     "dashboard_status": "RUNNING",
     "dashboard_pid": 14184,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 26.26,
+    "stale_locks_note": "sol_brain_status.json running=false (last completed 00:11:30 EST run-272). sol_research_status.json running=false (last finished 00:59:23 EDT research-140). Nothing to clear.",
+    "hours_since_last_trade": 26.34,
     "dormancy_alert": true,
-    "filter_lockout_diagnosis": "Bot is scanning normally (8 SCAN events) and producing 38 SIGNAL events in the last 100-event ring buffer, but every candidate is rejected \u2014 54 BUY_SKIP, 0 BUYs. Skip reasons are diverse: lp_concentration_skip (KIDO 100% in 1 pool), Sell-conflict skip (multiple wallet IDs), midpump skip, m5 pump/dump skip. This is filter-lockout style \u2014 gates are doing their job but no candidates are surviving. Bot has been dormant 25.3h since soothsayer EMERG -13.1% on May 7 02:49 EDT. Three CHOP-protective gates installed across runs 270/271/272 (h1 bimodal + dead-zone kill-gate + animal-token); none have logged a fire yet because the filter mix is rejecting candidates upstream of those gates.",
+    "last_buy": {
+      "ts": "2026-05-07T02:49:07 EDT",
+      "token": "soothsayer",
+      "strategy": "wallet_convergence",
+      "outcome": "EMERGENCY STOP at -13.1% within 27 seconds (round-trip)"
+    },
+    "filter_lockout_diagnosis": "Filter-accumulation lockout continues. 100% of buy candidates rejected in the last 100 events (53 BUY_SKIP, 0 buys, 38 SIGNAL, 9 SCAN). Top skip reasons: sell_conflict 14 (tracked wallets are exiting the same tokens we'd buy), m5_pump-already-ran 10, midpump h1<15% momentum gate 9, m5_dump 7, h6pump>5% (extended pump) 4, downtrend 3, wallet WR<44% 2, lp_concentration 1. Sell-conflict + already-pumped together account for ~45% of rejections \u2014 copy-target wallets are mid-distribution, not mid-accumulation. Bot internals fine; filter mix continues to behave as 'rejection-only' on this regime (ALTCOIN_WINTER 58.4% BTC-dom).",
     "actions_taken": [
-      "Created brain directives backup snapshot (sol_brain_directives.json.bak.2026-05-08).",
-      "Ran Efficiency Lab efflab-002: trimmed condensed_lessons 52->40 (12 oldest single-evidence shipped-notes demoted to historical_lessons), preserved every N>=30 entry, audited 16 killed_ideas_permanent entries.",
-      "Wrote DORMANCY_ALERT to sol_maintenance_alerts.json (25.3h since last trade) for survival-brain visibility."
+      "Verified bot PID 9292 is mid-cycle and healthy despite stale heartbeat \u2014 no restart.",
+      "Confirmed dashboard PID 14184 responds 200 OK on /api/state in <3s.",
+      "Confirmed GitHub Pages mirror is fresh (4.6 min stale, well inside HEALTHY band).",
+      "Logged 31st consecutive dormancy alert (now 26.3h since last buy).",
+      "Skipped Efficiency Lab \u2014 trigger metrics all under thresholds AND last lab run was only 1h 55m ago (throttle window 24h)."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 3.0,
+      "pre_heal_age_min": 4.6,
+      "pre_heal_published_at": "2026-05-08 04:59:32 EDT",
       "heal_attempted": false,
       "heal_succeeded": null,
-      "heal_output": "",
+      "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 3.0,
-      "note": "Mirror was 3 minutes old (well under 15-min HEALTHY threshold). The publisher daemon thread inside degen_bot.py is alive and pushing on schedule. No heal required."
+      "post_heal_age_min": 4.6,
+      "note": "Mirror is fresh \u2014 daemon thread inside degen_bot is publishing on schedule. No action needed."
     },
     "efficiency_lab": {
-      "triggered": true,
+      "triggered": false,
       "trigger_metrics": {
         "pending_hypotheses": 50,
-        "lessons": 52,
+        "lessons": 4,
         "pending_requests": 0,
         "drift_keys": []
       },
-      "fired_this_run": true,
-      "skip_reason": null,
-      "summary": "Fired (lessons=52 just over the 50 trigger threshold; last efflab was 29h ago so not throttled). Trimmed condensed_lessons 52->40 by demoting 12 oldest single-evidence shipped-note entries (kolscan_auto_ingest_shipped, pumpfun_curve_progress_logger_live, etc.) to historical_lessons; preserved all 19 entries that cited N>=30 sample size. Hypotheses unchanged at 50/50 cap \u2014 45 of 50 hypotheses lack a 'name' field which prevents dedupe (flag for brain: hypothesis schema may need a name backfill pass). Killed-ideas audit flagged 2 substring matches that look like false positives (entries 13 + 15 mention 'copy_trade' in passing but kill different concepts: orphan-recovery misclassification and reentry_topchase_block); copy_trade's actual killed entry [idx 8] correctly carved out via 'Watch-only' note. No survival history archiving needed (38 entries, all <30d). 0 pending requests to archive. Backups not pruned (only 4 exist, at the cap)."
+      "trigger_thresholds": {
+        "pending_hypotheses_gt": 60,
+        "lessons_gt": 50,
+        "pending_requests_gt": 8,
+        "drift_keys_present": false
+      },
+      "fired_this_run": false,
+      "skip_reason": "not_triggered_and_throttled_24h",
+      "throttle_status": "Last lab run was 1h 55m ago (well inside the 24h throttle window).",
+      "summary": "Brain memory is well within healthy bounds. pending_hypotheses sits at 50 of 60, the closest metric to its threshold \u2014 worth watching but not urgent. No drift keys, no stuck research requests, lessons compact at 4. Skipped lab cleanly."
     },
-    "next_run_focus": "Four things to verify next run: (1) bot dormancy persists past 30h, watch for first BUY since soothsayer EMERG May 7 02:49 EDT; (2) heartbeat-vs-events divergence (heartbeat 7+ min stale while events flow fresh \u2014 verify heartbeat writer is healthy); (3) GitHub Pages mirror still publishing at <15-min cadence (publisher thread inside degen_bot.py); (4) efficiency lab throttle holds \u2014 should NOT re-fire for at least 24h (next eligible 2026-05-09 04:08 EDT). Heads-up for survival brain: hypothesis schema has 45/50 entries with name=null which blocks the dedupe pathway \u2014 consider a one-time name-backfill in next survival run.",
+    "next_run_focus": "Same vigil: dormancy now 26h+ and grinding \u2014 verify if next survival brain run actually relaxes a filter, since recent runs have been spent on drift fixes instead of EV experiments. If 0 buys persist across 36h, watch heartbeat closely (it's updated by the trade engine \u2014 a sustained age >600s would indicate a real stall as opposed to a slow cycle). No bot/dashboard action needed otherwise.",
     "log_truncations": [],
-    "elapsed_min": 4,
-    "file_age_min": 52.0,
+    "log_sizes": {
+      "bot_log_mb": 0.01,
+      "dashboard_log_mb": 0.0
+    },
+    "elapsed_min": 2,
+    "file_age_min": 3.0,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1938,7 +1959,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 15,
-    "age_min": 4.9,
+    "age_min": 10.0,
     "stale": false,
     "available": true
   },
@@ -1983,19 +2004,19 @@
     "backups_pruned": [],
     "elapsed_min": 3,
     "next_run_focus": "Lessons trimmed 52->40 (target 40). Active demoted entries are oldest single-evidence shipped-notes; preserved all N>=30 entries. Hypotheses unchanged at 50/50 cap (no RESEARCHING entries to drop and 45/50 lack name field for dedupe \u2014 flag to brain that hypothesis schema is missing names). Killed-ideas revival check found 2 potential conflicts (copy_trade carve-out applied: watch-only note explicitly preserved). No survival history archived (all entries <30d). 0 pending requests.",
-    "age_hours": 0.9,
+    "age_hours": 1.0,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 624.026637,
+  "maint_next_sec": 320.67535,
   "maint_next_str": "5:15 AM EST",
-  "maint_last_run_str": "",
-  "maint_stale": true,
+  "maint_last_run_str": "5:06 AM EST",
+  "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "54m ago",
+  "memk_last_run_str": "59m ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
@@ -2015,118 +2036,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-08T04:29:15.682863",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: As7HjL7d sold 4yZMJ1S6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:29:15.682863",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: As7HjL7d sold 4yZMJ1S6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:30:23.776998",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip GLORP: m5=88.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:30:24.276395",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip GLORP: m5=88.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:30:24.276395",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:30:48.293609",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: AGqjivJr sold Q6jkcn3q \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:30:49.877395",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip Q6jkcn3q: tracked wallet sold this token 452s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:33:02.772895",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: PMJA8UQD sold Q6jkcn3q \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:33:02.772895",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip Q6jkcn3q: tracked wallet sold this token 585s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:35:13.332570",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8DGbkGgQ sold Jofji8cU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:35:16.125074",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Attention: h1=8.6% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:37:08.021986",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip assface: h1=0.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:37:08.027529",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6urLyUoh sold jk1T35eW \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:37:30.394726",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5EJ64rJX sold 2CKp88BF \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:37:32.618964",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip DoubleT: deep24h h24=-40.4% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T04:37:34.888893",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip PURCH: softdown h1=-7.6% h24=-27.2%",
-      "detail": ""
-    },
     {
       "ts": "2026-05-08T04:37:34.909077",
       "type": "SIGNAL",
@@ -2714,6 +2623,118 @@
       "color": "#d29922",
       "msg": "m5 dump skip Harambe: m5=-14.9% (active sell-off at execution, run79)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:04:57.450367",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: gangJEP5 sold Gt1wPYyL \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:05:39.271009",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 719sfKUj sold B9MrmSj2 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:05:39.277034",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip B9MrmSj2: tracked wallet sold this token 358s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:06:13.564065",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5B52w1ZW sold 7qRGS47q \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:06:13.564065",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:07:16.639289",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip GLORP: m5=13.8% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:07:18.783288",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip UFO: h6=460.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:07:21.077189",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip UFOCOIN: m5=-18.0% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:07:21.545759",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip UFOCOIN: m5=-18.0% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:08:54.928862",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: PMJA8UQD sold FuCobNe6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:08:56.734397",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FuCobNe6: tracked wallet sold this token 555s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:08:56.754084",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip FuCobNe6: tracked wallet sold this token 555s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:09:08.681646",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip GLORP: h1=14.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:09:09.148154",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip GLORP: h1=14.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:09:09.609953",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip GLORP: h1=14.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T05:09:10.055214",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip GLORP: h1=14.0% (below 15% momentum threshold, run115)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2769,9 +2790,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "05:04:35",
+  "ts": "05:09:39",
   "__publish_meta": {
-    "published_at": "2026-05-08 05:04:36 EDT",
+    "published_at": "2026-05-08 05:09:39 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
