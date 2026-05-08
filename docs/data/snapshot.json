@@ -1,15 +1,15 @@
 {
-  "sol_price": 88.28993565735489,
+  "sol_price": 88.25962937969618,
   "bot_status": "RUNNING",
   "bot_last_seen": "00:09:20",
   "bot_cycles": 1,
   "bankroll": 1.1578,
-  "bankroll_usd": 102.22208750408548,
+  "bankroll_usd": 102.18699889581222,
   "budget": 0.16617003675,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.0,
+  "hour": 0.1,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,12 +113,12 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-07 18:10:00 EST",
+    "timestamp": "2026-05-08 00:10:00 EST",
     "market_regime": "CHOP",
-    "system_diagnosis": "Second consecutive documentation-drift fix. Last run installed the CHOP h1 death-zone gate after discovering the gate was claimed IMPLEMENTED in directives but had never been in code. This run found the same problem with the CHOP dead-zone kill-gate (the one that blocks morning hours 10-12 EDT and Saturdays in CHOP regime). Original evidence was strong (research-044/045 HIGH, n=986). The gate is now installed. The bot has been dormant ~15 hours since the last losing trade (soothsayer EMERG -13.1% at 02:49 EDT), so neither this gate nor last run's bimodal gate has had a chance to fire on a real candidate yet. Bigger picture: 7-day stats are still poor (N=8, WR 37.5%, R/R 0.6, 3 of 5 losses on wallet_convergence with 2 emergency stops). The two new gates target precisely the patterns that produced those losses, so the next 10-20 trades will be the real test.",
-    "exit_analysis": "All-time N=997: WR 35.5%, avg win +13.17%, avg loss -16.60%, R/R 0.79, stop-loss rate 39.8%. 30-day N=94: WR 41.5%, avg win +7.82%, avg loss -7.38%, R/R 1.06, stop-loss rate 28.7% (down 11pp). 30-day exit mix: 34% flat-time, 28.7% stop-loss, 12.8% target, 9.6% emergency-stop. Emergency-stop rate is the main bleeder right now; both wallet_convergence emergencies (Bumpy May 4, soothsayer May 7) had price_change_1h in the [12%,30%) death zone \u2014 exactly what last run's bimodal gate now blocks.",
-    "strategy_work": "Re-implemented chop_dead_zone_kill_gate per the run-233 narrowed spec: CHOP regime (sol_h24<5%) AND (EDT hour in {10,11,12} OR weekday==Saturday) -> universal skip in _process_signal. Bounce_hunter exempt (BULL-only design, mirrors bimodal-gate exemption). Compile-check passed. Bot restarted PID 3156. Cannot validate gate behavior yet (bot dormant 15h, no candidates have arrived since restart).",
-    "directives_changes": "Bumped version 264 -> 265, updated_by run-270 -> run-271. Updated track_record with current regime/PID/timestamp. Added two pending hypotheses: (1) chop_dead_zone_kill_gate with status RE-IMPLEMENTED run-271 and full spec/evidence, (2) deployer_recidivism_blacklist with status PROPOSED_BY_RESEARCH from research-139 HIGH (51% recidivism on same-deployer mints, -0.4115 SOL avoidable losses). Appended audit_drift condensed lesson: code grep must be source of truth, not directive text.",
+    "system_diagnosis": "Third consecutive documentation-drift fix. The pattern is now firmly established: directives carry IMPLEMENTED status flags that the code never (or no longer) backs up. Run-270 caught the CHOP h1 death-zone gate, run-271 caught the CHOP morning-hours dead-zone gate, and this run caught the CHOP animal-token gate. All three were claimed live in directives but a code search returned zero matches. This run did a broader audit covering ~15 IMPLEMENTED hypotheses; only one other claim was missing (the FOMC trading gate), and that one is harmless because the calendar window expired April 30. Bot has been dormant 21+ hours since the last losing trade (soothsayer emergency stop -13.1% on May 7 02:49 EDT), so the three new CHOP-protective gates installed across runs 270/271/272 still have not been tested by a live candidate. Bigger picture: 7-day stats remain poor (8 trades, win rate 37.5%, R/R 0.6) and the wallet_convergence strategy is one bad trade away from triggering its fast-kill check at N=10.",
+    "exit_analysis": "All-time N=997: WR 35.5%, avg win +13.17%, avg loss -16.60%, R/R 0.79, stop-loss rate 39.8%. 30-day N=94: WR 41.5%, avg win +7.82%, avg loss -7.38%, R/R 1.06, stop-loss rate 28.7%. 7-day N=8 active-only: WR 37.5%, R/R 0.6, stop-loss rate 62.5%. Last five sells (oldest first): Bumpy WC EMERG -13.4% May 4, STACCANA BS stop -9.0% May 4, ROAF CB flat +0.07% May 5, AVERAGEGUY CB stop -8.3% May 5, soothsayer WC EMERG -13.1% May 7. Two of last five are >-10% emergency stops, both wallet_convergence, both with price_change_1h in the [12%,30%) death zone \u2014 exactly what run-270's bimodal gate now blocks.",
+    "strategy_work": "Drift audit: greped degen_bot.py for ~15 IMPLEMENTED hypotheses' marker constants/keywords. VERIFIED LIVE: chop_h1_bimodal_gate (line 13127), chop_dead_zone_kill_gate (line 13147), rugcheck_insider_network_blocker (line 1291), CROSS_STRAT_COOLDOWN_SEC (line 12987), LP_OWNER_PROGRAMS + holder snapshot helpers, multi_strategy_convergence_boost (line 5598), CMS m5/age/h6 filters, vol_liq_ratio, pumpfun_curve_progress, m5/avg_buy_size logging, all three loggers (pumpfun_grad + dex_boosts + gecko_breadth), kolscan auto-ingest, exit velocity snapshots, dow/quartile fields. CONFIRMED MISSING: fomc_risk_gate (harmless, calendar expired) and chop_animal_token_gate (live-impactful, re-shipped this run). Re-implemented chop_animal_token_gate at degen_bot.py _process_signal just after chop_dead_zone_kill_gate \u2014 keywords FROG/PEPE/DOG/DOGE/CAT/KITTY/WHALE/APE/SHIB/CORGI/CAPYBARA/BUNNY/RABBIT, case-insensitive substring on token symbol or name, CHOP-only via sol_h24<5%, bounce_hunter exempt to preserve DOGEFATHER/COWGORITHM BULL wins. Compile-check passed. Bot restarted, PID 9292, cycle 1 already ticking.",
+    "directives_changes": "Bumped version 265 -> 266, updated_by run-271 -> run-272. Updated track_record stats (SOL $87.81 -> $88.25, PID 3156 -> 9292, timestamp), added run-270/271 zero-trade tallies. Updated chop_animal_token_gate hypothesis status from drifted-IMPLEMENTED to RE-IMPLEMENTED with full spec. Updated fomc_risk_gate hypothesis status to DRIFT_CONFIRMED_HARMLESS. Added two condensed lessons: drift_audit_pattern_run272 (the three-run pattern + fix-forward rule) and chop_animal_token_reshipped_run272.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
@@ -126,46 +126,120 @@
       "code_verified": true
     },
     "previous_followups": [
-      "run-270 priority (a): 'verify h1 bimodal gate fires when CHOP candidate with h1 in [12,30) appears' \u2014 UNVERIFIED, bot dormant 15h since gate installation, no events to inspect.",
-      "run-270 priority (b): 'audit other IMPLEMENTED claims that may also be drifted (FOMC gate, chop_dead_zone_kill_gate)' \u2014 DONE: chop_dead_zone_kill_gate confirmed missing and re-implemented this run; FOMC gate auto-deactivated Apr30 14:00 EDT (already past), so it cannot cause harm even if missing.",
-      "run-270 priority (c): 'WC fast-kill check at N=10 if more trades arrive' \u2014 N still at 8, no new wallet_convergence trades, fast-kill check still pending."
+      "run-271 priority (a): 'verify chop_dead_zone_kill_gate fires correctly during 10/11/12 EDT or Saturday in CHOP' \u2014 UNVERIFIED, bot dormant 21+h, 0 fires in 100-event ring buffer.",
+      "run-271 priority (b): 'audit FOMC gate drift' \u2014 DONE, confirmed missing in code but calendar window expired Apr 30 so harmless. Status updated to DRIFT_CONFIRMED_HARMLESS.",
+      "run-271 priority (c): 'act on research-139 deployer-recidivism blacklist HIGH proposal' \u2014 DEFERRED to next run; mint_creators.json file already exists (80 entries, ~7.6kB) but heavy with pump.fun infrastructure addresses needing program-filter; ~80-120 LOC of work needs proper preparation.",
+      "run-271 priority (d): 'two new gates need trade samples to validate' \u2014 STILL PENDING, bot still dormant; now three gates need samples (animal_token added this run)."
     ],
     "changelog": [
-      "Re-installed the CHOP morning/Saturday dead-zone safety filter that the directives claimed was already running but turned out not to be in the bot's code. It now blocks all trades during 10-11-12 AM Eastern hours and all of Saturday whenever the market is in CHOP regime (the historically worst hours and weekday for win rate).",
-      "Restarted the bot so the new filter is live. The dashboard is unaffected.",
-      "Logged a new high-priority research idea (deployer-recidivism blacklist) for next run. Idea: if a token whose creator-wallet previously made us lose money shows up again, skip it. The research brain estimates this could save about 45% of the losses we keep taking on serial bad creators."
+      "Re-installed the CHOP animal-token blocker the brain mistakenly thought was already live. Same kind of fix as the last two runs: directives said it was shipped, the code search said otherwise, so it was re-shipped using the same evidence. Filter only applies in chop conditions and exempts the bounce_hunter strategy so winning bull-market animal trades are preserved.",
+      "Did a wider audit of every other 'already shipped' protective filter to make sure no more silent gaps exist. Found one harmless gap (a calendar gate for the April Fed meeting that's now in the past) and noted it but did nothing further.",
+      "Restarted the bot to load the new code. New process is running and writing heartbeats. Dashboard still alive."
     ],
     "actions_taken": [
-      "Audited the bot code for the two safety filters last run flagged as possibly missing. Confirmed one (chop_dead_zone_kill_gate) was indeed never installed despite the brain's records claiming otherwise. Installed it.",
-      "Verified compile passed and restarted the bot fresh.",
-      "Updated brain memory: filed the deployer-recidivism blacklist as the next big project, noted the dead-zone gate as freshly installed, and added a lesson about checking code (not directive text) when verifying past work."
+      "Read brain directives, research findings (research-139), trade log, events, and heartbeat to understand current state.",
+      "Confirmed prior run's CHOP morning-hours gate and the run before that's CHOP h1 death-zone gate are both actually live in the code now.",
+      "Searched the bot's code for every 'already shipped' filter the brain claimed was live, to make sure the last two drift-fix runs weren't missing more cases. Found one more live-impactful drift (animal-token filter) and one harmless drift (FOMC).",
+      "Wrote ~25 lines of code to add the animal-token filter back into the bot's buy decision path, using the exact same shape as the previous two drift fixes for consistency.",
+      "Compile-checked the change.",
+      "Restarted the bot. Old process exited cleanly, new process is running with a new ID (9292) and the dashboard is still up.",
+      "Updated brain memory: bumped version, fixed the drifted status flags, added a lesson about the three-run drift pattern and the rule the brain should follow going forward (every 'IMPLEMENTED' claim must include a code marker that the next run greps for)."
     ],
     "next_priorities": [
-      "Watch sol_events.json for chop_h1_bimodal_gate and chop_dead_zone_kill_gate skip entries to confirm both filters fire correctly when a CHOP candidate arrives in their target window.",
-      "Implement deployer-recidivism blacklist (research-139 HIGH proposal): resolve deployer wallet from each pump.fun mint's first-tx signer using existing mint_creators.json file, build sol_deployer_blacklist.json, gate _process_signal. N=50 evaluation target.",
-      "If wallet_convergence sees 2 more trades (N=10), re-run the fast-kill check. Currently 1 of 4 conditions met (R/R<1.0); WR 62.5% is the safety net.",
-      "Keep monitoring 7-day rolling stats. Both new gates target the WC emergency-stop pattern; expect WR and R/R to improve once 5+ post-gate trades arrive."
+      "Verify all three CHOP-protective gates fire when the next CHOP candidate arrives \u2014 watch sol_events.json for chop_animal_token_gate, chop_h1_bimodal_gate, chop_dead_zone_kill_gate skip entries. Bot has been dormant 21+ hours; first scanner activity will be the test.",
+      "Implement the deployer-recidivism blacklist (research-139 HIGH). Plan: (1) Phase 1 logger that resolves real deployer per buy via Alchemy getSignaturesForAddress and persists to sol_deployer_blacklist.json, (2) program-address filter set to skip pump.fun/migration/refund infrastructure addresses, (3) Phase 2 live pre-buy filter at _process_signal blocking buys whose deployer was flagged in last 7 days. Mine sol_trade_log.json on startup to seed the blacklist from past losses. ~80-120 LOC.",
+      "Consider boosts_top_feed_breakout strategy (research-139 MEDIUM). DexScreener top-feed boosts with liq>$50k showed 22% big-winner rate (>+50% h24) vs 75% rugs on latest feed. sol_dex_boosts_log.json already collecting. Paper-trial first.",
+      "If wallet_convergence takes one more loss before any wins, re-evaluate fast-kill at N=10 (currently N=8 with R/R 0.42; WR 62.5% holding the strategy in TESTING).",
+      "When bot reaches BULL trigger (SOL h24>+5%, ~$93+), reactivate flash_surge / fresh_profile / bounce_hunter and watch for stall_detection fires (currently 3/20, all wins)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 997,
+      "total_buys": 996,
       "win_rate": 35.5,
       "avg_win_pct": 13.17,
       "avg_loss_pct": -16.6,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 39.8,
       "bankroll": 1.1578,
-      "pnl_today": -0.000654
+      "pnl_today": 0.0,
+      "pnl_7d": -0.00324,
+      "pnl_24h": -0.00065,
+      "active_only_7d_trades": 8,
+      "active_only_7d_wr": 37.5,
+      "active_only_7d_rr": 0.6,
+      "active_only_7d_stop_rate_pct": 62.5,
+      "open_positions": 0,
+      "wallets_monitored": 69,
+      "wallets_pinned": 16
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, 0.9x)",
-      "bear_strength (TESTING, 0.35x BULL / 0.15x CHOP)",
-      "consensus_boost (TESTING, 0.50x CHOP / 0.70x BULL; CB CHOP gate live)",
-      "wallet_convergence (TESTING, 0.15x; pending fast-kill at N=10)",
-      "chop_momentum_scalp (TESTING, 0.15x; m5 ceiling + h1 bimodal live)",
-      "anchor_derivative_snipe (TESTING, 0.15x; N=0 trades yet)",
-      "flash_surge (TESTING_BULL, 0.15x)",
-      "bounce_hunter (TESTING_BULL; exempt from CHOP bimodal + dead-zone gates)"
+      {
+        "name": "fresh_profile",
+        "status": "PROVEN",
+        "lifetime_trades": 15,
+        "lifetime_wr": 60.0,
+        "sizing": "0.9x",
+        "note": "Dormant since Apr 2 \u2014 CHOP quality gate + overnight block blocking candidates."
+      },
+      {
+        "name": "bear_strength",
+        "status": "TESTING",
+        "lifetime_trades": 23,
+        "lifetime_wr": 43.5,
+        "lifetime_rr": 2.12,
+        "sizing": "0.35x BULL / 0.15x CHOP"
+      },
+      {
+        "name": "consensus_boost",
+        "status": "TESTING",
+        "lifetime_trades": 38,
+        "lifetime_wr": 50.0,
+        "lifetime_rr": 1.68,
+        "sizing": "0.50x CHOP / 0.70x BULL"
+      },
+      {
+        "name": "flash_surge",
+        "status": "TESTING_BULL",
+        "lifetime_trades": 4,
+        "lifetime_wr": 0.0,
+        "sizing": "0.15x"
+      },
+      {
+        "name": "bounce_hunter",
+        "status": "TESTING_BULL",
+        "lifetime_trades": 28,
+        "lifetime_wr": 50.0,
+        "sizing": "default"
+      },
+      {
+        "name": "anchor_derivative_snipe",
+        "status": "TESTING",
+        "lifetime_trades": 0,
+        "sizing": "0.15x"
+      },
+      {
+        "name": "chop_momentum_scalp",
+        "status": "TESTING",
+        "lifetime_trades": 16,
+        "lifetime_wr": 31.3,
+        "sizing": "0.15x"
+      },
+      {
+        "name": "wallet_convergence",
+        "status": "TESTING",
+        "lifetime_trades": 8,
+        "lifetime_wr": 62.5,
+        "lifetime_rr": 0.42,
+        "sizing": "0.15x",
+        "note": "One loss away from N=10 fast-kill check; R/R 0.42 already trips one of four criteria."
+      },
+      {
+        "name": "copy_trade",
+        "status": "KILLED",
+        "lifetime_trades": 537,
+        "note": "Watch-only since run-32."
+      }
     ]
   },
   "wallet_scan": {
@@ -173,15 +247,15 @@
     "result": "Saved 20 wallets in 32m 21s",
     "completed": "2026-05-04T01:41:38.867292"
   },
-  "brain_next_sec": 21161.105328,
+  "brain_next_sec": 20857.809033,
   "brain_next_str": "6:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 378.894672,
-  "brain_last_run_str": "6:10 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "12:10 AM EST",
   "research_running": false,
   "research_last_run_str": "12:55 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 1121.105328,
+  "research_next_sec": 817.809033,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-07 12:54:30 EDT",
@@ -348,7 +422,7 @@
     "dashboard_pid": 14184,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 21.37,
+    "hours_since_last_trade": 21.45,
     "dormancy_alert": false,
     "filter_lockout_diagnosis": "Not yet at 24h threshold. Recent skip mix: sell-conflict skips (tracked wallet sold same token recently), midpump h1=0.0% (below 15% momentum), downtrend h24 -91%. Bot scanning normally \u2014 every candidate is rejected by individual gates rather than a single dominant filter. No filter-accumulation lockout signature.",
     "actions_taken": [
@@ -380,7 +454,7 @@
     "next_run_focus": "Trade dormancy will cross 24h threshold next run (last buy was soothsayer at 02:49 EDT 2026-05-07, ~21.3h ago). If still no buys, surface DORMANCY_ALERT and filter-lockout diagnosis \u2014 watch for chop_dead_zone_kill_gate / chop_h1_bimodal_gate skip events as the new gates installed in run-270/271 begin firing. Also: heartbeat file has been stale 4 consecutive runs (108s -> 438s -> 767s) while bot is alive \u2014 the cycle wall-clock is exceeding the heartbeat budget; flag for operator review.",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 4.4,
+    "file_age_min": 9.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1829,7 +1903,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 2.0,
+    "age_min": 7.0,
     "stale": false,
     "available": true
   },
@@ -1837,11 +1911,11 @@
     "requests_pending": 0,
     "requests_acknowledged": 0,
     "hypotheses_pending": 50,
-    "lessons_count": 50,
+    "lessons_count": 52,
     "killed_ideas_count": 16,
     "drift_keys": [],
     "active_strategies_count": 9,
-    "overloaded": false
+    "overloaded": true
   },
   "memory_keeper_status": {
     "timestamp": "2026-05-06 23:09:23 EDT",
@@ -1878,14 +1952,14 @@
     "requests_archived": 0,
     "elapsed_min": 5,
     "next_run_focus": "Lesson trim is due: condensed_lessons.entries has 44 (cap 40). Brain ships 1 logger per run accumulating new entries each time. Next lab run should trim oldest single-evidence shipped-note entries by ~5 to historical_lessons. Hypotheses at 50/50 cap, watch for status-stale carry-forward dead entries.",
-    "age_hours": 25.0,
+    "age_hours": 25.1,
     "stale": true,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 221.105328,
-  "maint_next_str": "12:15 AM EST",
+  "maint_next_sec": 817.809033,
+  "maint_next_str": "12:30 AM EST",
   "maint_last_run_str": "12:06 AM EST",
   "maint_stale": false,
   "memk_next_sec": null,
@@ -1896,111 +1970,20 @@
     "latest": {
       "hypothesis_name": "boosts_top_feed_breakout",
       "run_id": "research-139",
-      "status": "not_acknowledged",
-      "status_label": "\u2753 Not acknowledged",
-      "status_color": "#ff9933",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Read brain directives, research findings (research-139), trade log, events, and heartbeat to understand current state.",
+      "evidence_source": "action"
     },
     "tally": {
-      "implemented": 26,
+      "implemented": 27,
       "queued": 0,
       "rejected": 1,
-      "total": 27
+      "total": 28
     }
   },
   "events": [
-    {
-      "ts": "2026-05-07T23:49:07.968218",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6E4897rJ sold AxXQf12U \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:49:20.120144",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: APSrV2sR sold 3TYgKwkE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:49:22.267090",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=2.6% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:50:08.013130",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=1.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:50:45.071210",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold 21rwEDi8 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:50:45.082145",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold 817TC4ut \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:50:45.082145",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HjLFpRto sold Gv2i54cz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:50:47.404481",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip DTOUR: h1=-9.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:50:49.882100",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip underclass: h1=-15.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:51:22.336696",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold jvKtLFLn \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:51:24.716524",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip COMPUTA: m5=-10.6% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:51:26.831050",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Scientology : downtrend h1=-14.3% h24=-49.5%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-07T23:51:26.835062",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HcLMmNx9 sold 7iRJcjWH \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-07T23:51:26.840579",
       "type": "SIGNAL",
@@ -2609,6 +2592,97 @@
       "color": "#d29922",
       "msg": "Sell-conflict skip 3TsMV8cM: tracked wallet sold this token 74s ago",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:11:54.253343",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4vw54BmA sold 3TsMV8cM \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:13:21.560933",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ApRnQN2H sold ER3j4zL5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:13:21.564943",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ApRnQN2H sold ER3j4zL5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:13:54.218939",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip conviction: m5=26.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:13:54.686124",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip conviction: m5=26.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:13:55.175763",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip conviction: m5=26.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:13:55.654428",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip conviction: m5=26.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:13:56.134479",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip conviction: m5=26.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:15:07.495019",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8MaVa9kd sold FZWDFWR4 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:16:07.360254",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Gate probation 9c6StdpH: 1214.5h idle, WR 40% (12/30), PnL=-0.0270 \u2014 allowing signal (next reset in 24h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:16:07.360254",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:16:16.171831",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip IMC: h6=734.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T00:16:16.621385",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip IMC: h6=734.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2664,9 +2738,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "00:11:18",
+  "ts": "00:16:22",
   "__publish_meta": {
-    "published_at": "2026-05-08 00:11:18 EDT",
+    "published_at": "2026-05-08 00:16:22 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
