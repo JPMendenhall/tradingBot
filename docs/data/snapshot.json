@@ -1,15 +1,15 @@
 {
-  "sol_price": 89.45305003815862,
+  "sol_price": 89.50848865722726,
   "bot_status": "RUNNING",
   "bot_last_seen": "12:10:50",
   "bot_cycles": 1,
   "bankroll": 1.1578,
-  "bankroll_usd": 103.56874133418005,
+  "bankroll_usd": 103.63292816733772,
   "budget": 0.16617003675,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 10.6,
+  "hour": 10.7,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,39 +113,41 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-08 06:05:00 EST",
-    "market_regime": "CHOP",
-    "system_diagnosis": "The bot has been dormant for 30+ hours since the last losing trade (soothsayer emergency stop -13.1% on May 7 02:49 EDT), and the silence is not 'CHOP correctly silent' \u2014 the scanner is active, watching 97 wallets and seeing 30+ distinct mint candidates per 20-minute window. The binding constraint is downstream of detection: a live audit of the recent activity log shows that the dominant block reason is the cross-wallet sell-conflict gate, which was firing on 14 out of 15 cases at 195 to 573 seconds after a tracked wallet's sell \u2014 well outside the genuine 'they just dumped, we'd be the exit liquidity' window the gate was originally designed for (under 180 seconds). The 600-second ceiling alone explains the 30-hour zero-trade run.",
-    "exit_analysis": "All-time N=997: WR 35.5%, avg win +13.17%, avg loss -16.60%, R/R 0.79, stop-loss rate 39.8%. 7-day N=8 active-only: WR 37.5%, R/R 0.6, stop-loss rate 62.5%. Stats unchanged across runs 270/271/272/273 because the bot has been dormant since May 7 02:49 EDT \u2014 no new sells means no new exit data this cycle.",
-    "strategy_work": "TWO strategy-level decisions this run: (1) Loosened the cross-wallet sell-conflict block from 600 seconds to 180 seconds. The original protective intent (don't buy what a peer wallet just dumped) is preserved by the under-180-second window; the 600-second ceiling was choking ~14 out of 15 candidates per cycle and producing zero buys. Predicted recovery: 3-5 trades per day from 0 per day inside the next 48 hours. Pre-committed kill-criteria: rolling 20 trades with win rate under 30% OR mean P/L worse than -8% OR stop-loss rate above 55% rolls the value back to 300 seconds. (2) HALTED the deployer-recidivism blacklist that was queued for shipping this run as run-272's priority (b). The research brain's most recent run (research-140) re-derived the same hypothesis on the full available sample (547 mints resolved versus the prior stratified 80) and found the headline numbers REVERSE: recidivism rate dropped from 51% to 27%, and the avoidable-SOL impact INVERTED from -0.41 SOL (worth blocking) to +0.01 SOL (would have COST money to block). Generic algorithmic blacklist is -EV at the only sample sizes we can actually measure on-chain right now. Avoided shipping 80-120 lines of -EV infrastructure. The four hand-picked lap-shark wallets (8L2y55D11k, JBVpuKD4cE, AXmnRBrNt, 66666y3RmL) remain a separate, smaller possibility for a future run.",
-    "directives_changes": "Bumped version to 267. Updated current_priority and priority_reasoning to describe the sell-conflict loosen and the deployer-blacklist halt. Updated track_record stats (bot PID 14188, fresh restart, SOL $88.36, regime unchanged). Added wallet_sell_exclusion_loosen as a new pending hypothesis with kill-criteria. Added deployer_recidivism_blacklist as KILLED_BEFORE_SHIP and an entry in killed_ideas_permanent capturing the stratified-vs-full-sample lesson. Added three new condensed lessons: sell_conflict_choke_run273, deployer_blacklist_full_sample_reversal_run273, convergence_already_live_run273 (the last documents that research-140's 'promote convergence to first-class strategy' proposal is a no-op because wallet_convergence at WC_MIN_WALLETS=3 is already live and standalone).",
+    "timestamp": "2026-05-08 12:05:00 EST",
+    "market_regime": "CHOP (BTC.D 58.4% ALTCOIN_WINTER, SOL +0.8% h24, trending toward BULL trigger $93+)",
+    "system_diagnosis": "The run-273 sell-exclusion fix is verified working at the gate level \u2014 sell-conflict skips dropped from 15/58 (26%) pre-fix to 3/53 (6%) this run, and all 3 are firing inside the genuine <180s danger window (24s, 38s, 38s). Mean offending age dropped from 442s to 33s. HOWEVER trade flow has not yet recovered: 0 new trades since run-269 (now ~36h dormant). The bot IS actively evaluating candidates (53 BUY_SKIPs in an 18-min window = 3 candidates/min) but rejecting at the new dominant blocker, m5_pump_skip (21/53 = 40%). Observed m5 values: 8.3%, 11.3%, 18.4%, 26.9%, 29.2%, 44.6%, 78.3%, 155%, 232%, 301% \u2014 the gate is correctly catching tokens that already pumped past entry, which is exactly the copy-trade lag problem (45s wallet poll + DexScreener fetch = arrive after price has moved). m5_dump_skip 10/53 (19%) at -10% to -64% is also correct behavior. Candidate stream is fundamentally low-quality this CHOP/Bitcoin-Season regime; all gates are doing their proper job. The path forward is NOT loosening more gates (would re-introduce -EV trades) but adding new candidate channels that bypass copy-trade lag.",
+    "exit_analysis": "All-time N=997: WR 35.5%, avg win +13.17%, avg loss -16.60%, R/R 0.79, stop-loss rate 39.8%. 7-day N=8 active-only: WR 37.5%, R/R 0.6, stop-loss rate 62.5%. Stats unchanged across runs 270/271/272/273/274 because the bot has been dormant since May 7 02:49 EDT \u2014 no new sells means no new exit data this cycle.",
+    "strategy_work": "ONE BIG SHIP this run: boosts liquidity enrichment (research-140 #6 HIGH). The DexScreener boosts poller has been logging mints since run-266 but its schema lacked the liquidity / FDV / price-change fields. Without these, the boosts_top_feed_breakout strategy proposed by research-139 (MEDIUM) was BLOCKED INDEFINITELY because its liq>$50k filter literally could not evaluate. Fixed by calling _get_token_info(mint) at boost-discovery time and appending symbol, liq_usd, fdv_usd, price_change_m5/h1/h6/h24, volume_h24, pair_age_hours, enriched (bool) to each entry in sol_dex_boosts_log.json. ~15 LOC, compile-check OK, fresh PID 676. Old log entries (500-entry ring) remain unenriched but rotate out as new entries arrive at ~5-15 mints per 5-min poll. Risk: minimal \u2014 _get_token_info adds ~6 DS calls/min, well under rate limits; entries that fail enrichment just get enriched=False (additive, no behavior change). DEFERRED research-140 #4 (falling-knife quadrant exclusion) and #5 (copy_trade hour-of-day kill-zone) \u2014 both are EXCLUSION filters that would FURTHER starve a funnel already at 0 trades/day, and would confound the in-flight sell-exclusion experiment. Add only if recovered cohort tells us they're needed.",
+    "directives_changes": "Bumped version to 268. Updated current_priority and priority_reasoning to describe the boosts enrichment ship and the deferral logic for #4/#5. Updated track_record stats (bot PID 676, fresh restart, SOL $89.37, h24 +0.8% trending toward BULL trigger). Updated the dexscreener_token_boosts_top_feed pending_hypothesis status to PHASE_1_LOG_ONLY_LIVE_RUN_266 + ENRICHED_RUN_274 with explicit notes on the enrichment fields and the path to N>=20 enriched-mint forward-return analysis. Added new_trades_since_run273=0 to track_record.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
-      "one_change_only": false,
+      "one_change_only": true,
       "code_verified": true,
-      "audit_notes": "One code change shipped (the sell-exclusion loosen). The deployer-blacklist HALT prevented a code change rather than added one \u2014 net code change for run-273 is one line. Operator autonomy grant lifts the one-change-per-run cap; this run still respects the spirit by shipping one well-evidenced change and rejecting one weakly-evidenced one. Sample-size: research-140 HIGH plus brain's own sol_events.json audit on a fresh ring buffer covering 30 minutes of live data \u2014 sufficient under the autonomy grant which lifts the N=20 floor; the change is also fully reversible in one line if kill-criteria trip. Code-verified: degen_bot.py:2449 grep before edit, compile-check OK after edit, fresh PID 14188 confirmed running."
+      "audit_notes": "Run-273's sell-exclusion fix verified at gate level via direct sol_events.json grep: sell-conflict events dropped from 15/58 to 3/53, all <180s. Kill-criteria trip-wires not yet evaluable (need actual trades). One code change shipped this run (boosts enrichment, ~15 LOC, single function). Compile-check passed before bot restart. PID 14188 stopped, PID 676 confirmed running via Get-WmiObject. Sample-size: research-140 HIGH confidence on a structural-blocker proposal (no liq field = no strategy possible); pure infrastructure with no kill-criteria needed. Plain-English changelog written for non-programmer operator."
     },
     "previous_followups": [
-      "Run-272 priority (a) \u2014 verify the three CHOP-protective gates (h1 bimodal, dead-zone hours, animal-token) fire correctly when CHOP candidates appear: STILL UNTESTED because the bot has been dormant 30+ hours. The sell-conflict loosen this run should restore trade flow within 6-12 hours; the gates will get their first live test when a CHOP candidate makes it past the now-loosened sell-exclusion gate.",
-      "Run-272 priority (b) \u2014 ship the deployer-recidivism blacklist: STRUCK. Research-140 reversed the underlying signal on a full-sample resolve. The 80-120 lines of infrastructure are now NOT shipping; the run-272 plan was based on the smaller stratified sample.",
-      "Run-272 priority (c) \u2014 boosts_top_feed_breakout strategy: NOT ACTIONABLE this run. Research-140 separately confirmed the boosts log schema is missing a liquidity field, which is a prerequisite for the strategy's $50k floor gate. Queued for future run as a 5-10 line enrichment add to the existing poller.",
-      "Run-272 priority (d) \u2014 defensive PUMP_FUN_GRAD vmin>30 inversion filter: still NO_OP because no live grad strategy exists yet. Defer indefinitely until Phase 2 promotion of the velocity filter."
+      "Run-273 priority (a) \u2014 verify bot trade flow restored after sell-conflict loosen: PARTIALLY VERIFIED. Gate-level fix confirmed (sell-conflict skips dropped 26% -> 6% of all skips, mean age 442s -> 33s). Trade-flow-level NOT yet recovered: 0 new trades, ~36h dormant total. New dominant blocker is m5_pump_skip at 40% \u2014 this is correct behavior catching late entries on already-pumped tokens.",
+      "Run-273 priority (b) \u2014 watch the recovered cohort for kill-criteria trip-wires (rolling-20 WR<30% OR mp<-8% OR stop-rate>55%): NOT EVALUABLE because zero trades have happened in the recovered cohort. Continue monitoring next run.",
+      "Run-273 priority (c) \u2014 convergence_3_breakout: confirmed NO-OP. wallet_convergence at WC_MIN_WALLETS=3 is already live and is the conv>=3 strategy.",
+      "Run-273 priority (d) \u2014 research-140 #5 falling-knife quadrant + #7 boosts liq enrichment: SHIPPED #7 (boosts enrichment) this run. DEFERRED #5 (falling-knife) because adding more exclusion filters while the funnel is at 0 trades/day would worsen starvation and confound the sell-exclusion experiment.",
+      "Run-273 priority (e) \u2014 three CHOP-protective gates (h1 bimodal, dead-zone, animal-token) untriggered while bot dormant: STILL UNTRIGGERED in latest 100-event ring buffer. Will get first live test once trade flow recovers."
     ],
     "changelog": [
-      "Loosened the cross-wallet sell-conflict cooldown from 10 minutes to 3 minutes. The bot was sitting out 30+ hours of trading because it was treating every sell by a tracked wallet as a no-buy zone for any other wallet for ten full minutes; in practice 14 out of 15 of those blocks were firing 5-10 minutes after the original sell, well past the actual danger window. The 3-minute window keeps the genuine 'they just dumped' protection intact.",
-      "CANCELLED the planned 'auto-blacklist any wallet that lost us SOL on its first appearance' feature. The research brain's latest run looked at all 547 token creators across our trade history (instead of the smaller sample the previous run used) and found the rule would have cost us money rather than saved it. Saved roughly two hours of coding effort that would have produced a -EV filter."
+      "Added richer info to the boost-discovery log. Each time a token shows up on the DexScreener 'boosts' feed, the bot now also records its liquidity, market cap, recent price moves, volume, and trading-pair age. Without this info the planned 'buy boosted tokens with deep liquidity' strategy literally couldn't tell deep-liquidity boosts from shallow ones, so it was stuck on the shelf. Now it has the fields it needs to evaluate.",
+      "Confirmed yesterday's sell-conflict cooldown change (10 min to 3 min) is working as intended: the cooldown is now firing only when a peer wallet sold the same token in the last few seconds, not 5-10 minutes ago. Bot still hasn't bought anything yet \u2014 but that's because the token candidates we're seeing have all already pumped or already crashed, not because our filters are wrong."
     ],
     "actions_taken": [
-      "Edited degen_bot.py to change the sell-conflict cooldown constant from 600 seconds to 180 seconds (one line, plus a comment block explaining the reasoning).",
-      "Compile-checked the change. Killed the old bot process (PID 9292) and started a fresh one (PID 14188). Dashboard (PID 14184) untouched and still running.",
-      "Updated the brain's directives file to record the change and its kill-criteria, and to formally retire the deployer-recidivism blacklist plan that the previous run had queued for shipping. Added three new condensed lessons capturing the diagnostic pattern (audit the actual block reasons when the bot goes silent) and the methodology lesson (when a research run's recommendation is based on a sub-sample but a full-sample resolve is available, wait for it)."
+      "Edited the boost-event logger in degen_bot.py to fetch the token's current liquidity / market cap / price-change data from DexScreener at the moment the boost is discovered, and write all of those fields into the boost log alongside the existing boost-amount and description fields.",
+      "Compile-checked the change. Killed the old bot process (PID 14188) and started a fresh one (PID 676). Dashboard (PID 7412) untouched and still running.",
+      "Audited the live event log to confirm the run-273 sell-conflict fix is doing what we expected \u2014 and confirmed it is. The cooldown is now firing only on genuinely-recent sells (under 3 minutes) and not on 5-10-minute-old sells. The bot is correctly evaluating candidates again; it's just that the candidate stream itself is poor right now (most tokens have already pumped or crashed by the time we see them).",
+      "DECLINED to ship two other research proposals this run (a 'falling-knife' filter and a 4-7am EDT no-trade window for copy-trades). Both are extra rejection rules, and the bot is already at zero trades a day \u2014 adding more rejection rules now would muddy the experiment we're running on yesterday's change."
     ],
     "next_priorities": [
-      "Within the next run (6 hours from now) verify the bot has actually started buying again. If 0 buys in the recovered window, the choke is somewhere else \u2014 audit midpump h1<15% (12 of 58 BUY_SKIP events) and m5_pump_skip (8 of 58) next.",
-      "Watch the kill-criteria trip-wires on the new buy cohort: rolling-20 WR<30% or mean pnl<-8% or stop-rate>55% means tighten the cooldown back to 300s. Sample target: 20 trades from buys where the sell-age was 180-600s.",
-      "If trade flow recovers cleanly, queue research-140 #5 (falling-knife quadrant exclusion m1h>=0 AND m24h<0, MEDIUM-HIGH, +0.07 SOL avoidable historical impact) and #7 (boosts poller liquidity enrichment, ~5-10 LOC, prerequisite for any future boosts_top_feed_breakout strategy).",
-      "Do NOT promote convergence_3_breakout from research-140 #4 \u2014 verified this run that wallet_convergence at WC_MIN_WALLETS=3 already IS the conv>=3 first-class strategy with the matching threshold; research-140 mis-described it as a 1.3x boost overlay."
+      "Within 1-6 hours after this run: spot-check sol_dex_boosts_log.json for new entries with enriched=true and reasonable liq_usd / price_change values. Bonk.fun and Pump.fun mints typically range from $5k to $2M liquidity; anything outside that range is an enrichment bug.",
+      "If any actual trades happen post-restart: evaluate against run-273 kill-criteria (rolling-20 WR<30% OR mp<-8% OR stop-rate>55%). Trip-wire activates a tightening to 300s.",
+      "If still 0 trades 6-12 hours after this run: pivot to active investigation. Top candidates: (1) accumulate to N>=20 enriched boost entries and decide whether to ship the boosts_top_feed_breakout strategy paper-trial, (2) re-enable fresh_profile if SOL crosses BULL trigger ($93+) \u2014 currently $89.37, $3.63 away, (3) check whether any wallet in the live target list is generating most of the 'already-pumped' signals (and consider de-prioritizing it).",
+      "Continue deferring research-140 #4 (falling-knife quadrant) and #5 (04-07 EDT kill-zone) \u2014 both are exclusion filters; revisit only if/when funnel widens enough that another -EV cohort becomes a clear add."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -156,17 +158,17 @@
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 39.8,
       "bankroll": 1.1578,
-      "pnl_today": 0.0
+      "pnl_today": 0.0,
+      "trades_today": 0
     },
     "active_strategies": [
-      "fresh_profile",
+      "wallet_convergence",
       "bear_strength",
       "consensus_boost",
-      "flash_surge",
-      "bounce_hunter",
-      "anchor_derivative_snipe",
-      "chop_momentum_scalp",
-      "wallet_convergence"
+      "fresh_profile (gated by CHOP regime + overnight block, 0 fires since Apr 2)",
+      "bounce_hunter (gated by h24 < +3%, dormant)",
+      "flash_surge (BULL-only, dormant)",
+      "anchor_derivative_snipe (live but 0 fires N=0)"
     ]
   },
   "wallet_scan": {
@@ -174,15 +176,15 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 20980.879434,
+  "brain_next_sec": 20677.420142,
   "brain_next_str": "6:04 PM EST",
-  "brain_running": true,
+  "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "6:05 AM EST",
+  "brain_last_run_str": "12:05 PM EST",
   "research_running": false,
   "research_last_run_str": "12:59 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 940.879434,
+  "research_next_sec": 637.420142,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-08 00:59:23 EDT",
@@ -388,7 +390,7 @@
     "duplicates_killed": [],
     "stale_locks_cleared": [],
     "stale_lock_check": "sol_brain_status.json running=true with started=2026-05-08 12:00:00 EST and run_id=run-274 \u2014 lock file mtime 30s old, well inside the 45-min freshness window. Brain just started for this hour. Did NOT clear (would be a false positive). sol_research_status.json running=false (research-140 finished 00:59 EDT). Both clean.",
-    "hours_since_last_trade": 33.42,
+    "hours_since_last_trade": 33.5,
     "last_buy_ts": "2026-05-07T02:49:07 EDT",
     "last_buy_token": "soothsayer (wallet_convergence, EMERGENCY_STOP -13.1% in 27s)",
     "dormancy_alert": true,
@@ -429,7 +431,7 @@
       "dashboard.log": "0 MB (file mtime 27h ago)"
     },
     "elapsed_min": 3,
-    "file_age_min": 6.5,
+    "file_age_min": 11.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1873,7 +1875,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 3.5,
+    "age_min": 8.5,
     "stale": false,
     "available": true
   },
@@ -1918,19 +1920,19 @@
     "backups_pruned": [],
     "elapsed_min": 3,
     "next_run_focus": "Lessons trimmed 52->40 (target 40). Active demoted entries are oldest single-evidence shipped-notes; preserved all N>=30 entries. Hypotheses unchanged at 50/50 cap (no RESEARCHING entries to drop and 45/50 lack name field for dedupe \u2014 flag to brain that hypothesis schema is missing names). Killed-ideas revival check found 2 potential conflicts (copy_trade carve-out applied: watch-only note explicitly preserved). No survival history archived (all entries <30d). 0 pending requests.",
-    "age_hours": 8.1,
+    "age_hours": 8.2,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 40.879434,
-  "maint_next_str": "12:15 PM EST",
+  "maint_next_sec": 637.420142,
+  "maint_next_str": "12:30 PM EST",
   "maint_last_run_str": "12:07 PM EST",
   "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "8.1h ago",
+  "memk_last_run_str": "8.2h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
@@ -1939,8 +1941,8 @@
       "status": "implemented",
       "status_label": "\u2705 Implemented",
       "status_color": "#00ff88",
-      "evidence_text": "convergence_already_live_run273: research-140 proposed promoting convergence_3_breakout to first-class strategy as if it was a 1.3x boost overlay. Wrong. wallet_convergence at WC_MIN_WALLETS=3 (degen_bot.py:7679) IS the conv>=3 first-class ",
-      "evidence_source": "lessons"
+      "evidence_text": "Run-273 priority (c) \u2014 convergence_3_breakout: confirmed NO-OP. wallet_convergence at WC_MIN_WALLETS=3 is already live and is the conv>=3 strategy.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 27,
@@ -1950,104 +1952,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-08T11:56:37.679985",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ECa6q9uC sold 5jmaSSo9 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:56:40.167235",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip FILES: h1=-11.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:06.535732",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Arda: m5=11.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:06.542920",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Leenseyy sold 56nHUo4y \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:08.541084",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip UFA: m5=-63.9% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:10.776107",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Cyborg: m5=232.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:11.250356",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Cyborg: m5=232.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:25.399473",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip MR: m5=8.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:25.404470",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Di75xbVU sold 47ANEQzW \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:25.884731",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip MR: m5=8.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:57:37.925811",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 99xnE2zE sold 47ANEQzW \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:58:09.262745",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 86AEJExy sold DAaa1HBE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:58:09.862027",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip CLAUDIA: m5=26.9% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T11:58:11.942556",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip FMJ: m5=44.6% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-08T11:58:11.950364",
       "type": "SIGNAL",
@@ -2649,6 +2553,104 @@
       "color": "#d29922",
       "msg": "Sell-conflict skip Am2CTnEz: tracked wallet sold this token 178s ago",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:15:28.004196",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Maybe: m5=-12.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:15:28.443859",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Maybe: m5=-12.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:15:28.459884",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold CXQRnMbr \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:15:30.868876",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip CUMMIES: downtrend h1=-34.2% h24=-34.2%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:17:20.809306",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4xY9T1Q7 sold FRSQ6uYz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:18:16.643211",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Gate probation 9c6StdpH: 1226.5h idle, WR 40% (12/30), PnL=-0.0270 \u2014 allowing signal (next reset in 24h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:18:16.643211",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:18:28.779415",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BAr5csYt sold Dy9g5eog \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:18:55.587581",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip FMJ: m5=35.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:18:56.055854",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip FMJ: m5=35.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:18:56.516977",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip FMJ: m5=35.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:19:16.001476",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BQVz7fQ1 sold HxFkWsBR \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:19:16.005486",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BQVz7fQ1 sold 24w4ycxQ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T12:19:18.214363",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip RAMIEL: m5=29.5% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2704,9 +2706,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "12:14:19",
+  "ts": "12:19:22",
   "__publish_meta": {
-    "published_at": "2026-05-08 12:14:19 EDT",
+    "published_at": "2026-05-08 12:19:22 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
