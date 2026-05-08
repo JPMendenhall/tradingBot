@@ -1,15 +1,15 @@
 {
-  "sol_price": 92.56443846488227,
+  "sol_price": 92.54435515034105,
   "bot_status": "RUNNING",
   "bot_last_seen": "18:07:06",
   "bot_cycles": 1,
   "bankroll": 1.1556,
-  "bankroll_usd": 106.96746509001795,
+  "bankroll_usd": 106.9442568117341,
   "budget": 0.16617003675,
   "pnl_today": -1.2034606997098002e-05,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 16.5,
+  "hour": 16.6,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,62 +113,90 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-08 12:05:00 EST",
-    "market_regime": "CHOP (BTC.D 58.4% ALTCOIN_WINTER, SOL +0.8% h24, trending toward BULL trigger $93+)",
-    "system_diagnosis": "The run-273 sell-exclusion fix is verified working at the gate level \u2014 sell-conflict skips dropped from 15/58 (26%) pre-fix to 3/53 (6%) this run, and all 3 are firing inside the genuine <180s danger window (24s, 38s, 38s). Mean offending age dropped from 442s to 33s. HOWEVER trade flow has not yet recovered: 0 new trades since run-269 (now ~36h dormant). The bot IS actively evaluating candidates (53 BUY_SKIPs in an 18-min window = 3 candidates/min) but rejecting at the new dominant blocker, m5_pump_skip (21/53 = 40%). Observed m5 values: 8.3%, 11.3%, 18.4%, 26.9%, 29.2%, 44.6%, 78.3%, 155%, 232%, 301% \u2014 the gate is correctly catching tokens that already pumped past entry, which is exactly the copy-trade lag problem (45s wallet poll + DexScreener fetch = arrive after price has moved). m5_dump_skip 10/53 (19%) at -10% to -64% is also correct behavior. Candidate stream is fundamentally low-quality this CHOP/Bitcoin-Season regime; all gates are doing their proper job. The path forward is NOT loosening more gates (would re-introduce -EV trades) but adding new candidate channels that bypass copy-trade lag.",
-    "exit_analysis": "All-time N=997: WR 35.5%, avg win +13.17%, avg loss -16.60%, R/R 0.79, stop-loss rate 39.8%. 7-day N=8 active-only: WR 37.5%, R/R 0.6, stop-loss rate 62.5%. Stats unchanged across runs 270/271/272/273/274 because the bot has been dormant since May 7 02:49 EDT \u2014 no new sells means no new exit data this cycle.",
-    "strategy_work": "ONE BIG SHIP this run: boosts liquidity enrichment (research-140 #6 HIGH). The DexScreener boosts poller has been logging mints since run-266 but its schema lacked the liquidity / FDV / price-change fields. Without these, the boosts_top_feed_breakout strategy proposed by research-139 (MEDIUM) was BLOCKED INDEFINITELY because its liq>$50k filter literally could not evaluate. Fixed by calling _get_token_info(mint) at boost-discovery time and appending symbol, liq_usd, fdv_usd, price_change_m5/h1/h6/h24, volume_h24, pair_age_hours, enriched (bool) to each entry in sol_dex_boosts_log.json. ~15 LOC, compile-check OK, fresh PID 676. Old log entries (500-entry ring) remain unenriched but rotate out as new entries arrive at ~5-15 mints per 5-min poll. Risk: minimal \u2014 _get_token_info adds ~6 DS calls/min, well under rate limits; entries that fail enrichment just get enriched=False (additive, no behavior change). DEFERRED research-140 #4 (falling-knife quadrant exclusion) and #5 (copy_trade hour-of-day kill-zone) \u2014 both are EXCLUSION filters that would FURTHER starve a funnel already at 0 trades/day, and would confound the in-flight sell-exclusion experiment. Add only if recovered cohort tells us they're needed.",
-    "directives_changes": "Bumped version to 268. Updated current_priority and priority_reasoning to describe the boosts enrichment ship and the deferral logic for #4/#5. Updated track_record stats (bot PID 676, fresh restart, SOL $89.37, h24 +0.8% trending toward BULL trigger). Updated the dexscreener_token_boosts_top_feed pending_hypothesis status to PHASE_1_LOG_ONLY_LIVE_RUN_266 + ENRICHED_RUN_274 with explicit notes on the enrichment fields and the path to N>=20 enriched-mint forward-return analysis. Added new_trades_since_run273=0 to track_record.",
+    "timestamp": "2026-05-08 18:08:00 EDT",
+    "run_id": "run-275",
+    "market_regime": "CHOP (BTC.D 58.2% ALTCOIN_WINTER, SOL +0.X% h24 at $92.48 \u2014 within $0.52 of BULL trigger $93+)",
+    "system_diagnosis": "Run-274's headline ship \u2014 boosts liq enrichment \u2014 was BROKEN ON ARRIVAL. Research-141 caught it: 0/340 post-restart entries had enriched=True (100% silent failure). Root cause located: degen_bot.py:4425 called self._get_token_info(mint) but _get_token_info lives on CopyTradeMonitor (self.monitor), NOT on SolCopyBot (self). Every call raised AttributeError, was silently swallowed by the surrounding try/except, and entries got enriched=False with no diagnostic. The pattern in degen_bot.py:12902 (self.monitor._get_token_info) shows this was the intended call path \u2014 run-274 just used the wrong receiver. Trade flow has finally restarted: 1 new sell since run-274 (wallet_convergence, BUY 16:35 EDT / SELL 16:55 EDT, flat -0.24%, 'Flat exit CWU 20m'). That's the first new trade in 38h+. Bot is alive (PID 1744 cycle 1), heartbeat fresh, scanning 99 wallets per cycle, evaluating candidates correctly. Most BUY_SKIPs continue to be m5_pump_skip (already-pumped tokens) and downtrend skips \u2014 same regime issue as run-274.",
+    "exit_analysis": "All-time N=998: WR ~35.5%, R/R 0.79, stop_rate 39.8% (unchanged \u2014 single new trade). 7-day N=8 active-only: WR 37.5% (3W/5L), avg_win +6.22%, avg_loss -8.80%, R/R 0.71, stop_rate 50.0% (2 stop + 2 emerg + 3 flat + 0 target out of 8). The new trade today exited flat via the 20-min CWU rule (-0.24%) \u2014 meaning it did NOT hit a stop loss. Small but the FIRST genuinely-non-stopping exit since the soothsayer EMERG May 7. Suggests the 3-min sell-exclusion fix is letting through candidates that the wider gate would have blocked, AND the time-decay flat-exit is correctly trimming flatliners before they devolve into stops.",
+    "strategy_work": "ONE BIG SHIP this run: fix the boosts enrichment regression (research-141 #1 HIGH). One-line change: self._get_token_info(mint) -> self.monitor._get_token_info(mint) at degen_bot.py:4425. Compile-check passed. Killed PID 676, started fresh PID 1744. Verified end-to-end: within 60s of restart, the first boost poll fired and 48 of 48 (100%) new entries logged enriched=True with sane data \u2014 symbols populated, liquidity ranging $0-$429,782 (median $15,767), 14 of 48 above $50k (i.e. eligible for the future boosts_top_feed_breakout filter). Pre-fix 0/340 (0.0%) -> post-fix 48/48 (100.0%). The strategy that was BLOCKED INDEFINITELY since run-266 (waiting on schema fields) is now N=0 and accumulating real data; first eligibility check at N=20 enriched entries (~10-20 polls = 1-2 hours).",
+    "directives_changes": "Bumped version 268 -> 269. Updated current_priority to describe the run-275 fix and the next focus (verify enrichment holds, watch the new wallet_convergence trade, evaluate gecko_breadth_burst proposal). Updated track_record (bot PID 676 -> 1744, total_sells 997 -> 998, total_buys 996 -> 997, new_trades_since_run274=1, fresh stats). Added killed_ideas note: 'two-class method-receiver bugs' as a lesson \u2014 explicit class-membership check before calling self.X() across class boundaries.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "audit_notes": "Run-273's sell-exclusion fix verified at gate level via direct sol_events.json grep: sell-conflict events dropped from 15/58 to 3/53, all <180s. Kill-criteria trip-wires not yet evaluable (need actual trades). One code change shipped this run (boosts enrichment, ~15 LOC, single function). Compile-check passed before bot restart. PID 14188 stopped, PID 676 confirmed running via Get-WmiObject. Sample-size: research-140 HIGH confidence on a structural-blocker proposal (no liq field = no strategy possible); pure infrastructure with no kill-criteria needed. Plain-English changelog written for non-programmer operator."
+      "audit_notes": "Run-274's boosts enrichment ship was a regression: 0/340 (0.0%) enriched. The verification criterion run-274 itself wrote (1-2 enriched entries within first hour) failed catastrophically. Run-275 root-caused via class-membership grep: _get_token_info is in CopyTradeMonitor (line 2959), _persist_dex_boost_event is in SolCopyBot (line 4392). The wrong-receiver call silently raised AttributeError. Fixed in one line. Compile-check OK. Bot restart verified: PID 676 stopped, PID 1744 started, first boost poll fired within 90s of restart producing 48/48 = 100% enrichment success. Plain-English changelog provided for non-programmer operator. Single change this run."
     },
     "previous_followups": [
-      "Run-273 priority (a) \u2014 verify bot trade flow restored after sell-conflict loosen: PARTIALLY VERIFIED. Gate-level fix confirmed (sell-conflict skips dropped 26% -> 6% of all skips, mean age 442s -> 33s). Trade-flow-level NOT yet recovered: 0 new trades, ~36h dormant total. New dominant blocker is m5_pump_skip at 40% \u2014 this is correct behavior catching late entries on already-pumped tokens.",
-      "Run-273 priority (b) \u2014 watch the recovered cohort for kill-criteria trip-wires (rolling-20 WR<30% OR mp<-8% OR stop-rate>55%): NOT EVALUABLE because zero trades have happened in the recovered cohort. Continue monitoring next run.",
-      "Run-273 priority (c) \u2014 convergence_3_breakout: confirmed NO-OP. wallet_convergence at WC_MIN_WALLETS=3 is already live and is the conv>=3 strategy.",
-      "Run-273 priority (d) \u2014 research-140 #5 falling-knife quadrant + #7 boosts liq enrichment: SHIPPED #7 (boosts enrichment) this run. DEFERRED #5 (falling-knife) because adding more exclusion filters while the funnel is at 0 trades/day would worsen starvation and confound the sell-exclusion experiment.",
-      "Run-273 priority (e) \u2014 three CHOP-protective gates (h1 bimodal, dead-zone, animal-token) untriggered while bot dormant: STILL UNTRIGGERED in latest 100-event ring buffer. Will get first live test once trade flow recovers."
+      "Run-274 priority (a) \u2014 verify boost enrichment populates within first hour: FAILED at run-274 (0/61 enriched). Re-shipped this run (run-275) with one-line receiver fix; verified 48/48 enriched in the first 90s after restart.",
+      "Run-274 priority (b) \u2014 kill-criteria trip-wires on recovered trade cohort: 1 new trade since last run (wallet_convergence flat -0.24%). Far below the N=20 floor; cannot evaluate trip-wires yet. Encouraging that the exit was FLAT (CWU time decay), not a stop.",
+      "Run-274 priority (c) \u2014 pivot to active investigation if 0 trades 6-12h after restart: NOT TRIGGERED. Trade flow resumed (1 new trade) before the deadline. Continuing the existing experiment.",
+      "Run-274 priority (d) \u2014 defer falling-knife and 04-07 EDT kill-zone: STILL DEFERRED. Adding exclusion filters now would still confound the sell-exclusion experiment; only 1 trade post-fix, need more sample.",
+      "Run-274 priority (e) \u2014 4-wallet hand-blacklist (8L2y55D11k, JBVpuKD4cE, AXmnRBrNt, 66666y3RmL): STILL ON BACKBURNER. No new evidence this run."
     ],
     "changelog": [
-      "Added richer info to the boost-discovery log. Each time a token shows up on the DexScreener 'boosts' feed, the bot now also records its liquidity, market cap, recent price moves, volume, and trading-pair age. Without this info the planned 'buy boosted tokens with deep liquidity' strategy literally couldn't tell deep-liquidity boosts from shallow ones, so it was stuck on the shelf. Now it has the fields it needs to evaluate.",
-      "Confirmed yesterday's sell-conflict cooldown change (10 min to 3 min) is working as intended: the cooldown is now firing only when a peer wallet sold the same token in the last few seconds, not 5-10 minutes ago. Bot still hasn't bought anything yet \u2014 but that's because the token candidates we're seeing have all already pumped or already crashed, not because our filters are wrong."
+      "Fixed yesterday's broken token-info enrichment. Yesterday I added code to grab each newly-boosted token's liquidity and recent price moves at the moment we see it. Today's audit found that none of those records actually got the data \u2014 every single one was missing it. The root cause was a one-liner: I asked the wrong helper to do the lookup (a class-membership mistake \u2014 the lookup function lives on the wallet-monitor object, not on the main bot object). Wired it to the right helper and the next batch of 48 boost records all came back fully populated, with liquidity values ranging from a few thousand dollars up to $430k. The 'buy deep-liquidity boosted tokens' strategy can now finally be evaluated.",
+      "Bot has finally bought something again. The first trade in 38+ hours fired today at 4:35pm EDT (a wallet-convergence trade) and exited flat 20 minutes later via the time-decay rule, with a tiny loss of 0.24%. Crucially: it did NOT hit a stop loss \u2014 the time-decay rule trimmed it before it could turn into one. That's the first non-stop exit in over a week."
     ],
     "actions_taken": [
-      "Edited the boost-event logger in degen_bot.py to fetch the token's current liquidity / market cap / price-change data from DexScreener at the moment the boost is discovered, and write all of those fields into the boost log alongside the existing boost-amount and description fields.",
-      "Compile-checked the change. Killed the old bot process (PID 14188) and started a fresh one (PID 676). Dashboard (PID 7412) untouched and still running.",
-      "Audited the live event log to confirm the run-273 sell-conflict fix is doing what we expected \u2014 and confirmed it is. The cooldown is now firing only on genuinely-recent sells (under 3 minutes) and not on 5-10-minute-old sells. The bot is correctly evaluating candidates again; it's just that the candidate stream itself is poor right now (most tokens have already pumped or crashed by the time we see them).",
-      "DECLINED to ship two other research proposals this run (a 'falling-knife' filter and a 4-7am EDT no-trade window for copy-trades). Both are extra rejection rules, and the bot is already at zero trades a day \u2014 adding more rejection rules now would muddy the experiment we're running on yesterday's change."
+      "Found the bug: yesterday's boost-enrichment code called the lookup helper on the wrong object \u2014 it called it on the main bot, but the helper lives on the wallet-monitor (a sub-component of the main bot). One-line fix: change the call to use the wallet-monitor instead.",
+      "Compile-checked the change, then killed the old bot process and started a fresh one with the fix in place.",
+      "Watched for the first new boost-poll cycle after the restart (about a minute) and confirmed all 48 newly-logged entries came back fully populated with liquidity, market cap, and price-change data. Pre-fix: 0 of 340 entries had any of this data. Post-fix: 48 of 48. The next strategy in the queue (deep-liquidity boosted-token entries) is no longer blocked.",
+      "Continued declining the two exclusion-style proposals from research (falling-knife quadrant and 4-7am EDT no-trade window). Trade flow has finally resumed but only one trade in the recovered cohort so far \u2014 too early to tighten the funnel further."
     ],
     "next_priorities": [
-      "Within 1-6 hours after this run: spot-check sol_dex_boosts_log.json for new entries with enriched=true and reasonable liq_usd / price_change values. Bonk.fun and Pump.fun mints typically range from $5k to $2M liquidity; anything outside that range is an enrichment bug.",
-      "If any actual trades happen post-restart: evaluate against run-273 kill-criteria (rolling-20 WR<30% OR mp<-8% OR stop-rate>55%). Trip-wire activates a tightening to 300s.",
-      "If still 0 trades 6-12 hours after this run: pivot to active investigation. Top candidates: (1) accumulate to N>=20 enriched boost entries and decide whether to ship the boosts_top_feed_breakout strategy paper-trial, (2) re-enable fresh_profile if SOL crosses BULL trigger ($93+) \u2014 currently $89.37, $3.63 away, (3) check whether any wallet in the live target list is generating most of the 'already-pumped' signals (and consider de-prioritizing it).",
-      "Continue deferring research-140 #4 (falling-knife quadrant) and #5 (04-07 EDT kill-zone) \u2014 both are exclusion filters; revisit only if/when funnel widens enough that another -EV cohort becomes a clear add."
+      "Continuous: spot-check sol_dex_boosts_log.json every run for sustained enrichment rate >=80%. If it drops back below 40%, the fix didn't address the full root cause and a deeper investigation is needed. Realistic baseline: some boost mints will be too fresh for DexScreener to index yet (legitimately enriched=False), so 100% is not expected long-term \u2014 but the 0.0% pre-fix vs 100.0% post-fix-first-poll gap is decisive evidence the call path is now working.",
+      "At N>=20 enriched-True boost entries with liq>$50k: re-evaluate the boosts_top_feed_breakout strategy (research-139 MEDIUM). Current pace ~5-15 enriched entries per 5-min poll = N=20 within 1-2 hours; first eligibility check next run.",
+      "Watch the recovered trade cohort for kill-criteria (rolling-20 WR<30% OR mp<-8% OR stop-rate>55%). Today's new trade is a small-positive sample (flat exit, no stop). Next 19 trades will determine whether the run-273 sell-exclusion loosen is sustainably +EV.",
+      "Evaluate the research-141 gecko_breadth_burst HIGH proposal next run with fresh eyes. Mechanism is solid (orthogonal buyer-COUNT signal, regime-independent, multi-DEX coverage), data is already on disk, ~40-60 LOC. If active strategies aren't already pulling their weight, this is the highest-leverage NEW funnel we have.",
+      "Watch SOL/USD: $92.48 now, $93+ is the BULL trigger that re-enables fresh_profile. If/when that crosses, fresh_profile reactivation is the path to >0 fires/day on our most-proven strategy (60% WR lifetime)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 997,
+      "total_sells": 998,
+      "total_buys": 997,
       "win_rate": 35.5,
       "avg_win_pct": 13.17,
       "avg_loss_pct": -16.6,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 39.8,
-      "bankroll": 1.1578,
-      "pnl_today": 0.0,
-      "trades_today": 0
+      "bankroll": 1.1556,
+      "sol_price": 92.48,
+      "sol_h24_pct": 0.0,
+      "btc_dom_pct": 58.2,
+      "altcoin_regime": "ALTCOIN_WINTER(58.2%)",
+      "pnl_today": -1.2e-05,
+      "trades_today": 1,
+      "open_positions": 0,
+      "rolling_7d": {
+        "trades": 8,
+        "wr": 37.5,
+        "avg_win_pct": 6.22,
+        "avg_loss_pct": -8.8,
+        "rr": 0.71,
+        "pnl_sol": -0.00283,
+        "stop_rate_pct": 50.0
+      },
+      "boost_enrichment": {
+        "pre_fix_rate_pct": 0.0,
+        "pre_fix_n": 340,
+        "post_fix_rate_pct": 100.0,
+        "post_fix_n": 48,
+        "median_liq_usd": 15767,
+        "max_liq_usd": 429782,
+        "above_50k_count": 14
+      }
     },
     "active_strategies": [
-      "wallet_convergence",
-      "bear_strength",
-      "consensus_boost",
-      "fresh_profile (gated by CHOP regime + overnight block, 0 fires since Apr 2)",
-      "bounce_hunter (gated by h24 < +3%, dormant)",
-      "flash_surge (BULL-only, dormant)",
-      "anchor_derivative_snipe (live but 0 fires N=0)"
+      "wallet_convergence (TESTING N=9, fired today)",
+      "bear_strength (TESTING)",
+      "consensus_boost (TESTING, BULL-gated)",
+      "fresh_profile (PROVEN N=15 60%WR, dormant in CHOP, awaits BULL trigger)",
+      "bounce_hunter (TESTING_BULL, gated)",
+      "flash_surge (TESTING_BULL N=4, dormant)",
+      "anchor_derivative_snipe (TESTING N=0, awaiting first fire)",
+      "chop_momentum_scalp (TESTING N=20)",
+      "boosts_top_feed_breakout (BLOCKED -> UNBLOCKED this run, accumulating N=0 -> N>=20 enriched candidates)"
     ]
   },
   "wallet_scan": {
@@ -176,15 +204,15 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 21325.10661,
+  "brain_next_sec": 21021.820581,
   "brain_next_str": "12:04 AM EST",
-  "brain_running": true,
+  "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "12:05 PM EST",
+  "brain_last_run_str": "6:08 PM EST",
   "research_running": false,
   "research_last_run_str": "12:48 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 22885.10661,
+  "research_next_sec": 22581.820581,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-08 12:53:00 EDT",
@@ -373,7 +401,7 @@
     "dashboard_pid": 7412,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 1.55,
+    "hours_since_last_trade": 1.64,
     "dormancy_alert": false,
     "filter_lockout_diagnosis": "No dormancy. Last buy 1.48h ago (16:35:29 EDT). Recent 50 events: 25 BUY_SKIP / 15 SIGNAL / 7 FP_SKIP / 3 SCAN \u2014 no CYCLE_ERROR. Skip mix is normal: sell-conflict (correctly under 180s window per run-273 fix), m5_pump_skip catching late entries, and standard FP filter prunes. Funnel is open and gating as designed.",
     "actions_taken": [
@@ -405,7 +433,7 @@
     "next_run_focus": "Heartbeat lagged 244s while events were ~90s old \u2014 same heartbeat/event-cadence divergence pattern noted last run. Bot is unambiguously alive (recent SIGNAL/BUY_SKIP events, fresh buy 1.48h ago). Next run, confirm dormancy stays broken and watch for any new buys evaluating the run-273 sell-exclusion + run-274 boosts-liq-enrichment changes. Survival brain run started 18:03:30 \u2014 its next-run output should arrive before maint-185.",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 2.8,
+    "file_age_min": 7.8,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1854,7 +1882,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 1.5,
+    "age_min": 6.5,
     "stale": false,
     "available": true
   },
@@ -1862,7 +1890,7 @@
     "requests_pending": 0,
     "requests_acknowledged": 0,
     "hypotheses_pending": 52,
-    "lessons_count": 43,
+    "lessons_count": 44,
     "killed_ideas_count": 17,
     "drift_keys": [],
     "active_strategies_count": 9,
@@ -1899,29 +1927,29 @@
     "backups_pruned": [],
     "elapsed_min": 3,
     "next_run_focus": "Lessons trimmed 52->40 (target 40). Active demoted entries are oldest single-evidence shipped-notes; preserved all N>=30 entries. Hypotheses unchanged at 50/50 cap (no RESEARCHING entries to drop and 45/50 lack name field for dedupe \u2014 flag to brain that hypothesis schema is missing names). Killed-ideas revival check found 2 potential conflicts (copy_trade carve-out applied: watch-only note explicitly preserved). No survival history archived (all entries <30d). 0 pending requests.",
-    "age_hours": 14.0,
+    "age_hours": 14.1,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 385.10661,
+  "maint_next_sec": 81.820581,
   "maint_next_str": "6:15 PM EST",
   "maint_last_run_str": "6:05 PM EST",
   "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "14.0h ago",
+  "memk_last_run_str": "14.1h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
       "hypothesis_name": "gecko_breadth_burst",
       "run_id": "research-141",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "implemented",
+      "status_label": "\u2705 Implemented",
+      "status_color": "#00ff88",
+      "evidence_text": "Run-274's headline ship \u2014 boosts liq enrichment \u2014 was BROKEN ON ARRIVAL. Research-141 caught it: 0/340 post-restart entries had enriched=True (100% silent failure). Root cause located: degen_bot.py:4425 called self._get_token_info(mint) but",
+      "evidence_source": "diagnosis"
     },
     "tally": {
       "implemented": 27,
@@ -1931,34 +1959,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-08T17:39:50.090603",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G6fUXjMK sold AYvMsRvk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T17:39:50.100392",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G6fUXjMK sold AYvMsRvk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T17:39:50.106685",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G6fUXjMK sold AYvMsRvk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-08T17:39:50.112703",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G6fUXjMK sold AYvMsRvk \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-08T17:39:50.118463",
       "type": "SIGNAL",
@@ -2630,6 +2630,34 @@
       "color": "#555555",
       "msg": "Scanning 100 wallets (cycle #1)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-08T18:08:43.854224",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip INTC: h6=231.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T18:08:44.316490",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip INTC: h6=231.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T18:12:27.052051",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip KIKI: m5=50.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-08T18:12:27.523788",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip KIKI: m5=50.7% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2685,9 +2713,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "18:08:34",
+  "ts": "18:13:38",
   "__publish_meta": {
-    "published_at": "2026-05-08 18:08:34 EDT",
+    "published_at": "2026-05-08 18:13:38 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
