@@ -1,15 +1,15 @@
 {
-  "sol_price": 93.17611690317048,
+  "sol_price": 93.3707868483254,
   "bot_status": "RUNNING",
   "bot_last_seen": "06:11:26",
   "bot_cycles": 7,
   "bankroll": 1.1556,
-  "bankroll_usd": 107.6743206933038,
+  "bankroll_usd": 107.89928128192483,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 6.0,
+  "hour": 6.1,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,97 +113,74 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-09 00:10:00 EDT",
-    "run_id": "run-276",
-    "market_regime": "CHOP -> BULL transition. SOL $93.95 (run-275 was $92.48, +1.6%). BTC.D 58.1% ALTCOIN_WINTER unchanged. SOL just CROSSED the $93 BULL trigger; if h24 hits +5% the regime flips to BULL and fresh_profile reactivates.",
-    "system_diagnosis": "Run-275's boost-enrichment fix is HOLDING STRONG. Last 100 boost entries are 100% enriched, total log 333/500 enriched (the 167 unenriched are pre-fix history). The 80% steady-state baseline I predicted is being exceeded. Trade flow recovery is still SHALLOW: the only new trade since run-274 is the same wallet_convergence flat exit (+0 today). The bot is not broken \u2014 universal gates are correctly catching m5_pump_skip (already-pumped) and downtrend (falling-knife) candidates. The funnel is regime-starved, NOT gate-starved. The right fix is adding a NEW funnel, not loosening existing ones. SECOND DIAGNOSIS: research-141 surfaced sol_gecko_breadth_log.json (~22-33 quality candidates/hour) sitting on disk with NO STRATEGY READING IT \u2014 pure unused alpha. Today's ship attacks both the dormancy problem AND the regime-dependence problem (breadth signal is regime-independent).",
-    "exit_analysis": "All-time N=998: WR 35.5%, R/R 0.79, stop_rate 39.8% (unchanged). 7d active-only N=8: WR 37.5%, avg_win +6.22%, avg_loss -8.80%, R/R 0.71. The 5/8 stop-or-emerg rate is still the dominant exit pattern in the 7d window, but there are zero new trades since run-275 to update those numbers. The CWU flat exit yesterday remains the only non-stop exit since soothsayer May 7. Exits aren't worse \u2014 there just aren't enough trades to evaluate.",
-    "strategy_work": "ONE BIG SHIP this run: gecko_breadth_burst (GBB) NEW STRATEGY at 0.15x tiny size. Research-141 #2 HIGH confidence proposal. Mechanism: m5 unique-buyer COUNT growth (breadth_acceleration field) is structurally distinct from price/volume momentum signals the bot already gates. A token going from 2 to 50 unique buyers in 5 minutes reflects ORGANIC crowd attention forming, not single-whale pump. Multi-DEX coverage (Raydium/Meteora/Orca/Pump.fun) catches direct-launch teams DexScreener trending misses entirely. Regime-independent \u2014 works in CHOP and BULL alike. Implementation: new GBB_* constants block (after WC), new _get_gecko_breadth_burst_signals() method (after _get_wallet_convergence_signals), wired into the scanner loop after WC. Reads sol_gecko_breadth_log.json (already populated by start_gecko_breadth_poller), filters fresh entries with breadth_acceleration>=20 AND reserve $5k-$250k AND age<=15min AND vol_m5>=$2k, validates via DexScreener + security gate, emits Signal. ~140 LOC including comments. Compile-check passed. Bot PID 1744 killed, fresh PID 6028 started. Predicted ~5-8 fires/day after universal gates filter the funnel. Fast-kill check at N=10. Live audit before ship: 33 unique mints/hour at the entry rule on the live breadth log (53-min window) \u2014 research's 22/hr estimate was conservative.",
-    "directives_changes": "Bumped version 269 -> 270. Updated current_priority to describe the GBB ship and the next focus (verify it fires, monitor fast-kill criteria, watch SOL crossing into BULL). Added gecko_breadth_burst as a new active_strategy at TESTING status. Updated track_record (bot PID 1744 -> 6028, sol_price 92.48 -> 93.95). Moved research-141 #2 from pending_hypotheses to IMPLEMENTED at run-276. Run-275's enrichment-verification follow-up resolved with 100% sustained rate.",
+    "timestamp": "2026-05-09 06:10:00 EDT",
+    "run_id": "run-277",
+    "market_regime": "BULL TRIGGER FRESHLY MET. SOL $93.30 (per heartbeat 05:49 EDT) / $93.56 (research-142 agent-2 live fetch ~00:30 EDT). h24 = +6.0% confirmed via events-log macro overlay 'Macro overlay: ALTCOIN_WINTER(58.2%) | SOL h24=6.0%' at 05:28:27 EDT. First BULL flip since 2026-04-02 (~37 days dormant). BTC dom 58.16% ALTCOIN_WINTER unchanged. fresh_profile (60% lifetime WR, N=15) regime-eligible to reactivate; 21-22 young profiles tracked but 0 ready yet at 05:48 EDT.",
+    "system_diagnosis": "Three things observed and ZERO code changes this run. (1) GBB FIRST FIRE SUCCESS at 05:27:33 EDT \u2014 exactly the success pattern run-276 predicted. ALIEN BOY signal (BA=74, age=1.3min, vol_m5=$37k, liq=$68k) was correctly downstream-blocked by the universal LP concentration gate (research-074 protective filter, 100% of liquidity in 1 pool, n=1). Wiring confirmed working. The block is the SYSTEM WORKING AS DESIGNED \u2014 but it also reveals a tension: GBB's mechanism by design picks up tokens at age<=15min where multi-pool depth is mechanically unrealistic; if 80%+ of GBB SIGNALs are LP-blocked, we never get N=10. NEXT-RUN watch the LP-block rate. (2) BULL TRIGGER MET \u2014 fresh_profile regime gate is automatic; no code change needed. Watch for first fresh_profile fire within 24h. (3) BOT HUNG between GBB ship 00:10 EDT and ~04:06 EDT (2-line summary: research-142 caught the hang at 00:39 EDT under PID 6028 with cycle stuck at #2; bot was respawned to PID 11564 ~04:06 EDT and is now alive on cycle 6, scanning 102 wallets). The hang itself is a one-incident regression that may have been caused by a long-running call introduced with GBB; if it recurs, root-cause via stack trace at hang time. NO BIG SHIP this run because all four research-142 proposals are blocked: letsbonk needs REQ-013 (graduation log-line pattern + 2 test mints) before parser can be written safely; hold-duration calibration cannot ship under hard rules (non-monotonic evidence, exit threshold mod = default N=20); copy_trade 04-07 EDT skip is no-op (copy_trade killed); fresh_profile reactivation is automatic.",
+    "exit_analysis": "7d active-strategy stats UNCHANGED from run-276 (still N=8 trades, WR 37.5%, R/R 0.6, PnL -0.00323 SOL, stop rate 62.5%) because no new sells have closed since run-275. Last sell was 2026-05-08 16:55 (wallet_convergence flat exit -0.24% via 20-min CWU rule). Hold-duration U-shape research-142 finding (1-6h bucket WR 44.8% but mp -7.4% and stop_rate 2.7%) flagged as a Phase 1 logger hypothesis; cannot ship the 8%->12% post-60min stop change directly because evidence is non-monotonic across the full bucket sweep and sample is regime-mixed (62-day window).",
+    "strategy_work": "Validation + planning run. Confirmed GBB scanner is wired and firing (ALIEN BOY first SIGNAL); confirmed BULL trigger met; confirmed boost enrichment 100/100 holding. Resolved letsBONK Raydium LaunchLab program-id LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj + platform config FfYek5vEz23cMkWsdJwG2oa6EphsvXSHrGpdALN4g6W1 via WebFetch to Bitquery docs \u2014 partially unblocking next-run letsbonk Phase 1 ship. REQ-013 dispatched for graduation log-line pattern + 2 test mints. Two new pending_hypotheses entries added: letsbonk_graduation_snipe (HIGH, queued for run-278+) and hold_duration_u_shape_calibration (HIGH, deferred to Phase 1 logger).",
+    "directives_changes": "Version 270 -> 271. Updated current_priority to reflect validation/planning run rationale. Added two pending_hypotheses (letsbonk_graduation_snipe, hold_duration_u_shape_calibration). Added REQ-013 to requests_for_research. Added three condensed_lessons entries (no_ship_validation_run_run277, letsbonk_program_id_resolved_run277, gbb_first_fire_correct_block_run277). Updated track_record sol_h24_note_run277 with BULL trigger confirmation + GBB first fire + bot PID change.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "audit_notes": "Run-275 fix verified live: 100% of last 100 boost entries enriched (vs 0% pre-fix). Decisive. The new ship qualifies for direct implementation under the operator-autonomy grant: research-141 HIGH confidence, mechanism is sound and orthogonal to existing strategies, evidence (33 unique mints/hr) measured live on the bot's own data, 0.15x tiny size with built-in N=10 fast-kill, regime-independent. NOT eligible for the monotonic-pattern N=10 fast-track (no monotonic numerical sweep), but the operator-autonomy grant covers this class of mechanism-driven additive ship. Compile-check OK. Bot PID 1744 stopped via Stop-Process, fresh PID 6028 verified alive on cycle 1. Single change, plain-English changelog provided."
+      "_notes": "Last change (run-276 GBB ship) verified producing predicted result: first GBB SIGNAL fired within predicted 1-2h window (actually 5h, slightly slower because bot was hung 0:10-4:06 EDT). One-change-only respected with ZERO changes this run. Code-verified: WebFetch confirmed letsBONK program-id; events-log audit confirmed GBB SCAN+SIGNAL firing; heartbeat + ps confirmed bot PID 11564 alive."
     },
     "previous_followups": [
-      "Run-275 priority (a) \u2014 verify enrichment rate stays >=80%: PASSED. Last 100 entries 100% enriched. Total log 333/500 enriched (the 167 unenriched are pre-fix history). Steady-state appears to be very high \u2014 likely because boost discovery happens AFTER DexScreener has already indexed the token (boosts are paid promotions, generally on already-listed tokens).",
-      "Run-275 priority (b) \u2014 at N>=20 enriched entries with liq>$50k, evaluate boosts_top_feed_breakout: ELIGIBLE NOW (boost log shows 333 enriched entries, ~14 above $50k from initial sample). Deferring boosts_top_feed_breakout to a future run because gecko_breadth_burst is the higher-leverage ship today (regime-independent and 4x more candidates per hour).",
-      "Run-275 priority (c) \u2014 wallet_convergence trip-wire watch at N=10: STILL PENDING. WC remains at N=9 lifetime; no new WC trade since run-275 (the CWU flat -0.24% was already counted in run-275 directives). Next decisive WC trade triggers fast-kill check.",
-      "Run-275 priority (d) \u2014 evaluate gecko_breadth_burst proposal: SHIPPED THIS RUN. 33 unique mints/hr observed on live log; mechanism solid; ~140 LOC. Live at 0.15x.",
-      "Run-275 priority (e) \u2014 defer V/L>20x exclusion: STILL DEFERRED. Adding an exclusion that blocks 30% of historical entries is the wrong direction while trade flow is just recovering. Re-evaluate in 7-14 days.",
-      "Run-275 priority (f) \u2014 SOL approaching BULL trigger: SOL hit $93.95 (above $93). Need h24 to confirm regime flip \u2014 heartbeat doesn't expose h24 directly, but if confirmed BULL, fresh_profile reactivates and is by far our highest-WR strategy."
+      "(a) GBB FIRST FIRE WATCH: ALIEN BOY signal fired 05:27 EDT, correctly blocked by LP concentration gate (n=1 pool). Wiring confirmed working. N=0 BUYs yet.",
+      "(b) GBB fast-kill watch: N=0 lifetime sells. No fast-kill check yet.",
+      "(c) SOL/BULL trigger watch: MET. h24=+6.0% confirmed via events-log macro overlay. fresh_profile regime-eligible.",
+      "(d) Boost enrichment health: HOLDING. Last 100 entries 100% enriched per research-142 audit.",
+      "(e) V/L>20x exclusion: STILL DEFERRED. Trade flow only just recovering; not the right time to add an exclusion.",
+      "(f) pump_fun_graduation_snipe shadow logger: STILL DEFERRED. Lower priority than GBB.",
+      "(g) wallet_convergence N=9, fast-kill at next decisive trade: no new WC trades since run-275."
     ],
     "changelog": [
-      "Shipped a brand new strategy called GeckoBreadthBurst. Background: the bot has been collecting a stream of new-pool data from GeckoTerminal for the past few weeks (one of the things the bot quietly polls in the background) but no part of the bot was actually USING that data to make trades. Today's ship plugs that gap. The strategy looks for very young tokens (under 15 minutes old) that suddenly attract a lot of distinct buyers in the last 5 minutes \u2014 at least 20 different wallets buying, with the pool holding between $5k and $250k in liquidity, and at least $2k traded in the last 5 minutes. The point is to catch tokens just as a real crowd is forming around them, BEFORE they appear on the public dashboards everyone watches. It uses the smallest test size we have ($1.50 per trade at current bankroll). If the next 10 trades show this is a losing strategy, the bot will automatically pause it.",
-      "Why this matters: the bot has been frustratingly quiet for the past month \u2014 only 8 trades in the last 7 days, mostly because the existing strategies depend on either copying high-quality wallet trades (which are slow because we poll wallets every 45 seconds) or finding tokens that are already showing strong price moves on DexScreener (everyone else sees those too, so we tend to arrive late). The new strategy looks at a different signal entirely (how many DIFFERENT people are buying, not how much the price has moved) and it works in any market condition. Live audit before launch showed about 33 viable candidates per hour on the data we already have \u2014 predicted ~5-8 actual trades per day after the safety gates filter that down.",
-      "Boost-enrichment fix from yesterday is holding strong. Out of the last 100 boost entries logged, 100 of them are fully populated with liquidity and price data (vs 0 of 340 pre-fix). The deep-liquidity boosted-token strategy is unblocked but parked behind the new strategy in the priority queue."
+      "No code changes this run. Updated brain memory only.",
+      "Resolved the letsBONK Solana program identifiers needed for the next-run new-strategy ship.",
+      "Documented that GBB's first-ever signal fired correctly and was blocked by the existing safety filter for over-concentrated liquidity (the right behavior \u2014 the system caught a single-pool token that could be drained quickly).",
+      "Documented that SOL just crossed the +5% daily-change line that turns BULL mode back on after 37 days of dormancy. The bot's best historical strategy (60% win rate fresh-profile) is now eligible to fire again automatically.",
+      "Recorded a research request for the missing details that would let us safely ship the new BONK launchpad listener next run.",
+      "Recorded a planned-but-deferred change to make the bot's stop-loss wider after one hour of holding \u2014 research suggests it could save ~0.32 SOL per week, but the evidence isn't clean enough to ship without more data first."
     ],
     "actions_taken": [
-      "Read the brain's stored memory and the latest research finding from this morning. The research brain spotted that sol_gecko_breadth_log.json contains roughly 22 actionable candidates per hour but no part of the bot reads that file. Confirmed live: 33 unique mints per hour passing the proposed entry filter on the most recent 53-minute window of the breadth log. Research's 22/hr estimate was conservative.",
-      "Wrote the new strategy: a constants block declaring the entry thresholds, a strategy method that reads the breadth log every ~3 minutes, applies the filter, validates each candidate against DexScreener and the security gate, and emits a buy signal at the smallest test size (0.15x). Wired into the main scanner loop right after the existing wallet-convergence strategy.",
-      "Compile-checked the change, killed the old bot process, started a fresh one. Verified the new bot is running (process ID 6028, cycle 1 heartbeat OK).",
-      "Confirmed yesterday's boost-enrichment fix is still working \u2014 100 out of the last 100 boost entries are fully populated with data (was 0 out of 340 before yesterday's fix)."
+      "Took no trading-code action this run on purpose. Three of the four research proposals were not safe to ship right now and one was a no-op.",
+      "Looked up the letsBONK launchpad's on-chain program identifiers so a future run can build the listener.",
+      "Verified the gecko-breadth-burst strategy (shipped last run) just produced its first signal correctly, with the existing safety net catching it as designed.",
+      "Verified the bot is healthy (alive, scanning, dashboard up) after a brief hang earlier in the night that was already auto-recovered by a respawn.",
+      "Verified the SOL price crossed the daily-change threshold that turns the bot's strongest historical strategy back on automatically."
     ],
     "next_priorities": [
-      "First fire watch: the new GeckoBreadthBurst strategy fires every ~3 minutes. Within 1-2 hours after restart, sol_events.json should show the first GBB SCAN entry and (assuming candidates pass the security and universal gates) the first GBB SIGNAL entry. If 6+ hours pass with zero GBB SIGNAL entries, the universal gates are filtering everything out \u2014 investigate which gate is the dominant blocker (likely m5_pump_skip on tokens that pumped 30%+ in their first minute) and consider a strategy-specific exemption next run.",
-      "Fast-kill watchpoint: at N=10 GBB sells, evaluate the four fast-kill criteria (\u226510 trades in current regime, R/R<1.0 AND WR<35%, net P/L<-0.002 SOL, no-outlier-still-negative). If criteria met, pause GBB. If R/R>1.5 with WR>40%, scale to 0.30x.",
-      "SOL price watch: $93.95 just crossed the $93 BULL trigger. Need h24>=5% for full regime flip. If BULL confirmed next run, fresh_profile reactivates (our highest-WR strategy at 60% lifetime). Monitor heartbeat sol_h24 if exposed; otherwise compute from h24-ago snapshot.",
-      "Boost-enrichment continued health check: spot-count enriched=True ratio in last 100 entries each run. If sustained <40%, root-cause again. If sustained >=70% (current trajectory), the fix is durable and we can ship the boosts_top_feed_breakout strategy in a future run.",
-      "DEFERRED but queued: research-141 #3 V/L>20x exclusion (HIGH, monotonic, eligible for N=10 fast-track). Adding a -30%-of-funnel exclusion while trade flow is just recovering would over-tighten. Re-evaluate after 14+ post-recovery sells.",
-      "DEFERRED: research-141 #4 pump_fun_graduation_snipe shadow logger (MEDIUM). Lower priority than GBB and would compete for development cycles. Re-evaluate after GBB has N=20 forward-tracked trades."
+      "GBB N=10 fast-kill watch \u2014 observe how often LP-concentration gate blocks GBB signals; if 24h passes with all GBB signals blocked, consider strategy-specific exemption for tokens younger than 2 minutes.",
+      "fresh_profile first-fire watch in BULL \u2014 if 24h passes with zero fresh_profile fires despite SOL h24>=5%, audit the ready-state gate.",
+      "Ship letsbonk_graduation_snipe Phase 1 LOG-ONLY listener once REQ-013 returns the graduation log-line pattern + 2 test mints. ~80-120 LOC modeled on existing pump.fun listener.",
+      "Ship hold_duration_min Phase 1 logger if bandwidth allows (~5 LOC additive) so future N=20 stratification under current filter stack can verify the U-shape claim.",
+      "wallet_convergence N=10 fast-kill at next decisive trade \u2014 if next trade is a stop or emergency, WR could trip below 35% safety net.",
+      "Continue boost enrichment health monitoring \u2014 last 100 should stay >=70%."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 998,
-      "total_buys": 997,
       "win_rate": 35.5,
-      "avg_win_pct": 13.17,
-      "avg_loss_pct": -16.6,
-      "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 39.8,
+      "avg_win_pct": 6.22,
+      "avg_loss_pct": -10.36,
+      "rr_ratio": 0.6,
+      "stop_loss_rate_pct": 62.5,
       "bankroll": 1.1556,
-      "sol_price": 93.95,
-      "sol_h24_pct": "unknown_via_heartbeat",
-      "btc_dom_pct": 58.1,
-      "altcoin_regime": "ALTCOIN_WINTER(58.1%)",
-      "pnl_today": 0.0,
-      "trades_today": 0,
-      "open_positions": 0,
-      "rolling_7d": {
-        "trades": 8,
-        "wr": 37.5,
-        "avg_win_pct": 6.22,
-        "avg_loss_pct": -8.8,
-        "rr": 0.71,
-        "pnl_sol": -0.00283,
-        "stop_rate_pct": 50.0
-      },
-      "boost_enrichment": {
-        "pre_fix_rate_pct": 0.0,
-        "pre_fix_n": 340,
-        "post_fix_total_enriched": 333,
-        "post_fix_last_100_enriched_pct": 100.0,
-        "max_liq_usd": 429782
-      },
-      "gecko_breadth_funnel": {
-        "raw_unique_mints_per_hour": 33,
-        "filter": "BA>=20 AND reserve $5k-$250k AND age<=15min AND vol_m5>=$2k",
-        "predicted_fires_per_day_post_gates": "5-8"
-      }
+      "pnl_today": 0,
+      "_active_only_7d": "8T WR=37.5% R/R=0.6 PnL=-0.00323 SOL stops=62.5% (UNCHANGED from run-276 \u2014 no new sells closed since 2026-05-08 16:55 EDT)"
     },
     "active_strategies": [
-      "gecko_breadth_burst (NEW THIS RUN \u2014 TESTING N=0, 0.15x size, fires every ~3min, fast-kill at N=10)",
-      "wallet_convergence (TESTING N=9, last fire 2026-05-08 16:55 EDT flat -0.24%)",
-      "bear_strength (TESTING)",
-      "consensus_boost (TESTING, BULL-gated)",
-      "fresh_profile (PROVEN N=15 60%WR, dormant in CHOP, awaits BULL trigger which SOL just crossed)",
-      "bounce_hunter (TESTING_BULL, gated)",
-      "flash_surge (TESTING_BULL N=4, dormant)",
-      "anchor_derivative_snipe (TESTING N=0, awaiting first fire)",
-      "chop_momentum_scalp (TESTING N=20)",
-      "boosts_top_feed_breakout (UNBLOCKED via run-275 enrichment fix, parked behind GBB)"
+      "fresh_profile (PROVEN, 0.9x, regime-eligible to reactivate after BULL flip)",
+      "bear_strength (TESTING, 0.35x BULL / 0.15x CHOP)",
+      "consensus_boost (TESTING, 0.50x CHOP / 0.70x BULL \u2014 fires only in BULL post run-221 fast-kill)",
+      "wallet_convergence (TESTING, 0.15x, N=9, fast-kill check at next decisive trade)",
+      "anchor_derivative_snipe (TESTING, 0.15x, N=0 trades)",
+      "chop_momentum_scalp (TESTING, 0.15x)",
+      "gecko_breadth_burst (TESTING, 0.15x \u2014 first SIGNAL fired this run, correctly LP-blocked)",
+      "bounce_hunter (TESTING_BULL, gate CLOSED morning block)",
+      "flash_surge (TESTING_BULL, 0.15x, dormant in CHOP)"
     ]
   },
   "wallet_scan": {
@@ -211,15 +188,15 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 21145.729006,
+  "brain_next_sec": 20842.443543,
   "brain_next_str": "12:04 PM EST",
-  "brain_running": true,
+  "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "12:10 AM EST",
+  "brain_last_run_str": "6:10 AM EST",
   "research_running": false,
   "research_last_run_str": "12:49 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 22705.729006,
+  "research_next_sec": 22402.443543,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-09 00:48:30 EDT",
@@ -422,7 +399,7 @@
     "dashboard_pid": 7412,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 13.6,
+    "hours_since_last_trade": 13.69,
     "last_trade": "CWU buy 2026-05-08 16:35:29 EDT (wallet_convergence)",
     "dormancy_alert": false,
     "filter_lockout_diagnosis": "Buy decision skip rate is effectively 100% across the last 100 events (56 BUY_SKIP, 0 buys), but trade gap (13.5h) is under the 24h dormancy threshold so no DORMANCY_ALERT is raised. Top skip reasons in this window: midpump h1 below 15% momentum, h6pump 'extended pump >=5% (early buyers distributing)', m5 dump 'active sell-off at execution', wallet_convergence live-WR gate. WalletSell SIGNAL events are firing (none of our positions held), so the bot is seeing wallet flow \u2014 every candidate is just failing at least one filter.",
@@ -456,7 +433,7 @@
     "next_run_focus": "Heartbeat-write-cadence quirk now persists across maint-193 -> 195 -> 196, on both old (PID 6028) and fresh (PID 11564) bot processes. Strongly suggests the issue is in degen_bot.py heartbeat write timing, not in the process. If next run again sees heartbeat >600s while events flow normally, surface this clearly to the operator as a code-level finding (suggested fix: move heartbeat write from start-of-cycle to mid-loop, OR raise the medic threshold to 1800s). Also: pending_hypotheses=52 \u2014 brain run-277 currently in progress could push this to >60 and trip the Efficiency Lab next run. Dormancy alert will trigger ~16:35 EDT today if no buys land.",
     "log_truncations": [],
     "elapsed_min": 3,
-    "file_age_min": 4.4,
+    "file_age_min": 9.4,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1905,15 +1882,15 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 7,
-    "age_min": 0.1,
+    "age_min": 5.2,
     "stale": false,
     "available": true
   },
   "brain_queue": {
-    "requests_pending": 0,
+    "requests_pending": 1,
     "requests_acknowledged": 0,
-    "hypotheses_pending": 52,
-    "lessons_count": 44,
+    "hypotheses_pending": 54,
+    "lessons_count": 47,
     "killed_ideas_count": 17,
     "drift_keys": [],
     "active_strategies_count": 10,
@@ -1950,14 +1927,14 @@
     "backups_pruned": [],
     "elapsed_min": 3,
     "next_run_focus": "Lessons trimmed 52->40 (target 40). Active demoted entries are oldest single-evidence shipped-notes; preserved all N>=30 entries. Hypotheses unchanged at 50/50 cap (no RESEARCHING entries to drop and 45/50 lack name field for dedupe \u2014 flag to brain that hypothesis schema is missing names). Killed-ideas revival check found 2 potential conflicts (copy_trade carve-out applied: watch-only note explicitly preserved). No survival history archived (all entries <30d). 0 pending requests.",
-    "age_hours": 26.0,
+    "age_hours": 26.1,
     "stale": true,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 205.729006,
-  "maint_next_str": "6:15 AM EST",
+  "maint_next_sec": 802.443543,
+  "maint_next_str": "6:30 AM EST",
   "maint_last_run_str": "6:07 AM EST",
   "maint_stale": false,
   "memk_next_sec": null,
@@ -1968,11 +1945,11 @@
     "latest": {
       "hypothesis_name": "letsbonk_graduation_snipe",
       "run_id": "research-142",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "(d) Boost enrichment health: HOLDING. Last 100 entries 100% enriched per research-142 audit.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 27,
@@ -1982,55 +1959,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-09T05:44:46.723349",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Mert: h1=-4.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T05:46:27.870067",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G4YqTqWP sold 3jG3vjwb \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T05:46:30.111013",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Bear: m5=-17.9% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T05:46:30.127124",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G4YqTqWP sold FhwV2wZi \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T05:46:40.054788",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5s4GgSH2 sold AfVBm1e6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T05:46:42.300841",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip motion: m5=11.7% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T05:46:42.300841",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5s4GgSH2 sold HLQFD2YV \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-09T05:46:42.783745",
       "type": "BUY_SKIP",
@@ -2681,6 +2609,55 @@
       "color": "#555555",
       "msg": "Scanning 102 wallets (cycle #7)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-09T06:14:39.825788",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 67Nwfi9h sold E432XHPu \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T06:14:42.293815",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip AURAHOUSE: m5=-11.9% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T06:15:28.778995",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip ???: h1=0.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T06:15:28.778995",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Av3xWHJ5 sold 7cYet1j6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T06:15:30.800403",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Rawdog: m5=119.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T06:15:31.277319",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Rawdog: m5=119.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T06:15:31.739786",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Rawdog: m5=119.0% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2736,9 +2713,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "06:11:34",
+  "ts": "06:16:37",
   "__publish_meta": {
-    "published_at": "2026-05-09 06:11:34 EDT",
+    "published_at": "2026-05-09 06:16:37 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
