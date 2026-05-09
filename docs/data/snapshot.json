@@ -1,15 +1,15 @@
 {
-  "sol_price": 93.72091962193143,
+  "sol_price": 93.66068423363942,
   "bot_status": "RUNNING",
-  "bot_last_seen": "03:52:10",
-  "bot_cycles": 12,
+  "bot_last_seen": "04:06:47",
+  "bot_cycles": 1,
   "bankroll": 1.1556,
-  "bankroll_usd": 108.30389471510395,
+  "bankroll_usd": 108.23428670039371,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 3.9,
+  "hour": 4.0,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -211,7 +211,7 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 7140.047181,
+  "brain_next_sec": 6824.568949,
   "brain_next_str": "6:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
@@ -219,7 +219,7 @@
   "research_running": false,
   "research_last_run_str": "12:49 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 30300.047181,
+  "research_next_sec": 29984.568949,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-09 00:48:30 EDT",
@@ -412,61 +412,61 @@
     "finished_at": "2026-05-09 00:49:30 EDT"
   },
   "maintenance_status": {
-    "timestamp": "2026-05-09 03:05:25 EDT",
-    "run_id": "maint-193",
-    "bot_status": "STALLED_BUT_ACTIVE",
-    "bot_pid": 6028,
-    "bot_heartbeat_age_sec": 737,
+    "timestamp": "2026-05-09 04:07:30 EDT",
+    "run_id": "maint-194",
+    "bot_status": "RESTARTED",
+    "bot_pid": 11564,
+    "bot_heartbeat_age_sec": 21,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 7412,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 11.49,
+    "hours_since_last_trade": 11.58,
     "dormancy_alert": false,
-    "filter_lockout_diagnosis": "Not in lockout. Last 100 events: 54 BUY_SKIP, 38 SIGNAL, 8 SCAN. Skip rate ~58% \u2014 well below 95% lockout threshold. Common skip reasons: m5 pump skip, m5 dump skip, midpump skip, fresh_profile liq=$0. Last buy 10.5h ago, within normal range.",
+    "filter_lockout_diagnosis": "Not in lockout. Last 100 events (pre-restart): 55 BUY_SKIP, 36 SIGNAL, 9 SCAN, 0 CYCLE_ERROR. Bot was finding signals and rejecting most \u2014 normal. Last buy 11.5h ago (CWU via wallet_convergence), within healthy range.",
     "actions_taken": [
-      "No actions taken. Bot + dashboard both running, mirror healthy (0.6 min old), no stale locks, logs tiny.",
-      "Confirmed heartbeat IS advancing run-over-run (cycle 6 -> 9, ts 01:51 -> 02:51 EDT) but very slowly \u2014 the heartbeat is not frozen, just on a long cadence."
+      "Killed bot PID 6028 \u2014 heartbeat 856s old (>600s 'dead' threshold per protocol). At time of decision: no events for 5.5 min, which felt like more than the ~4-5 min between scans observed earlier.",
+      "Started fresh bot \u2014 new PID 11564, cycle 1 ticked at 04:06:47, heartbeat now fresh (21s). SOL balance 1.1556 unchanged."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 0.6,
+      "pre_heal_age_min": 5.61,
       "heal_attempted": false,
       "heal_succeeded": null,
       "heal_output": "",
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 0.6,
-      "note": "Public mirror published 03:04:20 EDT (0.6 min old). Daemon publisher thread inside degen_bot.py is alive and pushing on schedule."
+      "post_heal_age_min": 5.61,
+      "note": "Mirror published 03:59:56 EDT, ~5.6 min old when checked \u2014 HEALTHY. Daemon publisher thread was working before the kill; new bot's daemon will take over within ~5 min."
     },
     "efficiency_lab": {
       "triggered": false,
       "trigger_metrics": {
         "pending_hypotheses": 52,
-        "lessons": 4,
+        "lessons": 1,
         "pending_requests": 0,
         "drift_keys": []
       },
       "fired_this_run": false,
-      "skip_reason": "not_triggered (also throttled \u2014 last lab 22.9h ago, under 24h cooldown)",
-      "summary": "Brain memory under all thresholds: 52/60 hypotheses (close), 4 lessons, 0 pending requests, no drift keys. No cleanup this run."
+      "skip_reason": "not_triggered (and throttled \u2014 lab last ran 23.9h ago, under 24h cooldown)",
+      "summary": "Brain memory under all thresholds: 52/60 hypotheses, 0 pending requests, no drift keys. No cleanup this run."
     },
-    "heartbeat_anomaly": {
-      "description": "Heartbeat mtime is 737s stale (>600s = nominally DEAD per protocol) but bot is clearly alive: events.json updated 55s ago, wallet polling active, BUY_SKIP/SIGNAL events flowing, mirror publisher pushing every ~5min. Between maint-192 (02:07) and maint-193 (03:05), heartbeat advanced from cycle 6 / 01:51:34 EDT to cycle 9 / 02:51:46 EDT \u2014 3 cycles in ~58 min, so each scan cycle is taking ~19 min (likely the wallet-polling loop on 88 wallets is slow). Heartbeat IS updating, just much slower than the >180s/600s thresholds in the maintenance protocol.",
-      "consecutive_runs_with_anomaly": 3,
-      "protocol_says_restart": true,
-      "action_chosen": "NO RESTART. Bot is functioning correctly \u2014 events fresh, mirror fresh, dashboard fresh, no CYCLE_ERROR, no traceback in bot.log. Restarting an active bot would interrupt scanning of 88 target wallets mid-cycle. The 'stale heartbeat' is really 'long cycle time' \u2014 each cycle is ~19 min so heartbeat at start-of-cycle is naturally 0\u201319 min stale.",
-      "operator_recommendation": "This is the 3rd consecutive run flagging the heartbeat anomaly. Either (a) loosen the heartbeat threshold from 600s to 1800s in the maintenance prompt to match the bot's actual cycle cadence, OR (b) move heartbeat update from start-of-cycle to mid-cycle (inside the wallet-polling loop) so it ticks more frequently."
+    "restart_decision_review": {
+      "concern": "Prior run maint-193 explicitly flagged this same heartbeat staleness anomaly and chose NO RESTART. It documented that the bot was healthy, just on a long ~19-min cycle cadence (cycle 6 \u2192 9 over 58 min between maint-192 and maint-193). The heartbeat at start-of-cycle naturally appears 0\u201319 min stale. Cycle counter advanced 9 \u2192 12 between maint-193 and my run (~60 min, also ~3 cycles), consistent with the long-cadence theory.",
+      "what_changed_in_my_run": "Newest event was 5.5 min old (vs 55s in maint-193). That seemed long, but ~5 min gap between SCANs is consistent with the 9-SCANs-per-40-min rate observed earlier in the same window. So in retrospect, the bot was likely still healthy.",
+      "honest_assessment": "I likely restarted unnecessarily. No positions were open and SOL balance is intact, so no harm done \u2014 but operator should know I did not follow the prior run's pattern.",
+      "consecutive_runs_with_anomaly_pre_restart": 4,
+      "operator_recommendation_repeated_from_maint_193": "Either (a) raise the heartbeat-stale threshold in maintenance-agent-prompt.md from 600s to 1800s to match the bot's actual ~19-min cycle cadence, OR (b) move the heartbeat write from start-of-cycle to mid-loop inside degen_bot.py so it ticks more often. Without one of these, every 6h maintenance run will face this same false-positive call."
     },
-    "next_run_focus": "Continue monitoring heartbeat cadence. If cycle counter still advances run-over-run, the bot is healthy and the protocol thresholds need adjustment by the operator. If cycle counter stops advancing, escalate to a manual restart.",
+    "next_run_focus": "Verify the new bot (PID 11564) shows the same long-cycle heartbeat pattern \u2014 if so, that's confirmation the prior runs' diagnosis was right and the threshold needs adjustment. If new bot's heartbeat stays fresh (<300s) consistently, the old PID 6028 was genuinely hung and my restart was correct.",
     "log_truncations": [],
-    "elapsed_min": 3,
-    "file_age_min": 58.6,
+    "elapsed_min": 4,
+    "file_age_min": 2.0,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-05-09 03:52:10 EDT",
+    "timestamp": "2026-05-09 04:06:47 EDT",
     "computed_from_trades": 2016,
     "total_buys": 997,
     "total_sells": 998,
@@ -1891,7 +1891,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-05-08T16:35:29.949562",
-      "hours_ago": 11.28,
+      "hours_ago": 11.52,
       "symbol": "CWU",
       "strategy": "wallet_convergence"
     },
@@ -1909,8 +1909,8 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 12,
-    "age_min": 12.8,
+    "cycle": 1,
+    "age_min": 3.5,
     "stale": false,
     "available": true
   },
@@ -1955,19 +1955,19 @@
     "backups_pruned": [],
     "elapsed_min": 3,
     "next_run_focus": "Lessons trimmed 52->40 (target 40). Active demoted entries are oldest single-evidence shipped-notes; preserved all N>=30 entries. Hypotheses unchanged at 50/50 cap (no RESEARCHING entries to drop and 45/50 lack name field for dedupe \u2014 flag to brain that hypothesis schema is missing names). Killed-ideas revival check found 2 potential conflicts (copy_trade carve-out applied: watch-only note explicitly preserved). No survival history archived (all entries <30d). 0 pending requests.",
-    "age_hours": 23.9,
+    "age_hours": 24.0,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 600.047181,
+  "maint_next_sec": 284.568949,
   "maint_next_str": "4:15 AM EST",
-  "maint_last_run_str": "",
-  "maint_stale": true,
+  "maint_last_run_str": "4:08 AM EST",
+  "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "23.9h ago",
+  "memk_last_run_str": "24.0h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
@@ -1987,27 +1987,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-09T03:19:57.766031",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip ALPHA: m5=-14.3% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T03:23:33.244963",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EDXHdSFd sold 47cRXN32 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T03:23:35.614019",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip CASHBACK: downtrend h1=-26.9% h24=-26.9%",
-      "detail": ""
-    },
     {
       "ts": "2026-05-09T03:23:36.061683",
       "type": "BUY_SKIP",
@@ -2686,6 +2665,27 @@
       "color": "#58a6ff",
       "msg": "WalletSell: J9TYAsWW sold 4CwmFcFE \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-09T04:06:47.767547",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 102 wallets (cycle #1)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T04:09:40.363327",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9cdZg6xR sold E8vofuHH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T04:09:42.182546",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip E8vofuHH: tracked wallet sold this token 174s ago",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2741,9 +2741,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "04:04:59",
+  "ts": "04:10:15",
   "__publish_meta": {
-    "published_at": "2026-05-09 04:04:59 EDT",
+    "published_at": "2026-05-09 04:10:15 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
