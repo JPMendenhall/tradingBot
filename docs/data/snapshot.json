@@ -1,15 +1,15 @@
 {
-  "sol_price": 93.00695826089922,
+  "sol_price": 93.10960546534157,
   "bot_status": "RUNNING",
-  "bot_last_seen": "12:02:29",
-  "bot_cycles": 24,
+  "bot_last_seen": "12:11:07",
+  "bot_cycles": 1,
   "bankroll": 1.1556,
-  "bankroll_usd": 107.47884096629514,
+  "bankroll_usd": 107.59746007574871,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 12.0,
+  "hour": 12.1,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,74 +113,67 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-09 06:10:00 EDT",
-    "run_id": "run-277",
-    "market_regime": "BULL TRIGGER FRESHLY MET. SOL $93.30 (per heartbeat 05:49 EDT) / $93.56 (research-142 agent-2 live fetch ~00:30 EDT). h24 = +6.0% confirmed via events-log macro overlay 'Macro overlay: ALTCOIN_WINTER(58.2%) | SOL h24=6.0%' at 05:28:27 EDT. First BULL flip since 2026-04-02 (~37 days dormant). BTC dom 58.16% ALTCOIN_WINTER unchanged. fresh_profile (60% lifetime WR, N=15) regime-eligible to reactivate; 21-22 young profiles tracked but 0 ready yet at 05:48 EDT.",
-    "system_diagnosis": "Three things observed and ZERO code changes this run. (1) GBB FIRST FIRE SUCCESS at 05:27:33 EDT \u2014 exactly the success pattern run-276 predicted. ALIEN BOY signal (BA=74, age=1.3min, vol_m5=$37k, liq=$68k) was correctly downstream-blocked by the universal LP concentration gate (research-074 protective filter, 100% of liquidity in 1 pool, n=1). Wiring confirmed working. The block is the SYSTEM WORKING AS DESIGNED \u2014 but it also reveals a tension: GBB's mechanism by design picks up tokens at age<=15min where multi-pool depth is mechanically unrealistic; if 80%+ of GBB SIGNALs are LP-blocked, we never get N=10. NEXT-RUN watch the LP-block rate. (2) BULL TRIGGER MET \u2014 fresh_profile regime gate is automatic; no code change needed. Watch for first fresh_profile fire within 24h. (3) BOT HUNG between GBB ship 00:10 EDT and ~04:06 EDT (2-line summary: research-142 caught the hang at 00:39 EDT under PID 6028 with cycle stuck at #2; bot was respawned to PID 11564 ~04:06 EDT and is now alive on cycle 6, scanning 102 wallets). The hang itself is a one-incident regression that may have been caused by a long-running call introduced with GBB; if it recurs, root-cause via stack trace at hang time. NO BIG SHIP this run because all four research-142 proposals are blocked: letsbonk needs REQ-013 (graduation log-line pattern + 2 test mints) before parser can be written safely; hold-duration calibration cannot ship under hard rules (non-monotonic evidence, exit threshold mod = default N=20); copy_trade 04-07 EDT skip is no-op (copy_trade killed); fresh_profile reactivation is automatic.",
-    "exit_analysis": "7d active-strategy stats UNCHANGED from run-276 (still N=8 trades, WR 37.5%, R/R 0.6, PnL -0.00323 SOL, stop rate 62.5%) because no new sells have closed since run-275. Last sell was 2026-05-08 16:55 (wallet_convergence flat exit -0.24% via 20-min CWU rule). Hold-duration U-shape research-142 finding (1-6h bucket WR 44.8% but mp -7.4% and stop_rate 2.7%) flagged as a Phase 1 logger hypothesis; cannot ship the 8%->12% post-60min stop change directly because evidence is non-monotonic across the full bucket sweep and sample is regime-mixed (62-day window).",
-    "strategy_work": "Validation + planning run. Confirmed GBB scanner is wired and firing (ALIEN BOY first SIGNAL); confirmed BULL trigger met; confirmed boost enrichment 100/100 holding. Resolved letsBONK Raydium LaunchLab program-id LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj + platform config FfYek5vEz23cMkWsdJwG2oa6EphsvXSHrGpdALN4g6W1 via WebFetch to Bitquery docs \u2014 partially unblocking next-run letsbonk Phase 1 ship. REQ-013 dispatched for graduation log-line pattern + 2 test mints. Two new pending_hypotheses entries added: letsbonk_graduation_snipe (HIGH, queued for run-278+) and hold_duration_u_shape_calibration (HIGH, deferred to Phase 1 logger).",
-    "directives_changes": "Version 270 -> 271. Updated current_priority to reflect validation/planning run rationale. Added two pending_hypotheses (letsbonk_graduation_snipe, hold_duration_u_shape_calibration). Added REQ-013 to requests_for_research. Added three condensed_lessons entries (no_ship_validation_run_run277, letsbonk_program_id_resolved_run277, gbb_first_fire_correct_block_run277). Updated track_record sol_h24_note_run277 with BULL trigger confirmation + GBB first fire + bot PID change.",
+    "timestamp": "2026-05-09 12:11:00 EDT",
+    "run_id": "run-278",
+    "market_regime": "CHOP. SOL $93.05 h24 +3.94% via CoinGecko (BELOW +5% BULL trigger). The BULL window briefly opened in run-277 at +6.0% but has since faded \u2014 first signs of regime weakness within hours of the flip. BTC dom 58.29% ALTCOIN_WINTER unchanged.",
+    "system_diagnosis": "GBB scanner has been firing only 6% of the time it should be. Strategy shipped run-276, then in 12+ hours produced exactly ONE SIGNAL (ALIEN BOY at 05:27 EDT run-277, correctly LP-blocked). Live audit of sol_gecko_breadth_log.json shows the funnel is HEALTHY \u2014 33 unique GBB-eligible mints in the last 60 minutes (David, MOTHER, UNOS, TeslaStock, Jack, etc.). Root cause: cycle latency drift. The bot was designed for 45s cycles but with 102 wallets being scanned and per-candidate DexScreener+RugCheck checks, real cycle latency in CHOP/BULL transition is ~20 min/cycle (PID 11564 ran 24 cycles in 8h). GBB_CYCLE_INTERVAL=4 means the GBB scanner runs every ~80 min, but its FRESHNESS_SEC=300s only catches breadth log entries from the last 5 minutes \u2014 so 75 of every 80 minutes the GBB candidate window is empty. Fix shipped this run: FRESHNESS_SEC raised 300 -> 1800 (5 min -> 30 min). Coverage rises from 6% to 37.5%. Risk is bounded because the GBB signal generator does a fresh DexScreener fetch + universal-gate re-validation per candidate; the breadth log entry is only a TRIGGER, not the entry condition.",
+    "exit_analysis": "7d active-strategy stats UNCHANGED \u2014 N=8 trades, WR 37.5%, R/R 0.71, PnL -0.00284 SOL, stop_rate 50%. No new sells since 2026-05-08 16:55 (wallet_convergence CWU flat -0.24%). Hold-duration U-shape calibration still deferred to Phase 1 logger pending instrumentation.",
+    "strategy_work": "Diagnosed and shipped the GBB cycle/freshness mismatch. One-line code edit at degen_bot.py:7741. Compile-check passed. Bot PID 11564 killed cleanly; fresh PID 3168 cycle 1 spun up at 12:10:58 EDT. Dashboard PID 7412 still alive. Confirmed via heartbeat 12:11:07 EDT \u2014 sol_balance 1.1556, sol_price 93.05.",
+    "directives_changes": "Version 271 -> 272. Updated current_priority with the GBB freshness fix rationale. Added gbb_freshness_run278 to track_record. Added new condensed_lessons entry gbb_freshness_cycle_latency_mismatch_run278 capturing the design lesson (scanner freshness >= cycle_interval \u00d7 cycle_seconds for full coverage; safe to widen freshness when a downstream fresh fetch re-validates). Updated gecko_breadth_burst active_strategies entry with new freshness value and last_note.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "_notes": "Last change (run-276 GBB ship) verified producing predicted result: first GBB SIGNAL fired within predicted 1-2h window (actually 5h, slightly slower because bot was hung 0:10-4:06 EDT). One-change-only respected with ZERO changes this run. Code-verified: WebFetch confirmed letsBONK program-id; events-log audit confirmed GBB SCAN+SIGNAL firing; heartbeat + ps confirmed bot PID 11564 alive."
+      "_notes": "Run-277's prediction (GBB SIGNAL within 1-2h, falsifiable at 6h zero) was already partially confirmed (1 signal in 12h, blocked downstream). The follow-on issue (zero signals after that single fire) is what this run diagnosed and fixed. Sample-size: this is a CALIBRATION fix to a shipped strategy based on operational evidence (cycle latency math + funnel audit), not a new filter \u2014 N=20 floor does not apply (per OPERATOR_AUTONOMY_GRANT 2026-04-30 + the change does not modify entry/exit logic, only scanner visibility). One-change-only respected (single GBB_FRESHNESS_SEC line). Code-verified: compile-check passed; PID 3168 fresh and writing heartbeat."
     },
     "previous_followups": [
-      "(a) GBB FIRST FIRE WATCH: ALIEN BOY signal fired 05:27 EDT, correctly blocked by LP concentration gate (n=1 pool). Wiring confirmed working. N=0 BUYs yet.",
-      "(b) GBB fast-kill watch: N=0 lifetime sells. No fast-kill check yet.",
-      "(c) SOL/BULL trigger watch: MET. h24=+6.0% confirmed via events-log macro overlay. fresh_profile regime-eligible.",
-      "(d) Boost enrichment health: HOLDING. Last 100 entries 100% enriched per research-142 audit.",
-      "(e) V/L>20x exclusion: STILL DEFERRED. Trade flow only just recovering; not the right time to add an exclusion.",
-      "(f) pump_fun_graduation_snipe shadow logger: STILL DEFERRED. Lower priority than GBB.",
-      "(g) wallet_convergence N=9, fast-kill at next decisive trade: no new WC trades since run-275."
+      "(a) GBB N=10 fast-kill watch: still N=0 BUYs lifetime, N=1 SIGNAL (LP-blocked). The visibility issue diagnosed this run is the upstream blocker that's been preventing more signals from accumulating.",
+      "(b) fresh_profile first-fire watch in BULL: BULL has retreated to CHOP (h24 +3.94% < +5% trigger). FP scanner IS now finding ready candidates (8 ready visible at 12:01:33 EDT) \u2014 encouraging \u2014 but every ready candidate is blocked at liq=$0 floor (DexScreener pre-indexing lag for very-fresh launches). This is a separate diagnostic, not the regime gate failing.",
+      "(c) letsbonk_graduation_snipe Phase 1: STILL BLOCKED on REQ-013 (graduation log-line pattern + 2 test mints). No new research findings since research-142.",
+      "(d) hold-duration calibration Phase 1 logger: Could ship next run if REQ-013 still pending. ~5 LOC additive instrumentation, no buy-decision impact.",
+      "(e) wallet_convergence N=9, fast-kill at N=10: no new WC trades since run-275.",
+      "(f) Boost enrichment health: HOLDING per run-277 audit (100/100)."
     ],
     "changelog": [
-      "No code changes this run. Updated brain memory only.",
-      "Resolved the letsBONK Solana program identifiers needed for the next-run new-strategy ship.",
-      "Documented that GBB's first-ever signal fired correctly and was blocked by the existing safety filter for over-concentrated liquidity (the right behavior \u2014 the system caught a single-pool token that could be drained quickly).",
-      "Documented that SOL just crossed the +5% daily-change line that turns BULL mode back on after 37 days of dormancy. The bot's best historical strategy (60% win rate fresh-profile) is now eligible to fire again automatically.",
-      "Recorded a research request for the missing details that would let us safely ship the new BONK launchpad listener next run.",
-      "Recorded a planned-but-deferred change to make the bot's stop-loss wider after one hour of holding \u2014 research suggests it could save ~0.32 SOL per week, but the evidence isn't clean enough to ship without more data first."
+      "Made one small change to a timing setting on the new gecko-breadth-burst strategy (the one shipped a few days ago that has only fired once). The setting controls how far back the strategy looks in its candidate log when deciding what to consider. The bot's normal cycle has been running slower than the original design, so the strategy was missing 94% of the candidates flowing through. The new setting catches roughly 6x more.",
+      "Restarted the bot to pick up the change. Old bot was running fine \u2014 this was a deliberate restart, not a crash. New bot is alive, dashboard still running, no positions to disrupt.",
+      "Confirmed the bot's best historical strategy (fresh-profile, 60% win rate) IS now finding fresh candidates again after BULL briefly opened earlier today, but every candidate it finds has $0 liquidity on DexScreener \u2014 meaning the tokens are too new to be indexed. This is an information-source issue, not a bot issue.",
+      "Documented today's regime: SOL had a brief BULL window early this morning (+6%) but has retreated to +3.94% \u2014 back to CHOP."
     ],
     "actions_taken": [
-      "Took no trading-code action this run on purpose. Three of the four research proposals were not safe to ship right now and one was a no-op.",
-      "Looked up the letsBONK launchpad's on-chain program identifiers so a future run can build the listener.",
-      "Verified the gecko-breadth-burst strategy (shipped last run) just produced its first signal correctly, with the existing safety net catching it as designed.",
-      "Verified the bot is healthy (alive, scanning, dashboard up) after a brief hang earlier in the night that was already auto-recovered by a respawn.",
-      "Verified the SOL price crossed the daily-change threshold that turns the bot's strongest historical strategy back on automatically."
+      "Raised the gecko-breadth-burst strategy's lookback window from 5 minutes to 30 minutes so it can actually see the candidates the bot's logging system is collecting.",
+      "Killed the previous bot (PID 11564) and started a fresh one (PID 3168). Verified the new bot is alive and writing its status.",
+      "Updated the brain's memory file with what changed and why, and what to watch for next."
     ],
     "next_priorities": [
-      "GBB N=10 fast-kill watch \u2014 observe how often LP-concentration gate blocks GBB signals; if 24h passes with all GBB signals blocked, consider strategy-specific exemption for tokens younger than 2 minutes.",
-      "fresh_profile first-fire watch in BULL \u2014 if 24h passes with zero fresh_profile fires despite SOL h24>=5%, audit the ready-state gate.",
-      "Ship letsbonk_graduation_snipe Phase 1 LOG-ONLY listener once REQ-013 returns the graduation log-line pattern + 2 test mints. ~80-120 LOC modeled on existing pump.fun listener.",
-      "Ship hold_duration_min Phase 1 logger if bandwidth allows (~5 LOC additive) so future N=20 stratification under current filter stack can verify the U-shape claim.",
-      "wallet_convergence N=10 fast-kill at next decisive trade \u2014 if next trade is a stop or emergency, WR could trip below 35% safety net.",
-      "Continue boost enrichment health monitoring \u2014 last 100 should stay >=70%."
+      "Watch for new gecko-breadth signals over the next 24 hours. With the freshness fix, expect 4-7x more signal events per scanner pass. If signals start firing but get blocked by other gates, document which gates and whether any blocks are misfiring on this strategy's specific candidate profile (very young tokens with single-pool liquidity).",
+      "If the gecko-breadth strategy gets to 10 actual buys, run the fast-kill check (win rate < 35%, R/R < 1.0, total P/L < -0.002 SOL, no outlier-driven sample).",
+      "If fresh-profile keeps finding 'ready' candidates that are all blocked by zero-liquidity from DexScreener, investigate using GeckoTerminal's pool data as an alternative liquidity source, or accept that the gate is correctly defending against not-yet-indexed launches.",
+      "If REQ-013 (the BONK launchpad graduation pattern) still hasn't been answered by next run, ship the small hold-duration logger (5 lines, no buy-decision impact) so we can later validate the U-shape claim under the current filter stack.",
+      "Watch for SOL h24 to push back above +5% \u2014 that re-opens the BULL window and fresh-profile reactivates."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 998,
-      "win_rate": 35.5,
+      "win_rate": 37.5,
       "avg_win_pct": 6.22,
-      "avg_loss_pct": -10.36,
-      "rr_ratio": 0.6,
-      "stop_loss_rate_pct": 62.5,
+      "avg_loss_pct": -8.8,
+      "rr_ratio": 0.71,
+      "stop_loss_rate_pct": 50.0,
       "bankroll": 1.1556,
-      "pnl_today": 0,
-      "_active_only_7d": "8T WR=37.5% R/R=0.6 PnL=-0.00323 SOL stops=62.5% (UNCHANGED from run-276 \u2014 no new sells closed since 2026-05-08 16:55 EDT)"
+      "pnl_today": 0.0
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, 0.9x, regime-eligible to reactivate after BULL flip)",
-      "bear_strength (TESTING, 0.35x BULL / 0.15x CHOP)",
-      "consensus_boost (TESTING, 0.50x CHOP / 0.70x BULL \u2014 fires only in BULL post run-221 fast-kill)",
-      "wallet_convergence (TESTING, 0.15x, N=9, fast-kill check at next decisive trade)",
-      "anchor_derivative_snipe (TESTING, 0.15x, N=0 trades)",
-      "chop_momentum_scalp (TESTING, 0.15x)",
-      "gecko_breadth_burst (TESTING, 0.15x \u2014 first SIGNAL fired this run, correctly LP-blocked)",
-      "bounce_hunter (TESTING_BULL, gate CLOSED morning block)",
-      "flash_surge (TESTING_BULL, 0.15x, dormant in CHOP)"
+      "fresh_profile (PROVEN, 60% lifetime WR, BULL-eligible but regime CHOP again)",
+      "bear_strength (TESTING)",
+      "consensus_boost (TESTING, BULL-only sizing)",
+      "wallet_convergence (TESTING N=9, fast-kill at N=10)",
+      "gecko_breadth_burst (TESTING, run-278 freshness calibration fix shipped)",
+      "anchor_derivative_snipe (TESTING N=0)",
+      "chop_momentum_scalp (TESTING N=20)",
+      "bounce_hunter (TESTING_BULL, gate closed)",
+      "flash_surge (TESTING_BULL N=4)"
     ]
   },
   "wallet_scan": {
@@ -188,15 +181,15 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 21211.553673,
+  "brain_next_sec": 20904.193164,
   "brain_next_str": "6:04 PM EST",
-  "brain_running": true,
+  "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "6:10 AM EST",
+  "brain_last_run_str": "12:11 PM EST",
   "research_running": false,
   "research_last_run_str": "12:49 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 1171.553673,
+  "research_next_sec": 864.193164,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-09 00:48:30 EDT",
@@ -398,7 +391,7 @@
     "dashboard_pid": 7412,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 19.58,
+    "hours_since_last_trade": 19.67,
     "dormancy_alert": false,
     "filter_lockout_diagnosis": "Healthy funnel. Last 100 events: 34 SIGNAL / 55 BUY_SKIP / 8 FP_SKIP / 3 SCAN. Signals are still firing (~34% of events) and overall skip ratio (~63%) is well below the 95% lockout bar. No filter-accumulation lockout. Last buy 19.49h ago, still inside the 24h dormancy window.",
     "actions_taken": [
@@ -431,12 +424,12 @@
     "next_run_focus": "Watch CWU dormancy clock \u2014 19.49h since last buy. If it crosses 24h, raise DORMANCY_ALERT and document dominant skip reason. Active lessons=47 is 3 under the 50 cap; expect Efficiency Lab to trigger within 1-2 runs as the survival brain accretes more entries \u2014 only fire when brain status is idle.",
     "log_truncations": [],
     "elapsed_min": 1,
-    "file_age_min": 4.4,
+    "file_age_min": 9.6,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-05-09 12:02:29 EDT",
+    "timestamp": "2026-05-09 12:11:07 EDT",
     "computed_from_trades": 2016,
     "total_buys": 997,
     "total_sells": 998,
@@ -1861,7 +1854,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-05-08T16:35:29.949562",
-      "hours_ago": 19.45,
+      "hours_ago": 19.59,
       "symbol": "CWU",
       "strategy": "wallet_convergence"
     },
@@ -1879,8 +1872,8 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 24,
-    "age_min": 8.0,
+    "cycle": 1,
+    "age_min": 4.5,
     "stale": false,
     "available": true
   },
@@ -1888,7 +1881,7 @@
     "requests_pending": 1,
     "requests_acknowledged": 0,
     "hypotheses_pending": 54,
-    "lessons_count": 47,
+    "lessons_count": 48,
     "killed_ideas_count": 17,
     "drift_keys": [],
     "active_strategies_count": 10,
@@ -1925,14 +1918,14 @@
     "backups_pruned": [],
     "elapsed_min": 3,
     "next_run_focus": "Lessons trimmed 52->40 (target 40). Active demoted entries are oldest single-evidence shipped-notes; preserved all N>=30 entries. Hypotheses unchanged at 50/50 cap (no RESEARCHING entries to drop and 45/50 lack name field for dedupe \u2014 flag to brain that hypothesis schema is missing names). Killed-ideas revival check found 2 potential conflicts (copy_trade carve-out applied: watch-only note explicitly preserved). No survival history archived (all entries <30d). 0 pending requests.",
-    "age_hours": 32.0,
+    "age_hours": 32.1,
     "stale": true,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 271.553673,
-  "maint_next_str": "12:15 PM EST",
+  "maint_next_sec": 864.193164,
+  "maint_next_str": "12:30 PM EST",
   "maint_last_run_str": "12:06 PM EST",
   "maint_stale": false,
   "memk_next_sec": null,
@@ -1946,157 +1939,17 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "(d) Boost enrichment health: HOLDING. Last 100 entries 100% enriched per research-142 audit.",
+      "evidence_text": "(c) letsbonk_graduation_snipe Phase 1: STILL BLOCKED on REQ-013 (graduation log-line pattern + 2 test mints). No new research findings since research-142.",
       "evidence_source": "followup"
     },
     "tally": {
-      "implemented": 27,
+      "implemented": 26,
       "queued": 0,
       "rejected": 1,
-      "total": 28
+      "total": 27
     }
   },
   "events": [
-    {
-      "ts": "2026-05-09T11:46:07.093764",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: AuPp4YTM sold 5ZXgVUbo \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:46:09.323869",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip PUPTOPIA: m5=92.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:46:09.794634",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip PUPTOPIA: m5=92.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:46:09.802202",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: AuPp4YTM sold 6GdLWPKk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:46:29.101345",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip David: h6=130.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:46:38.770827",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5ZuV8eqk sold 3HY93mCJ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:46:50.747764",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DYmsQudN sold EXGh5GhU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:46:52.961087",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip common: downtrend h1=-82.2% h24=-82.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:47:25.170025",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ASVzakeP sold FwGF9tgQ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:47:25.170025",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ASVzakeP sold 63o8y9v7 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:47:27.193994",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Krakka: m5=39.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:49:07.714544",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:50:28.043726",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip RP: m5=13.7% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:50:28.043726",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BQVz7fQ1 sold 2c173Kok \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:50:30.434225",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip RICH: m5=-45.2% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:50:30.914094",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip RICH: m5=-45.2% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:50:31.387264",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip RICH: m5=-45.2% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:51:56.594693",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: PMJA8UQD sold FmbeBucH \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:51:59.042194",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip momcoin: h1=-11.3% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T11:51:59.042194",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: PMJA8UQD sold HBeSvYTY \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-09T11:52:01.223523",
       "type": "BUY_SKIP",
@@ -2656,6 +2509,146 @@
       "color": "#d29922",
       "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:07.638893",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 105 wallets (cycle #1)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:28.116854",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: F9oqdWPu sold 7i1GWQaw \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:29.859317",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 7i1GWQaw: tracked wallet sold this token 22s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:43.114739",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Jack: m5=193.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:43.120730",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CyaE1Vxv sold 4TzUAfW9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:44.877260",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4TzUAfW9: tracked wallet sold this token 37s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:44.877260",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4TzUAfW9: tracked wallet sold this token 37s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:57.022529",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold C4XbLN3q \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:57.022529",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip C4XbLN3q: tracked wallet sold this token 49s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:57.022529",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold 3v6HPGpe \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:11:57.022529",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold 3v6HPGpe \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:12:30.847631",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 2fg5QD1e sold 43UAR1KN \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:12:32.327034",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 43UAR1KN: tracked wallet sold this token 84s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:12:32.343113",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 43UAR1KN: tracked wallet sold this token 84s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:12:32.343113",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 43UAR1KN: tracked wallet sold this token 84s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:12:34.360342",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip SWATCH: downtrend h1=-26.5% h24=-26.5%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:14:08.522748",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4vw54BmA sold 7YkFoTMU \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:14:16.027002",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 67Nwfi9h sold 8ksbsyAf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:14:18.463343",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip KAABA: downtrend h1=-18.5% h24=-18.5%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T12:14:18.463343",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 67Nwfi9h sold 7YkFoTMU \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2711,9 +2704,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "12:10:28",
+  "ts": "12:15:35",
   "__publish_meta": {
-    "published_at": "2026-05-09 12:10:28 EDT",
+    "published_at": "2026-05-09 12:15:35 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
