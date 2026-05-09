@@ -1,10 +1,10 @@
 {
-  "sol_price": 93.34572340006325,
+  "sol_price": 93.4131834066274,
   "bot_status": "RUNNING",
   "bot_last_seen": "06:53:21",
   "bot_cycles": 9,
   "bankroll": 1.1556,
-  "bankroll_usd": 107.87031796111309,
+  "bankroll_usd": 107.94827474469862,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
@@ -188,7 +188,7 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 18112.727764,
+  "brain_next_sec": 17809.38776,
   "brain_next_str": "12:04 PM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
@@ -196,7 +196,7 @@
   "research_running": false,
   "research_last_run_str": "12:49 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 19672.727764,
+  "research_next_sec": 19369.38776,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-09 00:48:30 EDT",
@@ -389,51 +389,52 @@
     "finished_at": "2026-05-09 00:49:30 EDT"
   },
   "maintenance_status": {
-    "timestamp": "2026-05-09 06:05:49 EDT",
-    "run_id": "maint-196",
+    "timestamp": "2026-05-09 07:06:15 EDT",
+    "run_id": "maint-197",
     "bot_status": "RUNNING",
     "bot_pid": 11564,
-    "bot_heartbeat_age_sec": 889,
-    "bot_heartbeat_note": "Heartbeat file mtime is 889s stale (above the 600s threshold), BUT the bot is observably alive: latest sol_events.json entry is 0.1 min old (a BUY_SKIP), and last 100 events break down as 56 BUY_SKIP / 34 SIGNAL / 10 SCAN / 0 CYCLE_ERROR. PID 11564 is the same fresh PID started by maint-194; the long-cycle / slow-heartbeat pattern is reproducing on it just like it did on PID 6028. NOT restarted \u2014 that would interrupt active scanning AND brain run-277, which started ~1 min before this maintenance window.",
+    "bot_heartbeat_age_sec": 774,
+    "bot_heartbeat_note": "Heartbeat file mtime is 774s stale (above the 600s 'dead' threshold). NOT restarted because the bot is observably alive: sol_events.json updated 20s ago, last 100 events break down as 39 BUY_SKIP / 28 FP_SKIP / 27 SIGNAL / 6 SCAN / 0 CYCLE_ERROR. PID 11564 has been alive since maint-194 (04:07 EDT). Same heartbeat-write-cadence quirk reported by maint-195 and maint-196 \u2014 strongly looks like a code-level issue (heartbeat written only at start of each scan cycle, and cycles are running ~10+ min on 102 tracked wallets). Restarting would interrupt active scanning for no real benefit.",
     "dashboard_status": "RUNNING",
     "dashboard_pid": 7412,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 14.44,
-    "last_trade": "CWU buy 2026-05-08 16:35:29 EDT (wallet_convergence)",
+    "stale_locks_note": "sol_brain_status.json running:false (run-277 finished 06:10 EDT, ~56 min ago). sol_research_status.json running:false (research-142 finished 2026-05-09 00:49 EDT). Nothing to clear.",
+    "hours_since_last_trade": 14.53,
+    "last_trade": "CWU buy 2026-05-08 16:35:29 EDT (wallet_convergence) \u2014 same trade reported by last 3 maint runs. SELL companion logged at 16:55 EDT, flat -0.24%.",
     "dormancy_alert": false,
-    "filter_lockout_diagnosis": "Buy decision skip rate is effectively 100% across the last 100 events (56 BUY_SKIP, 0 buys), but trade gap (13.5h) is under the 24h dormancy threshold so no DORMANCY_ALERT is raised. Top skip reasons in this window: midpump h1 below 15% momentum, h6pump 'extended pump >=5% (early buyers distributing)', m5 dump 'active sell-off at execution', wallet_convergence live-WR gate. WalletSell SIGNAL events are firing (none of our positions held), so the bot is seeing wallet flow \u2014 every candidate is just failing at least one filter.",
+    "filter_lockout_diagnosis": "Scanner is healthy: SCAN events firing every cycle, GBB/FreshProfile pollers populating, wallet-flow SIGNALs streaming. Buy decision skip rate ~100% across last 100 events but trade gap (14.5h) is under 24h threshold so no DORMANCY_ALERT. Top skip reasons in this window: midpump h1<15% (run115 momentum gate), h6pump extended (run116 'early buyers distributing'), m5 dump active sell-off (run79), FP_SKIP liq=$0 (newly-launched fresh-profile candidates with no DexScreener liquidity yet), wallet_convergence live-WR gate. One GBB SIGNAL fired (ELIEN, 06:52 EDT) and was correctly LP-blocked (100% in single pool, n=1). All gates appear to be doing their job \u2014 the candidate stream is just low-quality in the current ALTCOIN_WINTER(58.2%) regime even though SOL has flipped BULL.",
     "actions_taken": [
-      "None. All systems within tolerance: bot alive (events flowing), dashboard HTTP 200, mirror 3 min fresh, no stale locks (brain run-277 just started \u2014 mtime 0 min, NOT stale), logs tiny."
+      "None. All systems within tolerance: bot alive (events 20s fresh), dashboard HTTP 200 in 0.85s, mirror 4 min fresh, no stale locks, logs tiny."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 3.2,
+      "pre_heal_age_min": 4.1,
       "heal_attempted": false,
       "heal_succeeded": null,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 3.2,
-      "note": "Mirror published 3.2 minutes ago \u2014 comfortably inside the <15 min healthy band. Publisher daemon thread is fine."
+      "post_heal_age_min": 4.1,
+      "note": "Mirror published 2026-05-09 07:02:07 EDT, ~4 minutes old at audit time \u2014 comfortably inside the <15min healthy band. Publisher daemon thread inside degen_bot.py is fine."
     },
     "efficiency_lab": {
       "triggered": false,
       "trigger_metrics": {
-        "pending_hypotheses": 52,
-        "lessons": 44,
-        "pending_requests": 0,
+        "pending_hypotheses": 54,
+        "lessons": 47,
+        "pending_requests": 1,
         "drift_keys": []
       },
       "fired_this_run": false,
       "skip_reason": "not_triggered",
-      "throttle_age_h": 25.9,
-      "summary": "All metrics under thresholds: hypotheses 52/60, condensed_lessons.entries 44/50, pending requests 0/8, no drift keys. Throttle is past the 24h floor (25.9h since last lab status), so the lab IS eligible \u2014 it just has no work to do. Hypotheses count is closest to ceiling; 8 short of triggering."
+      "throttle_age_h": 26.92,
+      "summary": "All metrics under thresholds: hypotheses 54/60 (up 2 from maint-196 \u2014 run-277 added the two new pending_hypotheses for letsbonk_graduation_snipe and hold_duration_u_shape_calibration), condensed_lessons.entries 47/50 (up 3 from maint-196), pending requests 1/8 (REQ-013 added by run-277), no drift keys. Throttle is past the 24h floor (26.9h since last lab status), so the lab IS eligible \u2014 it just has no work to do. Lessons count is closest to ceiling; only 3 short of triggering. Hypotheses 6 short."
     },
-    "next_run_focus": "Heartbeat-write-cadence quirk now persists across maint-193 -> 195 -> 196, on both old (PID 6028) and fresh (PID 11564) bot processes. Strongly suggests the issue is in degen_bot.py heartbeat write timing, not in the process. If next run again sees heartbeat >600s while events flow normally, surface this clearly to the operator as a code-level finding (suggested fix: move heartbeat write from start-of-cycle to mid-loop, OR raise the medic threshold to 1800s). Also: pending_hypotheses=52 \u2014 brain run-277 currently in progress could push this to >60 and trip the Efficiency Lab next run. Dormancy alert will trigger ~16:35 EDT today if no buys land.",
+    "next_run_focus": "Heartbeat-write-cadence quirk has now persisted across maint-193 -> 195 -> 196 -> 197 on the same PID 11564. This is a CODE-LEVEL FINDING for the operator: degen_bot.py appears to write sol_heartbeat.json only at the start of each scan cycle, and current cycle latency on 102 tracked wallets is regularly ~10-13 min, which keeps the heartbeat above the 600s 'dead' medic threshold during normal operation. Suggested fixes for the operator/strategist: (a) move heartbeat write inside the wallet-poll loop so it refreshes every ~30-60s, (b) raise the medic 'dead' threshold in this prompt to 1800s to match observed cycle cadence, OR (c) reduce wallet-poll fan-out latency. Maintenance agent should NOT touch trade code. Also: lessons=47/50 \u2014 one more brain run that adds 3+ lessons will trip the Efficiency Lab next maintenance. DORMANCY_ALERT will trigger ~16:35 EDT today if no buys land \u2014 that's about 9.5h away.",
     "log_truncations": [],
-    "elapsed_min": 3,
-    "file_age_min": 54.9,
+    "elapsed_min": 4,
+    "file_age_min": 0.3,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1882,7 +1883,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 9,
-    "age_min": 8.8,
+    "age_min": 13.8,
     "stale": false,
     "available": true
   },
@@ -1933,10 +1934,10 @@
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 772.727764,
+  "maint_next_sec": 469.38776,
   "maint_next_str": "7:15 AM EST",
-  "maint_last_run_str": "",
-  "maint_stale": true,
+  "maint_last_run_str": "7:06 AM EST",
+  "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
   "memk_last_run_str": "1.1d ago",
@@ -1959,34 +1960,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-09T06:31:18.200019",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "\u6c17: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T06:31:18.719943",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "AURA: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T06:31:19.251232",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "goyim: h24=-94.0% < -40.0% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-09T06:31:19.769276",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "auramaxxing: liq=$0 < $3000",
-      "detail": ""
-    },
     {
       "ts": "2026-05-09T06:31:20.208547",
       "type": "FP_SKIP",
@@ -2658,6 +2631,34 @@
       "color": "#d29922",
       "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-09T07:02:29.285775",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Chiikawa: h6=658.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T07:02:29.755030",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Chiikawa: h6=658.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T07:02:30.200802",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Chiikawa: h6=658.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-09T07:05:56.161431",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8DGbkGgQ sold BbHYpJso \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2713,9 +2714,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "07:02:07",
+  "ts": "07:07:10",
   "__publish_meta": {
-    "published_at": "2026-05-09 07:02:07 EDT",
+    "published_at": "2026-05-09 07:07:10 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
