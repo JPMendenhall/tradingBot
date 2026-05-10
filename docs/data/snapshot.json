@@ -1,10 +1,10 @@
 {
-  "sol_price": 94.35208093331715,
+  "sol_price": 94.28719268880083,
   "bot_status": "RUNNING",
   "bot_last_seen": "12:11:41",
   "bot_cycles": 1,
   "bankroll": 1.1556,
-  "bankroll_usd": 109.0332647265413,
+  "bankroll_usd": 108.95827987117823,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
@@ -113,48 +113,46 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-10 06:10:00 EDT",
-    "run_id": "run-281",
+    "timestamp": "2026-05-10 12:15:00 EST",
     "market_regime": "CHOP",
-    "system_diagnosis": "Bot mechanically healthy, trade flow dormant 37h. Funnel-starved in CHOP/ALTCOIN_WINTER (BTC.D 58.3%). Last 7 days: only 6 closed trades, 16.7% WR, R/R essentially zero (one tiny 0.07% win, five losses averaging -8.8%), 66.7% stop-rate. The candidate stream is fundamentally low-quality this regime \u2014 gates are doing their proper job rejecting late entries. Path to more trades is NEW candidate channels (boost-velocity, letsBONK grad, bags grad), not loosening existing filters. SOL price $94.36 above $93 BULL price trigger but h24 not exposed via heartbeat for confirmation.",
-    "exit_analysis": "7d active-strategy stats: avg_win +0.07%, avg_loss -8.80%, R/R 0.01, stop-rate 66.7%. Single tiny win (consensus_boost) doesn't materially shift the picture; this is a 6-trade sample dominated by 8-9% stops. Lifetime exit work remains the long-horizon priority but is gated on trade-flow recovery \u2014 cannot calibrate exits on N=6 without weeks of accumulation. Per-strategy: wallet_convergence 3T 0%WR -0.0013, bear_strength 1T 0%WR -0.0011, consensus_boost 2T 50%WR -0.0014.",
-    "strategy_work": "ONE BIG SHIP: boost_velocity per-poll snapshot logger (~30 LOC). Run-280's recommended 'option b' design: additive parallel logger sol_dex_boosts_velocity_log.json (capacity 5000, ~7h retention) captures (ts, mint, totalAmount, boostAmount, source) on every DexScreener boost poll PRE-DEDUPE. Unblocks the boost_velocity_burst hypothesis (research-143 #2 MEDIUM) backtest at the 5-min cadence required. Existing sol_dex_boosts_log.json enrichment-health monitoring (last-100 enriched%) preserved untouched. Compile-check passed. Bot fresh restart PID 12864 cycle 1 06:08 EDT. End-to-end verified: 16 well-formed entries within 10s of restart. Backtest readiness at ~4-8h post-ship.",
-    "directives_changes": "Version 274->275, updated_by run-281. (1) boost_velocity_burst pending_hypothesis status flipped BACKTEST_BLOCKED_DATA_SUBSTRATE_RUN_280 -> DATA_SUBSTRATE_SHIPPED_RUN_281. (2) m5_pump_concentration_filter (HYP-261-1) status flipped LOGGING_LIVE -> CLOSED_RESOLVED_RUN_281 per research-144 Subagent B HIGH-confidence kill_strategy. (3) Added bags_graduation_snipe to pending_hypotheses (research-144 MEDIUM novel) with status PROPOSED_BY_RESEARCH; discriminators not locked. (4) letsbonk_graduation_snipe amended with smoke-test sigs (delivered by research-144) and density correction (~5/day not 24+/day) \u2014 status SHIP_READY_PENDING_SMOKE_TEST -> SHIP_READY_RUN_282. (5) REQ-013 marked completed; REQ-014 added (open) for bags discriminator lockdown. (6) Track_record updated with run-281 stats and bot_pid_run281=12864. (7) Three new condensed lessons added (additive cadence substrate pattern, research-144 three-findings discipline, scratch file housekeeping).",
+    "system_diagnosis": "Bot is trade-dormant 67 hours since the last sell on 2026-05-08 16:55 EDT (a wallet_convergence flat exit at -0.24%). The 7-day active-strategy snapshot is N=6, 16.7% win rate, R/R 0.01 (basically flat-or-loss only), -0.0038 SOL. That looks alarming in isolation, but in CHOP/ALTCOIN_WINTER (BTC dominance 58.25%, SOL h24 ~0%) the regime playbook explicitly favors dormancy + hypothesis-building over forcing trades. The real engine of progress this run was the launchpad-feed pipeline: letsBONK graduations - the biggest known data blind spot in the bot (15%+ Solana launchpad share with zero coverage) - now have a live HTTP poller writing to disk. That is the load-bearing work.",
+    "exit_analysis": "7d active-strategy exits: 4 of 6 (67%) were stop-losses or emergency stops, all in the -8% to -13% band. Avg win +0.07%, avg loss -8.80%, R/R 0.01. Sample is too small (N=6) to support any new exit-lab change under HARD RULES. exit_lab current experiment (stall_detection) holds at 3/3 wins on 3 fires lifetime, target 20 fires - waiting on trade volume to advance, which the launchpad pipeline is meant to provide.",
+    "strategy_work": "Shipped letsbonk_graduation_snipe Phase 1 logger. Status flipped SHIP_READY_RUN_282 -> PHASE_1_LIVE_RUN_282. New file sol_letsbonk_graduation_log.json will populate on first matched grad event (expected within 4-12 hours given research-144's empirically corrected 5-grads/day density). Smoke-test against research-144's verified signature passed - discriminator extraction matched migrate_to_cpswap and the mint at accounts[1] was exactly the mint research-144 named. Density-aware limit fix (25 -> 150 per poll) was applied within the same ship after an end-to-end mock revealed an 18-second coverage gap that would have silently dropped ~30% of grads.",
+    "directives_changes": "Bumped version 275 -> 276. Updated current_priority to describe the letsBONK ship + smoke-test + density-aware limit fix. Updated track_record with run-282 PID (6864) and listener status. Updated letsbonk_graduation_snipe hypothesis status to PHASE_1_LIVE_RUN_282 with shipped_run + shipped_at + logger_path. Added a process_discipline condensed lesson: derive poller page-size from measured signature density, not defaults. No other hypotheses moved this run; bags_graduation_snipe remains blocked on REQ-014 (discriminators not yet locked).",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "notes": "Last change (run-280) was no-code-ship; this run shipped the change run-280 explicitly pre-committed as priority #1. boost_velocity logger is additive infrastructure, not a filter modification, so HARD RULES sample-size gates do not apply. Compile-check passed; 16 entries verified in new file within 10s of restart."
+      "notes": "Last change (run-281 boost_velocity logger): file holding, ~720 entries/h pace. Sample size: ship was an additive logger, not a behavior change - N=20 rule does not apply (Phase 1 LOG-ONLY pattern). One change: letsBONK listener (with the limit-tuning sub-edit applied within the same ship as a load-bearing pre-flight fix, not a separate change). Code verified: compile-check OK twice (initial + post-fix recompile), bot restarted twice, PID 6864 alive."
     },
     "previous_followups": [
-      "BOOST_VELOCITY DATA-SUBSTRATE SHIP \u2014 DONE this run. ~30 LOC additive logger live, 16 entries verified.",
-      "GBB N=10 LP-BLOCK FAST-KILL WATCH \u2014 UNCHANGED at N=2 of 10. Bot trade-dormant; no new GBB SIGNALs since run-280.",
-      "letsbonk_graduation_snipe Phase 1 LOG-ONLY ship \u2014 SMOKE-TEST SIGS DELIVERED by research-144, listener now SHIP_READY for run-282.",
-      "wallet_convergence at N=9 \u2014 UNCHANGED, 0 new WC trades since run-275.",
-      "fresh_profile re-activation \u2014 UNCHANGED, no new ready candidates surfaced since prior run audit.",
-      "Boost enrichment health 100/100 \u2014 UNCHANGED (parallel velocity logger does not affect this metric)."
+      "run-281 boost_velocity per-poll snapshot logger: SHIPPED & HOLDING. File sol_dex_boosts_velocity_log.json populated within 10s of restart in run-281; no enrichment regression on sol_dex_boosts_log.json (run-281's audit confirmed). Backtest-ready at ~4-8h post-ship per run-281's note - that window has now passed, research can pull this substrate at any time.",
+      "run-281 m5_pump_skip 7% ceiling investigation: CLOSED PERMANENTLY. No re-investigation this run (per research-144 directive).",
+      "run-281 scratch-file housekeeping (4 files swept): no regression - no new scratch files appeared in repo root from research-144.",
+      "run-275 -> run-281 trade-dormancy: 0 new sells across 7 consecutive runs (998 total sells unchanged). Dormancy is correct in CHOP/ALTCOIN_WINTER per regime playbook."
     ],
     "changelog": [
-      "Added a second boost-tracking log alongside the existing one. The new log keeps ALL boost amounts seen on every poll instead of just the first time we see a coin. This lets the brain test a hypothesis from research-143 about whether sudden boost spikes within 5 minutes predict a price pop. Should have enough data in 4-8 hours to actually run the test.",
-      "Closed the investigation into the 7% momentum filter that was on the to-do list. Research-144 confirmed the filter is correctly tuned: coins above the 7% line lose 8% on average vs coins below losing 3%. The brain was about to spend cycles tweaking it; that work is now retired.",
-      "Marked the letsBONK launchpad sniper as ready to ship next run. Research-144 finally delivered the 2 example transactions needed to test it before going live \u2014 a missing piece that has been blocking this for weeks. Also corrected the daily volume estimate down from ~24/day to ~5/day, so the test will need ~4 days of data instead of ~1 day.",
-      "Added a new launchpad to the brain's queue: bags.fm. It pays creators 1% per trade forever (vs 0.05% for pump.fun), which gives them a structural reason to schedule shill posts at graduation time. The brain dispatched a request to research-145 to pull example transactions before any code ships.",
-      "Cleaned up 4 stray Python files left in the repo by a research subagent."
+      "Built and turned on a new sensor that watches the letsBONK launchpad on Solana. Every minute it asks the blockchain for the latest 150 letsBONK transactions and looks for the specific 'graduation' signature (when a token finishes its bonding curve and lists on Raydium). Each match gets logged to a new file (sol_letsbonk_graduation_log.json). This is purely a sensor - it does NOT buy anything yet. The bot needs about 20 logged graduations before it can decide whether trading them is profitable (about 4 days of data at the observed ~5 graduations per day).",
+      "Before turning on the sensor, the brain ran a 'smoke test' against a known-good graduation transaction provided by the research brain. The test passed - the sensor extracted the right token from the right transaction. This avoided the kind of silent failure that bit the bot in run-275 (where a sensor looked alive but was logging nothing useful).",
+      "The brain also caught a sizing bug before turning the sensor on: at 25 transactions per fetch and the actual letsBONK program throughput of 35 transactions per minute, the sensor would have been blind for ~18 seconds out of every 60-second cycle - missing roughly 30% of graduations by random luck. Raised the per-fetch count to 150, which gives the sensor a 4-minute lookback window with a 4-times safety margin.",
+      "No live-trading rules changed this run. The bot's entry/exit logic, position sizing, and risk gates are all identical to run-281. Only thing that changed is one new data sensor running in the background."
     ],
     "actions_taken": [
-      "Shipped a new boost-tracking log to enable a research backtest (~30 lines of code, no trading impact).",
-      "Compile-checked the bot, killed the old process (PID 7868), started a fresh process (PID 12864), and verified the new log file is being written correctly.",
-      "Closed an old investigation thread that research-144 confirmed was a dead end.",
-      "Updated the brain's notes on the letsBONK launchpad strategy with new test data delivered by research-144.",
-      "Added bags.fm as a new candidate launchpad to the brain's pipeline, with a clear gate that says 'don't ship until we have verified examples.'",
-      "Removed 4 leftover scratch Python files from the repo."
+      "Read brain memory and the research brain's latest output (research-144).",
+      "Confirmed bot was alive (PID 12864, cycle 17, fresh heartbeat) and dashboard alive (PID 7412).",
+      "Ran a one-off smoke test on the discriminator-extraction logic against research-144's verified letsBONK graduation transaction. Confirmed it found the correct token address.",
+      "Measured the letsBONK program's transaction density (~35 per minute) and chose a per-fetch count (150) that comfortably covers the 60-second poll interval.",
+      "Added the letsBONK graduation poller code to the bot (about 110 lines, all additive - no changes to existing trading logic). Compile-check passed.",
+      "Restarted the bot to load the new sensor. Verified the new process started cleanly.",
+      "Updated the brain's memory file with what was shipped, what was learned, and a new process-discipline lesson about deriving page sizes from measured density.",
+      "Wrote the run-282 survival report (this file).",
+      "REJECTED action: bags_graduation_snipe. Research-144 proposed it (MEDIUM confidence) but the discriminator bytes are not yet locked. REQ-014 was already opened in run-281 for the next research run; no implementation possible until those come back."
     ],
     "next_priorities": [
-      "At 4-8h post-ship, run a one-shot backtest script over the new boost-velocity log. If 5-min boost-amount spikes >=30 hit +12% within 12 minutes more than 40% of the time, ship Phase 1 of the boost_velocity_burst strategy live. (Sample size: as many fires as the log accumulates.)",
-      "Ship Phase 1 of the letsBONK launchpad sniper next run (~80-120 lines of code). It's a logger only \u2014 no trading yet. After ~4 days of data accumulation, decide whether to enable live buying. (Sample size: N=20 graduation events captured.)",
-      "Continue watching the gecko_breadth_burst (GBB) strategy. Currently 2 of 10 signals have been blocked by the LP-concentration gate; if this hits 10 with zero successful buys, ship a small exemption for fresh-launch tokens. (Sample size: N=10 LP-blocks.)",
-      "Wait for research-145 to deliver bags.fm graduation transaction examples before any code is written for that strategy."
+      "Run-283: read sol_letsbonk_graduation_log.json. If it has at least one entry, the sensor works end-to-end on real data. If it has zero entries after 12+ hours, investigate whether the listener is actually polling (check thread alive, recent RPC errors). Sample size goal: 20 logged graduations before any Phase 2 buy decision.",
+      "Run-283: check whether research-145 has returned with bags_graduation_snipe discriminators (REQ-014). If yes and the smoke-test passes the same way, ship the Bags poller as the next big additive sensor.",
+      "Run-283 or beyond: if dormancy continues, reconsider whether the bot's entry filter stack is too tight for the CHOP/ALTCOIN_WINTER regime. 7 trades in 7 days = 1/day = way below normal funnel. Check: how many candidates are scanner-eligible per day vs how many actually clear all gates. Need data, not speculation."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -167,24 +165,20 @@
       "stop_loss_rate_pct": 66.7,
       "bankroll": 1.1556,
       "pnl_today": 0.0,
-      "pnl_7d_sol": -0.0038,
-      "sol_price": 94.36,
-      "btc_dom_pct": 58.25,
-      "altcoin_regime": "ALTCOIN_WINTER(58.3%)",
-      "bot_pid": 12864,
-      "dashboard_pid": 7412,
-      "trade_dormant_hours": 37
+      "pnl_7d": -0.00378,
+      "open_positions": 0
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, dormant pending stable BULL)",
-      "bear_strength (TESTING)",
-      "consensus_boost (TESTING)",
-      "flash_surge (TESTING_BULL, dormant)",
-      "bounce_hunter (TESTING_BULL, gate CLOSED)",
-      "anchor_derivative_snipe (TESTING, N=0)",
-      "chop_momentum_scalp (TESTING)",
-      "wallet_convergence (TESTING, N=9, fast-kill at N=10 next decisive trade)",
-      "gecko_breadth_burst (TESTING, N=2 SIGNALs both LP-blocked)"
+      "fresh_profile",
+      "bear_strength",
+      "consensus_boost",
+      "flash_surge",
+      "bounce_hunter",
+      "anchor_derivative_snipe",
+      "copy_trade",
+      "chop_momentum_scalp",
+      "wallet_convergence",
+      "gecko_breadth_burst"
     ]
   },
   "wallet_scan": {
@@ -192,15 +186,15 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 20870.35064,
+  "brain_next_sec": 20567.101681,
   "brain_next_str": "6:04 PM EST",
-  "brain_running": true,
+  "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "6:10 AM EST",
+  "brain_last_run_str": "12:15 PM EST",
   "research_running": false,
   "research_last_run_str": "1:17 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 830.35064,
+  "research_next_sec": 527.101681,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-10 01:14:40 EDT",
@@ -340,7 +334,7 @@
       "brain_status": "running:true, started_at 2026-05-10T16:03:49Z (1.7 min ago) - fresh, NOT stale, brain currently executing its 6h run. 45min stale threshold not breached.",
       "research_status": "running:false (finished 2026-05-10 01:17:13 EDT, 648 min ago) - clean."
     },
-    "hours_since_last_trade": 43.68,
+    "hours_since_last_trade": 43.76,
     "last_buy_ts": "2026-05-08T16:35:29",
     "dormancy_alert": true,
     "filter_lockout_diagnosis": "6th consecutive maintenance run flagging dormancy with the SAME structural lockout. Last 100 events: 52 BUY_SKIP, 41 SIGNAL, 4 SCAN, 3 FP_SKIP. Bot scanning normally and finding 41 signals (41% signal rate) but the buy gate rejects 100% of them. Bucketed BUY/FP_SKIP reasons (n=55): midpump h1<15% (run115) x18 = 33%, m5 pump exit-liq (run95) x11 = 20%, h6 extended pump >=5% (run116) x10 = 18%, sell-conflict (tracked wallet sold same token recently) x6, m5 dump active sell-off (run79) x5, FP low-liq x3, lp_concentration single-pool x1, wallet WR gate x1. The momentum-stack filters (midpump h1 + m5-pump + h6-pump + m5-dump = 44/55 = 80% of rejections) remain the structural blocker. Brain has now seen 6 consecutive dormancy alerts without relaxing any momentum filter.",
@@ -379,7 +373,7 @@
     "next_run_focus": "Lockout is now 43.5h / 6th consecutive maintenance flag with identical momentum-stack pattern (midpump h1<15% + m5-pump exit-liq + h6 pump + m5-dump = 80% of rejections). Brain has executed multiple 6h cycles since first alert without relaxing these filters - confirm next run whether brain even reads sol_maintenance_alerts.json or if the read pipeline is broken. Watch hypothesis count: at 56/60 it is one bad day from triggering the lab. Brain currently mid-run started 16:03:49Z - verify it completes within 45min on next maint pass.",
     "log_truncations": [],
     "elapsed_min": 3,
-    "file_age_min": 7.9,
+    "file_age_min": 12.9,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1815,7 +1809,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 4.5,
+    "age_min": 9.5,
     "stale": false,
     "available": true
   },
@@ -1851,19 +1845,19 @@
     "requests_archived": 0,
     "elapsed_min": 1,
     "next_run_focus": "Recheck condensed_lessons growth in 24h+; verify brain still references demoted historical_lessons correctly.",
-    "age_hours": 5.1,
+    "age_hours": 5.2,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 830.35064,
+  "maint_next_sec": 527.101681,
   "maint_next_str": "12:30 PM EST",
   "maint_last_run_str": "12:08 PM EST",
   "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "5.1h ago",
+  "memk_last_run_str": "5.2h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
@@ -1872,8 +1866,8 @@
       "status": "implemented",
       "status_label": "\u2705 Implemented",
       "status_color": "#00ff88",
-      "evidence_text": "research_action_loop_discipline: research-144 delivered closure of one open question (m5_pump_skip), unblocking of one SHIP_READY hypothesis (letsbonk smoke-test sigs), and one fresh novel hypothesis (bags_graduation_snipe). Brain's role is",
-      "evidence_source": "lessons"
+      "evidence_text": "REJECTED action: bags_graduation_snipe. Research-144 proposed it (MEDIUM confidence) but the discriminator bytes are not yet locked. REQ-014 was already opened in run-281 for the next research run; no implementation possible until those com",
+      "evidence_source": "action"
     },
     "tally": {
       "implemented": 26,
@@ -1883,83 +1877,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-10T11:50:53.941389",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip BANI: m5=45.6% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:54.514688",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BFP: h1=-5.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:56.753642",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip CryptoForGood: m5=-20.0% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:57.325284",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CONSENSUS-1: h1=-40.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:57.849499",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: 8 new profile(s) (18 young, 3 ready)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:58.374412",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "BARRACKS: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:58.834239",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "FOODCOIN: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:59.343377",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "TROLLDAD: liq=$36 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:50:59.359529",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "GBB: 14 breadth candidate(s)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:51:01.570311",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "GBB: MMM BA=213 reserve=$24,544 liq=$24,865",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:51:01.570311",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "GBB: 1 signal(s)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-10T11:51:01.570311",
       "type": "SIGNAL",
@@ -2582,6 +2499,83 @@
       "color": "#58a6ff",
       "msg": "WalletSell: 4vw54BmA sold FzZMcSeh \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:17:32.635742",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ASVzakeP sold 89GfwE5E \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:17:34.860308",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Haram: m5=30.9% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:17:46.560007",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: gangJEP5 sold GHTSjF1h \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:17:48.624187",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip MOON: downtrend h1=-15.2% h24=-15.2%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:18:22.293538",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip MOON: h1=0.7% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:19:11.144707",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Gate probation 9c6StdpH: 1274.5h idle, WR 40% (12/30), PnL=-0.0270 \u2014 allowing signal (next reset in 24h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:19:11.144707",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:19:55.298993",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J9TYAsWW sold A2mSZTN6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:20:02.020692",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip \ud83e\uddcc: m5=-12.9% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:20:02.464161",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip \ud83e\uddcc: m5=-12.9% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:20:24.351248",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BQVz7fQ1 sold 89GfwE5E \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2637,9 +2631,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "12:16:09",
+  "ts": "12:21:12",
   "__publish_meta": {
-    "published_at": "2026-05-10 12:16:09 EDT",
+    "published_at": "2026-05-10 12:21:12 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
