@@ -1,10 +1,10 @@
 {
-  "sol_price": 95.44321173189564,
+  "sol_price": 95.50905014303349,
   "bot_status": "RUNNING",
   "bot_last_seen": "18:01:48",
   "bot_cycles": 16,
   "bankroll": 1.1556,
-  "bankroll_usd": 110.2941754773786,
+  "bankroll_usd": 110.3702583452895,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
@@ -113,72 +113,86 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-10 12:15:00 EST",
-    "market_regime": "CHOP",
-    "system_diagnosis": "Bot is trade-dormant 67 hours since the last sell on 2026-05-08 16:55 EDT (a wallet_convergence flat exit at -0.24%). The 7-day active-strategy snapshot is N=6, 16.7% win rate, R/R 0.01 (basically flat-or-loss only), -0.0038 SOL. That looks alarming in isolation, but in CHOP/ALTCOIN_WINTER (BTC dominance 58.25%, SOL h24 ~0%) the regime playbook explicitly favors dormancy + hypothesis-building over forcing trades. The real engine of progress this run was the launchpad-feed pipeline: letsBONK graduations - the biggest known data blind spot in the bot (15%+ Solana launchpad share with zero coverage) - now have a live HTTP poller writing to disk. That is the load-bearing work.",
-    "exit_analysis": "7d active-strategy exits: 4 of 6 (67%) were stop-losses or emergency stops, all in the -8% to -13% band. Avg win +0.07%, avg loss -8.80%, R/R 0.01. Sample is too small (N=6) to support any new exit-lab change under HARD RULES. exit_lab current experiment (stall_detection) holds at 3/3 wins on 3 fires lifetime, target 20 fires - waiting on trade volume to advance, which the launchpad pipeline is meant to provide.",
-    "strategy_work": "Shipped letsbonk_graduation_snipe Phase 1 logger. Status flipped SHIP_READY_RUN_282 -> PHASE_1_LIVE_RUN_282. New file sol_letsbonk_graduation_log.json will populate on first matched grad event (expected within 4-12 hours given research-144's empirically corrected 5-grads/day density). Smoke-test against research-144's verified signature passed - discriminator extraction matched migrate_to_cpswap and the mint at accounts[1] was exactly the mint research-144 named. Density-aware limit fix (25 -> 150 per poll) was applied within the same ship after an end-to-end mock revealed an 18-second coverage gap that would have silently dropped ~30% of grads.",
-    "directives_changes": "Bumped version 275 -> 276. Updated current_priority to describe the letsBONK ship + smoke-test + density-aware limit fix. Updated track_record with run-282 PID (6864) and listener status. Updated letsbonk_graduation_snipe hypothesis status to PHASE_1_LIVE_RUN_282 with shipped_run + shipped_at + logger_path. Added a process_discipline condensed lesson: derive poller page-size from measured signature density, not defaults. No other hypotheses moved this run; bags_graduation_snipe remains blocked on REQ-014 (discriminators not yet locked).",
+    "timestamp": "2026-05-10 18:05:00 EDT",
+    "market_regime": "CHOP / ALTCOIN_WINTER",
+    "system_diagnosis": "Bot trade-dormant 73 hours since 2026-05-08 16:55 EDT (wallet_convergence flat exit -0.24%). 7-day active-strategy snapshot unchanged: N=6, WR 16.7%, R/R 0.01, -0.0038 SOL. SOL $95.45 (up $0.94 from run-282), BTC.D 58.15%. The real news from this run is good: the letsBONK graduation HTTP poller shipped at run-282 12:13 EDT captured TWO live graduations within the first ~4 hours \u2014 14:55 EDT and 16:10 EDT, both migrate_to_cpswap, both with the non-spoofable platform_config_qualifier at accounts[3]. That is decisive evidence the run-275-class silent-failure regression has NOT happened, and the empirical density (12/day implied) is above the research-144 baseline of 5/day. The big new ops item is a research-145 invalidation: the bags_graduation_snipe spec from research-144 is wrong \u2014 BAGSB9...AmcV signs LAUNCHES, not graduations. That has been propagated to the directives file so the brain does not waste a future ship on a mis-spec'd listener.",
+    "exit_analysis": "7d active-strategy exits unchanged from run-282 (no new trades): 4 of 6 (67%) were stop-losses or emergency stops, all in the -8% to -13% band. avg_win +0.07%, avg_loss -8.80%, R/R 0.01. Sample too small (N=6) for any exit-lab change under HARD RULES. exit_lab current experiment stall_detection holds at 3/3 wins on 3 fires lifetime, target 20.",
+    "strategy_work": "(1) letsBONK grad poller validated: N=2 captures in first 4h means the listener IS receiving events and IS extracting the discriminator + mint correctly. Updated the strategy entry in directives with both signatures, mint_candidates, and the implied 12/day rate. (2) Research-145 reports REQ-014 BAGS PREMISE INVALIDATED \u2014 propagated to bags_graduation_snipe directives entry. Status flipped from 'discriminators not yet locked' to PREMISE_INVALIDATED_RUN_283 with the corrected approach noted (stream Meteora DBC program directly + filter on pool_creator field, after DAMMv2 initialize_pool discriminator is locked). (3) Research-145 dropped a NEW hypothesis dual_pair_echo_burst (MEDIUM confidence, N=7 discovery-grade evidence) \u2014 added to pending_hypotheses with PROPOSED_BY_RESEARCH_RUN_283 status. Not shipping this run: engineering bar is meaningful (cross-DEX pair-creation watch on 3 programs), pump.fun auto-migrator wallet still needs to be identified, and the pattern needs validation against the live letsBONK grad poller. (4) Dispatched REQ-015 to research-146 for DAMMv2 initialize_pool discriminator, FULL base58 addresses for the 4 kolscan wallets (research-145 returned truncated addresses unusable for sol_pinned_wallets.json edits), a letsBONK poller audit, and a cross-DEX dual_pair_echo validation.",
+    "directives_changes": "Updated last_updated to 2026-05-10 18:05 EDT, version 276 -> 277, updated_by run-283. Rewrote current_priority to cover the four run-283 actions (poller validation, bags invalidation propagation, dual_pair_echo PROPOSED, REQ-015 dispatch) and the priority_reasoning to explain why no code ship was the right call this run. Added REQ-015 to requests_for_research array. Added run283_validation block to letsbonk_graduation_snipe with both captured signatures and density math. Flipped bags_graduation_snipe status to PREMISE_INVALIDATED_RUN_283 with the corrected DBC-program-direct approach noted. Added dual_pair_echo_burst pending_hypothesis entry with research-145 evidence summary, mechanism, entry_rules, implementation_blocker_run283, kill_criteria. Added run-283 track_record fields (bot_pid, cycle_counter, cycle_latency_min, letsbonk_grad_captures_run283_n, density_check note, sol_h24_note_run283, new_trades_since_run282=0).",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
       "code_verified": true,
-      "notes": "Last change (run-281 boost_velocity logger): file holding, ~720 entries/h pace. Sample size: ship was an additive logger, not a behavior change - N=20 rule does not apply (Phase 1 LOG-ONLY pattern). One change: letsBONK listener (with the limit-tuning sub-edit applied within the same ship as a load-bearing pre-flight fix, not a separate change). Code verified: compile-check OK twice (initial + post-fix recompile), bot restarted twice, PID 6864 alive."
+      "audit_notes": "No code change this run \u2014 directives propagation only. ONE CHANGE PER RUN rule is satisfied: research-145 ops_note flagged REQ-014 invalidation as mandatory propagation. dual_pair_echo_burst was not shipped (MEDIUM confidence on N=7 fails default N=20 floor and monotonic fast-track does not apply to new-strategy adds without monotonic evidence). bags Phase 1 listener was not shipped (would have captured zero events for days). letsBONK strategy code unchanged \u2014 only state-file/directives update. JSON validity re-checked after edits (version=277, 3 reqs, 57 pending hypotheses, dual_pair_echo_burst present, REQ-015 present)."
     },
     "previous_followups": [
-      "run-281 boost_velocity per-poll snapshot logger: SHIPPED & HOLDING. File sol_dex_boosts_velocity_log.json populated within 10s of restart in run-281; no enrichment regression on sol_dex_boosts_log.json (run-281's audit confirmed). Backtest-ready at ~4-8h post-ship per run-281's note - that window has now passed, research can pull this substrate at any time.",
-      "run-281 m5_pump_skip 7% ceiling investigation: CLOSED PERMANENTLY. No re-investigation this run (per research-144 directive).",
-      "run-281 scratch-file housekeeping (4 files swept): no regression - no new scratch files appeared in repo root from research-144.",
-      "run-275 -> run-281 trade-dormancy: 0 new sells across 7 consecutive runs (998 total sells unchanged). Dormancy is correct in CHOP/ALTCOIN_WINTER per regime playbook."
+      "Run-282 priority (letsBONK poller HTTP-poll ship): SHIPPED. PID 6864 cycle 16 healthy. Captured N=2 grads in first 4h (12/day implied rate, above 5/day baseline). Discriminator extraction working \u2014 both grads matched migrate_to_cpswap (885cc8671cda908c) and both have platform_config_qualifier at accounts[3]. No false positives observed in the 2-event sample.",
+      "Run-281 priority (boost-velocity per-poll snapshot logger): HOLDING per prior runs. sol_dex_boosts_velocity_log.json continues to accumulate. Backtest still pending until ~4-8h of cadence data is meaningful; deferred behind letsBONK Phase 1 stabilization.",
+      "Run-280 priority (GBB LP-block pattern): HOLDING. N=2 GBB SIGNALs both LP-blocked at age<=2.1min unchanged this run. Fresh-launch tokens remain mechanically single-pool. Decision point at N=10 LP-blocks with zero BUYs to ship age<=2min strategy-specific exemption \u2014 currently N=2/10."
     ],
     "changelog": [
-      "Built and turned on a new sensor that watches the letsBONK launchpad on Solana. Every minute it asks the blockchain for the latest 150 letsBONK transactions and looks for the specific 'graduation' signature (when a token finishes its bonding curve and lists on Raydium). Each match gets logged to a new file (sol_letsbonk_graduation_log.json). This is purely a sensor - it does NOT buy anything yet. The bot needs about 20 logged graduations before it can decide whether trading them is profitable (about 4 days of data at the observed ~5 graduations per day).",
-      "Before turning on the sensor, the brain ran a 'smoke test' against a known-good graduation transaction provided by the research brain. The test passed - the sensor extracted the right token from the right transaction. This avoided the kind of silent failure that bit the bot in run-275 (where a sensor looked alive but was logging nothing useful).",
-      "The brain also caught a sizing bug before turning the sensor on: at 25 transactions per fetch and the actual letsBONK program throughput of 35 transactions per minute, the sensor would have been blind for ~18 seconds out of every 60-second cycle - missing roughly 30% of graduations by random luck. Raised the per-fetch count to 150, which gives the sensor a 4-minute lookback window with a 4-times safety margin.",
-      "No live-trading rules changed this run. The bot's entry/exit logic, position sizing, and risk gates are all identical to run-281. Only thing that changed is one new data sensor running in the background."
+      "Updated the brain's memory file (sol_brain_directives.json): bumped version to 277, marked who updated it and when, and changed the 'current_priority' to describe this run's four actions in plain English.",
+      "Filed REQ-014 as 'invalidated' on the bags.fm graduation idea: research-145 proved BAGSB9... wallet only signs new-token launches, NOT graduations. Bot will not ship the bags listener with the old wrong trigger.",
+      "Added a new candidate strategy 'dual_pair_echo_burst' to the queue: when a freshly graduated pump.fun token gets a SECOND independent liquidity pool within 5 minutes of migration by someone other than the auto-migrator, that's smart-money LP behavior and predicts continuation. Tagged as 'proposed by research' \u2014 not shipping yet, evidence is too small (N=7).",
+      "Logged that the letsBONK listener shipped last run is healthy: it captured 2 live graduations in the first 4 hours, faster than the predicted ~5/day rate. That confirms the listener is working as designed (no silent failures).",
+      "Filed REQ-015 for the research brain: lock down the Meteora DAMMv2 graduation discriminator, deliver full wallet addresses for 4 kolscan-leaderboard wallets (research returned only truncated ones), audit the letsBONK listener at next research run, and check whether the dual-pair-echo pattern also works on letsBONK graduations."
     ],
     "actions_taken": [
-      "Read brain memory and the research brain's latest output (research-144).",
-      "Confirmed bot was alive (PID 12864, cycle 17, fresh heartbeat) and dashboard alive (PID 7412).",
-      "Ran a one-off smoke test on the discriminator-extraction logic against research-144's verified letsBONK graduation transaction. Confirmed it found the correct token address.",
-      "Measured the letsBONK program's transaction density (~35 per minute) and chose a per-fetch count (150) that comfortably covers the 60-second poll interval.",
-      "Added the letsBONK graduation poller code to the bot (about 110 lines, all additive - no changes to existing trading logic). Compile-check passed.",
-      "Restarted the bot to load the new sensor. Verified the new process started cleanly.",
-      "Updated the brain's memory file with what was shipped, what was learned, and a new process-discipline lesson about deriving page sizes from measured density.",
-      "Wrote the run-282 survival report (this file).",
-      "REJECTED action: bags_graduation_snipe. Research-144 proposed it (MEDIUM confidence) but the discriminator bytes are not yet locked. REQ-014 was already opened in run-281 for the next research run; no implementation possible until those come back."
+      "Read research-145 findings (~13K char file) \u2014 three load-bearing items: REQ-014 INVALIDATION (bags premise wrong), dual_pair_echo_burst NEW hypothesis (MEDIUM confidence N=7), 4 kolscan wallets surfaced but with truncated addresses.",
+      "Read the letsBONK graduation log file \u2014 confirmed 2 live captures since run-282 ship: FsRNJG...HY9bonk at 14:55:52 EDT and CmoCueDNtv...DZh76J at 16:10:34 EDT. Both migrate_to_cpswap, both with platform config at accounts[3].",
+      "Checked bot health: PID 6864 cycle 16 alive (~22 min/cycle latency, healthy). Dashboard PID 7412 alive. No duplicate Python processes. No restart needed.",
+      "Did NOT add the 4 kolscan wallets to sol_pinned_wallets.json \u2014 research-145 returned truncated addresses ('EeXvxk...zumH' etc.) and corrupting the wallet file with partial keys is unsafe. Filed full-address request as REQ-015 part 2.",
+      "Did NOT ship dual_pair_echo_burst Phase 1 logger \u2014 N=7 evidence is discovery-grade, default N=20 sample floor applies, and the pattern needs cross-DEX validation against the live letsBONK poller before any code lands.",
+      "Updated sol_brain_directives.json with all run-283 changes (version 277, run283_validation block on letsBONK, PREMISE_INVALIDATED on bags, dual_pair_echo_burst pending hypothesis, REQ-015 dispatched, track_record additions). Re-validated the JSON parses cleanly after edits.",
+      "Wrote sol_brain_status.json running:true at run start (will flip to running:false at end), sol_survival_report.json (this file), and will append the lesson to sol_survival_history.json."
     ],
     "next_priorities": [
-      "Run-283: read sol_letsbonk_graduation_log.json. If it has at least one entry, the sensor works end-to-end on real data. If it has zero entries after 12+ hours, investigate whether the listener is actually polling (check thread alive, recent RPC errors). Sample size goal: 20 logged graduations before any Phase 2 buy decision.",
-      "Run-283: check whether research-145 has returned with bags_graduation_snipe discriminators (REQ-014). If yes and the smoke-test passes the same way, ship the Bags poller as the next big additive sensor.",
-      "Run-283 or beyond: if dormancy continues, reconsider whether the bot's entry filter stack is too tight for the CHOP/ALTCOIN_WINTER regime. 7 trades in 7 days = 1/day = way below normal funnel. Check: how many candidates are scanner-eligible per day vs how many actually clear all gates. Need data, not speculation."
+      "[NEXT RUN] Audit the letsBONK grad poller again \u2014 at 12+ hours post-ship (run-282 12:13 EDT + 12h = 2026-05-11 00:13 EDT), the log should have N>=5 entries at the observed 12/day rate. If <3 captured by then, treat as silent-failure suspect and investigate the matcher logic.",
+      "[NEXT RUN] If research-146 closed REQ-015 with the DAMMv2 init discriminator + full kolscan wallet addresses, add the 4 wallets to sol_pinned_wallets.json (state-file edit only, ~5 lines per wallet entry). Standalone action that doesn't compete with a code ship.",
+      "[NEXT RUN OR LATER] Consider Phase 1 logger for dual_pair_echo_burst \u2014 but ONLY after (a) research-146 has validated the pattern against the live letsBONK poller, (b) the pump.fun auto-migrator wallet is identified, (c) a backtest pass against the research-145 watchlist confirms detection logic works end-to-end. ~50-80 LOC additive logger when all three blockers clear.",
+      "[NEXT RUN OR LATER] Backtest the boost_velocity_burst hypothesis against sol_dex_boosts_velocity_log.json once ~4-8h of cadence data exists. Proceed to Phase 1 LIVE ~150 LOC ship only if historical hit-rate >40% at +12% TP within 12 min.",
+      "[REGIME DEPENDENT] If SOL h24 crosses +5% (BULL trigger) sustained for >2h, reactivate fresh_profile and bear_strength normal sizing. Currently in CHOP/ALTCOIN_WINTER, dormancy is correct."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 998,
       "total_buys": 997,
-      "win_rate": 16.7,
-      "avg_win_pct": 0.07,
-      "avg_loss_pct": -8.8,
-      "rr_ratio": 0.01,
-      "stop_loss_rate_pct": 66.7,
+      "win_rate_overall": 35.5,
+      "win_rate_7d_active": 16.7,
+      "avg_win_pct_7d": 0.07,
+      "avg_loss_pct_7d": -8.8,
+      "rr_ratio_7d": 0.01,
+      "stop_loss_rate_pct_7d": 66.7,
       "bankroll": 1.1556,
       "pnl_today": 0.0,
-      "pnl_7d": -0.00378,
-      "open_positions": 0
+      "pnl_7d": -0.0038,
+      "trades_today": 0,
+      "trades_since_run282": 0,
+      "open_positions": 0,
+      "bot_pid": 6864,
+      "dashboard_pid": 7412,
+      "sol_price": 95.45,
+      "btc_dom_pct": 58.15,
+      "altcoin_regime": "ALTCOIN_WINTER(58.1%)",
+      "letsbonk_grad_captures_first_4h": 2,
+      "letsbonk_grad_implied_per_day": 12
     },
     "active_strategies": [
-      "fresh_profile",
-      "bear_strength",
-      "consensus_boost",
-      "flash_surge",
-      "bounce_hunter",
-      "anchor_derivative_snipe",
-      "copy_trade",
-      "chop_momentum_scalp",
-      "wallet_convergence",
-      "gecko_breadth_burst"
+      "fresh_profile (PROVEN, dormant in CHOP \u2014 needs BULL regime)",
+      "bear_strength (TESTING, dormant \u2014 N=6/20 7d, monitoring)",
+      "consensus_boost (TESTING, BULL-only gated, dormant in CHOP/ALTCOIN_WINTER)",
+      "wallet_convergence (TESTING, N=9 lifetime, dormant since 2026-05-08)",
+      "gecko_breadth_burst (TESTING, N=2 SIGNALs both LP-blocked, N=0 BUYs)",
+      "anchor_derivative_snipe (TESTING, N=0 trades)",
+      "chop_momentum_scalp (TESTING, N=20 lifetime, post-ceiling 0)",
+      "bounce_hunter (TESTING_BULL, gate CLOSED in CHOP)",
+      "flash_surge (TESTING_BULL, 4/20 0%WR, dormant)",
+      "letsbonk_graduation_snipe Phase 1 (LOG-ONLY, N=2/20 grads captured live, poller healthy)",
+      "pumpfun_graduation_snipe_v2 Phase 1 (LOG-ONLY, N=142 enriched lifetime)",
+      "dex_boosts_top_feed Phase 1 (LOG-ONLY ENRICHED, awaiting N=20 forward returns)",
+      "gecko_unique_buyer_breadth Phase 1 (LOG-ONLY, N>=30 closed bot trades needed)",
+      "boost_velocity_burst data substrate (LOG-ONLY, sol_dex_boosts_velocity_log.json populating)"
     ]
   },
   "wallet_scan": {
@@ -186,15 +200,15 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 21238.778911,
+  "brain_next_sec": 20935.371821,
   "brain_next_str": "12:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 601.221089,
-  "brain_last_run_str": "12:15 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "6:05 PM EST",
   "research_running": false,
   "research_last_run_str": "1:06 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 22798.778911,
+  "research_next_sec": 22495.371821,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-10 13:05:00 EDT",
@@ -382,7 +396,7 @@
     "duplicates_killed": [],
     "stale_locks_cleared": [],
     "lock_status_check": "sol_brain_status.json running:true with started_at 2026-05-10 18:00:00 EDT (run-283) \u2014 concurrent with this maint task, ~5 min in, well under 45min stale threshold. Leaving alone. sol_research_status.json running:false (research-145 finished 2026-05-10 13:06 EDT). Clean.",
-    "hours_since_last_trade": 49.58,
+    "hours_since_last_trade": 49.66,
     "last_buy_ts": "2026-05-08T16:35:29 EDT (CWU, wallet_convergence)",
     "dormancy_alert": true,
     "dormancy_streak_runs": 12,
@@ -425,7 +439,7 @@
     },
     "next_run_focus": "12th consecutive dormancy flag (49.5h since last buy). Trajectory: 38.5 \u2192 39.2 \u2192 40.5 \u2192 41.5 \u2192 42.5 \u2192 43.5 \u2192 44.5 \u2192 45.5 \u2192 46.5 \u2192 47.5 \u2192 48.5 \u2192 49.5 \u2014 perfectly linear, zero buys across 12 runs. Brain run-283 is currently in-flight (started 18:00:00 EDT) concurrent with this maint task \u2014 next maint run (maint-013) should verify whether run-283 produced any filter relaxation, since runs-281/282 + research-145 + 11 prior alerts produced none. If run-283 also fails to act, the maintenance-alerts-not-ingested hypothesis is confirmed and operator should manually invoke /survive. Also watch: (1) FP_SKIP and BS_SKIP rising (security/liquidity gates rejecting more \u2014 possibly a wallet-list quality drift), (2) heartbeat-stale streak now at 6 (operator: bump threshold to 1800s or write heartbeat per-wallet), (3) mirror staying < 15 min (publisher thread health).",
     "elapsed_min": 2,
-    "file_age_min": 4.1,
+    "file_age_min": 9.1,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1861,7 +1875,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 16,
-    "age_min": 8.2,
+    "age_min": 13.3,
     "stale": false,
     "available": true
   },
@@ -1897,29 +1911,29 @@
     "requests_archived": 0,
     "elapsed_min": 1,
     "next_run_focus": "Recheck condensed_lessons growth in 24h+; verify brain still references demoted historical_lessons correctly.",
-    "age_hours": 11.0,
+    "age_hours": 11.1,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 298.778911,
-  "maint_next_str": "6:15 PM EST",
+  "maint_next_sec": 895.371821,
+  "maint_next_str": "6:30 PM EST",
   "maint_last_run_str": "6:05 PM EST",
   "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "11.0h ago",
+  "memk_last_run_str": "11.1h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
       "hypothesis_name": "dual_pair_echo_burst",
       "run_id": "research-145",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Read research-145 findings (~13K char file) \u2014 three load-bearing items: REQ-014 INVALIDATION (bags premise wrong), dual_pair_echo_burst NEW hypothesis (MEDIUM confidence N=7), 4 kolscan wallets surfaced but with truncated addresses.",
+      "evidence_source": "action"
     },
     "tally": {
       "implemented": 26,
@@ -1929,181 +1943,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-10T17:55:59.936586",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CWU: h1=0.9% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:55:59.952758",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G626Wee1 sold CmVUoJUt \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:56:46.470974",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CWU: h1=0.9% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:56:46.915168",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CWU: h1=0.9% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:56:46.931051",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7Jvv3oSU sold CmVUoJUt \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:20.780642",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G4YqTqWP sold 3v4hxxjm \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:23.184425",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CRASHIUS: h1=-23.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:23.184425",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G4YqTqWP sold 3qwtMkiB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:23.184425",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G4YqTqWP sold 6qdzMx4c \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:23.200255",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G4YqTqWP sold 6qdzMx4c \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:37.169540",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip Lenny: h6=17.5% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:37.169540",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5s4GgSH2 sold HtoNB93h \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:39.346540",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip TEPE: h1=2.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:39.358482",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5s4GgSH2 sold FRZdAqPf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:57:39.365097",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5s4GgSH2 sold FRZdAqPf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:18.934225",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Fqnu2jpU sold 7Lbe787d \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:18.934225",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Fqnu2jpU sold 8w9n4g1X \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:18.950274",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Fqnu2jpU sold 8jpRiwbU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:21.645243",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Mert: h1=-10.3% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:43.815073",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "No new signals",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:44.306238",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Agriculture: downtrend h1=-55.3% h24=-55.3%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:46.521184",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip TripleTROLL: h1=-19.7% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:47.106062",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip E: m5=14.2% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:47.678503",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip sidelinoor: h6=614.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T17:58:48.280697",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip OG: m5=11.7% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-10T17:59:48.563400",
       "type": "SCAN",
@@ -2628,6 +2467,181 @@
       "color": "#58a6ff",
       "msg": "WalletSell: AGqjivJr sold EbwVNiA6 \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:11:36.586531",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: C4eZg1rJ sold LqzMGKEk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:11:37.128521",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip nothing: m5=-67.9% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:11:57.293770",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: PMJA8UQD sold EabDiSrZ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:11:59.606879",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip MANDANILER: m5=-12.9% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:11:59.606879",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: PMJA8UQD sold EUvFwXUS \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:12:01.601560",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip pleco: m5=400.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:12:25.802031",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CvNiezB8 sold EbwVNiA6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:13:19.727864",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked EfDkkMop",
+      "detail": "Security check failed \u2014 both APIs unreachable"
+    },
+    {
+      "ts": "2026-05-10T18:13:19.743666",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: EDXHdSFd sold BFBn6DcH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:13:21.800882",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip 54trewr32: m5=108.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:13:47.843729",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip LIVESTOCK: m5=-57.0% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:13:48.354443",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip LIVESTOCK: m5=-57.0% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:13:48.854037",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip LIVESTOCK: m5=-57.0% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:02.454490",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ECa6q9uC sold GDbGY8ey \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:04.730231",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip The Wolf: h1=0.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:06.927948",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip TripleTROLL: h1=-26.9% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:06.946104",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ECa6q9uC sold GJkzyKka \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:09.504580",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip p(nis): h1=0.7% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:19.383390",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8DGbkGgQ sold GqAJYixd \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:21.542531",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Pleco: m5=32.3% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:35.976380",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip KAPPA: m5=28.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:14:36.451791",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip KAPPA: m5=28.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:15:00.674422",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 99xnE2zE sold EbwVNiA6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:15:02.790721",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip shit: h6=219.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T18:15:03.317487",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip shit: h6=219.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2683,9 +2697,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "18:10:01",
+  "ts": "18:15:04",
   "__publish_meta": {
-    "published_at": "2026-05-10 18:10:01 EDT",
+    "published_at": "2026-05-10 18:15:04 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
