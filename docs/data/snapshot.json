@@ -1,15 +1,15 @@
 {
-  "sol_price": 94.28310070202022,
+  "sol_price": 94.48279601146774,
   "bot_status": "RUNNING",
-  "bot_last_seen": "11:51:54",
-  "bot_cycles": 17,
+  "bot_last_seen": "12:09:00",
+  "bot_cycles": 1,
   "bankroll": 1.1556,
-  "bankroll_usd": 108.95355117125456,
+  "bankroll_usd": 109.18431907085211,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 11.8,
+  "hour": 11.9,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -192,7 +192,7 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 21486.802645,
+  "brain_next_sec": 21181.976169,
   "brain_next_str": "6:04 PM EST",
   "brain_running": true,
   "brain_elapsed_sec": 0,
@@ -200,7 +200,7 @@
   "research_running": false,
   "research_last_run_str": "1:17 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 1446.802645,
+  "research_next_sec": 1141.976169,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-10 01:14:40 EDT",
@@ -325,44 +325,44 @@
     "finished_at": "2026-05-10 01:17:13 EDT"
   },
   "maintenance_status": {
-    "timestamp": "2026-05-10 11:04:30 EDT",
-    "run_id": "maint-005",
+    "timestamp": "2026-05-10 12:07:41 EDT",
+    "run_id": "maint-006",
     "bot_status": "RUNNING",
     "bot_pid": 12864,
-    "bot_heartbeat_age_sec": 1145,
-    "bot_heartbeat_note": "Heartbeat is 19.1 min stale (above the 600s 'dead' line on paper) BUT bot is provably alive: events file mtime 0.4 min ago, last event SIGNAL at 11:04:15, 0 CYCLE_ERROR in last 50 events, process PID 12864 confirmed by wmic. Heartbeat writes only at cycle end and cycles run long; this is cadence, not death. Same pattern documented in maint-002/003/004. Not restarting.",
+    "bot_heartbeat_age_sec": 953,
+    "bot_heartbeat_note": "Heartbeat 15.9 min stale (cycle #17 timestamp 11:51:54) but bot is provably alive: events file last write 12:04:41 (~3 min ago), 0 CYCLE_ERROR in last 50 events, process PID 12864 still running. Same cycle-cadence pattern observed in maint-002/003/004/005 - heartbeat is written near cycle start, cycles run long when wallet activity is heavy, so the >600s 'dead' threshold misfires. Not restarting an actively-trading bot.",
     "dashboard_status": "RUNNING",
     "dashboard_pid": 7412,
-    "dashboard_check": "HTTP 200 in 0.74s on /api/state",
+    "dashboard_check": "HTTP 200 in <1s on /api/state, 73KB payload",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
     "lock_states": {
-      "brain_status": "running:false (completed 2026-05-10T06:10:00, 286min ago) - clean",
-      "research_status": "running:false (finished 2026-05-10 01:17:13, 587min ago) - clean"
+      "brain_status": "running:true, started_at 2026-05-10T16:03:49Z (1.7 min ago) - fresh, NOT stale, brain currently executing its 6h run. 45min stale threshold not breached.",
+      "research_status": "running:false (finished 2026-05-10 01:17:13 EDT, 648 min ago) - clean."
     },
-    "hours_since_last_trade": 43.51,
+    "hours_since_last_trade": 43.59,
     "last_buy_ts": "2026-05-08T16:35:29",
     "dormancy_alert": true,
-    "filter_lockout_diagnosis": "5th consecutive maintenance run flagging dormancy with the SAME structural lockout. Last 100 events: 51 BUY_SKIP, 38 SIGNAL, 7 FP_SKIP, 4 SCAN. Bot scans normally and finds candidates (38 signals) but rejects 100% at the buy gate. Top BUY_SKIP reasons unchanged from prior runs: m5 pump skip ('already ran, we are exit liq, run95') x10, midpump skip ('h1 below 15% momentum threshold, run115') x6, sell-conflict skip x5, downtrend skip x4. The momentum-stack filters (m5-pump exit-liq guard + midpump 15% h1 threshold + downtrend gate) are still rejecting every signal. FP_SKIPs are mostly liq=$0 reject (correct behavior, not the lockout cause).",
+    "filter_lockout_diagnosis": "6th consecutive maintenance run flagging dormancy with the SAME structural lockout. Last 100 events: 52 BUY_SKIP, 41 SIGNAL, 4 SCAN, 3 FP_SKIP. Bot scanning normally and finding 41 signals (41% signal rate) but the buy gate rejects 100% of them. Bucketed BUY/FP_SKIP reasons (n=55): midpump h1<15% (run115) x18 = 33%, m5 pump exit-liq (run95) x11 = 20%, h6 extended pump >=5% (run116) x10 = 18%, sell-conflict (tracked wallet sold same token recently) x6, m5 dump active sell-off (run79) x5, FP low-liq x3, lp_concentration single-pool x1, wallet WR gate x1. The momentum-stack filters (midpump h1 + m5-pump + h6-pump + m5-dump = 44/55 = 80% of rejections) remain the structural blocker. Brain has now seen 6 consecutive dormancy alerts without relaxing any momentum filter.",
     "actions_taken": [
-      "No restarts - bot heartbeat stale at 19min but events 0.4min fresh and 0 cycle errors confirm it is alive; dashboard /api/state HTTP 200 in 0.74s.",
-      "No stale locks - both brain_status and research_status show running:false from clean prior completions.",
-      "Confirmed exactly 1 bot PID 12864 and 1 dashboard PID 7412 via wmic. No duplicates.",
-      "GitHub Pages mirror checked - published 2026-05-10 11:00:10 EDT, ~4 min old. HEALTHY. No heal triggered.",
-      "Efficiency Lab skipped - throttled (last efflab-001 ran 3.93h ago at 07:08 EDT, <24h cooldown). All trigger metrics also below thresholds: hyp=56/60, lessons=5/50, pending_requests=0/8, drift_keys=[].",
-      "Will append dormancy alert #7 to sol_maintenance_alerts.json (5th consecutive maint flag). Operator should be aware brain has now read alerts across 5 runs without relaxing momentum filters.",
-      "No log truncation needed - bot.log 24KB, dashboard.log 4.8KB, both well under 50MB threshold."
+      "No restarts - bot events fresh (~3 min) and 0 cycle errors despite 15.9 min heartbeat staleness; dashboard /api/state returned HTTP 200.",
+      "No duplicate processes - confirmed exactly 1 degen_bot.py --continuous (PID 12864) and 1 dashboard.py (PID 7412) via Get-CimInstance.",
+      "No stale locks cleared - brain currently mid-run (1.7 min in), research completed cleanly hours ago.",
+      "GitHub Pages mirror probed - published_at 2026-05-10 12:05:53 EDT, age 0.83 min. HEALTHY. No heal triggered.",
+      "Efficiency Lab not fired - all 4 trigger metrics still below thresholds (hyp 56/60, lessons 5/50, pending_requests 0/8, drift_keys=[]) AND throttled (last efflab-001 ran 4.98h ago at 07:08 EDT).",
+      "Appended dormancy alert #7 to sol_maintenance_alerts.json (6th consecutive maint flag). Brain has run multiple times since first alert without relaxing momentum filters - this is now a persistent observation.",
+      "No log truncation needed - bot.log 0.02MB, dashboard.log 0.00MB, both nowhere near 50MB threshold."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 4.3,
+      "pre_heal_age_min": 0.83,
       "heal_attempted": false,
       "heal_succeeded": null,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 4.3,
-      "note": "Mirror published 2026-05-10 11:00:10 EDT, current time 11:04:30 EDT. Publisher daemon thread inside degen_bot.py is healthy and pushing on schedule."
+      "post_heal_age_min": 0.83,
+      "note": "Mirror published 2026-05-10 12:05:53 EDT - less than 1 minute old at probe time. Publisher daemon thread inside degen_bot.py is healthy and pushing on schedule."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -374,17 +374,17 @@
       },
       "fired_this_run": false,
       "skip_reason": "throttled_24h_AND_not_triggered",
-      "summary": "Last lab run efflab-001 was 3.93h ago at 07:08 EDT (trimmed lessons 54->40, deduped 0 hypotheses, archived 14 historical lessons). Brain memory still tidy - all 4 trigger metrics well below their thresholds. Throttle holds until ~07:08 EDT tomorrow. Hypothesis count at 56/60 is the closest metric to triggering."
+      "summary": "Last lab run efflab-001 was 4.98h ago at 07:08 EDT. Brain memory still well-organized - all 4 trigger metrics below their thresholds. Throttle clears around 07:08 EDT tomorrow. Hypothesis count holds at 56/60, the only metric near triggering."
     },
-    "next_run_focus": "Filter lockout is now in its 42.5h / 5th consecutive maintenance flag. Same momentum-stack pattern (m5-pump exit-liq guard + midpump 15% h1 + downtrend) still rejecting 100% of signals. The brain has NOT relaxed any of these between runs despite reading the alerts. If maint-006 still shows the same lockout, escalate visibility - either the brain's read pipeline is broken or it has decided to hold filters intentionally; either way operator should be aware. Also continue watching brain_status for stuck running:true past 45min after its next 6-hour run, and verify hypothesis count doesn't cross 60 before next lab cooldown clears.",
+    "next_run_focus": "Lockout is now 43.5h / 6th consecutive maintenance flag with identical momentum-stack pattern (midpump h1<15% + m5-pump exit-liq + h6 pump + m5-dump = 80% of rejections). Brain has executed multiple 6h cycles since first alert without relaxing these filters - confirm next run whether brain even reads sol_maintenance_alerts.json or if the read pipeline is broken. Watch hypothesis count: at 56/60 it is one bad day from triggering the lab. Brain currently mid-run started 16:03:49Z - verify it completes within 45min on next maint pass.",
     "log_truncations": [],
     "elapsed_min": 3,
-    "file_age_min": 59.5,
+    "file_age_min": 2.7,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-05-10 11:51:54 EDT",
+    "timestamp": "2026-05-10 12:09:00 EDT",
     "computed_from_trades": 2016,
     "total_buys": 997,
     "total_sells": 998,
@@ -1796,7 +1796,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-05-08T16:35:29.949562",
-      "hours_ago": 43.27,
+      "hours_ago": 43.56,
       "symbol": "CWU",
       "strategy": "wallet_convergence"
     },
@@ -1814,8 +1814,8 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 17,
-    "age_min": 14.0,
+    "cycle": 1,
+    "age_min": 2.0,
     "stale": false,
     "available": true
   },
@@ -1857,10 +1857,10 @@
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 546.802645,
+  "maint_next_sec": 241.976169,
   "maint_next_str": "12:15 PM EST",
-  "maint_last_run_str": "",
-  "maint_stale": true,
+  "maint_last_run_str": "12:08 PM EST",
+  "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
   "memk_last_run_str": "5.0h ago",
@@ -1883,181 +1883,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-10T11:44:54.641303",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: FsG3BaPm sold 9YEM8g5p \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:44:56.975496",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BFP: h1=-5.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:45:50.385561",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 7i1GWQaw \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:45:50.385561",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 7i1GWQaw \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:45:50.385561",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 7i1GWQaw \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:45:50.401382",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 7i1GWQaw \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:46:46.890250",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip LIFE: m5=73.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:46:46.890250",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BtMBMPko sold HDTiswxD \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:46:48.947559",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip hihihi: downtrend h1=-78.2% h24=-78.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:46:48.947559",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BtMBMPko sold ETuZL9Tw \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:46:51.205772",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip $Ted: downtrend h1=-77.7% h24=-77.7%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:13.731812",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6urLyUoh sold 7sGdNQSv \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:13.747959",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6urLyUoh sold 5o61DgZr \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:13.764099",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6urLyUoh sold 21rKrtBz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:13.764099",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6urLyUoh sold 89S7oVB4 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:38.537447",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip shoebill: h1=-12.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:38.537447",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5EJ64rJX sold 9GM8icX8 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:38.537447",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5EJ64rJX sold 6EQKNJD6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:47:40.789070",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip DATBOI: h1=-3.6% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:48:05.255503",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G626Wee1 sold CmVUoJUt \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:48:56.326403",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CWU: h1=-0.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:48:56.342574",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7Jvv3oSU sold CmVUoJUt \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:48:56.834430",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CWU: h1=-0.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:49:31.064367",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CONSENSUS-1: h1=-35.3% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T11:49:33.095572",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BMNTP: h1=-43.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-10T11:49:33.111363",
       "type": "SIGNAL",
@@ -2582,6 +2407,181 @@
       "color": "#58a6ff",
       "msg": "WalletSell: Leenseyy sold dNUciax4 \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:06:44.678190",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6aXFYXbF sold 59ZVksJa \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:06:44.694205",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6aXFYXbF sold MArSdHZS \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:06:56.978631",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: FsG3BaPm sold 8M4p2Gzi \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:06:59.219877",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Bani: h6=568.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:06:59.680543",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Bani: h6=568.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:06:59.696296",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: FsG3BaPm sold EXxZaV9V \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:07:56.334753",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Hw5UKBU5 sold 7i1GWQaw \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:07:56.334753",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Hw5UKBU5 sold 7i1GWQaw \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:07:56.334753",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Hw5UKBU5 sold 7i1GWQaw \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:00.284775",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 109 wallets (cycle #1)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:22.969535",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: F9oqdWPu sold Cabz2kyi \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:24.761988",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip Cabz2kyi: tracked wallet sold this token 24s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:24.777711",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip Cabz2kyi: tracked wallet sold this token 24s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:24.777711",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: F9oqdWPu sold DeViSPTp \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:26.470280",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip DeViSPTp: tracked wallet sold this token 26s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:32.689364",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CyaE1Vxv sold 65YwmDJo \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:34.155879",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 65YwmDJo: tracked wallet sold this token 33s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:45.808643",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold MArSdHZS \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:47.265636",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip MArSdHZS: tracked wallet sold this token 46s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:09:47.281593",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip MArSdHZS: tracked wallet sold this token 46s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:10:19.439342",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BANI: m5=123.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:10:21.486532",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Bani: h6=568.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:10:21.977266",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Bani: h6=568.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:10:22.493960",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Bani: h6=568.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T12:10:22.927831",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Bani: h6=568.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2637,9 +2637,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "12:05:53",
+  "ts": "12:10:58",
   "__publish_meta": {
-    "published_at": "2026-05-10 12:05:53 EDT",
+    "published_at": "2026-05-10 12:10:58 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
