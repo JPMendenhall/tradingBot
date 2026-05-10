@@ -1,15 +1,15 @@
 {
-  "sol_price": 93.26129907379804,
+  "sol_price": 0.0,
   "bot_status": "RUNNING",
   "bot_last_seen": "01:09:24",
   "bot_cycles": 1,
   "bankroll": 1.1556,
-  "bankroll_usd": 107.77275720968102,
+  "bankroll_usd": 0.0,
   "budget": 0.16583267415,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.9,
+  "hour": 1.0,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -198,174 +198,137 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 17407.188041,
+  "brain_next_sec": 17098.588473,
   "brain_next_str": "6:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
   "brain_last_run_str": "12:10 AM EST",
-  "research_running": true,
-  "research_last_run_str": "",
+  "research_running": false,
+  "research_last_run_str": "1:17 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 40567.188041,
-  "research_elapsed_sec": 2067.811959,
+  "research_next_sec": 40258.588473,
+  "research_elapsed_sec": 0,
   "research_findings": {
-    "timestamp": "2026-05-09 12:46:30 EDT",
-    "run_id": "research-143",
-    "version": 143,
-    "headline": "REQ-013 CLOSED \u2014 letsBONK graduation discriminators verified live: migrate_to_amm=cf52c091fecf91df, migrate_to_cpswap=885cc8671cda908c (sha256(global:NAME)[0:8] cross-checked against live LaunchLab buy_exact_in/sell_exact_in/initialize_v2 \u2014 formula matches 100%; subagent-2's claimed 0x9beae792... is WRONG, do not ship); CRITICAL CAVEAT \u2014 Alchemy logsSubscribe with mentions:[LanMV9...] was syntactically accepted but delivered <0.1 msg/s while the program runs at ~1.7 tx/s, because LaunchLab is overwhelmingly invoked as a CPI-callee (BuyExactIn/SellExactIn from aggregators) and Alchemy's mentions filter elides CPI-only mentions; the safe ship path is HTTP polling getSignaturesForAddress(LanMV9...) every 30s + getTransaction(json,base58) decode + discriminator-on-instruction-data filter, NOT websocket. Plus two new findings: (1) NEW HYPOTHESIS boost_velocity_burst \u2014 DexScreener boosts API (60 req/min, no auth, free) gives a 5-min rolling boost-amount delta; tokens that gain >=30 boosts in 5 min are paying real $ for coordinated retail attention and have a mechanical 5-15 min retail-click momentum window; bot already polls boosts to sol_dex_boosts_log.json (383 KB live) but throws away the velocity signal \u2014 purely additive, ~5-10 fires/day. (2) RESEARCH-142 PROPOSAL #3 OVERTURNED \u2014 strategy-conditional re-mining of N=998 trades shows 84% of the 1-6h-bucket -0.488 SOL drag is COPY_TRADE-ONLY (-0.4075 SOL across 181 trades) AND of that, 20 trades = -0.4274 SOL are -100% reconcile/orphan rugs (NOT slow bleeders past 8% stop). A wider stop wouldn't have caught any of them. Replace with a copy_trade-only mid-hold liquidity-drop guardrail aimed at rug detection. 7 strategies (fresh_profile, consensus_boost, bear_strength, bounce_hunter, profile_survivor, veteran_momentum, quiet_accum) are NET POSITIVE in 1-6h and would be HARMED by a global stop widen. Regime: SOL/USD $92.89 retreated below BULL trigger ($93/+5%h24 \u2014 last heartbeat 12:31 EDT shows altcoin_regime ALTCOIN_WINTER 58.3% BTC.D); fresh_profile likely re-blocked.",
+    "timestamp": "2026-05-10 01:14:40 EDT",
+    "run_id": "research-144",
+    "version": 144,
+    "regime": "CHOP / ALTCOIN_WINTER (SOL h24=-0.6%, dominance 58.3%) \u2014 favor low-fire-count high-conviction adds, not threshold widens",
+    "headline": "Bot is funnel-starved (7 trades/7d, WR 28.6%, -0.0037 SOL, 57% stop-loss exits). THREE actionable findings: (1) NEW novel hypothesis bags_graduation_snipe \u2014 Meteora DBC program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN with creator authority BAGSB9TpGrZxQbEsrEznv5jXXdwyP6AXerN8aVRiAmcv, distinct mechanism from pump.fun/letsBONK (1% creator royalty in perpetuity drives KOL-shill demand window post-grad); (2) letsBONK ship-readiness UPGRADED \u2014 2 fresh on-chain-verified smoke-test sigs delivered, both migrate_to_cpswap (0/2 migrate_to_amm in current sample), grad density empirically ~2 per 10h \u2248 5/day NOT 24+/day, listener fires/day estimate must be revised down; (3) m5_pump_skip 7% ceiling RESOLVED \u2014 N=85 above-ceiling closed trades give 29% WR vs 37% under-ceiling (median -8% vs -3%); no secondary-leg cohort exists, no alpha-leakage. CLOSE this investigation, do not tweak threshold.",
     "new_hypothesis": {
-      "name": "boost_velocity_burst",
-      "mechanism": "DexScreener's free /token-boosts/latest/v1 endpoint (60 req/min, no auth) reports cumulative `totalAmount` of paid boosts per Solana token. A boost is purchased real-money attention (~$10/boost in packs). The long-term return on boost-existence is negative (-48% per Dethective), which is why no one trades on raw boost presence. But the EDGE is in the *velocity*: when a token's boost-count jumps by >=30 inside a 5-minute window, the project paid $300+ for a coordinated burst \u2014 economically rational only if there's a parallel marketing push (KOL drop, community pump, Twitter campaign) imminent or already firing. Retail clicks the boosted listing -> retail buys -> mechanical 5-15 min momentum window. The bot would NOT enter on boost-existence, but on velocity-acceleration + liquidity-floor + age-window + price-not-already-extended. Importantly: bot already polls these boosts to sol_dex_boosts_log.json (383 KB on disk) \u2014 the velocity signal is sitting unused.",
-      "persistence": "Three layers. (a) Quant bots IGNORE boosts because long-term return is negative (-48%); they lose money holding to zero. We don't hold to zero \u2014 we exit at +12% TP / -7% SL / 12-min hard time stop, capturing only the retail-click micro-window. (b) Retail-click latency from boost activation to volume bump is empirically ~5-15 min (anyone clicking a boosted listing isn't a millisecond-bot \u2014 they're a human clicking through DexScreener trending). MEV/sandwich bots are present but they don't compete for directional momentum, only intra-block extraction. (c) The signal degrades only if boost-velocity becomes commoditized \u2014 but this requires the broader memecoin-bot population to specifically watch boost-deltas (not absolute counts), which is a different mental model from what's written about. Estimated half-life: 60-120 days before commoditization risk; rotate sizing down at that point.",
-      "entry_rules": "(1) Poll DexScreener /token-boosts/latest/v1 every 30-60s, append to existing sol_dex_boosts_log.json schema with a per-mint timestamp. (2) Compute rolling 5-min delta: boost_delta_5m = boost_now - boost_5min_ago for each Solana mint. (3) Trigger fires when ALL: boost_delta_5m >= 30 AND token_age_minutes between 30 and 720 AND liquidity_usd >= $15k AND vol_5m >= $5k AND price_5m_change between -10% and +25% (avoid extended chases) AND RugCheck score >= 50 AND GoPlus passes AND mint not already in cooldown AND mint not in our prior-boost-no-pump blacklist (anti-repeat). (4) Size: 0.15x tiny per OPERATOR_AUTONOMY_GRANT untested-strategy lifecycle. (5) Position management: 12-min hard time stop (vs default 60min \u2014 boost momentum is short), 12% TP target, 7% stop loss, 4% trailing arms at +6% gain. (6) Persistence: log every fire to sol_boost_velocity_log.json with pre/post outcome for backtest validation. (7) Run as additional strategy alongside copy_trade / fresh_profile / GBB \u2014 orthogonal funnel.",
-      "data_required": "ZERO new HTTP API. Already-polled DexScreener /token-boosts/latest/v1 (free, 60/min, no auth) and /token-boosts/top/v1. Already-existing sol_dex_boosts_log.json on disk. New module ~150 LOC: boost_velocity.py tails the log, computes 5-min rolling delta per mint, emits signal events; new strategy entry boost_velocity_burst in degen_bot.py _evaluate_strategies; reuses existing security gate (RugCheck/GoPlus), Jupiter execution, position manager. Persist to sol_boost_velocity_log.json (ring buffer 500). Single-file change apart from the module add.",
-      "estimated_fires_per_day": 8,
+      "name": "bags_graduation_snipe",
+      "mechanism": "Bags.fm tokens graduate from a Meteora Dynamic-Bonding-Curve to a DAMMv2 Raydium pool via the same Meteora DBC program (dbcij3L...) that hosts Believe and Jupiter Studio, but Bags-specific tokens are signed by creator authority BAGSB9TpGrZxQbEsrEznv5jXXdwyP6AXerN8aVRiAmcv. At graduation, Jupiter routing flips on, retail TG/X bots see 'graduated' status, and crucially Bags pays the creator 1% of every trade in perpetuity (vs pump.fun's 0.05%) \u2014 this gives KOL creators a structural incentive to schedule graduation-time shill posts, producing a reproducible 5\u201330 min reflexive bid window.",
+      "persistence": "Bags graduations are estimated 3\u20137/day vs pump.fun's ~170/day \u2014 too thin to attract dedicated arb infrastructure; detection is non-obvious (shared Meteora DBC program means generic snipers conflate Bags with Believe/Jupiter Studio unless they filter on the BAGSB9...AmcV creator authority); the 1% perpetual creator royalty is a Bags-only structural feature retail bots have not internalized.",
+      "entry_rules": "Trigger when migrate_meteora_damm or migration_damm_v2 instruction emitted by program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN AND any account in the tx == BAGSB9TpGrZxQbEsrEznv5jXXdwyP6AXerN8aVRiAmcv. Filters: liq_usd >= $15k at graduation, age <= 5 min post-graduation, max market cap at entry <= $150k (graduation threshold ~$69-100k leaves headroom). Position size 1.5% (HALF of standard 3% pending sample), stop loss 8% (same as base), take-profit ladder same as letsbonk_graduation_snipe spec.",
+      "data_required": "Solana RPC (already paid Alchemy endpoint via ALCHEMY_SOLANA_RPC) \u2014 getSignaturesForAddress polling on creator authority BAGSB9...AmcV at 30-45s cadence, then getTransaction(jsonParsed) and inspect inner instructions for graduation discriminators on the dbcij3L... program. Alternative: Bitquery GraphQL (https://docs.bitquery.io/docs/blockchain/Solana/bags-fm-api/) for a single round-trip. Discriminator hashes are NOT yet locked down \u2014 ship Phase 1 LOG-ONLY first to capture the actual instruction names emitted by Bags-specific grads.",
+      "estimated_fires_per_day": 5,
       "priority": "MEDIUM",
-      "evidence": "Subagent-3 verified live API calls returning Solana mints with totalAmount counts: DE2bhKYeUFqCy2ohJ492YizLsNSHcpMo2Qynv3Gepump (200 boosts, pump-suffix), HANTAYLiPiQ8d8dkJizcL8gJQHWBKF5ZeL1neeLqwbzc (150 \u2014 note: HANTA was on research-142's watchlist for pathogen-meme cluster, h1 +10% confirmed independently by run-142 narrative scout, cohort still active), 8PtCzHBJ8u1SWydCSbADAdc4bQ2o3kMeBVjYmF5dpump (100), 63o8y9v7hL2UsDansQYDG54kP1fgVibnDajfsy4Dpump (20), 56fYd9GHuj5C7JgjiDFaiaKCx1Tb4iPniJpAxQtQpump (10). Bot's existing sol_dex_boosts_log.json is 383 KB / 100 boost-enrichment hits per run-142 audit, confirming the data stream is live and the signal infrastructure is already half-built. Cross-cohort signal: HANTA was both (a) a research-142 pathogen-meme cluster leader and (b) a 150-boost recipient, suggesting boost-velocity often co-fires with narrative-cohort signals \u2014 the strategy may stack with consensus_boost rather than overlap."
+      "evidence": "Subagent C verified: (a) DefiLlama shows Bags fees $21,158/24h May 2026, $1.31M/30d ($5B cumulative platform vol); (b) Meteora Q1 2026 quarterly report shows 1,087 DBC graduations / 90d = 12/d avg across all DBC partners (Bags is dominant remaining), (c) Bagscreener.space live feed categorizes 'About to Graduate' / 'Graduated' buckets in real time; (d) example token $BTAPP at mint 7CNK58kSPYZkkKygTes1xBKsc8uuqMAGeSSuThAUBAGS \u2014 note the BAGS suffix vanity address pattern. Caveat: Q1 2026 Meteora DBC revenue collapsed Jan $5.1M -> Mar $371K, so the strongest version of this edge is likely already 30-50% arbed; ship at half-size and let kill_criteria decide."
     },
     "watchlist": [
       {
-        "mint": "DE2bhKYeUFqCy2ohJ492YizLsNSHcpMo2Qynv3Gepump",
-        "symbol": "(pump.fun token, 200 boosts)",
-        "reason": "Top Solana boost recipient at run-time. 200 cumulative boosts indicates either sustained campaign or large single burst \u2014 eligible for Phase-1 boost_velocity_burst smoke test once strategy ships. Verify recent 5-min delta.",
-        "expires_at": "2026-05-10T00:46:00-04:00"
+        "mint": "5hAZs9AKdLRxNzLeK9rurkLumdCAUph5V287jpe75uca",
+        "symbol": "(letsBONK grad ~5h ago)",
+        "reason": "Verified migrate_to_cpswap graduation sig WvoQt9oA1eZwLyoqp2gfKMsMzARRBtdbSdEwSFA2X25nyZbUG7pfHAdzm4aLVtwtQCEdqKHyGjKzNG6Ab5EU5qP \u2014 usable as smoke-test target for letsbonk_graduation_snipe listener",
+        "expires_at": "2026-05-12 00:00:00 EDT"
       },
       {
-        "mint": "HANTAYLiPiQ8d8dkJizcL8gJQHWBKF5ZeL1neeLqwbzc",
-        "symbol": "HANTA",
-        "reason": "Pathogen-meme cluster leader from research-142 watchlist with INDEPENDENT 150-boost confirmation \u2014 cross-cohort validation. h1 +10% per run-142 scout, MC ~$4.17M, liq $267k. Continuation candidate.",
-        "expires_at": "2026-05-10T00:46:00-04:00"
+        "mint": "3HY93mCJcjuDF7jzgvfGfKFcdJY6E1a5c5uc5Sjfbonk",
+        "symbol": "(letsBONK grad ~9.5h ago, 'bonk' suffix)",
+        "reason": "Verified migrate_to_cpswap graduation sig BGswokR2XBZppNcmggisTAa3p4x1ic1fKjbP5rZDNHPRavivAMzGoXjMhyTyQYisg2ZiXptST44kShAE4TeN43K \u2014 second smoke-test target",
+        "expires_at": "2026-05-12 00:00:00 EDT"
       },
       {
-        "mint": "8PtCzHBJ8u1SWydCSbADAdc4bQ2o3kMeBVjYmF5dpump",
-        "symbol": "(pump.fun, 100 boosts)",
-        "reason": "Triple-digit boost on pump.fun-graduated token. Mid-tier velocity candidate.",
-        "expires_at": "2026-05-10T00:46:00-04:00"
+        "mint": "7CNK58kSPYZkkKygTes1xBKsc8uuqMAGeSSuThAUBAGS",
+        "symbol": "BTAPP",
+        "reason": "Example Bags-launched token with BAGS-vanity suffix \u2014 observable via bagscreener.space; useful as a Bags-program detection smoke-test reference",
+        "expires_at": "2026-05-15 00:00:00 EDT"
       }
     ],
     "proposals_for_survival_brain": [
       {
         "type": "data_source_add",
-        "target": "letsbonk_graduation_snipe \u2014 SHIP-READY filter spec (closes REQ-013)",
-        "justification": "REQ-013 explicitly asked for the discriminator/log-line/CPI signature, >=2 recent grad tx signatures for smoke test, ALCHEMY logsSubscribe support confirmation, and rate-limit constraints. Subagent-1 + Subagent-2 cross-validated. RESULT: (a) GRADUATION SIGNATURE \u2014 Anchor instruction discriminator on LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj. migrate_to_amm = cf52c091fecf91df, migrate_to_cpswap = 885cc8671cda908c. Computed via sha256('global:NAME')[0:8], cross-verified against live LaunchLab buy_exact_in (faea0d7bd59c13ec), sell_exact_in (9527de9bd37c981a), initialize_v2 (4399af27da102620) seen on-chain in subagent-1's 5-tx live decode AND independently re-computed by the orchestrator with python's hashlib \u2014 both match. NOTE: subagent-2's value 0x9beae792e0c6f17d is INCORRECT, do not use. (b) letsBONK QUALIFIER \u2014 the instruction's accounts array MUST include FfYek5vEz23cMkWsdJwG2oa6EphsvXSHrGpdALN4g6W1 (platform_config). Without that, the migration is from a non-letsBONK launch on the same LaunchLab program. Per Bitquery docs, this is exactly the production filter. (c) BELT-AND-SUSPENDERS \u2014 migrate_to_amm CPIs to AMM v4 675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8 (initialize2, discriminator 0x01); migrate_to_cpswap CPIs to CPMM CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C (initialize). Validating the inner-CPI is present rules out the false-positive aggregator-route case (subagent-2 found tx 3u7NMfKTbLL1k77S6aQJNQAP1qKRCwXA4FKoFXRqznrjw9wkLvEViUTqQDdDxeKYSYApH2u7Sgoiuh7hcy1ZT1R6 routes through both LaunchLab and CPMM as a user swap, not a graduation \u2014 the disambiguator is: graduation has the LaunchLab instruction at TOP LEVEL with platform_config in accounts, while routes have LaunchLab as a CPI-callee from an aggregator program). (d) RECENT TX SIGNATURES \u2014 neither subagent retrieved verified recent grad signatures: subagent-1 was budget-blocked, subagent-2 scanned 1000+ LaunchLab txs in ~10 min of mainnet activity and saw 0 graduations (graduations are <0.1% of LaunchLab traffic). RECOMMENDED PROCUREMENT PATH for ship-time smoke test: run a Bitquery IDE query (free tier) at https://ide.bitquery.io filtered Program=LanMV9..., Method IN [migrate_to_amm,migrate_to_cpswap], Accounts includes FfYek5..., orderBy desc Block.Time, limit 5 \u2014 returns recent grad tx hashes for a 5-tx end-to-end test. (e) ALCHEMY logsSubscribe \u2014 supports {mentions:[LanMV9...]} server-side filter syntactically (subagent-2 subscribed successfully; subscription ID returned), BUT delivers FAR FEWER messages than tx-rate (<0.1 msg/s observed vs ~1.7 tx/s actual) because LaunchLab is overwhelmingly a CPI-callee, not a top-level program \u2014 Alchemy's mentions filter elides CPI-only mentions. THIS IS A SHIP-BLOCKER for the WS path. RECOMMENDED IMPLEMENTATION: HTTP polling \u2014 getSignaturesForAddress(LanMV9..., limit=100) every 30s, dedupe against last-seen-sig, getTransaction(json,base58) on each new sig, decode top-level instructions, match on programId+discriminator+platform_config-account. ~1.7 tx/s \u00d7 30s = ~50 sigs per poll, at ~2 KB each via getTransaction = manageable. NOT WebSocket. (f) ALCHEMY LIMITS \u2014 connections 100 free/2000 paid; subscriptions 1000/conn; in-flight 200/conn; CU/s rolling 10s window with 429-on-overage; pings server-driven, client must auto-pong; reconnect-on-close mandatory.",
-        "confidence": "HIGH",
-        "addresses_request": "REQ-013",
-        "baseline": "Bot's pump.fun graduation listener exists at degen_bot.py:4103 (start_pumpfun_grad_listener) and is the architectural template. Currently ZERO letsBONK graduation events are captured by the bot. letsBONK launchpad share is ~15% of Solana launchpads (KuCoin reporting), translating to ~30-50 grads/day on the BONK ecosystem feed.",
-        "expected_effect": "Phase 1 (LOG-ONLY): listener captures 30-50 graduation events/day to sol_letsbonk_graduation_log.json, validating ~80-95% capture rate against Bitquery REST ground truth. Phase 2 (TRADE-ENABLED): at 0.15x sizing with security gate filtering, ~5-10 actionable fires/day. If WR matches pump.fun grad strict-cohort 61% (per research-141 #4), expected ~+0.005-0.012 SOL/day net at break-even-to-positive R/R.",
-        "kill_criteria": "PHASE 1 only kill: <50% capture rate vs Bitquery REST cross-check after 100 grads observed (filter is wrong); listener websocket/poller crash rate >5% over 24h (infrastructure brittle). PHASE 2 (when survival brain promotes to live): rolling 10-trade WR < 30% OR mean_pnl_pct < -8% OR stop-rate > 60% -> pause; rolling 20-trade cumulative pnl_sol < -0.005 SOL -> kill.",
-        "min_sample_size": "Phase 1: N=100 graduation events captured before promoting to trade-enabled (validates filter precision/recall). Phase 2: N=10 trades for first fast-kill check, N=20 trades before any size increase.",
-        "regime_scope": "ANY (graduation events are a flow signal, not a regime signal \u2014 they fire across BULL/CHOP/BEAR; filter does not need regime gating; size at 0.15x absorbs regime risk).",
-        "rollback_plan": "Phase 1: comment out start_letsbonk_grad_listener invocation, ~1 line. Phase 2: remove `letsbonk_graduation_snipe` from _process_signal strategy dispatch, keep listener running for log-only (data is still useful). Total reversion ~15 LOC.",
-        "risk_if_wrong": "Phase 1: zero trading risk (log-only). Implementation risk: ~80-120 LOC + 30-min smoke-test with manual Bitquery-fetched grad signatures. Phase 2: at 0.15x \u00d7 8% stop \u00d7 7 fires/day worst case = -0.0017 SOL/day; kill_criteria observation window ~3 days = -0.005 to -0.015 SOL maximum drawdown. Far less than the opportunity cost of leaving a 15%-launchpad-share feed unmonitored.",
-        "implementation_hint": "(1) Modeled on start_pumpfun_grad_listener at degen_bot.py:4103 \u2014 DO NOT mirror the WebSocket pattern; use HTTP polling instead. (2) Loop: every 30s, call getSignaturesForAddress(LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj, limit=100, before=last_sig). (3) For each new sig: getTransaction(sig, encoding='jsonParsed', maxSupportedTransactionVersion=0). (4) Walk transaction.message.instructions (TOP-LEVEL ONLY \u2014 CPI false-positive avoidance) looking for ix.programId == LanMV9... AND ix.data first 8 base58-decoded bytes == cf52c091fecf91df OR 885cc8671cda908c. (5) Confirm FfYek5vEz23cMkWsdJwG2oa6EphsvXSHrGpdALN4g6W1 is in ix.accounts. (6) Extract migrated mint from the instruction's account list (position varies by instruction \u2014 verify against IDL on first ship; subagent-1's IDL reading is the source). (7) On match, emit signal to _process_signal with strategy_name='letsbonk_graduation_snipe' and persist to sol_letsbonk_graduation_log.json (ring buffer 500). (8) Smoke test BEFORE enabling trade-side: pre-fetch 5 grad signatures via Bitquery IDE, verify the parser identifies all 5 from getTransaction. (9) Rate-limit safety: 30s polls \u00d7 ~50 sigs/poll = manageable on Alchemy paid tier; if 429s appear, back off to 60s. (10) PHASE GATE: ship LOG-ONLY for 24-48h (Phase 1) and confirm capture rate vs Bitquery REST count, before enabling trade dispatch (Phase 2)."
+        "target": "bags_graduation_snipe",
+        "justification": "NEW novel hypothesis with distinct on-chain mechanism (Meteora DBC + creator-royalty incentive structure) not addressed by existing strategies. Detection cost is small once letsBONK listener ships \u2014 adds one program (dbcij3L...) and one signer-filter to already-built RPC polling. Edge persistence backed by 1% perpetual creator royalty (structural, not narrative). Ship Phase 1 LOG-ONLY first.",
+        "confidence": "MEDIUM",
+        "addresses_request": null,
+        "baseline": "No bags-related strategy exists. Bot 7d aggregate: N=7 trades, WR 28.6%, PnL -0.0037 SOL, 57.1% stop-loss exits (sol_strategy_stats.json). Comparable graduation-snipe baseline: pumpfun_graduation_snipe shadow-track research-141 strict-filter cohort 61% h6 WR / +44% median on N=18 \u2014 Bags-grad expected to land in a similar ballpark or slightly worse pre-arb.",
+        "expected_effect": "Phase 1 logger: 3-7 grad-event captures/day, no live trades. Phase 2 live: N=20 fires expected in ~3-7 days, target WR>=45% h1 / median pnl_pct>=+8% (Bags is thinner than pump.fun, so set bar BELOW pump_fun_graduation_snipe at +44%). Funnel widening from 7 to ~12-14 trades/wk if Phase 2 advances.",
+        "kill_criteria": "Phase 1 LOG-ONLY -> Phase 2 LIVE only if Phase 1 logger captures >= 20 grad events with median 1h-post-grad price change >= 0% (sanity check that the window exists). Phase 2 LIVE kill: at N=10 closed trades, if WR < 30% OR R/R < 0.60 OR median pnl_pct < -5%, STOP and roll back. Hard regime kill: if SOL h24 drops below -8% (CRASH regime) during Phase 2, pause new entries until regime normalizes.",
+        "min_sample_size": "Phase 1: N=20 grad-event log captures (any regime). Phase 2: N=10 closed live trades for kill check, N=20 for full evaluation. Stratify by regime ONLY if N>=20 in CHOP achieved.",
+        "regime_scope": "ANY (graduation pop is structural, not regime-dependent), but DEFAULT-OFF in CRASH regime (SOL h24 <= -8%).",
+        "rollback_plan": "Phase 1 rollback: remove the additive logger function (~30-40 LOC). Phase 2 rollback: comment out the strategy's entry registration in degen_bot.py main scan loop and revert to logger-only. No state files corrupted; trade log entries remain valid historical record.",
+        "risk_if_wrong": "Phase 1 has zero financial risk (logger-only, ~5-7 RPC calls/min added to already-paid Alchemy endpoint, well under quota). Phase 2 worst case: 10 stops at -8% each at 1.5% position size on ~1.1 SOL bankroll = -0.0132 SOL absolute downside before kill_criteria trip = ~1.2% bankroll drawdown over 3-5 days. Roughly 1/4 of a single bad copy_trade losing day."
       },
       {
         "type": "data_source_add",
-        "target": "boost_velocity_burst \u2014 NEW STRATEGY using already-polled DexScreener boost data",
-        "justification": "Bot already polls DexScreener /token-boosts/latest/v1 (free, 60/min, no auth) and persists 383 KB to sol_dex_boosts_log.json. The signal infrastructure is half-built \u2014 only the velocity computation and strategy entry are missing. Mechanism: a 5-min rolling boost-amount delta >= 30 indicates the project paid ~$300 for a coordinated retail-attention burst, economically rational only if a parallel marketing push (KOL drop, community pump) is imminent or already firing. Retail-click latency from boost activation to volume bump is ~5-15 min, which is the entry window. Quant bots IGNORE boosts because long-term boost-token return is -48% (Dethective analysis); we don't hold to zero \u2014 exit at +12% TP / -7% SL / 12-min time stop, capturing only the retail-click micro-window. CROSS-COHORT VALIDATION: HANTA appeared in BOTH research-142's pathogen-meme narrative cohort (run-142 scout) AND subagent-3's top-boost list (150 boosts) \u2014 this suggests boost-velocity co-fires with narrative-cohort signals, potentially STACKING with consensus_boost rather than overlapping.",
-        "confidence": "MEDIUM",
-        "addresses_request": null,
-        "baseline": "0 strategies currently consume boost-velocity. Bot polls boosts but does not compute deltas. sol_dex_boosts_log.json holds ~383 KB of historical boost samples \u2014 sufficient for a backtest to validate the 30-boost-in-5-min trigger before live ship. Across active strategies: copy_trade rolling 7d N=0 (dormant), all-time N=537 WR 33.7% pnl_sol -0.83 SOL (per sol_strategy_stats.json); fresh_profile N=15 WR 60% (BULL-blocked currently); consensus_boost N=45 WR 46.7%. boost_velocity_burst is regime-independent and complements rather than competes.",
-        "expected_effect": "If 45-55% WR (predicted; long-term-hold avg is -48% but micro-window edge is the +12% TP / 12-min cutoff) at 0.15x \u00d7 5-10 fires/day, expected +0.003 to +0.008 SOL/day net at conservative R/R 1.0. Stacking signal with consensus_boost (when a token is BOTH in narrative cohort AND velocity-trigger) may improve WR to 55-60% on the overlap subset.",
-        "kill_criteria": "Rolling 10-trade WR < 35% -> pause and audit. Rolling 20-trade pnl_sol < -0.005 SOL -> kill. Per-fire stop-rate > 70% -> tighten the 5-min delta threshold from >=30 to >=50. If <2 fires/day for 7 consecutive days, the threshold is too tight \u2014 relax to >=20.",
-        "min_sample_size": "BACKTEST FIRST: walk sol_dex_boosts_log.json's 383 KB historical data, generate synthetic fires (no security gate), correlate against post-fire 15-min DexScreener price moves. Need N=20 historical fires to validate the velocity-pump correlation > random. THEN N=10 live trades for first fast-kill, N=20 before sizing increase.",
-        "regime_scope": "ANY (boost-velocity is a retail-attention signal, not a price-regime signal; fires across BULL/CHOP/BEAR/CRASH).",
-        "rollback_plan": "Single flag toggle: boost_velocity_burst.enabled=False in config or remove the strategy entry from _evaluate_strategies. ~10-line revert. sol_boost_velocity_log.json keeps accumulated fires for forensic use.",
-        "risk_if_wrong": "At 0.15x \u00d7 7% stop \u00d7 8 fires/day worst case = -0.0017 SOL/day for the kill_criteria observation window (~3 days \u00d7 -0.005 SOL/day floor) = -0.020 SOL maximum drawdown. Bounded.",
-        "implementation_hint": "(a) New module boost_velocity.py: tail sol_dex_boosts_log.json, build per-mint time-series, compute boost_delta_5m = boost_now - max(boost at t-5m, ..., t-7m). (b) Trigger condition: boost_delta_5m >= 30 AND age_min in [30,720] AND liq_usd >= $15k AND vol_5m >= $5k AND price_change_5m in [-10%, +25%] AND security gate passes AND mint not in cooldown. (c) Strategy dispatch in _process_signal with strategy_name='boost_velocity_burst', size 0.15x. (d) Position management overrides: time_limit_min=12 (vs default 60), tp_pct=12%, sl_pct=7%, trailing_arm_pct=6% trailing_below=4%. (e) Persist to sol_boost_velocity_log.json (ring buffer 500). (f) Backtest: write a one-shot script that walks sol_dex_boosts_log.json, identifies historical fires, fetches DexScreener historical 5-min candle for each (m5/m15 OHLCV), and reports hit-rate at +12% TP within 12-min and stop-rate at -7% SL within 12-min. PROCEED ONLY IF historical hit-rate > 40%. (g) Gate to PHASE 2 (live ship) on backtest validation."
-      },
-      {
-        "type": "new_filter",
-        "target": "EXIT MANAGEMENT \u2014 SUPERSEDES research-142 #3 hold-duration U-shape proposal \u2014 copy_trade-only mid-hold liquidity-drop guardrail (NOT global stop-widen)",
-        "justification": "Subagent-4 strategy-conditional re-mining of N=998 closed trades shows research-142 #3's diagnosis was wrong. The 1-6h-bucket -0.488 SOL drag is 84% concentrated in COPY_TRADE (-0.4075 SOL across 181 trades). Of THAT, 20 trades = -0.4274 SOL are -100% reconcile/orphan rugs. Moderate losers in the 1-6h copy_trade cohort sum to only -0.0493 SOL. A 'widen stop to 12% after 60 min' rule would NOT have caught any of the rugs (they go from positive/neutral straight to -100% at the rug-pull moment, not via slow drift past 8%) AND would HARM 7 strategies that are NET POSITIVE in the 1-6h bucket: fresh_profile (+0.0045 N=3 WR 100%), consensus_boost (+0.0044 N=5 WR 80%), bear_strength (+0.0031 N=3 WR 67%), bounce_hunter (+0.0045 N=4 WR 50%), profile_survivor (+0.0017 N=9 WR 33%), veteran_momentum (+0.0031 N=4 WR 75%), quiet_accum (+0.0112 N=14 WR 43%). Total positive 1-6h SOL across these 7 = +0.033 SOL. The CORRECT fix is COPY_TRADE-ONLY rug-detection via mid-hold liquidity-drop monitoring.",
+        "target": "letsbonk_graduation_snipe (in-flight pending hypothesis)",
+        "justification": "Smoke-test signatures delivered + empirical correction to fires-per-day expectation + listener prioritization. Brain currently has SHIP_READY status; this proposal adds two amendments to the spec before code ship.",
         "confidence": "HIGH",
         "addresses_request": null,
-        "baseline": "Per sol_strategy_stats.json: copy_trade all-time N=537 WR 33.7% pnl_sol -0.830 SOL avg_loss% -20.32% stop_loss_rate% 46.2% RR 0.72 PF 0.35. 1-6h cohort within copy_trade: N=181 WR 43.1% mean_pnl% -9.85% stop_rate 2.8% sum_sol -0.4075 SOL. Of those 181: 20 are -100% reconcile/orphan rugs summing -0.4274 SOL; 161 are non-rug trades summing -0.0493 SOL net (essentially break-even).",
-        "expected_effect": "If a copy_trade-only mid-hold liquidity-drop guardrail catches HALF the rugs at -50% before they go to -100%, savings \u2248 10 trades \u00d7 0.0214 SOL avg position size \u00d7 0.5 = +0.107 SOL retained. Realistic conservative estimate: catches 40% of rugs at -60% avg (vs -100%) = +0.085 SOL retained. Still a 17% reduction in 1-6h drag, dwarfing the original Option-B prediction's +0.32 SOL claim that turns out to have been mis-attributed (slow bleeders aren't the problem).",
-        "kill_criteria": "Post-deploy rolling N=30 copy_trade trades held >60min: if liquidity-trigger fires <5% of the time the cohort = it doesn't see rugs (raise sensitivity from 40% drop to 30% drop). If salvaged loss <0.05 SOL after N=30 = the trigger is too late (tighten to 30-second polling instead of 60-second). If false-positive rate (trigger fires AND pool was actually healthy AND price recovered) >20% of triggers, threshold too sensitive \u2014 relax to 60% drop. If after N=50 trades the salvage is <0.03 SOL net (less than 6% of expected), revert and explore alternative rug-detection (deployer-wallet sell pattern, top-holder concentration spike).",
-        "min_sample_size": "N=30 copy_trade trades held >60min for first kill check (~3-4 weeks at current copy_trade dormancy; faster if copy_trade fires accelerate). N=50 for full evaluation.",
-        "regime_scope": "ANY (rug-pulls happen in all regimes; this is mechanical exit-management, not a directional edge).",
-        "rollback_plan": "Single config flag: copy_trade_liquidity_guardrail_enabled=False, OR remove the periodic liquidity-poll loop from copy_trade position management. ~30 LOC revert. Original 8% stop and 60-min time-limit unchanged.",
-        "risk_if_wrong": "Worst case: false-positive triggers exit healthy positions early at -30% to -50% (vs the +43% WR floor showing some trades recover from drawdown to TP). At 20% false-positive rate \u00d7 N=30 trades \u00d7 0.0214 SOL avg \u00d7 8% premature exit = -0.013 SOL drag worst case. Bounded and small.",
-        "implementation_hint": "(1) When a copy_trade position has been open >60 min, start polling that pool's liquidity_usd every 60s via DexScreener (existing infrastructure). (2) Compute rolling baseline = max(liquidity at entry, max(liquidity over first 60min)). (3) Trigger force-exit if liquidity_usd_now / liquidity_baseline < 0.6 (40% drop). (4) Log all triggers to sol_copytrade_rug_guard_log.json with: pool, entry_liq, baseline_liq, trigger_liq, drop_pct, exit_pnl_pct. (5) DO NOT apply this to other strategies \u2014 fresh_profile / consensus_boost / etc. are net-positive in 1-6h and don't need rug detection (they have other filter signals catching deployer risk pre-entry). (6) IMPORTANT CORRECTION TO RESEARCH-142: the proposed 'widen stop 8%->12% after 60min' rule should NOT ship \u2014 see baseline above for why."
+        "baseline": "Pending hypothesis letsbonk_graduation_snipe in sol_brain_directives.json status SHIP_READY_PENDING_SMOKE_TEST. Verified discriminators migrate_to_amm=cf52c091fecf91df, migrate_to_cpswap=885cc8671cda908c on program LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj. Brain expectation: many fires/day (implicit ~24+/day from pump.fun analogy).",
+        "expected_effect": "Amendment-1: empirical observation N=2 of 2 recent grads were migrate_to_cpswap (0 migrate_to_amm in window) \u2014 listener should prioritize cpswap detection but still match both. Amendment-2: actual graduation density ~2 per 10h \u2248 5/day, not 24+/day \u2014 adjust fires-per-day expectation downward 5x. Sample-size targets that assumed 24+/day must be lengthened proportionally (e.g. N=20 in CHOP requires ~4 days, not ~1 day). Smoke test ready: use the 2 verified watchlist sigs as listener-replay targets.",
+        "kill_criteria": "Same as already-defined letsbonk_graduation_snipe kill_criteria. Add ONE new trip-wire: if Phase 1 logger captures < 15 grad events in 7 calendar days post-ship, the launchpad has cooled below viability (revisit detection or kill).",
+        "min_sample_size": "Increase calendar windows by 5x to compensate for revised density. N=20 evaluation now needs ~4 days in CHOP (was implicit ~1 day).",
+        "regime_scope": "ANY (no change from original spec).",
+        "rollback_plan": "No new code change required if letsBONK listener has not yet shipped \u2014 these amendments are spec-only. If already shipped, no rollback needed (amendments are observational, not behavioral).",
+        "risk_if_wrong": "Zero direct risk \u2014 these are spec amendments, not behavioral changes. Risk if IGNORED: brain ships listener expecting ~24 grads/day, sees ~5/day, mistakes the listener for broken and rolls back a working ship."
       },
       {
         "type": "kill_strategy",
-        "target": "OPS-FOLLOWUP \u2014 research-142 #1 GBB regression check \u2014 re-audit at next survival-brain run",
-        "justification": "Run-278 (12:11 EDT) shipped GBB_FRESHNESS_SEC 300->1800 to fix the cycle-#2 hang issue identified by research-142 #1. Bot heartbeat now reads PID 3168 cycle 2 at 12:31 EDT \u2014 that is 16 min stale at run-143 start (12:39 EDT). Cycle #2 again, just like the symptom that triggered run-142's audit. Either: (a) cycles take ~30 min so the 16-min staleness is normal in the new regime; (b) cycle #2 hung again and the GBB ship didn't fix the underlying issue. Recommend the survival brain confirm at run-279 by checking heartbeat cycle counter advancement and GBB SCAN/SIGNAL event counts in sol_events.json over the 12:11 -> 18:00 EDT window. NO CODE CHANGE PROPOSED \u2014 this is a verification ask, not a fix.",
-        "confidence": "MEDIUM",
+        "target": "m5_pump_skip threshold investigation (close permanently)",
+        "justification": "RESOLVED \u2014 no alpha leakage. The 7% global m5 ceiling is correctly calibrated. Above-ceiling cohort N=85 (m5 7-25 only \u2014 m5>32% never logged because never traded) produces WR 28.7%, median -8.07%, mean -8.04%. Under-ceiling cohort N=332 produces WR 37.0%, median -2.60%, mean -3.21%. The 7 isolated +20% winners above-ceiling are scalp-shaped (sub-30-min holds, mid-liquidity, mild h1 confirm) \u2014 same shape the bot already trades under-ceiling, NOT a hidden secondary-leg mechanism. Brain should retire this as a hypothesis backlog item and stop spending future-run cycles on it.",
+        "confidence": "HIGH",
         "addresses_request": null,
-        "baseline": "PRE-RUN-278: cycle #2 heartbeat 10 min stale, 0 GBB SCAN events post-ship, 11 candidates/hr in funnel. POST-RUN-278 ship + restart at 12:11 EDT: PID 3168, cycle 2 heartbeat at 12:31 EDT (20 min after restart for cycle #2). Expected per CLAUDE.md: 45s heartbeat cadence \u2014 not 20 min/cycle.",
-        "expected_effect": "If the FRESHNESS_SEC 300->1800 ship fixed the issue: cycle counter should be >=10 by run-144 (12-hour gap), GBB SCAN events should appear in sol_events.json, and at least 1 GBB BUY should fire if the 11/hr funnel sustains. If still stuck at cycle 2-3 by run-144: the FRESHNESS fix was insufficient; deeper bug in scan loop.",
-        "kill_criteria": "If by run-144 (12 hours from now) cycle counter < 10 AND zero GBB SCAN events: GBB ship is NOT the root cause of the hang \u2014 escalate to a process-trace audit (py-spy / strace equivalent on Windows) and consider rolling back GBB entirely until hang-cause is independently isolated.",
-        "min_sample_size": "12-hour observation window (run-143 to run-144).",
-        "regime_scope": "ANY.",
-        "rollback_plan": "If GBB is the hang root-cause: comment out gecko_breadth_burst from active_strategies and the start_breadth_log_listener call. Restart bot. ~5 LOC revert.",
-        "risk_if_wrong": "If we wait too long to escalate: bot stays dormant for another 12+ hours. Mitigation: this proposal only asks the brain to RE-VERIFY at next run, not to wait. Brain can act independently if it sees the symptom recur."
+        "baseline": "m5_pump_skip BUY_SKIP gate at degen_bot.py:2522-2527, threshold 7% global (no regime split). Recent ring-buffer evidence: 43 of 100 events are m5 pump skips (sol_events.json) \u2014 gate fires constantly, but it is firing on negative-EV cohort. 7d funnel: N=7 trades total. Under-ceiling N=332 historical WR=37%; above-ceiling N=85 historical WR=29%. Filter is correctly removing -4% EV per trade.",
+        "expected_effect": "No code change. Survival brain frees up 1-2 hypothesis slots that have been investigating m5 ceiling tweaks (research-132 _persist_m5_skip_event, run-272 ALTCOIN_WINTER over-cautious hypothesis) and redirects to genuinely new mechanisms (bags_graduation_snipe, letsbonk_graduation_snipe). Brain reading time per run drops slightly.",
+        "kill_criteria": "N/A \u2014 this proposal IS a kill of further investigation. If the brain re-opens this in a future run, that re-open itself violates this finding and should be flagged.",
+        "min_sample_size": "Already met: N=85 above-ceiling, N=332 under-ceiling, 6+ months of data. Closure data-supported.",
+        "regime_scope": "ANY \u2014 the resolution applies in all regimes. Sub-finding: ALTCOIN_WINTER above-ceiling cohort is N=3 (too small to claim regime-specific exception); brain's existing run-272 'over-cautious in ALTCOIN_WINTER' hypothesis is currently anti-confirmed by N=3 (WR=0%, median -13%). Drop it.",
+        "rollback_plan": "If a future research run finds compelling new evidence (e.g. enabling _persist_m5_skip_event readout reveals a m5>32% cohort with WR>50%), reopen with explicit citation. Until then, closed.",
+        "risk_if_wrong": "Risk = brain misses a future hidden cohort in the m5>32% data-gap zone. Mitigation: research-132 _persist_m5_skip_event instrumentation is already in code at degen_bot.py:3010-3016 \u2014 if brain ships a Phase-2 readout (~10 LOC) the gap closes definitionally. Recommend brain ship that readout AS PART OF this closure, then permanently shelve the broader investigation."
       }
     ],
-    "request_responses": [
-      {
-        "request_id": "REQ-013",
-        "status_set_to": "completed",
-        "finding": "REQ-013 fully serviced. (1) GRADUATION SIGNATURE: Anchor instruction discriminator on programId LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj. migrate_to_amm = cf52c091fecf91df (8 bytes hex), migrate_to_cpswap = 885cc8671cda908c. Computed via sha256('global:NAME')[0:8]; ORCHESTRATOR INDEPENDENTLY RE-COMPUTED with python hashlib AND verified against live LaunchLab buy_exact_in (faea0d7bd59c13ec), sell_exact_in (9527de9bd37c981a), initialize_v2 (4399af27da102620) which subagent-1 saw on-chain. CRITICAL: subagent-2's claimed values 0x9beae792e0c6f17d / 0x88ae8f64b0908d40 are WRONG \u2014 do NOT use those. Belt-and-suspenders qualifier: instruction's accounts MUST include FfYek5vEz23cMkWsdJwG2oa6EphsvXSHrGpdALN4g6W1 (platform_config) AND the LaunchLab instruction must be top-level, not CPI from an aggregator. Subagent-2 demonstrated the aggregator-route false positive: tx 3u7NMfKTbLL1k77S6aQJNQAP1qKRCwXA4FKoFXRqznrjw9wkLvEViUTqQDdDxeKYSYApH2u7Sgoiuh7hcy1ZT1R6 routes through both LaunchLab and CPMM as a USER SWAP, not a graduation. (2) RECENT TX SIGNATURES \u2014 neither subagent retrieved verified recent grad signatures (subagent-2 scanned 1000+ LaunchLab txs over ~10min of mainnet activity, found 0 graduations, expected since grads are <0.1% of LaunchLab traffic). RECOMMENDED PROCUREMENT for ship-time smoke test: Bitquery IDE (free tier, no auth needed for IDE) at https://ide.bitquery.io with: Program=LanMV9..., Method IN [migrate_to_amm,migrate_to_cpswap], Accounts includes FfYek5..., orderBy desc Block.Time, limit 5. Returns 5 recent grad tx hashes for end-to-end parser test. Brain should fetch these AT SHIP TIME, not pre-fetch them now (they go stale). (3) ALCHEMY logsSubscribe with mentions:[LanMV9...] is SYNTACTICALLY ACCEPTED (subagent-2 successfully subscribed, confirmed at id=2642). HOWEVER: it delivered <0.1 msg/s in a 30s probe while the program runs at ~1.7 tx/s \u2014 Alchemy's mentions filter elides CPI-only mentions, and LaunchLab is overwhelmingly invoked as a CPI-callee. WS PATH IS NOT SAFE TO SHIP. RECOMMENDED IMPLEMENTATION: HTTP polling \u2014 getSignaturesForAddress(LanMV9..., limit=100) every 30s + getTransaction(json,base58) decode + discriminator-on-instruction-data filter. ~1.7 tx/s \u00d7 30s \u00d7 2 KB getTransaction = ~100 KB/poll, manageable on Alchemy paid tier. Subagent-2 ALSO confirmed firehose subscription works (logsSubscribe 'all', 524 msg/s in 18s, no errors) \u2014 this is the fallback IF HTTP polling has problems and we need real-time. (4) ALCHEMY LIMITS: connections 100 free / 2000 paid; subscriptions 1000/conn; in-flight 200/conn; CU/s rolling 10s window with 429 over WS; server-driven pings, client must auto-pong; idle timeout 30-120s (community guidance, not documented); reconnect-on-close mandatory in production. SHIP-READINESS VERDICT: Phase-1 LOG-ONLY listener is GO via HTTP polling path (NOT WebSocket). See proposals_for_survival_brain.target='letsbonk_graduation_snipe' for the full ship spec including kill_criteria, rollback_plan, and step-by-step implementation_hint.",
-        "evidence": "Subagent-1 (synchronous, 30 min, 89 tool calls): read Raydium IDL repo (https://github.com/raydium-io/raydium-idl), Bitquery letsbonk-api docs, Alchemy logsSubscribe + Subscription API + WebSocket disconnect troubleshooting docs, Solana logsSubscribe spec; computed Anchor discriminators per sha256('global:<name>')[0:8] formula; verified the formula by dumping 5 recent LaunchLab transactions and matching their actual instruction-data prefixes against the formula output (faea0d7bd59c13ec for buy_exact_in matched live; 9527de9bd37c981a for sell_exact_in matched live; 4399af27da102620 for initialize_v2 matched live; the e445a52e51cb9a1d byte sequence identified as the Anchor self-CPI event marker, NOT a real instruction). Subagent-2 (synchronous, 48 min, 62 tool calls): used ALCHEMY_SOLANA_RPC via os.getenv (NEVER api.mainnet-beta), scanned LaunchLab via getSignaturesForAddress + getTransaction (jsonParsed) on 1000+ txs, confirmed log vocabulary (BuyExactIn 112, SellExactIn 346, InitializeV2 11, others), proved 'MigrateToAmm/MigrateToCpswap' do NOT appear in raw logs (Anchor doesn't emit instruction names; that's Bitquery's decode), demonstrated the aggregator-route false-positive case with full tx decode (sig 3u7NMfKTbL...). WebSocket probe: built _ws_probe2.py, opened 3 subscriptions on Alchemy WS, confirmed mentions:[LanMV9...] subscription accepted (id=2642 confirmed, id=2643 processed) but delivered 0 msgs in 30s + 1 msg in 15s retry; firehose 'all' subscription delivered 9438 msgs in 18s (=524/s, no disconnects). ORCHESTRATOR (this run): independently re-computed migrate_to_amm and migrate_to_cpswap discriminators with python's hashlib to resolve the discrepancy between subagent-1's cf52c091fecf91df / 885cc8671cda908c and subagent-2's 0x9beae792e0c6f17d / 0x88ae8f64b0908d40 \u2014 subagent-1 is correct, subagent-2 is wrong. Subagent-2 verification scripts left at C:\\Users\\owner\\Desktop\\defi-survival-agent\\_grad_scan2.py, _grad_scan6.py, _decode_tx.py, _ws_probe2.py, _log_grep.py for the survival brain to inspect or re-run."
-      }
-    ],
+    "request_responses": [],
     "subagents_dispatched": [
       {
-        "role": "letsBONK graduation event signature",
-        "finding": "Anchor discriminators on programId LanMV9... are migrate_to_amm=cf52c091fecf91df, migrate_to_cpswap=885cc8671cda908c (sha256(global:NAME)[0:8] formula, verified live against buy_exact_in/sell_exact_in/initialize_v2). letsBONK qualifier: platform_config FfYek5vEz...g6W1 must be in instruction accounts. Alchemy logsSubscribe mentions filter is supported syntactically (single-pubkey only). Belt-and-suspenders: migrate_to_amm CPIs to AMM v4 675kPX9..., migrate_to_cpswap CPIs to CPMM CPMMoo8...."
+        "role": "letsBONK graduation signature scout (Path B Alchemy RPC)",
+        "finding": "Delivered 2 of 5 fresh on-chain-verified migrate_to_cpswap signatures within ~13 min on program LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj. Confirmed brain's stored discriminators (cf52c091fecf91df / 885cc8671cda908c) by direct base58 inner-instruction decode. Empirical surprises: 0/2 migrate_to_amm (all migrations going to cpswap/CPMM); graduation density ~2 per 10h \u2248 5/day not 24+/day; left 4 scratch Python tools in repo root for follow-up signature mining."
       },
       {
-        "role": "letsBONK on-chain forensic decode + WS probe",
-        "finding": "Live Alchemy subscription on mentions:[LanMV9...] is ACCEPTED but delivers <0.1 msg/s vs ~1.7 tx/s actual program rate (Alchemy mentions filter elides CPI-only mentions; LaunchLab is overwhelmingly CPI-invoked from aggregators). WS firehose 'all' delivered 524 msg/s no errors, viable as fallback. Scanned 1000+ LaunchLab txs in ~10min of mainnet activity, found 0 graduations (rare, <0.1% of traffic). Demonstrated false-positive aggregator-route case (tx 3u7NMfKTbL...) where LaunchLab is CPI'd inside a user swap \u2014 disambiguator: graduation has LaunchLab top-level, route has it as CPI-callee. Subagent's claimed discriminators were wrong (orchestrator re-verified)."
+        "role": "m5_pump_skip retro-mine (trade log)",
+        "finding": "Negative-result, high-confidence: m5 7% ceiling is correctly calibrated. Above-ceiling cohort N=85 closed trades at WR 28.7%, median -8.07%; under-ceiling N=332 at WR 37.0%, median -2.60%. 7 isolated +20% winners above-ceiling are scalp-shaped, no delayed-entry mechanism. Data-gap noted: m5>32% never traded so never logged; research-132 _persist_m5_skip_event already instruments this but no readout is wired."
       },
       {
-        "role": "novel non-letsbonk edge hunt (boost velocity)",
-        "finding": "DexScreener /token-boosts/latest/v1 (free, 60/min, no auth) is the half-built signal infrastructure: bot already polls and persists 383 KB to sol_dex_boosts_log.json but doesn't compute deltas. New hypothesis boost_velocity_burst: 5-min boost-amount delta >=30 indicates project paid ~$300 for coordinated retail attention; mechanical 5-15 min retail-click momentum window; predicted 8 fires/day, 45-55% WR at +12% TP / -7% SL / 12-min hard time stop. Edge persists because long-term boost-token return is -48% so quant bots ignore the signal. Cross-cohort: HANTA appears in BOTH research-142 pathogen-meme cluster AND today's 150-boost recipient \u2014 boost-velocity stacks with narrative-cohort signals."
-      },
-      {
-        "role": "trade-log strategy-conditional 1-6h drag mining",
-        "finding": "OVERTURNS research-142 #3 stop-widen proposal. 84% of the 1-6h-bucket -0.488 SOL drag is COPY_TRADE-ONLY (-0.4075 SOL across 181 trades). Of those 181: 20 trades = -0.4274 SOL are -100% reconcile/orphan rugs (NOT slow bleeders past 8% stop). Moderate 1-6h copy_trade losers sum to only -0.0493 SOL \u2014 break-even net of winners. A wider stop wouldn't have caught any of the rug damage. SEVEN strategies are NET POSITIVE in 1-6h (fresh_profile +0.0045 WR 100% N=3, consensus_boost +0.0044 WR 80% N=5, bear_strength +0.0031 WR 67% N=3, bounce_hunter +0.0045 WR 50% N=4, profile_survivor +0.0017 WR 33% N=9, veteran_momentum +0.0031 WR 75% N=4, quiet_accum +0.0112 WR 43% N=14) and would be HARMED by a global stop-widen. CORRECT FIX: copy_trade-only mid-hold liquidity-drop guardrail aimed at rug detection, not stop calibration."
+        "role": "novel launchpad scout",
+        "finding": "Recommended bags.fm as next-tier Solana launchpad target. Shares Meteora DBC program (dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN) with Believe and Jupiter Studio but is isolable via creator authority BAGSB9TpGrZxQbEsrEznv5jXXdwyP6AXerN8aVRiAmcv. Distinct mechanism: 1% perpetual creator royalty drives KOL-shill incentive structure absent from pump.fun (0.05%) and letsBONK. Honest caveat: Q1 2026 surge cooled (Meteora DBC monthly revenue $5.1M Jan -> $371K Mar); volume bar marginal at ~$1-3M/day. Runners-up Believe, Jupiter Studio, Heaven, Boop.fun, Moonshot all rejected for volume or graduation-density reasons."
       }
     ],
     "data_sources_used": [
-      "alchemy_solana_rpc",
-      "alchemy_solana_wss",
-      "raydium_idl_github",
-      "bitquery_letsbonk_api_docs",
-      "shyft_yellowstone_grpc_docs",
-      "alchemy_subscription_api_docs",
-      "alchemy_websocket_disconnect_docs",
-      "solana_logssubscribe_spec",
-      "dexscreener_token_boosts_api",
-      "dexscreener_top_boosts_api",
-      "theholycoins_dethective_boost_analysis",
-      "quicknode_jito_inflight_bundles",
-      "bitquery_jito_bundle_api",
-      "sol_trade_log_local",
-      "sol_strategy_stats_local",
-      "sol_dex_boosts_log_local",
-      "sol_brain_directives_local",
-      "sol_heartbeat_local",
-      "sol_research_findings_v142_local"
+      "solana_rpc_alchemy",
+      "bitquery_docs_letsbonk_bags_believe_jupiter",
+      "defillama_protocol_pages",
+      "dexscreener_search",
+      "own_trade_log_417_m5_captured_trades",
+      "own_strategy_stats",
+      "sol_events_ring_buffer",
+      "pineanalytics_meteora_q1_2026"
     ],
-    "next_run_focus": "(1) GBB POST-RUN-278 RE-AUDIT \u2014 bot still shows cycle 2 heartbeat at run-143 start (12:31 EDT, 16 min stale at 12:39 EDT); confirm by run-144 whether cycle counter advanced past 10 and whether GBB SCAN/SIGNAL events appeared in sol_events.json \u2014 if still stuck at cycle 2-3, the FRESHNESS_SEC ship was insufficient, escalate to process-trace audit. (2) letsbonk_graduation_snipe IMPLEMENTATION CHECK \u2014 if survival brain ships the listener (HTTP polling path per REQ-013 response), audit at run-144: count of graduation events captured, false-positive rate vs Bitquery REST cross-check, listener health (RPC errors, getSignaturesForAddress 429s). (3) boost_velocity_burst BACKTEST CHECK \u2014 if survival brain runs the backtest on sol_dex_boosts_log.json, audit the historical hit-rate result; if hit-rate >40% recommend Phase-2 live ship. (4) copy_trade RUG-GUARD AUDIT \u2014 if the survival brain ships the copy_trade-only liquidity-drop guardrail, audit first 10 fires for false-positive rate. (5) RE-MINE: rug-detection beyond liquidity-drop \u2014 does deployer-wallet sell pattern OR top-holder concentration spike OR Jupiter route slippage signature predict the 20-rug cohort better than liquidity-drop? Helius DAS API is free (10 RPS, 100k req/mo) \u2014 viable backtest data source. (6) HANTA-cohort follow \u2014 pathogen-meme narrative may rotate; track HANTA + Norovirus + any new pathogen mints over the 12h window.",
+    "next_run_focus": "(1) Bags discriminator lockdown \u2014 research-145 should pull 3-5 fresh Bags-specific graduation signatures and decode the actual migrate_meteora_damm / migration_damm_v2 instruction discriminators (subagent C did NOT lock these down \u2014 Phase 1 logger spec is currently 'capture instruction names emitted'). (2) If brain has shipped letsBONK listener by run-145, audit cycle counter advancement and grad-event capture rate \u2014 confirm 5/day prediction holds. (3) If brain has shipped _persist_m5_skip_event Phase-2 readout by run-145, mine the m5>32% zone for the actual data-gap that subagent B's analysis could not address. (4) Consider rotating to a wallet-leaderboard scout (gmgn.ai, Photon, Axiom) \u2014 last done in research-110 era; current 23-wallet target list is stale.",
+    "ops_note_subagent_artifacts": "Subagent A left 4 Python files in repo root (find_grad_sigs.py, find_grad_sigs2.py, find_grads_via_config.py, sample_discriminators.py \u2014 all <5KB each) as scratch tooling for signature mining. They are read-only and harmless but pollute the repo. Brain or operator should sweep them; research-brain hard boundaries forbid this run from deleting them.",
+    "ops_note_program_id_check": "Subagent A initially flagged the prompt's letsBONK program ID as wrong, but verification against sol_brain_directives.json shows brain ALREADY stores the correct ID (LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj). The prompt-side fabrication was caught and discarded. No directives correction needed.",
     "meta": {
-      "elapsed_min": 7,
-      "subagent_count": 4,
-      "web_calls": 18,
+      "elapsed_min": 35,
+      "subagent_count": 3,
+      "web_calls": 14,
+      "rpc_calls": 4240,
       "new_tokens_scouted": 5,
-      "regime_at_run": "POST-BULL-FLIP RETREAT \u2014 heartbeat 12:31 EDT shows SOL/USD $92.89 (below $93 BULL trigger), BTC.D 58.3% (still ALTCOIN_WINTER); fresh_profile likely re-blocked since the BULL flip from research-142 (00:30 EDT, +6.2% h24) has reverted within ~12h. Bot bankroll 1.1556 SOL, 0 open positions per heartbeat.",
-      "bot_state_at_run": "PID 3168 cycle 2 heartbeat 12:31 EDT (16 min stale at run-143 start, mirrors the cycle-#2 hang symptom from research-142 \u2014 survival brain run-278 shipped GBB_FRESHNESS_SEC 300->1800 to fix it; need run-144 to confirm). Bankroll 1.1556 SOL. 0 open positions. sol_letsbonk_graduation_log.json does NOT exist yet (REQ-013 implementation still pending). sol_dex_boosts_log.json 383 KB indicates boost polling infrastructure is live.",
-      "req_013_status": "COMPLETED \u2014 full ship spec delivered including discriminators (verified by orchestrator), platform_config qualifier, ship-blocker for WS path identified (CPI-mentions filter elision), recommended HTTP-polling implementation path, Phase-1/Phase-2 gate, and explicit warning about subagent-2's incorrect discriminator values."
+      "over_budget_reason": "Subagent A used 117 tool calls / 26 min to deliver 2 of 5 sigs via Alchemy RPC \u2014 Path A (Solscan/SolanaFM web) returned 403. Time spent was load-bearing for the verification but exceeded 20-min target by 75%. Mitigation for next run: time-cap any subagent doing batch RPC scans at 8 min hard, or pre-stage a Bitquery API key in .env to avoid the RPC fallback entirely."
     }
   },
   "research_status": {
-    "running": true,
-    "started_at": "2026-05-10 00:39:25 EDT",
-    "run_id": "research-144"
+    "running": false,
+    "last_run_id": "research-144",
+    "finished_at": "2026-05-10 01:17:13 EDT"
   },
   "maintenance_status": {
     "timestamp": "2026-05-10 01:11:00 EDT",
@@ -378,7 +341,7 @@
     "dashboard_pid": 7412,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 32.64,
+    "hours_since_last_trade": 32.73,
     "dormancy_alert": true,
     "filter_lockout_diagnosis": "Skip rate 52/100 (BUY_SKIP 45 + CB_SKIP 7); SIGNAL=36 SCAN=12. NOT >95% threshold so NOT classic filter-lockout. Funnel scans and signals fire; every candidate fails downstream gates (midpump, m5_pump, m5_dump, sell-conflict, downtrend, h24-floor). CHOP+ALTCOIN_WINTER regime; SOL h24 still below +5% BULL trigger so fresh_profile (highest-WR strategy) stays regime-gated. Same pattern as the previous 8 runs.",
     "actions_taken": [
@@ -412,7 +375,7 @@
     "next_run_focus": "Verify the freshly-restarted bot (PID 7868) is advancing cycles \u2014 heartbeat should show cycle counter > 1 within ~10\u201315 min. If heartbeat goes >600 sec stale again on this same PID, the stall reproduces under fresh memory and the issue is structural (likely the main scanner blocked on a slow upstream call), not a leak \u2014 escalate to strategist. Note that prior maint-214 attributed >600s heartbeat as a 'known false positive', but cycles 34\u219235 took ~20 min and 35\u219236 never finished within 30 min, which exceeded the cadence baseline; restart was justified. Dormancy is now 32.6 h with 9 consecutive alerts \u2014 operator/strategist should evaluate (a) the GBB age<=2min LP-concentration exemption deferred by run-280, (b) BULL trigger watch (SOL h24 still below +5% per heartbeat), (c) whether the run-280 boost_velocity_burst data-substrate logger should ship.",
     "log_truncations": [],
     "elapsed_min": 4,
-    "file_age_min": 1.2,
+    "file_age_min": 6.3,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1848,7 +1811,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 4.5,
+    "age_min": 9.6,
     "stale": false,
     "available": true
   },
@@ -1899,8 +1862,8 @@
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 67.188041,
-  "maint_next_str": "1:15 AM EST",
+  "maint_next_sec": 658.588473,
+  "maint_next_str": "1:30 AM EST",
   "maint_last_run_str": "1:12 AM EST",
   "maint_stale": false,
   "memk_next_sec": null,
@@ -1909,13 +1872,13 @@
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "boost_velocity_burst",
-      "run_id": "research-143",
-      "status": "queued",
-      "status_label": "\ud83d\udfe1 Queued",
-      "status_color": "#ffaa00",
-      "evidence_text": "run-279 (b) boost_velocity_burst BACKTEST => ATTEMPTED, BLOCKED on 60-min mint dedup; documented option-b ship path for run-281",
-      "evidence_source": "followup"
+      "hypothesis_name": "bags_graduation_snipe",
+      "run_id": "research-144",
+      "status": "pending_brain_run",
+      "status_label": "\u23f3 Pending next brain run",
+      "status_color": "#7cd3ff",
+      "evidence_text": "",
+      "evidence_source": ""
     },
     "tally": {
       "implemented": 26,
@@ -1925,139 +1888,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-10T00:18:51.614855",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F9oqdWPu sold J55K2cLf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:18:51.630522",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip J55K2cLf: tracked wallet sold this token 21s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:18:51.630522",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip J55K2cLf: tracked wallet sold this token 21s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:18:51.630522",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip J55K2cLf: tracked wallet sold this token 21s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:19:04.269825",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CyaE1Vxv sold J55K2cLf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:19:38.954425",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 2fg5QD1e sold HqX6oe7v \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:24:56.733895",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4xY9T1Q7 sold SEGxU4pW \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:24:59.158345",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip AMERICA: h6=62.6% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:25:54.599950",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:29:48.282473",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip rtprtprtprpt: m5=-11.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:29:48.758644",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip rtprtprtprpt: m5=-11.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:29:49.203717",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip rtprtprtprpt: m5=-11.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:29:49.663879",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip rtprtprtprpt: m5=-11.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:29:50.142325",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip rtprtprtprpt: m5=-11.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:30:09.651262",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip TEPE: m5=15.2% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:30:09.660937",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5t9xBNuD sold J55K2cLf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:30:09.664947",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5t9xBNuD sold J55K2cLf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:32:46.706290",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold BMcReKHF \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-10T00:32:48.930957",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip MNEMOS: m5=52.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-10T00:32:48.937321",
       "type": "SIGNAL",
@@ -2624,6 +2454,139 @@
       "color": "#d29922",
       "msg": "Sell-conflict skip EL1mL2xB: tracked wallet sold this token 83s ago",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:14:51.666235",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BMNTP: m5=1680.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:14:51.666235",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9jyqFiLn sold EL1mL2xB \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:14:52.190335",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip bmtp: downtrend h1=-48.1% h24=-48.1%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:15:14.327629",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ASVzakeP sold EjdwyXj9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:15:16.646053",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip 1HOUR: h1=-14.8% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:16:41.887625",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 39q2g5tT sold 6EQKNJD6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:16:41.895656",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 39q2g5tT sold 6EQKNJD6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:16:41.901417",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 39q2g5tT sold 6EQKNJD6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:16:41.907436",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 39q2g5tT sold 6EQKNJD6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:16:54.846034",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Gate probation 9c6StdpH: 1263.5h idle, WR 40% (12/30), PnL=-0.0270 \u2014 allowing signal (next reset in 24h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:16:54.848050",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "PnL gate 9c6StdpH: 30 trades, WR 40%, PnL=-0.0270 SOL < -0.010 threshold",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:02.276485",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BAr5csYt sold 24hTZu4B \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:02.276485",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BAr5csYt sold 24hTZu4B \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:02.276485",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BAr5csYt sold 24hTZu4B \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:15.087866",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip BMNTP: h6=1440.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:15.595445",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip BMNTP: h6=1440.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:16.038807",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip BMNTP: h6=1440.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:16.491118",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip BMNTP: h6=1440.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-10T01:17:16.965327",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip BMNTP: h6=1440.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2679,9 +2642,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "01:13:52",
+  "ts": "01:19:01",
   "__publish_meta": {
-    "published_at": "2026-05-10 01:13:52 EDT",
+    "published_at": "2026-05-10 01:19:01 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
