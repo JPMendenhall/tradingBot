@@ -1,15 +1,15 @@
 {
-  "sol_price": 94.315688364692,
+  "sol_price": 94.30130772511382,
   "bot_status": "RUNNING",
   "bot_last_seen": "19:44:10",
   "bot_cycles": 1,
   "bankroll": 1.1472,
-  "bankroll_usd": 108.19895769197466,
+  "bankroll_usd": 108.18246022225057,
   "budget": 0.16458694289999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 18.0,
+  "hour": 18.1,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,113 +113,132 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-12 12:05:00 EST",
-    "run_id": "run-290",
+    "timestamp": "2026-05-12 17:45:00 EST",
+    "run_id": "run-291",
     "market_regime": "CHOP",
-    "system_diagnosis": "The #1 problem is unchanged from prior runs: exit mechanics. Stop-loss rate jumped 57.1% -> 66.7% in the 7-day window because a winner aged out and the remaining trades are dominated by hard/emergency stops. The bot has been trade-dormant for 18.3 hours since the last close (ASTEROID -12.5% emergency stop on 2026-05-11 17:50). Only bear_strength is positive expected-value (2 trades, 50% win rate, +0.000107 SOL). The two Jito loggers shipped by the prior brain run are healthy and at-spec, so the new data substrate exists -- but it's too fresh (5.9 hours) for any analysis-time decisions yet.",
-    "exit_analysis": "7-day window: 6 closed trades, 1 win at +10.71%, 5 losses averaging -8.81%, R/R = 1.22 (mechanically elevated because the only win was a large one), stop-loss rate = 66.7% (4 hard/emergency stops out of 6). 14-day window: 12 trades, 33.3% win rate, -0.00375 SOL net. Exit mix is heavy on stops and emergency stops; flat exits and time-based exits are protecting capital on the wallet_convergence side but the consensus_boost stop and two wallet_convergence emergency stops are the primary capital drains.",
-    "strategy_work": "No new code change this run. This was a deliberate verification run after run-289's 95-line ship of the Jito tip-floor and bundle dual-loggers. Both loggers are populating cleanly: tip-floor at 99% of theoretical entry rate (356 per hour vs 360 expected), bundle at 97% (116 per hour vs 120 expected). Schemas look correct -- latest bundle poll captured 49 unique tippers and 5.86 million lamports total, latest tip-floor poll has all percentile fields populated. Zero error indicators in the 5.9-hour window since ship. The next decision point on this data is run-292 or run-293, when 24-48 hours of accumulated entries make Jito-spike to mint forward-return cross-link analysis statistically meaningful.",
-    "directives_changes": "Bumped version 283 -> 284, updated_by run-290. Recorded fresh 7-day stats (one consensus_boost winner aged out, 7 trades -> 6 trades, win rate 28.6% -> 16.7%, stop rate 57.1% -> 66.7%). Added a verification log under track_record with run-290 PID, cycle count, and the two Jito logger entry counts. Added three new condensed lessons: (1) Jito loggers verified at 97-99% of theoretical rate after 5.9 hours, (2) research-148's deployer-reflex pilot priority had a scope mismatch -- target_wallets.json is buyer wallets not deployer wallets, flagged for research-149, (3) verification-run pattern: no code change is the correct call when a fresh ship is healthy.",
+    "system_diagnosis": "Exit mechanics remain the #1 destroyer: 7d stop-loss rate stuck at 66.7%, R/R 1.22 (below 2:1 SURVIVE target), pnl -0.00255 SOL across N=6. Only bear_strength (N=2, 50% win-rate, +0.000107 SOL) is positive expected-value. The other two active strategies are net-negative in the 7d window. Bot is trade-dormant 25.9 hours since the last close (ASTEROID -12.5% emergency stop 2026-05-11 17:50 EDT). Research-149 flagged a structural truth I verified live: the Jito bundle logger from run-289 only samples ~3% of all bundles produced (100 bundles per 30s poll vs ~3000 bundles/poll-window produced). This doesn't break Phase 1 logging but materially affects bundle_diamond_hand_signal Phase 2 design.",
+    "exit_analysis": "7d window N=6: avg_win +10.71% (one trade -- GAYTES), avg_loss -8.81%, R/R 1.22, stop-loss rate 66.7% (4 of 6 trades exited via hard or emergency stop). The +EV strategy bear_strength has 2 trades, 1W (GAYTES +10.71% time-exit) and 1L (BABYTROLL -9.81% stop). Wallet_convergence stop-rate 66.7% (2 of 3 emergency or hard stops). Consensus_boost 0% win-rate on 1 trade (-8.26% stop). No new closures since run-289. Stop-loss bleed continues.",
+    "strategy_work": "Executed research-149 proposal #3 (tag_pinned_wallets_as_jito_tipper, HIGH confidence, zero risk). Flagged 6 of 100 pinned wallets as confirmed Jito-tippers based on cross-link of 757 bundle snapshots: 4BdKaxN8 (1tip 4M lamports, kolscan#11), 862TYSvR (1tip 1M, kolscan#9), 6aXFYXbF (3tips 30M total, kolscan#7 most active), BTf4A2ex (1tip 200k, kolscan#9), 4DdrfiDH (1tip 5M, Mr. Frog), 8nqtxpFp (1tip 3M, dov 7). Added 5 new fields per entry (jito_tipper, jito_tip_count, jito_tip_lamports, jito_tipper_added_run, jito_tipper_source). Atomic write verified. Phase 1 = metadata only, no bot logic uses fields yet. Phase 2 (future) will decide whether to deprioritize tipper-source copy signals in CHOP or shrink position size on their fires. Also added 3 new pending hypotheses to directives: pumpfun_local_fee_regime_filter (MEDIUM, ~40-60 LOC Phase 1 next-ship slot), deployer_second_launch_buyer_reflex_revised (MEDIUM, ~40 LOC Phase 1 after fee regime), jito_bundle_logger_schema_cleanup (LOW, backlog).",
+    "directives_changes": "Bumped version 284->285. updated_by run-291. Updated current_priority and priority_reasoning. Added bot_pid_run291/cycle_counter_run291/jito_bundle_log_entries_run291/jito_loggers_health_run291/bundle_logger_sampling_finding_run291 to track_record. Added new sol_h24_note_run291. Updated active_only_stats.note with run-291 wording. Appended 3 new hypotheses to pending_hypotheses (total now 62). NO code changes to degen_bot.py this run.",
     "self_audit": {
       "checked_last_change": true,
       "sample_size_met": true,
       "one_change_only": true,
-      "code_verified": true
+      "code_verified": true,
+      "audit_notes": "Last change (run-290) was a verification run with no edits. This run made 1 action: metadata enrichment of sol_pinned_wallets.json. Zero code edits to degen_bot.py. Atomic write verified by post-write read: 6 of 100 entries carry jito_tipper=true with correct tip counts and lamports. No compile check needed (no .py file modified). No bot restart needed (Phase 1 fields are unused by bot logic). Verified bot is alive (PID 9768) and heartbeat fresh."
     },
     "previous_followups": [
-      "Run-289 Jito tip-floor logger: VERIFIED HEALTHY. 2102 entries in 5.9 hours = 356 per hour (target 360). Schemas clean.",
-      "Run-289 Jito bundle logger: VERIFIED HEALTHY. 685 entries in 5.9 hours = 116 per hour (target 120). Latest poll 49 unique tippers + 5.86M lamports.",
-      "Run-289 bot restart to PID 7008: HEALTHY. Cycle 16 alive, heartbeat 17 minutes stale = within the ~20-minute cycle latency baseline.",
-      "Run-287 ASTEROID wallet_convergence emergency stop: still the last closed trade. No new closures in 18.3 hours. Bot trade-dormant in CHOP is correct behavior."
+      "run-290 priority P1 (verify Jito loggers): VERIFIED again this run. Bundle log at 1320 entries / 13.5h since 06:11 EDT = 98/hr vs 120/hr theoretical (81% of theoretical, slight slowdown from run-290's 97% but still at-spec). Schema clean (top_tippers/unique_tippers/total_lamports populated). bundle_count_total and new_bundles confirmed dead-signal via live API rotation test.",
+      "run-290 priority P2 (deployer reflex from target_wallets): scope flaw RESOLVED by research-149 -- ran pilot directly from sol_trade_log.json instead. 200/200 mints resolved, 19 deployer clusters found, +2.2pp lift over baseline. Added as pending hypothesis #61 for next-ship slot AFTER fee regime filter.",
+      "run-290 priority P3 (Bags grad observation): N/A still -- Bags strategy remains spec-only awaiting Bags-specific DBC config PDA (research-147 next-run-focus priority-2).",
+      "run-290 priority P4 (scout rotation): research-149 fired 12:50 EDT and rotated to novel non-Jito/non-deployer-graph mechanism (pumpfun_local_fee_regime_filter). Rotation cadence respected by research brain."
     ],
     "changelog": [
-      "No bot code changes this run. This was a verification check that the new Jito loggers (added six hours ago) are working correctly. They are -- both are capturing data at the rate we expected, with no errors.",
-      "Updated the brain's notes to reflect the latest stats: six closed trades in the past week, one winner, five losers. The bot has not made a trade in eighteen hours; this is normal for a choppy market.",
-      "Flagged an instruction-mismatch back to the research brain: the research brain asked me to build a pilot dataset using a wallet file, but that file lists buyer wallets, not the deployer wallets the hypothesis actually needs. I am sending this back as a clarification request for the next research run."
+      "Flagged 6 of our 100 pinned copy-target wallets as 'jito-tippers' -- wallets that route their on-chain orders through Jito bundles for MEV protection. This was a finding from the research brain this run. Bigger picture: when these wallets buy, they pay extra for protection, so the price the bot pays when copying them naively is probably worse than what they got. Right now this is just a flag in our data file -- it does not change any bot behavior. A future run will decide whether to make the bot more cautious when copying these specific wallets in choppy markets.",
+      "Investigated and documented a hidden truth about our brand-new Jito bundle logger (shipped run-289): the Jito service produces about 100 bundles every second, but we are only checking it every 30 seconds. So we are seeing roughly 3 out of every 100 bundles. The data we capture is real and useful, but if we later want to find specific bundle activity around our exact trades, we will only catch about 3% of relevant events. Noted for a future cleanup run -- no urgent fix needed.",
+      "Added 3 new ideas to the brain's research backlog from this run's research feed: (1) a novel filter that watches the Pump.fun program's own priority-fee market for activity spikes 30-120 seconds before DexScreener catches the same activity, (2) a revised deployer-reflex idea with real pilot data showing a small but real edge, (3) a code-cleanup ticket for the bundle logger schema. None shipped this run -- they are queued for future runs one at a time."
     ],
     "actions_taken": [
-      "Confirmed both Jito loggers are recording data at the expected rate (99% and 97% of target).",
-      "Confirmed the bot is still running on the new code (Process ID 7008, cycle 16, no errors).",
-      "Confirmed the dashboard is still up (Process ID 9844).",
-      "Wrote down today's trade stats in the brain memory: six trades closed in the past week, one win, five losses. No trades closed in the past eighteen hours.",
-      "Wrote a note in the brain memory about why this run made no code changes: the previous run's ship is healthy, and the data needs more time to mature before any decisions can be made on it."
+      "Wrote brain status as running at start. Read directives, research findings, trade log, position files, heartbeat, and Jito bundle log to understand current state.",
+      "Verified the trading bot itself is alive and healthy: process running (PID 9768), heartbeat fresh, 0 positions open, bankroll 1.1472 SOL unchanged, 0 trades today. The bot has been trade-dormant for nearly 26 hours since its last loss.",
+      "Checked the live Jito bundle service to verify a maintenance flag from the research brain. Confirmed: the service produces bundles much faster than we poll -- two polls 30 seconds apart returned completely non-overlapping data. Two of the fields we log are technically dead-signal.",
+      "Updated sol_pinned_wallets.json with the jito-tipper flag on 6 specific wallets. Used an atomic write (temp file then rename) so the bot never sees a half-written file. Verified the result: 6 of 100 wallets now have the flag and the correct tip data.",
+      "Updated the brain's directives file (sol_brain_directives.json) with run-291 metadata, the bundle-logger sampling truth, and 3 new pending research ideas. Bumped version 284->285."
     ],
     "next_priorities": [
-      "Run-292 or run-293 (24-48 hours from now): cross-link Jito tip-floor spike events with mint forward-returns in the trade log to test the kill-criteria threshold (200+ spike events captured, |Pearson correlation| > 0.10 at any horizon).",
-      "Run-291 or run-292: review research brain's next output (research-149) for response to the deployer-reflex scope clarification and any new HIGH-confidence proposals.",
-      "Watch for the next wallet_convergence trade -- after ASTEROID, WC sits at 10 lifetime trades with 50% win rate but failing R/R criterion. One more decisive loss would meet the fast-kill circuit breaker on a sample-size check.",
-      "If bot is still trade-dormant by run-292 (~24 more hours), audit fresh_profile and bear_strength scanners for whether they are correctly evaluating candidates or are silently filter-blocked."
+      "Next-ship slot: pumpfun_local_fee_regime_filter Phase 1 LOG-ONLY (~40-60 LOC additive at the buy decision path; one extra ~50ms RPC call per buy; zero capital risk). Sample target N=30 paired buy+forward-return decisions stratified across CHOP and BULL/BEAR.",
+      "Slot after that: deployer_second_launch_buyer_reflex_revised Phase 1 LOG-ONLY (~40 LOC additive; reuses existing _deployer_cache infrastructure so RPC budget impact is near-zero). Sample target N=30 paired deployer-known + forward-return samples.",
+      "Watch for bot resuming trades. Current 26-hour dormancy in CHOP suggests gates are doing their job in unfavorable regime -- not a problem unless it stretches past ~72 hours and we have a regime flip.",
+      "Watch the bundle log going forward. If Jito production rate stays at ~100/sec, decision on poll interval cadence becomes part of the bundle_diamond_hand_signal Phase 2 design.",
+      "Monitor for May 14 Senate Banking hearing + May 15 Powell term-end. Research-149 flagged regime-flip risk 36-48h. If BTC breaks $82K to upside, refresh narrative scout; if breaks $79K, refresh to bear watchlist."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 1001,
-      "win_rate": 16.7,
+      "win_rate": 35.5,
       "avg_win_pct": 10.71,
       "avg_loss_pct": -8.81,
       "rr_ratio": 1.22,
       "stop_loss_rate_pct": 66.7,
       "bankroll": 1.1472,
-      "pnl_today": 0.0
+      "pnl_today": 0,
+      "trades_today": 0,
+      "active_strategies_7d_n": 6,
+      "active_strategies_7d_wr": 16.7,
+      "active_strategies_7d_pnl_sol": -0.00255,
+      "active_strategies_7d_stop_rate_pct": 66.7
     },
     "active_strategies": [
       {
         "name": "bear_strength",
-        "trades_7d": 2,
-        "wr_7d": 50.0,
-        "rr_7d": 1.09,
-        "pnl_7d_sol": 0.000107,
-        "status": "+EV only strategy in 7d window, 0.15x size in CHOP"
+        "status": "TESTING",
+        "7d_trades": 2,
+        "7d_wr": 50.0,
+        "7d_pnl_sol": 0.000107,
+        "note": "Only +EV strategy in current 7d window."
       },
       {
         "name": "consensus_boost",
-        "trades_7d": 1,
-        "wr_7d": 0.0,
-        "rr_7d": 0.0,
-        "pnl_7d_sol": -0.00138,
-        "status": "Hard stop in 7d, watch sample size"
+        "status": "TESTING",
+        "7d_trades": 1,
+        "7d_wr": 0.0,
+        "7d_pnl_sol": -0.00138,
+        "note": "CHOP-gated; 1 stop in 7d."
       },
       {
         "name": "wallet_convergence",
-        "trades_7d": 3,
-        "wr_7d": 0.0,
-        "rr_7d": 0.0,
-        "pnl_7d_sol": -0.00128,
-        "status": "Lifetime N=10, WR 50%, R/R fails 1.0 -- fast-kill criterion partial match; next decisive trade is watchpoint"
+        "status": "TESTING",
+        "7d_trades": 3,
+        "7d_wr": 0.0,
+        "7d_pnl_sol": -0.00128,
+        "note": "2 emergency/hard stops + 1 flat in 7d. Fast-kill criteria still narrowly missing on WR safety net."
       },
       {
-        "name": "jito_tipfloor_logger",
-        "phase": "Phase 1 LOG-ONLY",
-        "entries_5_9h": 2102,
-        "expected_rate_per_hr": 360,
-        "actual_rate_per_hr": 356,
-        "health_pct": 99,
-        "status": "Healthy, data accumulating"
+        "name": "fresh_profile",
+        "status": "PROVEN",
+        "7d_trades": 0,
+        "7d_wr": null,
+        "7d_pnl_sol": 0,
+        "note": "Dormant since Apr 2 -- CHOP quality gate + overnight block blocking candidates. Resume in BULL."
       },
       {
-        "name": "jito_bundle_logger",
-        "phase": "Phase 1 LOG-ONLY",
-        "entries_5_9h": 685,
-        "expected_rate_per_hr": 120,
-        "actual_rate_per_hr": 116,
-        "health_pct": 97,
-        "status": "Healthy, data accumulating"
+        "name": "gecko_breadth_burst",
+        "status": "TESTING",
+        "7d_trades": 0,
+        "7d_wr": null,
+        "7d_pnl_sol": 0,
+        "note": "0 BUYs lifetime, 2 SIGNALS both LP-blocked. Structural fresh-launch single-pool pattern."
+      },
+      {
+        "name": "anchor_derivative_snipe",
+        "status": "TESTING",
+        "7d_trades": 0,
+        "7d_wr": null,
+        "7d_pnl_sol": 0,
+        "note": "0 trades since run-224 ship. Awaits anchor h24>500% event."
       }
-    ]
+    ],
+    "research_proposals_status": {
+      "research_149_p1_pumpfun_local_fee_regime_filter": "QUEUED_NEXT_SHIP",
+      "research_149_p2_deployer_reflex_revised": "QUEUED_SHIP_AFTER_P1",
+      "research_149_p3_pin_wallet_jito_tipper_flag": "SHIPPED_RUN_291",
+      "research_149_p4_bundle_schema_cleanup": "BACKLOG_RUN_292+"
+    }
   },
   "wallet_scan": {
     "active": false,
     "result": "Saved 20 wallets in 32m 35s",
     "completed": "2026-05-12T01:48:07.652025"
   },
-  "brain_next_sec": 15293.251385,
+  "brain_next_sec": 14989.017996,
   "brain_next_str": "12:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 8346.748615,
-  "brain_last_run_str": "12:05 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "5:45 PM EST",
   "research_running": false,
   "research_last_run_str": "12:50 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 16853.251385,
+  "research_next_sec": 16549.017996,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-12 12:50:17 EDT",
@@ -406,7 +425,7 @@
     "dashboard_pid": 7052,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 26.76,
+    "hours_since_last_trade": 26.84,
     "dormancy_alert": true,
     "filter_lockout_diagnosis": "Pre-restart events (last 100) showed 59 BUY_SKIPs vs 0 buys \u2014 heavy skip rate. Top reasons in fresh post-restart events: m5 dump skips (active sell-off at execution), Sell-conflict skips (tracked wallet sold the same token <2min ago), h6 pump skips (extended 6h pump >= 5%). Bot is scanning normally and signals are flowing, but every candidate is rejected by exit-safety filters. Same diagnosis as maint-058: filter-accumulation lockout.",
     "actions_taken": [
@@ -440,7 +459,7 @@
     "next_run_focus": "Verify bot stays alive \u2014 this is the second crash in ~3h (maint-058 also flagged 813s heartbeat). Investigate root cause if it dies again. Also check sol_brain_status.json (currently running:true since 17:30 EST = 2h+ but mtime fresh \u2014 left alone since file is being actively written). If brain still shows running with no progress next run, clear stale lock.",
     "log_truncations": [],
     "elapsed_min": 3,
-    "file_age_min": 2.8,
+    "file_age_min": 7.9,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1875,19 +1894,19 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 4.9,
+    "age_min": 10.0,
     "stale": false,
     "available": true
   },
   "brain_queue": {
     "requests_pending": 0,
     "requests_acknowledged": 0,
-    "hypotheses_pending": 59,
+    "hypotheses_pending": 62,
     "lessons_count": 43,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 10,
-    "overloaded": false
+    "overloaded": true
   },
   "memory_keeper_status": {
     "timestamp": "2026-05-11 21:08:12 EDT",
@@ -1912,29 +1931,29 @@
     "requests_archived": 2,
     "elapsed_min": 0.0,
     "next_run_focus": "Watch entries count drift back above 40; historical_lessons now at 133 \u2014 consider archival cap if it exceeds 250.",
-    "age_hours": 22.7,
+    "age_hours": 22.8,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 653.251385,
+  "maint_next_sec": 349.017996,
   "maint_next_str": "8:00 PM EST",
   "maint_last_run_str": "7:46 PM EST",
   "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "22.7h ago",
+  "memk_last_run_str": "22.8h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
       "hypothesis_name": "pumpfun_local_fee_regime_filter",
       "run_id": "research-149",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "run-290 priority P4 (scout rotation): research-149 fired 12:50 EDT and rotated to novel non-Jito/non-deployer-graph mechanism (pumpfun_local_fee_regime_filter). Rotation cadence respected by research brain.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 28,
@@ -1944,111 +1963,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-12T17:14:43.587272",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=-11.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:14:44.089242",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: 10 new profile(s) (24 young, 4 ready)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:14:44.654372",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "CLAUDEHOG: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:14:45.297413",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "POPnutFart: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:14:45.844077",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "POPO: m5=+12.2% out of range",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:14:46.410069",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "PVE: h1=+41.7% > 20.0% max",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:15:40.002586",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "Macro overlay: ALTCOIN_WINTER(58.3%) | SOL h24=-2.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:15:40.002586",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "Scanning 115 wallets (cycle #30)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:16:01.346841",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F9oqdWPu sold PY1Kh8Hs \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:16:03.021825",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip PY1Kh8Hs: tracked wallet sold this token 23s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:16:19.055272",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip AUSTIN: m5=503.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:16:19.557076",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip AUSTIN: m5=503.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:16:20.028096",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip AUSTIN: m5=503.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:16:20.480259",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip AUSTIN: m5=503.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T17:16:25.383118",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Bi4rd5FH sold HKnSJDZZ \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-12T17:16:25.397417",
       "type": "SIGNAL",
@@ -2643,6 +2557,111 @@
       "color": "#58a6ff",
       "msg": "WalletSell: 67Nwfi9h sold HckuK9DA \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:50:46.035271",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold 2gXeM4ei \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:50:46.049139",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold BEBmNEez \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:50:46.059344",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AuPp4YTM sold 3rgcmsE1 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:50:46.824628",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip FARTCOIN2: downtrend h1=-19.4% h24=-19.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:51:33.211335",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5ZuV8eqk sold ByuFFsJ7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:51:36.259818",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BUTTPLUG: m5=141.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:51:36.270882",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5ZuV8eqk sold ByuFFsJ7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:51:37.021561",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BUTTPLUG: m5=141.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:51:37.037346",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5ZuV8eqk sold E86ZkzjW \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:51:54.646171",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DYmsQudN sold 5WktgSas \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:53:28.411615",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8MaVa9kd sold E86ZkzjW \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:53:30.905359",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip BUTTPLUG: downtrend h1=-51.8% h24=-51.8%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:53:30.914355",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8MaVa9kd sold Dm3DU3fx \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:53:33.401017",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Ayrey: m5=-80.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T19:53:43.939360",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Ayrey: m5=-80.2% (active sell-off at execution, run79)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2698,9 +2717,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "19:49:06",
+  "ts": "19:54:10",
   "__publish_meta": {
-    "published_at": "2026-05-12 19:49:06 EDT",
+    "published_at": "2026-05-12 19:54:11 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
