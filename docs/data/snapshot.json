@@ -1,15 +1,15 @@
 {
-  "sol_price": 96.46530257619993,
+  "sol_price": 96.31440494908314,
   "bot_status": "RUNNING",
-  "bot_last_seen": "00:32:46",
+  "bot_last_seen": "00:53:23",
   "bot_cycles": 34,
   "bankroll": 1.1472,
-  "bankroll_usd": 110.66499511541656,
+  "bankroll_usd": 110.49188535758817,
   "budget": 0.16458694289999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.6,
+  "hour": 0.7,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -178,177 +178,197 @@
     "result": "Saved 20 wallets in 32m 32s",
     "completed": "2026-05-08T01:36:16.834313"
   },
-  "brain_next_sec": 18903.289861,
+  "brain_next_sec": 18599.726477,
   "brain_next_str": "6:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
   "brain_last_run_str": "12:05 AM EST",
-  "research_running": true,
-  "research_last_run_str": "",
+  "research_running": false,
+  "research_last_run_str": "12:51 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 42063.289861,
-  "research_elapsed_sec": 526.710139,
+  "research_next_sec": 41759.726477,
+  "research_elapsed_sec": 0,
   "research_findings": {
-    "timestamp": "2026-05-11 12:48:00 EDT",
-    "run_id": "research-147",
-    "version": 147,
-    "regime": "CHOP / ALTCOIN_WINTER (BTC.D 58.25%, SOL ~$97). Bot heartbeat 8.5min stale at run start \u2014 soft-stale (bot was alive at 12:08 EDT per run-286 cycle restart). 24h has 1 winning bear_strength trade (+10.7%) \u2014 first non-stop closure in ~37h. 7d remains 7T 28.6% WR R/R 0.61 pnl -0.002535 SOL.",
-    "headline": "NOVEL HYPOTHESIS jito_tip_floor_anomaly_front_run \u2014 Jito tip-floor spikes precede mint-specific price moves by 400-1200ms; public free endpoint (bundles.jito.wtf/api/v1/bundles/tip_floor) confirmed live; brain's existing strategies all monitor wallet/launchpad/holder signals but NONE monitor the MEV auction itself. PLUS: dual_pair_echo_burst KILL-recommended (TYERA -94% h24, 0/3 echo-pattern hits in fresh trending scan); Bags DBC config PDAs LOCKED ON-CHAIN (2L9Lkc... + 6Mz5nR... + corrected two-tier filter spec); Jito Block Engine endpoint SPEC DELIVERED (bundles.jito.wtf/api/v1/bundles/slot/{slot}, no-auth, live-probe 200 OK) \u2014 bundle_diamond_hand_signal Phase 1 now ship-ready.",
+    "timestamp": "2026-05-12 00:51:18 EDT",
+    "run_id": "research-148",
+    "version": 1,
+    "regime": "CHOP",
+    "headline": "TIP-FLOOR SHIP-NOW (2 confirmed >5x p99 spikes in 5 min = ~24/hr extrapolated, 0 errors, vanity-bot tippers identified incl. roUte/CoPy/JESUS) + NOVEL HYPOTHESIS deployer_second_launch_buyer_reflex (prior-hit-token early-buyer wallets re-enter on deployer next launch -- graph-crossover edge not in any current strategy) + Bags allowlist CORRECTION (all 5 fresh Bags launches share single PDA FhVo3mqL..., the stated 2L9Lkc/6Mz5nR seeds are not in directives -- may be hallucinated) + letsBONK poller VINDICATED (healthy, 3 grads/24h, ecosystem quiet not broken). Regime: CHOP; bear_strength only positive-EV strategy.",
     "new_hypothesis": {
-      "name": "jito_tip_floor_anomaly_front_run",
-      "mechanism": "Jito's tip floor (the per-percentile SOL tip needed to land a bundle in the next block) updates every ~500ms at bundles.jito.wtf/api/v1/bundles/tip_floor. When a single mint becomes the focus of competitive sniping, dozens of bots simultaneously raise their tips on bundles touching that mint \u2014 causing a localized tip-floor spike (95th pct jumps from ~0.001 SOL baseline to 0.02+ SOL) seconds BEFORE the corresponding swaps land in confirmed blocks. The spike is causally upstream of the price move because sniping bots commit tips at quote-time, but price impact only registers after bundle inclusion (~400-1200ms later on Solana mainnet). Retail traders then react to the visible candle, providing exit liquidity.",
-      "persistence": "Not arbitraged because: (1) the signal is asymmetric \u2014 sniper bots themselves cannot trade ON the signal (by the time they detect a competitor's elevated tip, their own bundle would lose the priority auction); (2) it requires correlating an exogenous data stream (tip floor) with an on-chain mint, which ~95% of copy-trading and TG sniper bots ignore (they monitor mempool/pool creation, not the tip auction); (3) the actionable window is 400-1500ms \u2014 too slow for sub-50ms HFT snipers, too fast for human TG traders \u2014 a vacant niche; (4) Jito controls >95% of stake, so the tip floor reflects near-total flow.",
-      "entry_rules": "(1) Poll bundles.jito.wtf/api/v1/bundles/tip_floor every 1s and maintain a 30-min rolling-median per-percentile buffer. (2) Concurrent: subscribe to tx stream filtered to Jito tip accounts (8 known addresses listed in evidence below). (3) Signal fires when: 95th-pct tip floor crosses >5x its 30-min rolling median AND >=3 distinct tip-payer wallets in that 10-second window route through the same single mint AND that mint has age <72h AND liquidity >=$5k. (4) Position size 1% bankroll (EXPERIMENTAL \u2014 Phase 2 ONLY). Buy 200-700ms after signal. TP +12%, SL -6%, time stop 8 min. (5) PHASE 1 (REQUIRED BEFORE LIVE): LOG-ONLY listener that records tip-floor + mint + cohort identity for N=50 confirmed spikes, then back-test against forward 1/5/10/30-min returns BEFORE allocating capital.",
-      "data_required": "(a) bundles.jito.wtf/api/v1/bundles/tip_floor (free, no auth, ~1 req/sec safe). (b) Helius or Triton gRPC transactionSubscribe filtered to Jito tip accounts: 96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5, HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe, Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY, ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49, DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh, ADuUkR4vqLUMWXxW9gh6D6L8pivKeVtv9F3p3qghJ1iZ, DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL, 3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT. (c) For Phase 1 logger: ALCHEMY_SOLANA_RPC getTransaction on bundle tx sigs to attribute mints to bundles (alternative if gRPC not available \u2014 adds ~200-400ms latency, OK for logger but borderline for live trading). (d) Jupiter quote API for execution (already in use).",
-      "estimated_fires_per_day": 12,
+      "name": "deployer_second_launch_buyer_reflex",
+      "mechanism": "When a wallet has previously deployed a Solana SPL token that reached >=$500k peak FDV with >=$50k cumulative volume (a 'hit deployer'), the 10 earliest-buyer wallets of that hit token form a 'buyer-reflex pool'. When the SAME deployer launches a NEW token, >=3 of those reflex-pool wallets typically re-enter within 30-120s. Their re-entry creates a self-fulfilling early-volume spike that triggers DexScreener trending and retail FOMO, producing a 2-8x in the first 5-15 minutes before reflex-pool wallets exit. Bot enters alongside the reflex pool, exits before retail saturation.",
+      "persistence": "Sniper UIs (Axiom, GMGN) show only the deployer's prior-token performance as a scalar metric, NOT the buyer-graph crossover. Computing 'did >=3 wallets from deployer's prior-hit-token early-buyer set just buy this new mint?' requires graph traversal (deployer -> tx -> token list -> per-token early-buyer set -> intersection), which retail snipers do not do because it requires persistent indexed history. Competitors cannot easily reproduce without per-deployer state.",
+      "entry_rules": "Step 1: detect new mint (Pump.fun/letsBONK/Bags listeners). Step 2: resolve deployer = first signer of mint init tx. Step 3: query deployer's prior mints via Alchemy getSignaturesForAddress + getTransaction parse. Step 4: filter to prior mints with peak FDV >= $500k AND cumulative volume >= $50k (DexScreener history); need >=1 hit token. Step 5: extract earliest-10 buyer wallets per hit token -> union set = 'reflex pool'. Step 6: monitor first 120s of new-mint trades. Step 7: if >=3 reflex-pool wallets buy within 120s, FIRE buy at 3% size. Stop 8%, trailing activates at +20% (faster than default +10% because reflex pumps decay quicker), 15-min hard time-limit.",
+      "data_required": "Alchemy Solana RPC (already configured): getSignaturesForAddress, getTransaction. DexScreener historical price for FDV peak (already integrated). New persistent cache: deployer_reflex_pool.json (keyed by deployer wallet -> reflex-pool wallet set, rebuilt weekly).",
+      "estimated_fires_per_day": 4,
       "priority": "HIGH",
-      "evidence": "Subagent D (novel-mechanism scout) confirmed via Nansen, Dysnix, Bitquery, MEXC articles: 0.005-0.01 SOL aggressive tips (5-10x baseline 0.001 SOL) are standard for brand-new launches. Solana memecoin daily volume hit $2.57B in 2026; PumpSwap $1.2B record day. Every surveyed sniper-bot blueprint monitors mempool/pool-creation but NONE monitor the tip-auction as a leading indicator \u2014 gap confirmed. Subagent C independently confirmed bundles.jito.wtf/api/v1/bundles/tip_floor is live, no-auth, returns rolling p25/p50/p75/p95/p99 every block. NOTE: discovery-grade evidence \u2014 no back-test yet. Phase 1 LOG-ONLY listener required before Phase 2 live trades."
+      "evidence": "Three converging sources: (1) Medallion Analytics on-chain study (May 2025) of 178,109 prolific Solana deployers found 85.3% (151,893) cluster into a profitable-serial-deployer cohort responsible for ~3.07M token launches -> deployer identity is a strong non-random prior. (2) Axiom production trading terminal exposes 'deployer prior launches and their performance' as a live filter snipers gate on, confirming the signal is actionable at sub-minute timescale (DEXTools 2026 tutorial). (3) This repo's own pinned/target wallet discovery (sol_pinned_wallets.json, sol_target_wallets.json) empirically discovers ~23 alpha wallets via post-pump backtracing -- those wallets ARE the reflex-pool wallets, but the bot currently tracks them by identity not by causal link to deployer."
     },
     "watchlist": [
       {
-        "mint": "EuCJrJhSYySYn1PbKVquvjMB7qaWxn2SW86zJUroBAGS",
-        "symbol": "Bags-launch-sample-1",
-        "reason": "Confirmed Bags-launched token (BAGSB9...AmcV signer in DBC init tx 2R56fURyEoc...). Vanity suffix `BAGS` + DBC config PDA `2L9Lkcgbm2TciABjewAMAiGhr4nVABF1NSUZpqth8rnS`. Use as ground-truth smoke-test for any future bags_graduation_snipe Phase 1 logger or for Bags-allowlist-builder.",
-        "expires_at": "2026-05-25 00:00:00 EDT"
+        "mint": "CCByxVKPymfuAN8vNbWULwNSjZNx3pACjPHyWxBCAoRt",
+        "symbol": "CAoRt",
+        "reason": "Fresh Bags launch (~6 min ago at probe time), config PDA FhVo3mqL...; usable to seed Bags two-tier filter live-test",
+        "expires_at": "2026-05-12T18:00:00-04:00"
       },
       {
-        "mint": "4bYyXTMBd3t6WjBCd28Ytfk8FgVaw4dMHkpF7b4fBAGS",
-        "symbol": "Bags-launch-sample-2",
-        "reason": "Second confirmed Bags-launched token (BAGSB9...AmcV signer in DBC init tx eJNgPeUZPnR...). Vanity suffix `BAGS` + DBC config PDA `6Mz5nRufrpT3EcqHpfYYu6YYook5Q9gKHZ9ARYpq2Lfr` (DIFFERENT from sample-1's config \u2014 confirms Bags uses multiple configs, allowlist approach required).",
-        "expires_at": "2026-05-25 00:00:00 EDT"
+        "mint": "6MEgxjbYGehbvsptcfLki78wkWc8Jty4PUzEhXefBAGS",
+        "symbol": "BAGS-suffix",
+        "reason": "Vanity BAGS-suffixed mint, fee-payer = Bags Creator program key itself -- canonical Bags launch for allowlist seed validation",
+        "expires_at": "2026-05-12T18:00:00-04:00"
       },
       {
-        "mint": "2wGwwrGAc7DwhGfd6pGFgRyi4azxSnFVxh3V9E2Hpump",
-        "symbol": "SOL(meme)",
-        "reason": "h1 +197-217% from research-147 dual_pair_echo extension scan \u2014 SINGLE pair only (no echo). Useful as a current-trending watchlist anchor for fresh_profile reactivation if BULL regime returns.",
-        "expires_at": "2026-05-13 00:00:00 EDT"
+        "mint": "HCESm3hqotpRQgRmyPAJMwG99MJZMne9YBB61Ax9eeMp",
+        "symbol": "9eeMp",
+        "reason": "Fresh Bags launch ~20 min before probe, config PDA FhVo3mqL...",
+        "expires_at": "2026-05-12T18:00:00-04:00"
+      }
+    ],
+    "high_tip_wallets_for_logger_seed": [
+      {
+        "wallet": "75amCPfPecHipzFeE7gsBi8rLptXCEQGewon7jePpwHP",
+        "evidence": "Top single 7.5M lamp tip + 1.5M re-tip across both probe snapshots"
       },
       {
-        "mint": "ADue87cPcDhsyGq2hrDsukp7j8AFTSnaYHSanDATpump",
-        "symbol": "SOAG",
-        "reason": "h6=h24 +274%, h1 +11% \u2014 sustained pump shape (h1 LOWER than h6 indicates the move was earlier; bot would have missed entry window). SINGLE pair only.",
-        "expires_at": "2026-05-13 00:00:00 EDT"
+        "wallet": "FVnv5qH7dsrBzEDwJ8dN2m9PFtKTBAQFtqWF3M9LpwMg",
+        "evidence": "23 bundles across both 2-min-apart snapshots -- highest recurrence"
       },
       {
-        "mint": "J8H7qKNiv3THnsUqs9uHbLGtLou4e4hMhStPPSftpump",
-        "symbol": "SolanaAI",
-        "reason": "h1=h6=h24 +158% \u2014 flat sustained line shape, suggests trade was 1-shot pump then dead flat. SINGLE pair only. Useful as a benchmark for pumpfun snipe latency analysis.",
-        "expires_at": "2026-05-13 00:00:00 EDT"
+        "wallet": "roUteHjDohtkatXTb79PJ99bbxkTipgo3GJ4EJZ1YpB",
+        "evidence": "15 bundles, vanity prefix roUte (Jupiter/router-style bot)"
+      },
+      {
+        "wallet": "CoPyPPWdm8SirumaAEe8S68nSJpHYhguN2L5i2YGxLB",
+        "evidence": "12 bundles, vanity prefix CoPy (copy-trader bot)"
+      },
+      {
+        "wallet": "JESUSL2s5BsffGNNn6wQtHART2iXVGjtGhKAwGw44bL",
+        "evidence": "11 bundles, vanity prefix JESUS (recurrent searcher)"
       }
     ],
     "proposals_for_survival_brain": [
       {
-        "type": "kill_strategy",
-        "target": "dual_pair_echo_burst (research-145 PRIMARY HIGH proposal \u2014 KILL PERMANENTLY)",
-        "justification": "Subagent A's revalidation provides converging evidence to KILL the hypothesis. (a) REBUTTAL CONFIRMED LIVE: TYERA (A3AFYk...pump) h24 -94.26%, liq $4,048 \u2014 full round-trip from claimed +1355% h1. BITCHES (8qZb8t...pump) FULLY DELISTED \u2014 DexScreener returns pairs:null. (b) PATTERN ABSENT IN FRESH TRENDING: scouted 3 tokens with h1>50% (SOL-meme +197%, SOAG +274% h6, SolanaAI +158% h24). ALL THREE have only ONE DEX pair. Zero echo-pattern hits in fresh trending feed. (c) MECHANISM IS ADVERSE: a second pool within 5min usually means the deployer pre-seeded a Raydium/Meteora exit ramp to dump into \u2014 exactly the round-trip dynamic observed. (d) Even a sustained-pump filter variant (research-146's suggested h6/h24 positive gate) would not help because the underlying signal is adversarial (deployer-driven), not stochastic. Recommend: mark dual_pair_echo_burst as killed_ideas_permanent in sol_brain_directives.json. Free the strategy slot back to fresh_profile or to jito_tip_floor_anomaly_front_run.",
+        "type": "data_source_add",
+        "target": "jito_tip_floor_anomaly_front_run Phase 1 LOG-ONLY logger",
+        "justification": "Probe SHIP-NOW: 5-min live probe = 85 samples, 0 errors. 2 confirmed independent p99 spike events at >=5x rolling-30 median (85x and 12.7x ratios) -> ~24/hr -> ~576/day = dense enough signal for Phase 1 to produce usable data within hours. Endpoint updates ~once per 25s so poll cadence should be 10s (not 3s) -- saves 60% req volume with zero info loss. Use p99 channel NOT p95 (p95 had 0 spikes in 5 min, far too sparse). 38% wallet-recurrence rate across 2-min snapshots with clear vanity-bot prefixes (roUte/CoPy/JESUS/sp1n) gives strong wallet-attribution signal.",
         "confidence": "HIGH",
         "addresses_request": null,
-        "baseline": "research-145 evidence: 3/7 echo tokens claimed +354%/+1166%/+1355% h1. research-147 24h revalidation: TYERA -94% h24 / liq $4k (confirmed live), BITCHES dead/delisted (confirmed live), Mars/SolanaHippo unresolvable. Fresh trending scan (research-147 Subagent A): 0/3 echo-pattern hits among current h1>50% pumpers. Net: 0/7 sustained-pump confirmations + 0/3 fresh-scout pattern hits = pattern is both ineffective AND rare.",
-        "expected_effect": "Strategy slot freed. sol_brain_directives.json pending_hypotheses entry for dual_pair_echo_burst moves from DEFERRED (per research-146 proposal #2) to KILLED_IDEAS_PERMANENT with the cite-trail (research-145 ranked HIGH -> research-146 DEFER -> research-147 KILL). Saves brain ~1 cycle of re-validation work it would otherwise schedule. No code change required (Phase 1 logger never shipped).",
-        "kill_criteria": "N/A \u2014 this proposal IS the kill of an already-deferred hypothesis. If brain wants to revisit later: require fresh evidence of >=3 tokens with both 5-min-echo pattern AND h6+h24 both positive AND not deployer-controlled (independent wallet for second pool) before re-opening.",
-        "min_sample_size": "Permanent kill \u2014 no future sample-size gate. To revive, require N=10 echo-pattern tokens in a controlled forward-test with sustained-pump criterion.",
-        "regime_scope": "ANY (pattern fails across regimes \u2014 both letsBONK CHOP grads dumped, pump.fun winners round-tripped in 24h).",
-        "rollback_plan": "If killed and the brain later sees external evidence the pattern works, the cite-trail makes it trivial to reopen via a new request_for_research entry. No state-file revert needed.",
-        "risk_if_wrong": "Zero direct financial risk (no live trades to roll back). Opportunity-cost: if dual_pair_echo IS a niche edge in conditions we haven't tested (e.g. specific market-cap band or specific cross-DEX combo), killing it forfeits ~0.5-1 SOL/month of theoretical opportunity. Mitigated by the converging-negative-evidence base \u2014 fresh trending feed shows the pattern doesn't occur, not just that it doesn't profit."
+        "baseline": "jito_tip_floor_anomaly_front_run is unimplemented; no current bot strategy monitors MEV-auction signals. Overall rolling-7d N=7 WR=28.6% R/R=0.61 PnL=-0.00255 SOL stop_rate=57.1%; bear_strength only positive-EV strategy at N=2 WR=50% R/R=1.09 PnL=+0.000107.",
+        "expected_effect": "Phase 1 produces sol_jito_tipfloor_log.json with ~8,640 entries/day at 10s cadence and sol_jito_bundle_log.json ~2,880 entries/day at 30s cadence. After 48-72h, brain cross-links spike events to mint price moves in trade_log to determine forward-return correlation. No P/L impact during Phase 1 (LOG-ONLY).",
+        "kill_criteria": "If after 48h of Phase 1 logging total >5x p99 spikes captured < 200 (vs ~1,150 extrapolated), endpoint reliability or rate-limiting is the limiter -> investigate. If after 96h cross-link analysis shows |Pearson correlation| < 0.10 between p99 spike events and mint forward-returns at any horizon (1m/5m/15m), kill Phase 2 plan and rip out the logger.",
+        "min_sample_size": "48h of logger uptime to evaluate spike density; 200+ spike events for forward-return cross-link analysis; N=20 trades minimum before any Phase 2 buy logic activates.",
+        "regime_scope": "ANY",
+        "rollback_plan": "Delete the two new daemon-thread function definitions and their start_*() calls in main(). Remove 2 log files. No state changes needed.",
+        "risk_if_wrong": "Adds ~65 LOC to degen_bot.py + 2 new daemon threads = marginal memory/CPU. Worst case: endpoint goes down or rate-limits and logger spams errors -- caught by try/except wrap. Zero capital risk (LOG-ONLY).",
+        "implementation_loc_budget": "start_jito_tipfloor_logger ~28 LOC (drop after degen_bot.py:4609), start_jito_bundle_logger ~33 LOC (drop ~4650). __init__ additions: 2 locks + 2 thread handles = 4 LOC. Main spawn lines 14481-14482. Total ~65 LOC. Use shared requests.Session() to avoid TLS handshake per cycle."
       },
       {
         "type": "data_source_add",
-        "target": "bags_graduation_snipe (CORRECTED \u2014 two-tier filter with on-chain-built allowlist)",
-        "justification": "Subagent B located TWO confirmed Bags-launched DBC virtual_pool config PDAs on-chain via two distinct tokens with vanity suffix `BAGS` and BAGSB9...AmcV as signer in the DBC initialize_virtual_pool_with_spl_token tx. Critically, the two configs are DIFFERENT (2L9Lkc... vs 6Mz5nR...), confirming Bags uses MULTIPLE configs (likely fee-tier / curve-param variants) \u2014 so a single-PDA filter is insufficient. CORRECTED ARCHITECTURE: two-tier filter. Tier 1 (allowlist builder, Phase 0 LOG-ONLY): listen for DBC initialize_virtual_pool_with_spl_token (disc 8c55d7b06636684f) where signer == BAGSB9TpGrZxQbEsrEznv5jXXdwyP6AXerN8aVRiAmcv; extract config PDA from idx 0 of accounts list; append to a Bags-config-allowlist JSON file (deduped). Tier 2 (graduation logger): when a DAMMv2 init fires (disc 955248c5fdfc440f, locked in research-146), trace back to originating DBC pool's config field and check it against the Bags allowlist. This is the run-275-class regression-proof architecture \u2014 sample purity guaranteed by signer-verified provenance.",
+        "target": "bundle_diamond_hand_signal Phase 1 LOG-ONLY logger (research-147 ship-ready, LOC-validated this run)",
+        "justification": "Endpoint already locked by research-147 (bundles.jito.wtf/api/v1/bundles/recent). LOC budget validated this run: ~33 LOC body + 3 LOC spawn. Same shipping window as tipfloor logger -- one PR, two threads, ~65 LOC total. Confirmed live in research-148 probe (100 bundles/snapshot, 38% wallet recurrence over 2 min, clear vanity-bot prefixes).",
         "confidence": "HIGH",
         "addresses_request": null,
-        "baseline": "No bags_graduation_snipe currently runs. DAMMv2 init discriminator LOCKED at 955248c5fdfc440f (research-146). Two known Bags-launched config PDAs as starter allowlist seed: `2L9Lkcgbm2TciABjewAMAiGhr4nVABF1NSUZpqth8rnS` and `6Mz5nRufrpT3EcqHpfYYu6YYook5Q9gKHZ9ARYpq2Lfr`. Source mints + tx sigs for smoke-test: tx `2R56fURyEocC9t4QfVqcDF1vHuJpvoq9146yvYBdzdNKvicMTmCeDPx487JXS8MSmxTaFmovgT2U5b4sxJDDFDvZ` for mint EuCJrJhSYy...BAGS, tx `eJNgPeUZPnRZsVNrsYNatfNDf88kVo5xwVXtYNDXQqHnX3QeTfRS3y8afpmjc1azpaZQjTYeuPgfbnzz2SazCr8` for mint 4bYyXTMBd3...BAGS.",
-        "expected_effect": "Phase 0 ship: ~80 LOC additive \u2014 `start_bags_dbc_init_listener` daemon thread modeled on letsBONK grad poller (degen_bot.py:4595), polls DBC program sigs filtered on BAGSB9...AmcV signer presence. Writes `sol_bags_config_allowlist.json` (deduped) + `sol_bags_init_log.json` (per-init details). Estimated Phase 0 yield: ~5-20 new Bags-launches/day (Bags is mid-tier launchpad vs pump.fun ~1500/day and letsBONK ~30/day). After N=20 allowlist entries OR 7 days uptime (whichever first), promote to Phase 1: hook into existing DAMMv2 graduation listener (the one captured by 955248c5fdfc440f filter), check originating DBC pool's config field, log as confirmed Bags graduation. Phase 2 (live snipe) requires N>=20 Phase 1 confirmed Bags graduations with measured outcomes \u2014 DEFER until then.",
-        "kill_criteria": "Phase 0 kill: if 0 Bags-init events captured within 48h of shipping (despite known active Bags traffic), suspect signer-detection is mis-spec'd and roll back. Architecture kill: if after 14 days the allowlist has fewer than 3 unique configs (suggesting Bags uses N>>2 short-lived per-batch configs, making allowlist economically untenable), consider a per-tx signer-trace at the DAMMv2 graduation event instead. Phase 2 LIVE kill: at N=10 closed trades, if WR < 35% OR R/R < 0.80 OR median pnl_pct < -3%, STOP and roll back to logger-only.",
-        "min_sample_size": "Phase 0: N=20 allowlist entries. Phase 1: N=20 Bags graduations captured. Phase 2: N=10 closed live trades for kill check, N=20 for full evaluation.",
-        "regime_scope": "ANY (graduation snipe is launchpad-mechanic-driven, regime-agnostic), but DEFAULT-OFF in CRASH regime (SOL h24 <= -8%).",
-        "rollback_plan": "Phase 0 rollback: remove start_bags_dbc_init_listener function (~80 LOC) and the two log files. Phase 1 rollback: remove DBC-config-trace hook from DAMMv2 listener (~30 LOC). Phase 2 rollback: comment out strategy registration in main scan loop. No state-file corruption risk \u2014 all writes are append-only logs.",
-        "risk_if_wrong": "Phase 0/1 are LOG-ONLY (zero financial risk). Phase 2 worst case: 10 stops at -10% each at 0.02x position size = -0.002 SOL absolute downside = ~0.17% bankroll over 4-6 days. Specific failure mode: if Bags Co. wraps their DBC calls via a proxy program, signer-based detection may capture both Bags-direct and Bags-via-proxy \u2014 adding a separate proxy-program filter may be required. Mitigated by the allowlist-builder being LOG-ONLY for 7 days (operator can manually inspect entries before any live trading)."
-      },
-      {
-        "type": "data_source_add",
-        "target": "bundle_diamond_hand_signal (Phase 1 LOG-ONLY now ship-ready \u2014 Jito endpoint LOCKED)",
-        "justification": "Subagent C confirmed the Jito Block Engine bundles endpoint is live, no-auth, and returns the data needed for bundle_diamond_hand_signal Phase 1. Specifically: `GET https://bundles.jito.wtf/api/v1/bundles/slot/{slot}` returns JSON array of bundle objects with `bundleId`, `slot`, `validator`, `tippers[]` (signer wallets that paid the tip), `landedTipLamports`, `blockIndex`, `timestamp`, `txSignatures[]`. Subagent C live-probed and returned a 200 OK with the first 200 chars of the response verbatim (slot 419077950 sample). Companion endpoints: /api/v1/bundles/recent (live tail), /api/v1/bundles/tip_floor (rolling tip percentiles), /api/v1/bundles/transaction/{txSig} (reverse-lookup). Rate limit ~1 req/sec/IP safe. No paid key needed. Promotes research-146 bundle_diamond_hand_signal proposal from MEDIUM-priority idea to HIGH-priority ship-ready Phase 1 spec.",
-        "confidence": "HIGH",
-        "addresses_request": null,
-        "baseline": "No bundle-aware strategy currently runs. Per research-146 evidence: ~98% of pump.fun launches are bundled (Solidus Labs / DeFade research); diamond-hand subset is the unmined inversion. Jito API access UNBLOCKED as of this run.",
-        "expected_effect": "Phase 1 logger captures: per-bundle, the slot, validator, tippers[], txSignatures[]. For each bundle with len(txSignatures) >= 2 (coordinated multi-tx launch candidate), the brain attributes the bundle to a mint via getTransaction on Alchemy. After N=30 bundled-launch captures, compute cohort_hold_rate at t=30min using getTokenAccountBalance on tippers' associated token accounts. Estimated 30-50 captures/day. Phase 2 (live, deferred until Phase 1 N>=30 with measured hold-rate distribution): expected ~4-8 fires/day at the strict filter (cohort holds 80%+, age 25-45min, liq>$15k). Predicted: WR >= 50% on diamond-hand subset vs <30% on dump-cohort subset.",
-        "kill_criteria": "Phase 1 kill: if 0 bundle captures with multi-tx >= 2 within 24h of shipping, suspect listener is mis-spec'd and roll back. Phase 1 -> Phase 2 promotion gate: >= 30 bundled-grad captures, >= 5 with cohort_hold_rate >= 80% at t=30min, AND within those >=5, median price-change t30->t90 is >= +20%. Phase 2 LIVE kill: at N=10 closed trades, if WR < 35% OR R/R < 0.80 OR median pnl_pct < -3%, STOP and roll back.",
-        "min_sample_size": "Phase 1: N=30 bundled grad captures. Phase 2: N=10 closed live trades for kill check.",
-        "regime_scope": "ANY (bundle-cohort behavior is independent of macro regime), DEFAULT-OFF in CRASH regime.",
-        "rollback_plan": "Phase 1 rollback: remove Jito polling daemon + bundle-cohort-balance computer + sol_bundle_capture_log.json (~120 LOC). Phase 2 rollback: comment out strategy registration in main scan loop.",
-        "risk_if_wrong": "Phase 1 zero financial risk (logger-only). Phase 2 worst case: 10 stops at -10% each at 0.02x position size = -0.002 SOL absolute downside = ~0.17% bankroll. Specific failure mode: bundle cohort could be a single actor with N wallets faking diamond hands to fish for snipers, then dumping at min 45 \u2014 Phase 1 logger MUST capture wallet identity for Phase 2 same-actor-deduplication. Use tippers[] direct (no extra RPC) for the tip-payer cohort; for full signer cohort, getTransaction on each txSignatures entry."
+        "baseline": "bundle_diamond_hand_signal is unimplemented; no current strategy monitors bundle composition or tipper identity. Same overall baseline as tip_floor proposal (7d N=7 WR=28.6% R/R=0.61 PnL=-0.00255).",
+        "expected_effect": "Phase 1 produces sol_jito_bundle_log.json with ~2,880 entries/day. Brain cross-links recurrent tipper wallets to mint trades in trade_log (overlap with copy_trade target wallets, bag-holding patterns, stop-loss events).",
+        "kill_criteria": "If after 48h tipper-wallet recurrence rate is <10% across snapshots (vs 38% observed), endpoint may be returning stale cache -> investigate. If after 96h NO recurrent tipper-wallet has any overlap with bot trade log mints, kill -- the wallets are not in our trading universe.",
+        "min_sample_size": "48h logger uptime + 96h cross-link analysis with bot trade log.",
+        "regime_scope": "ANY",
+        "rollback_plan": "Same as tipfloor: delete 2 functions + spawn calls + 1 log file.",
+        "risk_if_wrong": "Marginal CPU/memory for daemon thread. Zero capital risk (LOG-ONLY).",
+        "implementation_loc_budget": "~33 LOC body + 3 LOC spawn (full breakdown in subagent B output)."
       },
       {
         "type": "new_filter",
-        "target": "jito_tip_floor_anomaly_front_run (NEW NOVEL HYPOTHESIS \u2014 Phase 1 LOG-ONLY)",
-        "justification": "Subagent D produced a genuinely novel mechanism unaddressed by ANY current strategy: the tip-floor itself as a leading indicator, NOT mempool/pool-creation/wallet/holder signals. Edge-test answered: tip-floor spikes are causally upstream of price moves (snipers commit tips at quote-time, price registers at bundle inclusion ~400-1200ms later). Persistence answered: the signal is asymmetric (sniper bots can't trade ON their own competitive tipping), the actionable window (400-1500ms) is too slow for HFT/too fast for human TG, and ~95% of bots ignore the auction itself. The brain has been heavily focused on graduation snipes; this is a fundamentally different timing-microstructure edge. Subagent C's Jito spec card (proposal #3 above) provides the exact data pipeline this proposal needs \u2014 same endpoints, additional /tip_floor polling. Phase 1 LOG-ONLY listener mandatory before Phase 2 live trades.",
+        "target": "bags_graduation_snipe seed allowlist CORRECTION",
+        "justification": "Subagent C surveyed 5 fresh Bags launches in last ~4h. ALL 5 use the SAME DBC config PDA: FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM. This matches research-146 finding (6/6 sampled grads write the same PDA). The seed PDAs 2L9Lkc... and 6Mz5nR... cited in run-287/288 priority_reasoning are NOT visible in sol_brain_directives.json -- the brain may be hallucinating prior probe output. RECOMMEND: replace any multi-PDA allowlist with either (a) single-PDA allowlist [FhVo3mqL...] OR (b) use Bags Creator program ID BAGSB9TpGrZxQbEsrEznv5jXXdwyP6AXerN8aVRiAmcv as membership check (50 sigs in 4.3h -- ~280/day fresh Bags-flow rate).",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "bags_graduation_snipe is unimplemented; no current allowlist on disk. Stated baseline of 2 known config PDAs (2L9Lkc + 6Mz5nR) is unverified -- they do not appear in sol_brain_directives.json. Treat as N=0 allowlist.",
+        "expected_effect": "Switching to (a) single-PDA filter or (b) Bags Creator program ID membership gives 100% recall on fresh Bags launches. The proposed multi-PDA growth-to-5 task is likely solving a non-problem.",
+        "kill_criteria": "If within 30 days a single Bags-launched token is observed with a config PDA OTHER than FhVo3mqL..., re-open the multi-PDA design.",
+        "min_sample_size": "N=10 fresh Bags launches observed before declaring single-PDA model proven.",
+        "regime_scope": "ANY",
+        "rollback_plan": "Revert to whatever allowlist set is currently committed in degen_bot.py if any exists; otherwise no-op.",
+        "risk_if_wrong": "Filter under-matches and bot misses a Bags grad with a different PDA. Mitigated by kill_criteria. Capital risk: zero (filter only narrows entry)."
+      },
+      {
+        "type": "new_filter",
+        "target": "deployer_second_launch_buyer_reflex Phase 1 LOG-ONLY",
+        "justification": "Genuinely novel mechanism: not a tweak, not a Jito-anything, not a threshold change. Converts existing wallet-discovery output into a CAUSAL graph signal: deployer-prior-hit-token -> early-buyer set -> intersection with new-mint early buyers. Strong evidence: Medallion 85.3% deployer-clustering stat, Axiom productionizes prior-deployer-perf filter, repo's own wallet-discovery validates reflex wallets exist. Phase 1 should LOG-ONLY: on every new mint, resolve deployer, query prior mints, compute reflex pool, log first-120s buyer overlap. Captures the data needed to verify the 3-of-10 threshold before Phase 2 buy logic.",
         "confidence": "MEDIUM",
         "addresses_request": null,
-        "baseline": "No tip-floor-aware strategy currently runs. Bot's existing strategies all use price-action / holder / launchpad signals. 7d aggregate: 7 trades, 28.6% WR, R/R 0.61, pnl -0.002535 SOL. Tip-floor data is NOT currently ingested.",
-        "expected_effect": "Phase 1 logger captures per-second tip-floor percentiles + per-bundle tipper identity + bundle's mint (via getTransaction). After N=50 spike events (95th-pct > 5x 30-min rolling median), back-test forward 1/5/10/30-min returns to confirm the leading-indicator hypothesis. Estimated 8-20 fires/day at the strict filter. Phase 2 (live, deferred until Phase 1 N>=50 + back-test positive expected-value): expected ~12 fires/day at 1% sizing.",
-        "kill_criteria": "Phase 1 kill: if 0 tip-floor spike events (95th-pct >5x rolling-30min median) captured within 48h, recalibrate thresholds or kill. Phase 1 -> Phase 2 promotion gate: N>=50 spike events with forward-30-min-return median >= +5% AND positive expected value. Phase 2 LIVE kill: at N=10 closed trades, if WR < 40% OR R/R < 1.0 OR median pnl_pct < -2%, STOP and roll back.",
-        "min_sample_size": "Phase 1: N=50 spike events. Phase 2: N=10 trades for kill check, N=30 for full evaluation. Stratify by regime if N>=20 in CHOP.",
-        "regime_scope": "ANY (MEV-auction behavior is independent of macro regime), but DEFAULT-OFF in CRASH regime.",
-        "rollback_plan": "Phase 1 rollback: remove tip_floor polling daemon + rolling-median buffer + sol_tip_floor_spike_log.json (~150 LOC). Phase 2 rollback: comment out strategy registration in main scan loop.",
-        "risk_if_wrong": "Phase 1 zero financial risk (logger-only). Phase 2 worst case: 10 stops at -6% each at 0.01x position size = -0.0006 SOL absolute downside = ~0.05% bankroll over 1-2 days \u2014 smallest-blast-radius live test the brain has ever shipped. Specific failure mode: tip-floor spike could be confounded by validator-level prioritization for non-mint reasons (e.g. NFT mints, big DEX block fills), creating false positives. Mitigated by the >=3-distinct-payer-wallets-routing-same-mint AND mint-age <72h AND liq >=$5k filters."
+        "baseline": "No current strategy uses deployer-buyer-graph crossover. Overall 7d N=7 WR=28.6% R/R=0.61 PnL=-0.00255. Closest analog (copy_trade) is N=0 last 7d, all-time N=537 WR=33.7% -- empirically the bot's flat wallet-list approach has been unprofitable.",
+        "expected_effect": "Phase 1 logger writes sol_deployer_reflex_log.json with ~5-15 entries/day. After N=20 forward-return cross-link samples, brain decides Phase 2 buy threshold (likely the 3-of-10 reflex-pool wallets within 120s rule).",
+        "kill_criteria": "If after 14 days Phase 1 captures <30 events total, signal is too rare to be useful -> drop. If after N=20 forward-return cross-links, median 5-min return on >=3-reflex-pool fires is <+5%, hypothesis fails -> drop.",
+        "min_sample_size": "N=20 forward-return samples for Phase 2 gate. ~14-day Phase 1 window.",
+        "regime_scope": "ANY",
+        "rollback_plan": "Delete sol_deployer_reflex_log.json + remove deployer-history-resolver code from the mint-detection callback. ~80 LOC estimated.",
+        "risk_if_wrong": "Phase 1 LOG-ONLY = zero capital risk. CPU/RPC risk: each new mint triggers a multi-call deployer-history lookup. Mitigation: cache deployer_reflex_pool.json keyed by deployer wallet, rebuilt weekly -- amortizes lookup to ~once per deployer."
       }
     ],
-    "request_responses": [],
+    "request_responses": [
+      {
+        "request_id": "REQ-015",
+        "status_set_to": "completed",
+        "finding": "REQ-015 was already marked completed in directives v282 (research-147 delivered). No re-action needed this run. Carried-forward priorities from research-147 next_run_focus were fully serviced: priority-1 tip-floor probe SHIP-NOW; priority-5 daemon-thread LOC budget DELIVERED; priority-3 Bags allowlist enrichment RECONCILED (single-PDA reality contradicts multi-PDA premise); priority-4 letsBONK grad poller AUDITED (healthy, ecosystem quiet not broken). Priority-2 (kolscan wallet base58 recovery) deferred again -- below-fold leaderboard rank does not justify Playwright dispatch this run.",
+        "evidence": "See proposals_for_survival_brain (4 items) and subagents_dispatched section."
+      }
+    ],
     "subagents_dispatched": [
       {
-        "role": "dual_pair_echo_burst sustained-pump revalidation",
-        "finding": "VERDICT KILL. TYERA confirmed -94.26% h24 / liq $4,048 (round-trip); BITCHES DELISTED (DexScreener pairs:null). Fresh trending scan: 0/3 echo-pattern hits among current h1>50% pumpers (SOL-meme +197% / SOAG +274% h6 / SolanaAI +158% h24 \u2014 all SINGLE pair). Mechanism is adverse (deployer-controlled second pool = exit ramp). Recommend permanent kill, do NOT ship sustained-pump variant."
+        "role": "jito tip-floor 5-min spike-density probe",
+        "finding": "85 samples 0 errors; 2 confirmed independent p99 spike events at >=5x rolling-30 median (85x and 12.7x ratios), ~24/hr extrapolated -> ~576/day. p95 had 0 spikes (too sparse, use p99). 5 recurrent vanity-bot tippers (roUte/CoPy/JESUS/sp1n + 75amCPf top single tipper). 38% wallet recurrence between 2-min snapshots. SHIP-NOW with 10s poll cadence."
       },
       {
-        "role": "bags-specific DBC config PDA hunt",
-        "finding": "TWO Bags config PDAs LOCKED: 2L9Lkcgbm2TciABjewAMAiGhr4nVABF1NSUZpqth8rnS + 6Mz5nRufrpT3EcqHpfYYu6YYook5Q9gKHZ9ARYpq2Lfr (DIFFERENT \u2014 confirms multi-config use, allowlist required). Source mints (vanity suffix BAGS): EuCJrJhS...BAGS + 4bYyXTMBd...BAGS. Signer in DBC initialize_virtual_pool_with_spl_token: BAGSB9TpGrZxQbEsrEznv5jXXdwyP6AXerN8aVRiAmcv. Two-tier filter recommended (allowlist builder via signer-tracking, then DAMMv2-graduation-filter via originating DBC config check)."
+        "role": "daemon-thread LOC budget survey of degen_bot.py",
+        "finding": "start_pumpfun_grad_listener at degen_bot.py:4107 (45 LOC) and start_letsbonk_grad_poller at :4508 (102 LOC) are reference patterns. NEW: start_jito_tipfloor_logger ~28 LOC after :4609, start_jito_bundle_logger ~33 LOC after that. __init__ additions: 2 locks + 2 thread handles. Main spawn at 14481-14482. Total ~65 LOC. Use shared requests.Session()."
       },
       {
-        "role": "Jito Block Engine endpoint spec for bundle_diamond_hand_signal",
-        "finding": "SPEC DELIVERED + LIVE-PROBED 200 OK. Endpoint: GET https://bundles.jito.wtf/api/v1/bundles/slot/{slot} (no auth, ~1 req/sec safe). Returns per-bundle: bundleId, slot, validator, tippers[] (signer wallets paying tip), landedTipLamports, blockIndex, timestamp, txSignatures[]. Companion: /api/v1/bundles/recent, /tip_floor, /transaction/{txSig}. Promotes bundle_diamond_hand_signal Phase 1 to ship-ready."
+        "role": "Bags allowlist enrichment + letsBONK grad audit",
+        "finding": "CRITICAL: All 5 fresh Bags launches share single DBC config PDA FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM -- the stated 2L9Lkc/6Mz5nR seed pair is NOT in directives and may be hallucinated. Recommend single-PDA allowlist OR Bags Creator program ID BAGSB9... membership check (50 sigs/4.3h). letsBONK poller is HEALTHY: 3 valid grad entries with correct discriminator 885cc8671cda908c spanning 24h+; LaunchLab program has 267 sigs/hr -> ecosystem alive, graduations just rare. Phase 1 letsBONK grad-snipe is SAMPLE-STARVED not BROKEN."
       },
       {
-        "role": "novel-mechanism scout (untapped Solana edges)",
-        "finding": "PROPOSED jito_tip_floor_anomaly_front_run \u2014 Jito tip-floor (95th pct) spikes >5x 30-min rolling median precede mint-specific price moves by 400-1200ms. Public free endpoint bundles.jito.wtf/api/v1/bundles/tip_floor. Asymmetric signal (sniper bots can't trade on it), ~95% of bots ignore the auction. Est 8-20 fires/day. Phase 1 LOG-ONLY required before Phase 2 live."
+        "role": "novel-mechanism scout (non-Jito rotation per mandate)",
+        "finding": "Surfaced deployer_second_launch_buyer_reflex hypothesis. Mechanism: deployer prior-hit-token early-buyer wallets re-enter on next deployment, forming 30-120s causal-graph buy signal. Evidence: Medallion 85.3% deployer-clustering stat, Axiom productionizes prior-deployer-perf filter, repo's own 23-wallet pinned/target list empirically validates reflex wallets exist. Persistence: requires graph traversal retail UIs do not surface. Priority HIGH."
       }
     ],
     "data_sources_used": [
-      "dexscreener_token_endpoint",
-      "dexscreener_search_endpoint",
-      "dexscreener_trending_pages_403_blocked",
+      "bundles.jito.wtf_tip_floor",
+      "bundles.jito.wtf_recent",
       "solana_rpc_alchemy",
-      "bags_fm_docs",
-      "bitquery_bags_api_docs",
-      "meteora_dbc_sdk_idl",
-      "jito_block_engine_bundles_api",
-      "jito_tip_floor_endpoint",
-      "nansen_solana_2026_analytics",
-      "dysnix_sniper_blueprint",
-      "mexc_telegram_bots_article",
-      "dev_to_jito_2026",
+      "meteora_dbc_program",
+      "bags_creator_program",
+      "letsbonk_launchlab_program",
+      "medallion_analytics_deployer_study",
+      "dextools_axiom_2026_tutorial",
+      "helius_orb_docs",
+      "bubblemaps_holder_analysis",
+      "walletmaster_solana_token_api",
       "own_strategy_stats",
       "own_brain_directives",
       "own_letsbonk_graduation_log",
       "own_heartbeat",
-      "own_research_findings_146"
+      "own_research_findings_147",
+      "own_degen_bot_py_source"
     ],
-    "next_run_focus": "(1) RESEARCH-148 PRIORITY-1: validate jito_tip_floor_anomaly_front_run with a 1-hour real probe. Subagent should poll bundles.jito.wtf/api/v1/bundles/tip_floor every 5s for 30 min, log percentiles + concurrent /api/v1/bundles/recent for tipper wallets. Build a histogram of 95th-pct deltas from rolling-30-min median. Confirm at least 3 spike events >5x median occur in any 30-min window. If 0 spikes observed in a 30-min sample, expand to 60 min or widen the rolling-median window. (2) PRIORITY-2: complete REQ-015 sub-ask 2 partial (still). Re-attempt milito + Cowboy BNB full base58 via kolscan _rsc=1 endpoint or Playwright/headless-chrome scrape; OR brain may decide to skip them (below-fold leaderboard ranks). (3) PRIORITY-3: enrich Bags-allowlist seed. Find 3 MORE Bags-launched mints to grow the starter allowlist from 2 configs to 5 \u2014 increases the probability that the first graduating Bags token in the wild matches a known config. Use bags.fm Twitter/Telegram references or Bitquery API trace. (4) PRIORITY-4: investigate the 0/1800 grad discriminator hit rate research-146 Subagent C reported on letsBONK \u2014 re-run inner+outer scan over a 24h window and compare to the bot's actual log (2 entries since Phase 1 ship). (5) PRIORITY-5: now that Jito Block Engine endpoint is locked, spec the bundle_diamond_hand_signal Phase 1 LOC budget more precisely \u2014 survey degen_bot.py for the existing daemon-thread pattern (start_letsbonk_grad_poller at line 4595, start_pumpfun_grad_listener at line 4103) and produce a concrete file-and-function checklist the survival brain can execute in one run.",
-    "ops_note_subagent_artifacts": "Subagent B left 2 helper files in working dir: find_bags_config.py, verify_bags_configs.py. Subagent C produced no temp files. Subagents A and D produced no temp files. None of the subagents touched protected state files. All RPC calls used ALCHEMY_SOLANA_RPC via .env (no public-endpoint usage observed).",
-    "ops_note_brain_critical_alerts": "THREE high-priority signals for brain action: (a) KILL dual_pair_echo_burst (move to killed_ideas_permanent) \u2014 fresh evidence converges on no-edge AND adverse selection. (b) SHIP-READY: bundle_diamond_hand_signal Phase 1 has the Jito endpoint spec locked \u2014 brain may ship in run-287/288 with the LOC budget research-148 will deliver. (c) NEW HIGH-PRIORITY: jito_tip_floor_anomaly_front_run is the most novel-mechanism finding in 5+ runs and deserves dedicated brain bandwidth.",
+    "next_run_focus": "(1) PRIORITY-1: if survival brain has SHIPPED Phase 1 tipfloor+bundle loggers, verify sol_jito_tipfloor_log.json + sol_jito_bundle_log.json have grown to expected entry counts (8.6k/day and 2.9k/day) and spot-check schema; otherwise re-validate ship-ready status. (2) PRIORITY-2: build the deployer_second_launch_buyer_reflex pilot dataset -- pick 5 deployers from sol_target_wallets.json that have launched >=2 tokens, manually compute their reflex pool, eyeball the 3-of-10 threshold against actual 120s buyer set on their newest launch. Concrete sample-data work, no production code. (3) PRIORITY-3: if FhVo3mqL is now the LIVE Bags allowlist, watch for the FIRST Bags graduation post-deploy and report mechanism validation; if not, escalate the allowlist reconciliation finding. (4) PRIORITY-4: novel-mechanism scout rotates to a different area next run (NOT Jito, NOT deployer-graph) -- candidates: Compressed NFT velocity by deployer, Solana mint freeze/unfreeze timing as buy signal, or Telegram-channel scraping for leading retail-FOMO indicators. (5) Maintenance note: bot heartbeat was 438s stale at run start (>300s threshold) but no positions open and brain run-288 reported healthy 16-min stale heartbeat -- recommend brain double-check bot liveness on run-289 fire.",
+    "maintenance_alert": {
+      "bot_heartbeat_stale_seconds": 438,
+      "note": "Heartbeat mtime was 7m 18s old at research-148 start; over the 5-min liveness threshold. Flagged for survival brain run-289 verification of PID 13752. No open positions so no immediate capital risk. NOT the headline."
+    },
     "meta": {
-      "elapsed_min": 11,
+      "elapsed_min": null,
       "subagent_count": 4,
-      "web_calls": 22,
-      "rpc_calls": 18,
-      "new_tokens_scouted": 5,
-      "request_responses_count": 0
+      "web_calls": 7,
+      "new_tokens_scouted": 7,
+      "spike_events_observed_5min_p99": 2,
+      "spike_events_extrapolated_per_day_p99": 576
     }
   },
   "research_status": {
-    "running": true,
-    "started_at": "2026-05-12 00:40:10 EDT",
-    "run_id": "research-148"
+    "running": false,
+    "last_run_id": "research-148",
+    "finished_at": "2026-05-12 00:51:26 EDT"
   },
   "maintenance_status": {
     "timestamp": "2026-05-12 00:05:00 EDT",
@@ -364,7 +384,7 @@
     "stale_locks_cleared": [],
     "brain_status_check": "running:false (last_completed run-287 at 2026-05-11T18:08:30 EDT) \u2014 no stale lock",
     "research_status_check": "running:false (last_run research-147 at 2026-05-11 12:48:34 EDT) \u2014 no stale lock",
-    "hours_since_last_trade": 7.76,
+    "hours_since_last_trade": 7.84,
     "last_buy": {
       "timestamp": "2026-05-11T17:03:35 EDT",
       "token": "ASTEROID",
@@ -402,7 +422,7 @@
     "log_truncations": [],
     "next_run_focus": "Watch hypothesis count (57) \u2014 one new add without a kill trips the 60-trigger. Heartbeat-writer symptom returned at maint-038/039/041 after maint-037's brief catch-up; expect to continue ignoring while events stay fresh.",
     "elapsed_min": 2,
-    "file_age_min": 42.4,
+    "file_age_min": 47.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1851,7 +1871,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 34,
-    "age_min": 16.2,
+    "age_min": 21.2,
     "stale": false,
     "available": true
   },
@@ -1888,29 +1908,29 @@
     "requests_archived": 2,
     "elapsed_min": 0.0,
     "next_run_focus": "Watch entries count drift back above 40; historical_lessons now at 133 \u2014 consider archival cap if it exceeds 250.",
-    "age_hours": 3.7,
+    "age_hours": 3.8,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 663.289861,
+  "maint_next_sec": 359.726477,
   "maint_next_str": "1:00 AM EST",
   "maint_last_run_str": "",
   "maint_stale": true,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "3.7h ago",
+  "memk_last_run_str": "3.8h ago",
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "jito_tip_floor_anomaly_front_run",
-      "run_id": "research-147",
-      "status": "not_acknowledged",
-      "status_label": "\u2753 Not acknowledged",
-      "status_color": "#ff9933",
-      "evidence_text": "",
-      "evidence_source": ""
+      "hypothesis_name": "deployer_second_launch_buyer_reflex",
+      "run_id": "research-148",
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Run-287 bundle_diamond_hand_signal and jito_tip_floor_anomaly deferral: STILL DEFERRED - research-148 not yet fired, so the wait continues exactly as planned.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 28,
@@ -1920,195 +1940,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-12T00:22:00.347502",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip mrpenis: m5=18.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:22:00.818423",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip mrpenis: m5=18.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:22:01.289910",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip mrpenis: m5=18.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:22:39.500106",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J6TDXvar sold 9HEWoirz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:22:39.500106",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J6TDXvar sold 9HEWoirz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:22:41.983588",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip ELEPHANTS: h1=-3.2% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:23:54.162190",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 99xnE2zE sold EqoJGGiX \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:23:54.169448",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 99xnE2zE sold EqoJGGiX \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:24:26.911831",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 86AEJExy sold CcTZANTu \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:24:29.151163",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip Chud: h6=209.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:25:40.835492",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold TkEfcu8C \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:25:41.336990",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Agu: downtrend h1=-19.1% h24=-19.1%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:25:41.783725",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Agu: downtrend h1=-19.1% h24=-19.1%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:25:41.787738",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold BhrNnMRJ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:26:52.700656",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip mrpenis: m5=-49.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:26:53.151883",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip mrpenis: m5=-49.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:26:53.606258",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip mrpenis: m5=-49.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:26:54.043856",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip mrpenis: m5=-49.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:26:54.482255",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip mrpenis: m5=-49.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:04.821725",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6urLyUoh sold VNo7EjR3 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:06.990145",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip BULL: h1=-1.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:06.996144",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6urLyUoh sold AVA8YuCs \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:09.158725",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CHUD: h1=14.3% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:31.361679",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5EJ64rJX sold AMCHpR1F \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:31.367681",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5EJ64rJX sold FJtB7uHW \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:33.732696",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Walter: softdown h1=-8.9% h24=-36.5%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-12T00:28:35.826933",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Scientology : h1=0.2% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-12T00:29:00.321309",
       "type": "SIGNAL",
@@ -2619,6 +2450,195 @@
       "color": "#d29922",
       "msg": "m5 dump skip mrpenis: m5=-10.4% (active sell-off at execution, run79)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:49:49.835810",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6urLyUoh sold DtwuKwjS \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:49:49.844768",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6urLyUoh sold 4AjvPXMn \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:49:49.850802",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6urLyUoh sold 4C4uA2TR \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:49:49.850802",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6urLyUoh sold 52nVoVk3 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:49:49.850802",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6urLyUoh sold 21rKrtBz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:50:09.463756",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Octopus: m5=-12.6% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:50:11.948436",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip HANTA: h1=-4.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:50:38.344607",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip CWU: h1=0.3% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:50:38.344607",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: G626Wee1 sold CmVUoJUt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:50:38.360297",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: G626Wee1 sold CmVUoJUt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:50:38.794647",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip CWU: h1=0.3% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:50:38.810451",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: G626Wee1 sold CmVUoJUt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:51:23.632508",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7Jvv3oSU sold CmVUoJUt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:51:23.638661",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7Jvv3oSU sold CmVUoJUt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:51:23.643660",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7Jvv3oSU sold CmVUoJUt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:51:37.154863",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip ALONEGUY: deep24h h24=-98.7% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:14.766533",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard block h0 5s4GgSH2: blocked hour (data-proven -EV)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:14.766533",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5s4GgSH2 sold 6CVd9hqv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:16.887465",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip RoyalPop: h6=108.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:17.335450",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip RoyalPop: h6=108.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:54.010243",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Fqnu2jpU sold 6rWKWPPw \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:56.038522",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip PRATT: h1=-15.2% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:56.054662",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Fqnu2jpU sold EWiVNxCq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:52:58.417639",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Openhuman: h1=-18.8% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:53:19.963805",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "No new signals",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:53:20.554974",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip mrpenis: m5=-26.7% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-12T00:53:20.554974",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "FreshProfile: overnight skip (00:xx ET, block=00:00-04:59)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2674,9 +2694,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "00:48:56",
+  "ts": "00:54:00",
   "__publish_meta": {
-    "published_at": "2026-05-12 00:48:56 EDT",
+    "published_at": "2026-05-12 00:54:00 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
