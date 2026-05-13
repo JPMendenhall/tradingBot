@@ -1,15 +1,15 @@
 {
-  "sol_price": 94.72438638061163,
+  "sol_price": 95.14723628327556,
   "bot_status": "DEAD",
   "bot_last_seen": "19:44:10",
   "bot_cycles": 1,
   "bankroll": 1.1472,
-  "bankroll_usd": 108.66781605583766,
+  "bankroll_usd": 109.15290946417372,
   "budget": 0.16458694289999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 19.3,
+  "hour": 20.3,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -230,7 +230,7 @@
     "result": "Saved 20 wallets in 32m 35s",
     "completed": "2026-05-12T01:48:07.652025"
   },
-  "brain_next_sec": 10543.667045,
+  "brain_next_sec": 6966.445904,
   "brain_next_str": "12:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
@@ -238,7 +238,7 @@
   "research_running": false,
   "research_last_run_str": "12:50 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 12103.667045,
+  "research_next_sec": 8526.445904,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-12 12:50:17 EDT",
@@ -416,40 +416,42 @@
     "finished_at": "2026-05-12 12:50:17 EDT"
   },
   "maintenance_status": {
-    "timestamp": "2026-05-12 20:06:30 EDT",
-    "run_id": "maint-060",
+    "timestamp": "2026-05-12 21:10:30 EDT",
+    "run_id": "maint-061",
     "bot_status": "RUNNING",
     "bot_pid": 9768,
-    "bot_heartbeat_age_sec": 1244,
-    "heartbeat_anomaly": "Heartbeat file is 20.7 min stale (cycle=1 only since 19:44:10, when maint-059 restart fired) BUT sol_events.json is being actively written (last entry 4 min ago, 61 BUY_SKIPs and 38 SIGNALs in last 100 events). The bot's main loop and event writer are alive; the heartbeat writer thread appears stuck. Did NOT restart - restarting a working bot mid-scan to reset a stale indicator would interrupt active work. Next run: if events ALSO go stale, treat as crash and restart.",
+    "bot_heartbeat_age_sec": 226,
+    "heartbeat_observation": "Heartbeat was 1310s stale at run start, then refreshed during this run when cycle #4 began at 21:06:24. The cycle marker advanced from 3 to 4 (visible in latest SCAN event \"Scanning 120 wallets (cycle #4)\"). The previous-run anomaly (heartbeat stuck since maint-059 restart at cycle=1) appears self-resolved: cycles ARE advancing, heartbeat IS updating, just on a slow once-per-cycle cadence (~20-25 min). No restart needed.",
     "dashboard_status": "RUNNING",
     "dashboard_pid": 7052,
-    "dashboard_http": "200 in 0.99s on /api/state (17319 bytes)",
+    "dashboard_http": "200 in 0.92s on /api/state",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "lock_check_notes": "sol_brain_status.json running:false (last_run run-291, completed 17:45 EST). sol_research_status.json running:false (last research-149 finished 12:50 EDT). No stale running:true flags.",
-    "hours_since_last_trade": 28.08,
-    "last_buy": "2026-05-11T17:03:35 ASTEROID via wallet_convergence (-12.5% emergency stop, exited 17:50)",
+    "lock_check_notes": "sol_brain_status.json running:false (last_run run-291, completed 2026-05-12 17:45 EST). sol_research_status.json running:false (last research-149 finished 12:50 EDT). No stale running:true flags. Both files live at OneDrive copy only.",
+    "hours_since_last_trade": 29.07,
+    "last_buy": "2026-05-11T17:03:35 EDT ASTEROID via wallet_convergence (-12.5% emergency stop, exited 17:50)",
     "buys_in_last_24h": 0,
     "dormancy_alert": true,
-    "filter_lockout_diagnosis": "Bot is scanning normally but every buy candidate is rejected. Last 100 events: 61 BUY_SKIPs, 38 SIGNALs, 1 SCAN - skip rate ~61% of total events (not the >95% strict lockout threshold, but still 0 buys in 27h). Top BUY_SKIP buckets: m5 pump/dump skips (momentum gate - candidates either dumping or post-pump), Sell-conflict skip (positions in cooldown), generic 'Skip TOKENNAME' from CHOP/wallet-WR gates. Many m5 skips at -10% to -60% h1 - the market is in active sell-off and the bot is correctly refusing to chase dumps. Filters are doing their job; whether the gates are TOO tight for current regime is a brain decision, not mine.",
+    "filter_lockout_diagnosis": "Bot is scanning normally but every buy candidate is rejected. Last 100 events: 37 BUY_SKIP + 19 CB_SKIP + 2 BS_SKIP + 38 SIGNAL + 4 SCAN. Top BUY_SKIP buckets: m5 pump skip (run95, post-pump exit-liq), m5 dump skip (run79, active sell-off), midpump skip (run115, h1 below 15% threshold), h6pump skip (run116, extended 6h pump), downtrend (h1 and h24 both deep red), sell-conflict (recently sold by tracked wallet). The market is in active sell-off (many candidates at -50% to -86% h1) and the bot is correctly refusing dump-chases. Filters are working as designed; whether the GATE COMBINATION is too tight for ALTCOIN_WINTER (58.3% BTC dom) is a brain judgment.",
     "altcoin_regime": "ALTCOIN_WINTER(58.3% BTC dominance)",
     "sol_balance_sol": 1.1472,
+    "bot_realized_pnl_summary": "24h: $+0.00 (0 trades) | 7d: $-0.11 (5 trades, 1W/4L) | All-time: $-110.40 (1001 trades, 355W/646L). 49 spam-tokens held (not tracked positions).",
     "actions_taken": [
-      "Checked all 7 maintenance sections. No restarts needed - both bot (PID 9768) and dashboard (PID 7052) are healthy and singleton.",
-      "Did NOT restart bot despite stale heartbeat: events are flowing fresh (262s ago), no CYCLE_ERROR present. Heartbeat writer appears separately stuck; main scan loop is fine. Logged for next run.",
-      "Appended DORMANCY_ALERT to sol_maintenance_alerts.json - 27h since last buy crossed 24h threshold for the second consecutive run."
+      "Checked all 7 maintenance sections. No process restarts needed - bot (PID 9768) and dashboard (PID 7052) are healthy singletons.",
+      "Healed GitHub Pages public mirror: was 70.9 min stale (CRITICAL >60 min threshold), ran publish_dashboard.py manually, push succeeded at 21:08:16 EDT; verified post-heal mirror_age = 1.9 min after ~45s CDN propagation. The publisher daemon thread inside degen_bot.py appears to have missed at least one cycle - if this recurs next run, that thread may be dead.",
+      "Appended DORMANCY_ALERT to sol_maintenance_alerts.json (3rd consecutive run, now 28.1h since last buy).",
+      "Efficiency Lab: trigger fires (62 pending_hypotheses just above the 60 threshold) and throttle has EXPIRED (24.0h since efflab-003 at 2026-05-11 21:08 EDT). DEFERRED firing this run due to scheduler 5-min budget vs lab 15-min budget; lab should be invoked as its own scheduled task or via operator command."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
-      "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 6.8,
-      "heal_attempted": false,
-      "heal_succeeded": null,
-      "heal_output": "",
-      "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 6.8,
-      "note": "Public mirror published 19:59:16 EDT - only 6.8 min stale, well under the 15-min healthy threshold. Publisher daemon thread inside the bot is firing on schedule (matches the 'publisher alive' diagnosis from maint-059 post-restart)."
+      "pre_heal_status": "CRITICAL",
+      "pre_heal_age_min": 70.9,
+      "heal_attempted": true,
+      "heal_succeeded": true,
+      "heal_output": "[OK] wrote OneDrive\\docs\\data\\snapshot.json (109,664 bytes); staged: docs/data/snapshot.json; pushed: snapshot 2026-05-12T21:08:16",
+      "post_heal_status": "HEALED",
+      "post_heal_age_min": 1.9,
+      "note": "Mirror was 70.9 min stale (CRITICAL) - ran publisher manually, GH Pages CDN took ~45s to propagate, post-heal verified at 1.9 min. The bot publisher daemon missed at least one ~5-min cycle (last auto-push 19:59:16, prior maintenance run at 20:06 found mirror at 6.8 min so it WAS pushing then). If this recurs next run, the publisher thread inside degen_bot.py is the culprit and a clean bot restart may be needed - but only if the operator decides; restarting active trading isn't worth a stale public dashboard."
     },
     "efficiency_lab": {
       "triggered": true,
@@ -460,17 +462,18 @@
         "drift_keys": []
       },
       "fired_this_run": false,
-      "skip_reason": "throttled_24h",
-      "summary": "Trigger fired (pending_hypotheses=62 just over the 60 threshold) but SKIPPED: previous efflab-003 ran 23.0h ago (2026-05-11 21:08 EDT), under the 24h throttle. Lab can fire on next maintenance run if hypotheses remain >60. Lessons (43), pending_requests (0), and drift_keys ([]) are well under thresholds."
+      "skip_reason": "time_budget",
+      "summary": "Trigger fires (62 pending_hypotheses above the 60 threshold); throttle has expired (24.0h since last efflab-003 at 2026-05-11 21:08 EDT). Lab DEFERRED this run because the scheduler-task time budget is 5 min and the lab requires 15 min for careful curation (snapshot, condensed_lessons cleanup across 43 active entries, dedupe 62 hypotheses, audit killed_ideas, archive survival_history, archive completed requests). Recommend running the efficiency-lab as its own scheduled task, or extending the next maintenance window. The next maintenance run can fire the lab if pending_hypotheses remains >60."
     },
     "log_truncations": [],
     "log_sizes": {
-      "bot.log": "2.6 KB (unchanged since restart - stdout possibly buffered, consistent with stale-heartbeat anomaly)",
-      "dashboard.log": "1.2 KB"
+      "bot.log": "2.0 KB (located at OneDrive\\bot.log, fresh writes at 21:06:24)",
+      "dashboard.log": "0.4 KB"
     },
-    "next_run_focus": "1) Critical: verify sol_events.json is STILL being updated. If events have also gone stale, the bot is truly dead despite the live PID - restart it. 2) If heartbeat is still 20+ min stale next run while events are fresh, the heartbeat writer thread in degen_bot.py has a bug; flag to operator. 3) Dormancy is now 27h - second consecutive run with 0 buys in 24h. The survival brain (last ran run-291 at 17:45 EST) has the data and operator-autonomy grant to relax filters if it judges fit; that is its call, not mine. 4) Efficiency Lab will be eligible to fire next run (throttle expires ~21:08 EDT today).",
-    "elapsed_min": 4,
-    "file_age_min": 60.7,
+    "state_directory_anomaly": "Active state files (sol_heartbeat.json, sol_events.json, sol_seen_sigs.json, sol_jito_*, sol_dex_*, sol_gecko_*, sol_strategy_stats.json, sol_m5_skip_log.json, sol_profile_cache.json, sol_pumpfun_*, sol_convergence_tracker.json, sol_copy_mult_state.json) live in C:\\Users\\owner\\Desktop\\defi-survival-agent and are being actively written by the bot. The full project (degen_bot.py, dashboard.py, publish_dashboard.py, sol_trade_log.json, sol_brain_directives.json, sol_brain_status.json, sol_research_status.json, sol_maintenance_*.json, sol_efficiency_lab_status.json, bot.log, dashboard.log) lives in C:\\Users\\owner\\OneDrive\\Desktop\\defi-survival-agent. The bot apparently chdir-s its state writes to Desktop but keeps stdout/log/static-config in OneDrive. publish_dashboard.py reads state from OneDrive (which is why the published snapshot shows bot_last_seen 19:44:10 = the stale OneDrive heartbeat). This means the public mirror is reporting STALE state regardless of when the publisher last pushed. Surfacing for operator awareness; do not auto-fix - this is a structural issue, not a maintenance one.",
+    "next_run_focus": "1) Watch for recurring mirror staleness - if the bot publisher thread keeps missing cycles, that thread is dying and a clean bot restart may be warranted (operator call only). 2) Efficiency Lab is ELIGIBLE - trigger fires + throttle expired. Either invoke efficiency-lab directly or expand the next maintenance window. 3) Dormancy is now 28h, 3rd consecutive run with 0 buys - the survival brain has the data + autonomy grant; this is for the brain to address, not maintenance. 4) Investigate state_directory_anomaly: publisher is reading stale OneDrive state because bot writes go to Desktop dir. Either fix the publisher path or fix the bot path - structural cleanup for the operator.",
+    "elapsed_min": 6,
+    "file_age_min": 55.7,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1905,7 +1908,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 84.1,
+    "age_min": 143.7,
     "stale": true,
     "available": true
   },
@@ -1942,14 +1945,14 @@
     "requests_archived": 2,
     "elapsed_min": 0.0,
     "next_run_focus": "Watch entries count drift back above 40; historical_lessons now at 133 \u2014 consider archival cap if it exceeds 250.",
-    "age_hours": 24.0,
+    "age_hours": 25.0,
     "stale": true,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 403.667045,
-  "maint_next_str": "9:15 PM EST",
+  "maint_next_sec": 426.445904,
+  "maint_next_str": "10:15 PM EST",
   "maint_last_run_str": "",
   "maint_stale": true,
   "memk_next_sec": null,
@@ -2728,9 +2731,9 @@
       "auto_resolved": "operator: keeping refactor as-is, dismissed action-required panel"
     }
   ],
-  "ts": "21:08:16",
+  "ts": "22:07:53",
   "__publish_meta": {
-    "published_at": "2026-05-12 21:08:16 EDT",
+    "published_at": "2026-05-12 22:07:53 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
