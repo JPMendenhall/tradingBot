@@ -1,15 +1,15 @@
 {
-  "sol_price": 90.87798943937985,
+  "sol_price": 90.81457866679384,
   "bot_status": "RUNNING",
   "bot_last_seen": "06:05:43",
   "bot_cycles": 22,
   "bankroll": 1.1377,
-  "bankroll_usd": 103.39188858518244,
+  "bankroll_usd": 103.31974614921134,
   "budget": 0.16314797369999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 6.1,
+  "hour": 6.2,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,88 +113,115 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-14 00:10:00 EDT",
-    "run_id": "run-280",
+    "timestamp": "2026-05-14 06:10:00 EDT",
+    "run_id": "run-281",
     "market_regime": "CHOP",
-    "altcoin_regime": "ALTCOIN_WINTER",
-    "system_diagnosis": "Bot is back alive after the path-divergence outage (operator copied source files to the canonical folder between 9:05 and 9:23 PM yesterday). First new trade in over a day was WORLDCUP via consensus_boost - bought at 22:44, stopped out at 23:35 for a 10.5% loss. Tiny sample size but the entry sat in exactly the kind of late-chase setup the research brain flagged as toxic (5-minute chart up 17.6% AND 1-hour up 9.3% at entry). The #1 problem heading into this run was that the highest-impact strategy fix (H11) was sitting in research and could not be coded while source was unreachable. That blocker is now gone, and the fix is in the source code.",
-    "exit_analysis": "Rolling 7-day stop-loss rate is 71.4% (5 of 7 sells were stop-losses), risk-to-reward 0.84. The new WORLDCUP sell pushes the 24-hour window to 1 trade, 100% stop-loss rate, average loss 10.5%. All-time numbers basically unchanged: 35.4% win rate over 1003 sells, R/R 0.79. Exit mix all-time still 42.6% stop-loss / 22.4% time-exit / 14.6% target / 12.4% other / 8.1% trailing. Single biggest dollar leak remains the 1-2 hour slow-bleed cohort at -0.481 SOL across 255 trades; nothing this run touches it directly (that needs H8 peak instrumentation, which is queued for the next code pass).",
-    "strategy_work": "H11 (per-strategy young-pair gate) shipped to source this run. Two specific edits to degen_bot.py: (a) the fresh_boost minimum pair age is now 6 hours instead of 4, and (b) a brand-new 6-hour pair-age skip was added to the fresh_profile signal generator without touching its other age-tracking logic. The fix uses a separate constant so the existing profile-first-seen logic stays intact - that overload was a trap I noticed and avoided. Compile-check passes. Change takes effect on the next bot restart, which the brain cannot trigger itself - filed an operator todo to request the restart. Expected effect: fresh_profile shifts from 60% win rate to roughly 85% on the remaining cohort; fresh_boost flips from net loser to net positive.",
-    "directives_changes": "Bumped directives to version 5. Big swap of current_priority away from the run-279 'bot is dead, wait for operator' state to a 'H11 deployed, next is H8+F2 instrumentation' posture. H11 hypothesis status moved from READY to DEPLOYED_PENDING_RESTART with a documented rollback plan. fresh_profile and fresh_boost active-strategy entries updated to show the expected post-restart projection. WORLDCUP trade logged as a single supporting observation for H10 (toxic late-chase zone). Added two new condensed lessons: brain has no restart authority, and existing constants can overload meanings (the FRESH_PROFILE_MIN_AGE_H trap). Track record refreshed against the fresh strategy stats file.",
+    "system_diagnosis": "The biggest practical problem is NOT in the trade book this run \u2014 it is in the deploy queue. H11 (the per-strategy young-pair filter coded in run-280) has now been waiting for an operator restart through 5 consecutive maintenance runs (~6 hours real-time). Bot is alive, healthy, dormant in chop, but still executing pre-H11 code. The historical projected gain of H11 (~+0.047 SOL on the historical fresh_profile + fresh_boost samples) is on hold until the restart. Trade book itself: 1003 lifetime sells unchanged since run-280, zero new trades this 6h window. All other diagnostics are nominal.",
+    "exit_analysis": "Rolling 7-day across all strategies: 6 trades, 1 win, 5 losses, win rate 16.7%, R/R 0.84, stop-loss rate 66.7%, net -0.0058 SOL. All-time: 1003 sells, 35.4% WR, R/R 0.79, stop-loss rate 50.6%, net -1.172 SOL. The single new trade since run-280 (WORLDCUP via consensus_boost, -10.5% stop-loss) sat squarely in H10's late-chase zone (5-minute chart +17.6% AND 1-hour chart +9.3% at entry) \u2014 single data point but mechanism-consistent. No new evidence to act on for exits this run; H6 RULE-B work remains blocked behind the H8 peak-tracking instrumentation, which will ship in the next bundled restart.",
+    "strategy_work": "No code edits shipped this run \u2014 deliberate. With H11 still pending operator restart (6th consecutive run flag), stacking more pending edits in isolation would compound deployment risk and confound H11's measurement. Instead, processed research-150's two schema-complete proposals: (1) weekend-midday non-copy filter, MEDIUM confidence \u2014 filed as new pending hypothesis H13, status RESEARCHING, deferred until H11 has 10+ post-restart trades; (2) pump.fun graduation data source, HIGH confidence \u2014 filed as new pending hypothesis F3 (infrastructure), status READY, queued for next instrumentation bundle. Research-150 also surfaced a new HIGH-priority entry mechanism (pump.fun graduation snipe with $50k LP gate, 6 wins / 0 rugs in N=10 live sample) \u2014 filed as H14, status RESEARCHING, blocked on F3. All three new pending hypotheses pass the proposal-completeness gate (baseline + expected_effect + kill_criteria + min_sample_size + regime_scope + rollback_plan + risk_if_wrong present). Outcome: pending_hypotheses grew from 13 to 16, all with explicit blockers and next steps.",
+    "directives_changes": "Bumped version 5 -> 6. Current priority reframed: H11 stuck in deploy-purgatory; next source-edit pass will be ONE bundled restart covering F2 + H8 + F3 + H14 after H11 lands. Added 3 new pending hypotheses (H13, F3, H14) all filed from research-150 + 1 new condensed lesson about bundling pending edits to minimize operator burden. exit_lab's next_experiment narrative updated to reflect the bundle. No changes to killed_ideas_permanent. No new requests_for_research filed (research-150's own next_run_focus already commits to the three follow-up scouts I would have asked for).",
     "self_audit": {
       "checked_last_change": true,
-      "checked_last_change_note": "Last code change was run-275 (boosts_top_feed unblock). Has not produced trades yet; still in candidate-accumulation phase. No regression observed.",
-      "code_verified": true,
-      "code_verified_note": "py_compile passed on degen_bot.py after the three edits (constant block at 7806 + new constant at 7858 + new skip check inside _get_fresh_profile_signals). Defaults verified: pair_age_h falls back to 999.0 when pairCreatedAt is missing, which passes the new MIN_PAIR_AGE_H=6 check as intended.",
-      "atomic_writes": true
+      "code_verified": false,
+      "code_verified_note": "No code changes this run. The H11 code edit from run-280 (FRESH_PROFILE_MIN_PAIR_AGE_H=6.0, FRESH_BOOST_MIN_AGE_H 4.0->6.0) remains on disk at degen_bot.py mtime 2026-05-14 00:06:48 EDT but is still NOT executing in the running bot (PID 14400 started 2026-05-13 21:23:33 EDT, predates the edit). 5th consecutive maintenance flag.",
+      "research_proposal_gate": "Both research-150 proposals checked for the 7 required fields (baseline, expected_effect, kill_criteria, min_sample_size, regime_scope, rollback_plan, risk_if_wrong). Both schema-complete. No down-rank or research re-submit required. Filed as pending hypotheses (no immediate-deploy stacking).",
+      "killed_ideas_conflict_check": "Neither proposal nor new hypothesis conflicts with killed_ideas_permanent. K1 covers a copy_trade-specific cooldown idea; nothing in research-150 touches copy_trade."
     },
     "previous_followups": [
-      "Path divergence (the cross-folder source-vs-state split): RESOLVED before this run. Maintenance bot's maint-024 confirmed all .py files at canonical path; bot restarted by operator at 21:23 EDT yesterday on PID 14400; mirror is fresh.",
-      "Dormancy alert clock (18.7h at end of run-279): cleared by the WORLDCUP buy at 22:44 EDT. 24-hour alert threshold never tripped.",
-      "H11 readiness (PROPOSED_BY_RESEARCH at run-279, READY-but-blocked at run-279): SHIPPED to source code this run. Awaits a restart to go live."
+      "Run-280 priority 'H11 deploys at next natural restart, then begin H8/F2 instrumentation bundle' \u2014 H11 has NOT deployed; bot PID 14400 still runs pre-H11 code. Instrumentation pass remains queued. Status: 1/2 partially done.",
+      "Run-280 secondary 'verify H11 deployment status (restart happened?)' \u2014 verified: not happened, 6th consecutive run flagging.",
+      "Run-280 secondary 'begin staging H8+F2 instrumentation pass' \u2014 STAGED but NOT coded yet. Decision this run: bundle with F3 + H14 also, ship as ONE pass once H11 lands."
     ],
     "changelog": [
-      "Fresh-boost strategy now waits until a token's first trading pair is at least 6 hours old before buying (was 4 hours). Historical data shows fresh-boost loses every trade it takes inside the 1-6 hour window.",
-      "Fresh-profile strategy now also waits for a token's first trading pair to be at least 6 hours old. This is a new check that does not interfere with how the bot detects brand-new profiles - profiles still get noticed instantly, just not BOUGHT until the underlying pool is old enough to be less rug-prone.",
-      "Submitted a request to the to-do list asking the operator to restart the bot so the two changes above can take effect."
+      "Logged research brain's two new proposals (weekend mid-day non-copy filter; pump.fun graduation data source) and one new edge hypothesis (pump.fun graduation snipe with $50k liquidity gate) into the brain's pending-hypothesis list.",
+      "Verified both research proposals carry every required design field, so no rework is needed from the research brain.",
+      "Updated the brain's current priority statement to reflect that the H11 fix coded last run is still waiting for the operator to restart the bot, and that the next code change will bundle five related improvements into a single restart to minimize disruption.",
+      "Added a new internal lesson: when a code change is already pending restart, do not stack more pending edits in isolation \u2014 bundle them so the operator only restarts the bot once and each change can still be measured cleanly.",
+      "Added a second new lesson: a genuinely new entry mechanism (like the pump.fun graduation feed) is rarer and higher-edge than another threshold tweak on an existing data source \u2014 prioritize integration when research surfaces one.",
+      "No bot code changes this run."
     ],
     "actions_taken": [
-      "Read every key state file: directives, research findings, maintenance status, strategy stats, heartbeat, positions, trade log, budget.",
-      "Confirmed the bot is alive and the path-divergence outage is fully closed (source files back at the canonical folder, fresh heartbeat, healthy public dashboard).",
-      "Studied the WORLDCUP loss - the only new trade since last run. Noted that the entry pattern matches research's late-chase toxic zone exactly.",
-      "Edited degen_bot.py to apply the H11 fix - raised the fresh-boost minimum age to 6 hours and added a brand-new 6-hour pair-age skip to fresh-profile that does not break the existing profile-detection logic.",
-      "Ran a compile-check on degen_bot.py - passes clean.",
-      "Filed an operator to-do asking for a bot restart so H11 actually starts running.",
-      "Updated the brain's directives file: bumped to version 5, swapped current priority, advanced H11 to DEPLOYED_PENDING_RESTART, added supporting H10 observation, added two new rules-of-thumb (brain has no restart authority, and don't overload existing constants).",
-      "Wrote this report and appended a copy to the survival history file."
+      "Verified bot is alive and healthy: process 14400 has been running 8.7 hours, cycle counter at 21, no errors in the last 100 events, mirror dashboard publishing on schedule, zero open positions.",
+      "Confirmed that the H11 fix shipped last run (which would tighten the young-pair filter on the fresh_profile and fresh_boost strategies) has NOT yet taken effect: the bot was started before the file was edited. Operator restart is still required. Maintenance is already flagging this in its warnings, so no new operator todo was filed.",
+      "Read the research brain's latest findings file (research-150, 00:48 EDT). Verified both deployable proposals carry every required design field. Filed them as pending hypotheses rather than shipping code immediately, to keep the H11 restart bundle clean.",
+      "Wrote an updated directives file (version 6) atomically: temp file -> validate JSON -> rename. 16 pending hypotheses now tracked.",
+      "Logged this report and brain-status file."
     ],
     "next_priorities": [
-      "After H11 activates at next restart, watch the next 10-20 fresh-profile and fresh-boost trades and confirm the in-zone bleed is gone. Expected win rates: fresh-profile ~85%, fresh-boost ~50%+.",
-      "Next code-edit pass: bundle H8 (intra-trade peak tracking) and F2 (always-log richer entry telemetry) into one restart. This single change unblocks four other hypotheses including H6 (the biggest dollar drag in the book).",
-      "If hturn reaches 10 trades and is still net-negative with R/R<1.0, execute the fast-kill (criteria already met on three of four conditions; only the sample-size floor blocks it).",
-      "Continue watching for any sign that the late-chase entry pattern that hit WORLDCUP is systematic across strategies - one more similar loss would justify pulling H10 forward.",
-      "Open follow-up for operator: figure out what mechanism spawned brain run-279 during the bot-dead window. Benign so far, but the trigger is still latent (per maint-024's anomaly note)."
+      "Verify whether the operator has restarted the bot to apply H11. If yes: validate the fresh_profile / fresh_boost trade flow looks right post-restart (no zero-trade flatline, no compile crash) and then begin coding the bundled F2 + H8 + F3 + H14 instrumentation pass for the NEXT restart. If still no: continue holding new edits, file a higher-priority operator todo if this stretches past 24 hours since H11 was first coded.",
+      "If H11 has activated AND fresh_profile has produced at least 3 post-restart trades, sanity-check that the strategy didn't go fully silent (over-filtering). Sample size 3 is too small to evaluate WR but enough to flag a deploy-broke-the-strategy scenario.",
+      "If still no restart by the run-282 boundary, consider whether to ship F2 telemetry (purely additive logging, no decision-path change) standalone \u2014 the only edit that is genuinely safe to stack against an un-deployed H11 because it cannot affect trade flow.",
+      "Monitor SOL price and BTC dominance \u2014 if regime flips to BULL (h24 > +5%), revisit the H13 weekend filter decision since its evidence was collected entirely in CHOP/winter."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 1003,
-      "win_rate": 0.354,
+      "win_rate": 35.4,
       "avg_win_pct": 13.17,
       "avg_loss_pct": -16.57,
       "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 42.6,
+      "stop_loss_rate_pct": 50.6,
       "bankroll": 1.1377,
-      "pnl_today": 0
+      "pnl_today": 0.0
+    },
+    "rolling": {
+      "rolling_24h": {
+        "trades": 1,
+        "win_rate": 0.0,
+        "pnl_sol": -0.001721,
+        "stop_loss_rate_pct": 100.0
+      },
+      "rolling_7d": {
+        "trades": 6,
+        "win_rate": 16.7,
+        "pnl_sol": -0.00576,
+        "rr_ratio": 0.84,
+        "stop_loss_rate_pct": 66.7
+      }
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, H11 in code awaiting restart)",
-      "fresh_boost (REVIEW, H11 in code awaiting restart)",
-      "consensus_boost (TESTING, top candidate, 1 new SL this run)",
-      "bear_strength (WATCH-CLOSE)",
-      "chop_momentum_scalp (TESTING)",
-      "wallet_convergence (TESTING)",
-      "bounce_hunter (TESTING_BULL, gated)",
-      "flash_surge (TESTING_BULL, dormant)",
-      "hturn (KILL_CANDIDATE, N=8)",
-      "anchor_derivative_snipe (TESTING, N=0)",
-      "boosts_top_feed_breakout (TESTING, N=0)",
-      "copy_trade (DORMANT)"
-    ]
+      "fresh_profile (proven, H11 gate in code awaiting restart)",
+      "fresh_boost (review, H11 gate in code awaiting restart)",
+      "consensus_boost (testing, top non-fresh candidate)",
+      "bear_strength (testing watch-close)",
+      "chop_momentum_scalp (testing watch)",
+      "wallet_convergence (testing)",
+      "bounce_hunter (testing bull, gated)",
+      "flash_surge (testing bull, dormant)",
+      "anchor_derivative_snipe (testing, N=0)",
+      "boosts_top_feed_breakout (testing, N=0)",
+      "hturn (kill-candidate, awaiting N>=10)",
+      "copy_trade (dormant)"
+    ],
+    "research_proposals_processed": {
+      "weekend_midday_filter": {
+        "decision": "FILED_AS_PENDING_H13_DEFERRED",
+        "reason": "Schema-complete but deferred to avoid stacking against H11 in flight. Re-evaluate after H11 has 10+ post-restart trades."
+      },
+      "pump_fun_graduation_data_source": {
+        "decision": "FILED_AS_PENDING_F3_QUEUED_FOR_BUNDLE",
+        "reason": "Schema-complete, HIGH confidence, no P&L risk by itself. Queued for the next bundled instrumentation pass with F2 + H8 + H14."
+      },
+      "pump_fun_graduation_snipe_new_hypothesis": {
+        "decision": "FILED_AS_PENDING_H14_RESEARCHING",
+        "reason": "Genuinely new entry mechanism with strong supporting evidence (6 wins / 0 rugs in N=10 live sample with $50k LP gate). Blocked by F3 data source."
+      }
+    }
   },
   "wallet_scan": {
     "active": false,
     "result": "Saved 20 wallets in 32m 35s",
     "completed": "2026-05-12T01:48:07.652025"
   },
-  "brain_next_sec": 21475.478113,
+  "brain_next_sec": 21156.767232,
   "brain_next_str": "12:04 PM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 95.521887,
-  "brain_last_run_str": "12:10 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "6:10 AM EST",
   "research_running": false,
   "research_last_run_str": "12:48 AM EST",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 23035.478113,
+  "research_next_sec": 22716.767232,
   "research_elapsed_sec": 0,
   "research_findings": {
     "timestamp": "2026-05-14 00:48:00 EDT",
@@ -352,22 +379,22 @@
     "finished_at": "2026-05-14 00:48:15 EDT"
   },
   "maintenance_status": {
-    "timestamp": "2026-05-14 05:06:00 EDT",
-    "run_id": "maint-030",
-    "run_ts": "2026-05-14T05:06:00-04:00",
+    "timestamp": "2026-05-14 06:05:53 EDT",
+    "run_id": "maint-031",
+    "run_ts": "2026-05-14T06:05:53-04:00",
     "agent": "maintenance",
     "overall": "ALL_GREEN",
     "bot_status": "RUNNING",
     "bot_pid": 14400,
     "bot_alive": true,
-    "bot_uptime_h": 7.71,
-    "bot_heartbeat_age_sec": 806,
-    "bot_heartbeat_threshold_note": "Heartbeat mtime 2026-05-14 04:51:19 EDT, age ~806s (~13.4 min) at start of run. Events file last write 05:04:52 EDT (age ~71s at probe time, fresh). Cycle counter advanced 17 -> 19 (+2) since maint-029. Per Section 2: events_age<120s AND cycle_delta>=+1 = ALIVE. Heartbeat is written at cycle boundaries, and the ~13 min age is normal cycle cadence. No action.",
-    "cycle": 19,
+    "bot_uptime_h": 8.71,
+    "bot_heartbeat_age_sec": 10,
+    "bot_heartbeat_threshold_note": "Heartbeat just refreshed at 2026-05-14 06:05:43 EDT (age 10s at probe). Events file 10s fresh. Cycle counter advanced 19 -> 21 (+2) per heartbeat content; an even fresher cycle landed mid-run at 06:05:43 so true current is 22+. Per Section 2: events_age<120s AND cycle_delta>=+1 = ALIVE. No action.",
+    "cycle": 21,
     "cycle_delta_since_prior_run": 2,
     "sol_balance": 1.1377,
-    "sol_price": 91.03,
-    "regime": "ALTCOIN_WINTER(58.2%)",
+    "sol_price": 90.63,
+    "regime": "ALTCOIN_WINTER(58.3%)",
     "open_positions": 0,
     "open_position_summary": "Zero open positions. sol_positions.json is `[]` (empty array, mtime unchanged since the WORLDCUP SL exit at 2026-05-13 23:35:14 EDT). No new buys or exits since maint-025.",
     "trades_today": 0,
@@ -376,16 +403,16 @@
     "rolling_24h_sells": 1,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 15384,
-    "dashboard_uptime_h": 7.71,
+    "dashboard_uptime_h": 8.71,
     "dashboard_port": 5555,
     "dashboard_http": 200,
-    "dashboard_response_sec": 0.893,
-    "dashboard_response_note": "GET http://localhost:5555/api/state returned 200 / 74389 bytes in 0.893s. BIG improvement from the 2.8-2.9s band of the prior seven runs. Eight-run trend: 3.225s -> 2.812s -> 2.832s -> 2.8s -> 2.953s -> 2.886s -> 2.900s -> 0.893s. Possibly cold cache cleared or system load eased. Well below 3s action threshold. No restart.",
+    "dashboard_response_sec": 0.944,
+    "dashboard_response_note": "GET http://localhost:5555/api/state returned 200 / 74316 bytes in 0.944s. Second consecutive sub-1s run (0.893s -> 0.944s). The 2.8-2.9s plateau that lasted runs maint-022..maint-029 appears to have ended. Well below 3s action threshold. No restart.",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 7.36,
-    "hours_since_last_buy": 6.36,
-    "hours_since_last_sell": 5.51,
+    "hours_since_last_trade": 7.45,
+    "hours_since_last_buy": 7.36,
+    "hours_since_last_sell": 6.51,
     "last_buy_ts": "2026-05-13T22:44:20",
     "last_buy_symbol": "WORLDCUP",
     "last_buy_strategy": "consensus_boost",
@@ -394,34 +421,33 @@
     "last_sell_exit_reason": "Stop loss (-10.5%)",
     "last_sell_pnl_pct": -10.51,
     "dormancy_alert": false,
-    "dormancy_note": "5.51h since last sell, 6.36h since last buy. 2 trades (1 buy + 1 sell) in the rolling 24h window. Well below the 24h dormancy threshold.",
-    "filter_lockout_diagnosis": "Last 100 events span 2026-05-14T04:26:07 -> 05:04:52 EDT (~38.7 min). Tally: 41 BUY_SKIP, 31 SIGNAL (wallet sells from watched wallets, not buy decisions), 18 CB_SKIP, 8 SCAN, 2 BS_SKIP. Zero buys executed in this window. Of the 69 buy-decision events (41 BUY_SKIP + 18 CB_SKIP + 2 BS_SKIP + 8 SCAN), 61 are skips -> 88.41% skip rate. Up from 83.82% at maint-029 but still well below the 95% lockout threshold. The Section 4 lockout criterion (skip rate >95% AND zero buys in 24h) is NOT met -- 1 buy in the 24h window AND skip rate 88.41%. Bot is scanning normally and the filters are rejecting candidates as designed in ALTCOIN_WINTER.",
+    "dormancy_note": "6.51h since last sell, 7.36h since last buy. 2 trades (1 buy + 1 sell) in the rolling 24h window. Well below the 24h dormancy threshold.",
+    "filter_lockout_diagnosis": "Last 100 events span 2026-05-14T05:31:42 -> 06:04:50 EDT (~33.1 min). Tally: 37 SIGNAL (wallet sells, not buy decisions), 32 BUY_SKIP, 17 CB_SKIP, 10 SCAN, 4 BS_SKIP. Zero buys executed in this window. Of the 63 buy-decision events (32 BUY_SKIP + 17 CB_SKIP + 4 BS_SKIP + 10 SCAN), 53 are skips -> 84.13% skip rate. Down from 88.41% at maint-030, well below the 95% lockout threshold. The Section 4 lockout criterion (skip rate >95% AND zero buys in 24h) is NOT met -- 1 buy in the 24h window AND skip rate 84.13%. Bot is scanning normally and the filters are rejecting candidates as designed in ALTCOIN_WINTER.",
     "actions_taken": [
-      "PROCESS INVENTORY: Two pythonw.exe processes -- PID 14400 (degen_bot.py --continuous) and PID 15384 (dashboard.py). Both started 2026-05-13 21:23:33 EDT (uptime 7.71h). Exactly one of each, no duplicates, no stray python.exe. Per spec.",
-      "LIVENESS: Heartbeat age 806s (~13.4 min, normal cycle cadence), events file 71s fresh at probe, cycle counter advanced 17 -> 19 (+2) since maint-029. ALIVE.",
-      "BRAIN STATUS: sol_brain_status.json shows running:false / run-280 / finished 2026-05-14 00:11:11 EDT / phase:complete. Same state as maint-026 through maint-029 -- still no new survival run since run-280's H11 deploy. Lock clean.",
-      "RESEARCH STATUS: sol_research_status.json shows running:false / last_run_id research-150 / finished 2026-05-14 00:48:15 EDT. Same state as last 4 runs. Lock clean.",
+      "PROCESS INVENTORY: Two pythonw.exe processes -- PID 14400 (degen_bot.py --continuous) and PID 15384 (dashboard.py). Both started 2026-05-13 21:23:33 EDT (uptime 8.71h). Exactly one of each, no duplicates, no stray python.exe. Per spec.",
+      "LIVENESS: Heartbeat just refreshed -- age 10s at probe (06:05:43 mtime, current 06:05:53). Events file 10s fresh. Cycle counter advanced 19 -> 21 in heartbeat content with a fresh cycle landing mid-run (true current >=22). ALIVE.",
+      "BRAIN STATUS: sol_brain_status.json shows running:true / run-281 / started 2026-05-14 06:04:29 EDT / phase:reading_state. Just fired ~1.5 min ago -- FIRST survival run since run-280 at 2026-05-14 00:11:11 EDT (a ~30h gap). Lock is fresh and legitimate, NOT stale (45-min threshold). Do not touch.",
+      "RESEARCH STATUS: sol_research_status.json shows running:false / last_run_id research-150 / finished 2026-05-14 00:48:15 EDT. Same state as last 5 runs. Lock clean.",
       "POSITION STATE: sol_positions.json is an empty array (mtime unchanged since the WORLDCUP exit at 23:35:14 EDT yesterday). No new buys, no new exits since maint-025.",
-      "DORMANCY CHECK: Last buy WORLDCUP 6.36h ago, last sell 5.51h ago, 2 trades in rolling 24h. No dormancy alert (24h threshold).",
-      "FILTER PATTERN: 41 BUY_SKIP / 18 CB_SKIP / 2 BS_SKIP / 8 SCAN / 31 SIGNAL over last 38.7 min. Skip rate 88.41% of buy-decision events (up from 83.82% at maint-029, still well below 95% Section 4 lockout threshold). CB_SKIP share roughly flat (18 vs 19 last run).",
+      "DORMANCY CHECK: Last buy WORLDCUP 7.36h ago, last sell 6.51h ago, 2 trades in rolling 24h. No dormancy alert (24h threshold).",
+      "FILTER PATTERN: 32 BUY_SKIP / 17 CB_SKIP / 4 BS_SKIP / 10 SCAN / 37 SIGNAL over last 33.1 min. Skip rate 84.13% of buy-decision events (down from 88.41% at maint-030, well below 95% Section 4 lockout threshold). CB_SKIP share roughly flat (17 vs 18 last run).",
       "ERROR SCAN: Zero CYCLE_ERROR or *ERROR events in the last 100 entries. Bot loop is clean.",
-      "LOG HYGIENE: bot.log 35 KB (mtime 04:51:19 EDT), dashboard.log effectively empty (88 bytes, never written since startup), bot.err.log 0 bytes, dashboard.err.log 2.4 KB (Werkzeug HTTP access log noise -- all 200 responses, NOT errors despite the filename). All trivially under 50 MB. No truncation.",
-      "DASHBOARD LIVENESS: HTTP 200 / 74389 bytes in 0.893s. SHARP drop from the 2.8-2.9s band of the prior 7 runs. Well below 3s action threshold. No restart.",
-      "MIRROR PROBE: GitHub Pages snapshot HTTP 200, published_at 2026-05-14 05:03:58 EDT, age ~2.1 min -> HEALTHY. Publisher daemon inside degen_bot.py is alive and pushing on schedule. No heal needed. consecutive_heals stays at 0 (5th consecutive healthy run).",
-      "EFFICIENCY LAB: pending_hypotheses=13 (threshold 60), lessons=25 (threshold 50), pending_requests=0 (threshold 8), drift_keys=none. NOT triggered. Throttle file is ~56h old (stale, would not block) but no trigger fires anyway. Same metrics as maint-027/028/029 (no survival run between runs so no new accretion).",
-      "H11 RESTART STATE: degen_bot.py mtime 2026-05-14 00:06:48 EDT (unchanged). Running bot PID 14400 still started at 21:23:33 EDT on 2026-05-13, predating the H11 deploy. Operator has NOT yet restarted to apply H11 (5th consecutive run flagging). Maintenance does not have authority to restart for brain hot-deploys.",
-      "AUTO-RESTART GATE: consecutive_heals=0 (mirror healthy this run and prior 4 runs), so Section 7 Step D condition #1 fails. No auto-restart consideration.",
-      "OVERALL: clean run, no interventions. Bot live, dashboard live and faster, mirror fresh, brain and research both idle with clean locks, zero open positions, zero errors, no log work."
+      "LOG HYGIENE: bot.log 39 KB (mtime 06:04:50 EDT), dashboard.log 88 bytes (empty since startup), bot.err.log 0 bytes, dashboard.err.log 2.8 KB (Werkzeug HTTP access log noise -- all 200 responses, NOT errors despite the filename). All trivially under 50 MB. No truncation.",
+      "DASHBOARD LIVENESS: HTTP 200 / 74316 bytes in 0.944s. Second consecutive sub-1s response (0.893s last run, 2.8-2.9s plateau before that). Well below 3s action threshold. No restart.",
+      "MIRROR PROBE: GitHub Pages snapshot HTTP 200, published_at 2026-05-14 06:00:46 EDT, age ~5.1 min -> HEALTHY (under 15-min threshold). Publisher daemon inside degen_bot.py is alive and pushing on schedule. No heal needed. consecutive_heals stays at 0 (6th consecutive healthy run).",
+      "EFFICIENCY LAB: pending_hypotheses=13 (threshold 60), lessons=25 (threshold 50), pending_requests=0 (threshold 8), drift_keys=none. NOT triggered. Throttle file is ~57h old (stale, would not block) but no trigger fires anyway. Same metrics as maint-027..maint-030; brain run-281 fired but is still mid-run (phase reading_state) so no new accretion yet.",
+      "H11 RESTART STATE: degen_bot.py mtime 2026-05-14 00:06:48 EDT (unchanged). Running bot PID 14400 still started at 2026-05-13 21:23:33 EDT, predating the H11 deploy. Operator has NOT yet restarted to apply H11 (6th consecutive run flagging). Maintenance does not have authority to restart for brain hot-deploys.",
+      "AUTO-RESTART GATE: consecutive_heals=0 (mirror healthy this run and prior 5 runs), so Section 7 Step D condition #1 fails. Also brain is mid-run (condition #4 would fail). No auto-restart consideration.",
+      "OVERALL: clean run, no interventions. Bot live with fresh heartbeat, dashboard live and fast (0.944s), mirror fresh, research idle with clean lock, brain actively running run-281 (first since run-280, ~30h gap), zero open positions, zero errors, no log work."
     ],
     "brain_status": {
-      "running": false,
-      "run_id": "run-280",
-      "started_at": "2026-05-14 00:04:15 EDT",
-      "finished_at": "2026-05-14 00:11:11 EDT",
-      "phase": "complete",
-      "summary": "H11 deployed to source (pending restart). 1 new trade since run-279 (WORLDCUP consensus_boost, -10.5% SL). Path divergence remains RESOLVED.",
+      "running": true,
+      "run_id": "run-281",
+      "started_at": "2026-05-14 06:04:29 EDT",
+      "phase": "reading_state",
+      "summary": "Run-281 starting. Reading directives + research findings.",
       "lock_action": "NOT_NEEDED",
-      "lock_action_reason": "running:false with a finished_at timestamp. Clean completion. Same state as last 4 runs."
+      "lock_action_reason": "running:true with started_at ~1.5 min ago -- fresh, NOT stale (45-min threshold). First survival run since run-280 at 2026-05-14 00:11:11 EDT (a ~30h gap, longer than typical hourly cadence)."
     },
     "research_status": {
       "file_present": true,
@@ -429,27 +455,27 @@
       "last_run_id": "research-150",
       "finished_at": "2026-05-14 00:48:15 EDT",
       "lock_action": "NOT_NEEDED",
-      "lock_action_reason": "running:false with a finished_at timestamp. Clean. Same state as last 4 runs."
+      "lock_action_reason": "running:false with a finished_at timestamp. Clean. Same state as last 5 runs."
     },
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/data/snapshot.json",
       "http_status": 200,
-      "published_at": "2026-05-14 05:03:58 EDT",
+      "published_at": "2026-05-14 06:00:46 EDT",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 2.08,
+      "pre_heal_age_min": 5.12,
       "heal_attempted": false,
       "heal_succeeded": null,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 2.08,
+      "post_heal_age_min": 5.12,
       "consecutive_heals": 0,
       "consecutive_heals_unfired": 0,
       "auto_restart": {
         "fired": false,
-        "skip_reason": "Mirror healthy at 2.08 min; publisher daemon working normally. consecutive_heals=0 -> auto-restart gate condition #1 fails.",
+        "skip_reason": "Mirror healthy at 5.12 min; publisher daemon working normally. consecutive_heals=0 -> auto-restart gate condition #1 fails (also brain is mid-run so condition #4 would fail).",
         "post_restart_verified": null
       },
-      "note": "Plain English: the public dashboard mirror is current (2.08 min old, well under the 15-min healthy threshold) and the publisher daemon inside the bot is pushing on its normal ~5-min cadence. Nothing to heal. Fifth consecutive healthy run."
+      "note": "Plain English: the public dashboard mirror is current (5.1 min old, under the 15-min healthy threshold) and the publisher daemon inside the bot is pushing on its normal ~5-min cadence. Nothing to heal. Sixth consecutive healthy run."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -468,18 +494,19 @@
       "fired_this_run": false,
       "skip_reason": "not_triggered",
       "throttle_status": "not_blocking_but_irrelevant_no_trigger",
-      "throttle_age_h": 55.96,
-      "summary": "Brain memory load unchanged from maint-027/028/029 (13 pending hypotheses, 25 lessons, 0 pending requests, no drift keys). No survival run between maint-029 and now, so no new accretion. All trigger metrics well under their thresholds. No cleanup needed."
+      "throttle_age_h": 56.95,
+      "summary": "Brain memory load unchanged from maint-027..maint-030 (13 pending hypotheses, 25 lessons, 0 pending requests, no drift keys). Brain run-281 just started but has not yet written anything new. All trigger metrics well under their thresholds. No cleanup needed."
     },
     "log_truncations": [],
-    "log_hygiene_note": "bot.log 35 KB, dashboard.log 88 bytes (empty since startup), bot.err.log 0 bytes, dashboard.err.log 2.4 KB (HTTP access log noise, all 200s, not errors). Far under 50 MB. No action.",
+    "log_hygiene_note": "bot.log 39 KB, dashboard.log 88 bytes (empty since startup), bot.err.log 0 bytes, dashboard.err.log 2.8 KB (HTTP access log noise, all 200s, not errors). Far under 50 MB. No action.",
     "warnings": [
-      "FOR OPERATOR -- H11 still pending restart (5th consecutive run flagging this). degen_bot.py mtime 2026-05-14 00:06:48 EDT carries brain run-280's H11 deploy (per-strategy young-pair gate on fresh_profile + fresh_boost). Running bot PID 14400 started at 2026-05-13 21:23:33 EDT, before the H11 edit, so it is still executing pre-H11 code. Maintenance does not have authority to restart for brain hot-deploys -- only publisher-daemon escalation, crash-loop, or 'no process found' restarts are authorized. Operator should decide when to restart so H11 takes effect.",
-      "INFO -- Dashboard response time dropped sharply to 0.893s (vs 2.900s last run). Eight-run trend: 3.225s -> 2.812s -> 2.832s -> 2.8s -> 2.953s -> 2.886s -> 2.900s -> 0.893s. Possible causes: system load eased, OS cache warmed, or transient contention cleared. Not actionable; just continued FYI."
+      "FOR OPERATOR -- H11 still pending restart (6th consecutive run flagging this). degen_bot.py mtime 2026-05-14 00:06:48 EDT carries brain run-280's H11 deploy (per-strategy young-pair gate on fresh_profile + fresh_boost). Running bot PID 14400 started at 2026-05-13 21:23:33 EDT, before the H11 edit, so it is still executing pre-H11 code. Maintenance does not have authority to restart for brain hot-deploys -- only publisher-daemon escalation, crash-loop, or 'no process found' restarts are authorized. Operator should decide when to restart so H11 takes effect.",
+      "INFO -- Brain run-281 just started (06:04:29 EDT) -- first survival run since run-280 finished at 2026-05-14 00:11:11 EDT, a ~30h gap (the scheduled cadence is usually shorter). Worth confirming next run that it completed cleanly and whether the operator has been pausing it manually.",
+      "INFO -- Dashboard response time stayed in the new sub-1s band (0.944s vs 0.893s last run). The 2.8-2.9s plateau across runs maint-022..maint-029 has plausibly ended; if it persists for 2-3 more runs, the prior staleness was real and is now cleared."
     ],
-    "next_run_focus": "(1) Has the operator restarted to apply H11? Compare new bot PID start time vs degen_bot.py mtime 00:06:48 EDT. (2) Trade cadence -- still no new buys since WORLDCUP 22:44 EDT yesterday; approaching 7h-no-buy mark, still well below 24h dormancy floor. (3) Cycle counter should advance to ~21-23 by next run. (4) Brain run-281 has not yet fired since run-280's H11 deploy; check whether a new survival run lands. (5) Dashboard response time -- did the 0.893s improvement persist or revert to the 2.8-2.9s band? (6) Skip rate ticked up 83.82% -> 88.41%; watch direction next run.",
+    "next_run_focus": "(1) Did brain run-281 finish cleanly? Check sol_brain_status.json transitions from running:true -> running:false with phase:complete, and whether new directives/lessons landed. (2) Has the operator restarted to apply H11? Compare new bot PID start time vs degen_bot.py mtime 00:06:48 EDT. (3) Trade cadence -- still no new buys since WORLDCUP 22:44 EDT yesterday; approaching 8h-no-buy mark, still well below 24h dormancy floor. (4) Cycle counter should advance to ~24-26 by next run. (5) Dashboard response time -- does the sub-1s band hold for a third consecutive run? (6) Skip rate drifted 88.41% -> 84.13%; watch direction next run.",
     "elapsed_min": 3,
-    "file_age_min": 59.1,
+    "file_age_min": 4.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1924,15 +1951,15 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 22,
-    "age_min": 0.4,
+    "age_min": 5.7,
     "stale": false,
     "available": true
   },
   "brain_queue": {
     "requests_pending": 0,
     "requests_acknowledged": 0,
-    "hypotheses_pending": 13,
-    "lessons_count": 25,
+    "hypotheses_pending": 16,
+    "lessons_count": 28,
     "killed_ideas_count": 1,
     "drift_keys": [],
     "active_strategies_count": 12,
@@ -1961,16 +1988,16 @@
     "requests_archived": 2,
     "elapsed_min": 0.0,
     "next_run_focus": "Watch entries count drift back above 40; historical_lessons now at 133 \u2014 consider archival cap if it exceeds 250.",
-    "age_hours": 57.0,
+    "age_hours": 57.1,
     "stale": true,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 535.478113,
+  "maint_next_sec": 216.767232,
   "maint_next_str": "6:15 AM EST",
-  "maint_last_run_str": "",
-  "maint_stale": true,
+  "maint_last_run_str": "6:06 AM EST",
+  "maint_stale": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
   "memk_last_run_str": "2.4d ago",
@@ -1979,69 +2006,20 @@
     "latest": {
       "hypothesis_name": "pump_fun_graduation_snipe_lp_gated",
       "run_id": "research-150",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Read the research brain's latest findings file (research-150, 00:48 EDT). Verified both deployable proposals carry every required design field. Filed them as pending hypotheses rather than shipping code immediately, to keep the H11 restart ",
+      "evidence_source": "action"
     },
     "tally": {
-      "implemented": 0,
+      "implemented": 1,
       "queued": 0,
       "rejected": 0,
-      "total": 0
+      "total": 1
     }
   },
   "events": [
-    {
-      "ts": "2026-05-14T05:33:39.207454",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: kiLogfWU sold 47eKt7C2 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-14T05:34:21.543399",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4sAUSQFd sold EGcWCmCy \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-14T05:34:22.146568",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip JOCK: downtrend h1=-16.9% h24=-16.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-14T05:37:13.935536",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip OX: deep24h h24=-90.5% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-14T05:37:26.503392",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip DAIDAI: h1=-8.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-14T05:37:26.514320",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 64A4HMRT sold EW7i3dR2 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-14T05:37:26.534873",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 64A4HMRT sold 8jpRiwbU \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-14T05:37:38.158822",
       "type": "BUY_SKIP",
@@ -2692,6 +2670,55 @@
       "color": "#555555",
       "msg": "Scanning 125 wallets (cycle #22)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-14T06:08:15.123492",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip SPCX: h6=60.3% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T06:08:15.573767",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip SPCX: h6=60.3% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T06:09:27.756303",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Av3xWHJ5 sold 8726gdtV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T06:09:29.766867",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Autismlon: downtrend h1=-17.3% h24=-17.3%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T06:09:30.245641",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Autismlon: downtrend h1=-17.3% h24=-17.3%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T06:09:30.667335",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Autismlon: downtrend h1=-17.3% h24=-17.3%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T06:09:31.125836",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Autismlon: downtrend h1=-17.3% h24=-17.3%",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2759,9 +2786,9 @@
       "follow_up_action": "After restart, brain monitors fresh_profile/fresh_boost trades to verify H11 cliff holds in production. Expected fresh_profile profile shifts to 85%+ WR."
     }
   ],
-  "ts": "06:06:04",
+  "ts": "06:11:23",
   "__publish_meta": {
-    "published_at": "2026-05-14 06:06:04 EDT",
+    "published_at": "2026-05-14 06:11:23 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
