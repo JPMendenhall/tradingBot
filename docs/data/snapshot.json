@@ -1,15 +1,15 @@
 {
-  "sol_price": 90.13641469800409,
+  "sol_price": 90.13881761602208,
   "bot_status": "RUNNING",
   "bot_last_seen": "00:00:25",
   "bot_cycles": 7,
   "bankroll": 1.1377,
-  "bankroll_usd": 102.54819900191924,
+  "bankroll_usd": 102.55093280174832,
   "budget": 0.16314797369999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.1,
+  "hour": 0.2,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,76 +113,72 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-13 17:10:00 EDT",
-    "run_id": "run-279",
+    "timestamp": "2026-05-14 00:10:00 EDT",
+    "run_id": "run-280",
     "market_regime": "CHOP",
     "altcoin_regime": "ALTCOIN_WINTER",
-    "btc_dominance_pct": 58.19,
-    "sol_price_usd": 90.88,
-    "bot_alive": false,
-    "bot_dead_since": "2026-05-13 16:13 EDT",
-    "system_diagnosis": "Bot is DEAD. At 16:13 EDT today the maintenance agent killed a divergent bot instance that had spawned at the wrong storage location (OneDrive) and was about to trade against stale state. The .py source files for the bot now live only at OneDrive while the live state files live at Desktop. Neither the scheduled watchdog nor any documented restart procedure can revive the bot until the operator either copies the .py files back to Desktop or updates all configs to point at OneDrive. No trades have happened in 18.7 hours and the bot is structurally unable to resume on its own.",
-    "exit_analysis": "Last 7 days: 6 sells, win rate 17%, R/R 0.81, 67% stop-loss rate (small sample, dormant period). Lifetime: win rate 35.4%, R/R 0.79, stop-loss rate 42.5%. The dominant dollar-cost remains the 1-2 hour hold-time cohort at -0.481 SOL across 255 trades (winners capped at +6%, losers run to -18%). No new sells since run-278.",
-    "strategy_work": "Validated the research brain's young-pair-zone finding (H11) by doing my own per-strategy split inside vs outside the 1-6 hour pair age zone. Result: fresh_profile is split 37.5% win rate inside the zone vs 85.7% outside; fresh_boost is split 0% inside vs 53% outside; hturn is bad in both. This converts H11 from 'global filter or kill these strategies' into a clean targeted rule. When the bot is back, only fresh_profile and fresh_boost should require pair age 6h or older, and hturn should be killed once it crosses the 10-trade fast-kill floor. Estimated historical win-back: about +0.047 SOL on avoided trades, and the fresh_profile that REMAINS shifts from 60% win rate to 85% win rate.",
-    "directives_changes": "Bumped directives to version 4. Promoted H11 from PROPOSED_BY_RESEARCH to READY with per-strategy evidence attached. Added run-279 split data to fresh_profile, fresh_boost, and hturn strategy entries. Added H10 (entry price action shape) and H12 (volume dead zone) as RESEARCHING. Added F2 (entry telemetry gap) as parallel-to-H8 work. Shifted current_priority to reflect the bot-dead/operator-blocked reality and noted that when the bot is revived, H11 ships BEFORE H8 because H11 needs no instrumentation. Added two new operations lessons about path divergence and contaminated mirrors.",
+    "system_diagnosis": "Bot is back alive after the path-divergence outage (operator copied source files to the canonical folder between 9:05 and 9:23 PM yesterday). First new trade in over a day was WORLDCUP via consensus_boost - bought at 22:44, stopped out at 23:35 for a 10.5% loss. Tiny sample size but the entry sat in exactly the kind of late-chase setup the research brain flagged as toxic (5-minute chart up 17.6% AND 1-hour up 9.3% at entry). The #1 problem heading into this run was that the highest-impact strategy fix (H11) was sitting in research and could not be coded while source was unreachable. That blocker is now gone, and the fix is in the source code.",
+    "exit_analysis": "Rolling 7-day stop-loss rate is 71.4% (5 of 7 sells were stop-losses), risk-to-reward 0.84. The new WORLDCUP sell pushes the 24-hour window to 1 trade, 100% stop-loss rate, average loss 10.5%. All-time numbers basically unchanged: 35.4% win rate over 1003 sells, R/R 0.79. Exit mix all-time still 42.6% stop-loss / 22.4% time-exit / 14.6% target / 12.4% other / 8.1% trailing. Single biggest dollar leak remains the 1-2 hour slow-bleed cohort at -0.481 SOL across 255 trades; nothing this run touches it directly (that needs H8 peak instrumentation, which is queued for the next code pass).",
+    "strategy_work": "H11 (per-strategy young-pair gate) shipped to source this run. Two specific edits to degen_bot.py: (a) the fresh_boost minimum pair age is now 6 hours instead of 4, and (b) a brand-new 6-hour pair-age skip was added to the fresh_profile signal generator without touching its other age-tracking logic. The fix uses a separate constant so the existing profile-first-seen logic stays intact - that overload was a trap I noticed and avoided. Compile-check passes. Change takes effect on the next bot restart, which the brain cannot trigger itself - filed an operator todo to request the restart. Expected effect: fresh_profile shifts from 60% win rate to roughly 85% on the remaining cohort; fresh_boost flips from net loser to net positive.",
+    "directives_changes": "Bumped directives to version 5. Big swap of current_priority away from the run-279 'bot is dead, wait for operator' state to a 'H11 deployed, next is H8+F2 instrumentation' posture. H11 hypothesis status moved from READY to DEPLOYED_PENDING_RESTART with a documented rollback plan. fresh_profile and fresh_boost active-strategy entries updated to show the expected post-restart projection. WORLDCUP trade logged as a single supporting observation for H10 (toxic late-chase zone). Added two new condensed lessons: brain has no restart authority, and existing constants can overload meanings (the FRESH_PROFILE_MIN_AGE_H trap). Track record refreshed against the fresh strategy stats file.",
     "self_audit": {
       "checked_last_change": true,
-      "sample_size_met": true,
-      "one_change_only": true,
-      "code_verified": false,
-      "code_verified_note": "No code change was made. Bot is dead and source files are not visible from this sandbox path. Analysis-only run."
+      "checked_last_change_note": "Last code change was run-275 (boosts_top_feed unblock). Has not produced trades yet; still in candidate-accumulation phase. No regression observed.",
+      "code_verified": true,
+      "code_verified_note": "py_compile passed on degen_bot.py after the three edits (constant block at 7806 + new constant at 7858 + new skip check inside _get_fresh_profile_signals). Defaults verified: pair_age_h falls back to 999.0 when pairCreatedAt is missing, which passes the new MIN_PAIR_AGE_H=6 check as intended.",
+      "atomic_writes": true
     },
     "previous_followups": [
-      "run-278 priority 'unblock H8 instrumentation': UNCHANGED, same operator-side blocker plus now bot is dead too. Source access still required.",
-      "run-278 priority 'H6 RULE B remains highest-EV exit fix': STILL TRUE for exits but H11 (entry filter, no instrumentation needed) is now higher priority for first-deploy.",
-      "run-278 follow-up 'H9 hour-of-day re-split by regime and per-strategy before deploy': NOT advanced this run (no new sells; analytical bandwidth spent on H11 verification instead).",
-      "Bankroll unchanged 1.1415 SOL. 0 trades today. Last sell still 2026-05-12 23:12 EDT ANDV (bear_strength, -30.6%)."
+      "Path divergence (the cross-folder source-vs-state split): RESOLVED before this run. Maintenance bot's maint-024 confirmed all .py files at canonical path; bot restarted by operator at 21:23 EDT yesterday on PID 14400; mirror is fresh.",
+      "Dormancy alert clock (18.7h at end of run-279): cleared by the WORLDCUP buy at 22:44 EDT. 24-hour alert threshold never tripped.",
+      "H11 readiness (PROPOSED_BY_RESEARCH at run-279, READY-but-blocked at run-279): SHIPPED to source code this run. Awaits a restart to go live."
     ],
     "changelog": [
-      "No code or strategy changes deployed this run. Bot is dead and source files are not reachable until the operator restores the file layout.",
-      "Strategy understanding update on fresh_profile: my own split of historical trades shows this strategy has a sharp cliff at the 6-hour pair age mark. Above 6 hours it wins 85% of trades and is the strongest single edge in the book. Below 6 hours it wins only 38% and loses money. The 60% lifetime win rate hides this split.",
-      "Strategy understanding update on fresh_boost: looks like a marginal money-loser overall, but the loss is concentrated entirely in trades where the token's first DEX pair is less than 6 hours old. Above 6 hours, fresh_boost wins 53% of trades and is positive.",
-      "Strategy understanding update on hturn: bad both above and below the 6-hour cutoff (12.5% win rate lifetime). This is a broken strategy, not a pair-age problem. Once it has 10 lifetime trades (currently 8), it should be the first one killed.",
-      "Filed a new top-priority deploy plan: when the bot comes back, the first edit should add a token-must-be-at-least-6-hours-old check to fresh_profile and fresh_boost ONLY. Other strategies are unaffected. Historical avoided loss: about +0.047 SOL, and the fresh_profile trades that remain are much higher quality."
+      "Fresh-boost strategy now waits until a token's first trading pair is at least 6 hours old before buying (was 4 hours). Historical data shows fresh-boost loses every trade it takes inside the 1-6 hour window.",
+      "Fresh-profile strategy now also waits for a token's first trading pair to be at least 6 hours old. This is a new check that does not interfere with how the bot detects brand-new profiles - profiles still get noticed instantly, just not BOUGHT until the underlying pool is old enough to be less rug-prone.",
+      "Submitted a request to the to-do list asking the operator to restart the bot so the two changes above can take effect."
     ],
     "actions_taken": [
-      "Verified the bot is still dead, that there are no open positions, and that no operator action has resolved the path divergence reported by the maintenance agent at 17:04 EDT.",
-      "Read the research brain's latest output (12:40 EDT) and validated its top-priority finding by re-running the per-strategy numbers myself on the historical trade log.",
-      "Updated the brain's memory file (directives.json version 4): promoted the young-pair-zone idea to READY status for the first deploy when the bot is back; added two more research ideas; recorded that the 'fresh' strategies actually do better on older tokens; added new operational lessons about how the path-divergence failure cascade played out.",
-      "Did NOT attempt a bot restart. Per the maintenance agent's standing guidance, a restart while the path divergence is unresolved would just produce another divergent bot reading two-day-stale state. Same failure mode as the bot the maintenance agent killed at 16:13 EDT. Operator action required.",
-      "Did NOT attempt to heal the public dashboard mirror. The publisher script also lives at OneDrive and would re-publish stale OneDrive state to the public site. Same blocker."
+      "Read every key state file: directives, research findings, maintenance status, strategy stats, heartbeat, positions, trade log, budget.",
+      "Confirmed the bot is alive and the path-divergence outage is fully closed (source files back at the canonical folder, fresh heartbeat, healthy public dashboard).",
+      "Studied the WORLDCUP loss - the only new trade since last run. Noted that the entry pattern matches research's late-chase toxic zone exactly.",
+      "Edited degen_bot.py to apply the H11 fix - raised the fresh-boost minimum age to 6 hours and added a brand-new 6-hour pair-age skip to fresh-profile that does not break the existing profile-detection logic.",
+      "Ran a compile-check on degen_bot.py - passes clean.",
+      "Filed an operator to-do asking for a bot restart so H11 actually starts running.",
+      "Updated the brain's directives file: bumped to version 5, swapped current priority, advanced H11 to DEPLOYED_PENDING_RESTART, added supporting H10 observation, added two new rules-of-thumb (brain has no restart authority, and don't overload existing constants).",
+      "Wrote this report and appended a copy to the survival history file."
     ],
     "next_priorities": [
-      "FOR THE OPERATOR: pick one of the three recovery options (copy .py files to Desktop, OR overwrite OneDrive state with Desktop state and update configs to OneDrive, OR investigate what moved the files and pause OneDrive sync). Until then nothing can ship.",
-      "When the bot is back AND a session has source access: deploy H11 first. Add 'pair age must be 6 hours or more' gate to fresh_profile and fresh_boost only. Plain English: these strategies lose money on tokens whose first DEX pair is less than 6 hours old.",
-      "Same source-access session: add H8 peak tracking (record max gain percent and minutes-to-peak on each closed trade) and F2 entry-telemetry always-log (bundle_detected, holder counts, security score, vol/liq ratio, dex_id, m5 buys/sells). All three changes are independent and share the same access blocker. Bundle them.",
-      "After 30+ trades carry the new peak field, run the H6 RULE B backtest (60-minute breakeven-floor stop) targeting the -0.481 SOL slow-bleed cohort.",
-      "If hturn fires any more trades and crosses 10 lifetime, execute fast-kill on it the next run."
+      "After H11 activates at next restart, watch the next 10-20 fresh-profile and fresh-boost trades and confirm the in-zone bleed is gone. Expected win rates: fresh-profile ~85%, fresh-boost ~50%+.",
+      "Next code-edit pass: bundle H8 (intra-trade peak tracking) and F2 (always-log richer entry telemetry) into one restart. This single change unblocks four other hypotheses including H6 (the biggest dollar drag in the book).",
+      "If hturn reaches 10 trades and is still net-negative with R/R<1.0, execute the fast-kill (criteria already met on three of four conditions; only the sample-size floor blocks it).",
+      "Continue watching for any sign that the late-chase entry pattern that hit WORLDCUP is systematic across strategies - one more similar loss would justify pulling H10 forward.",
+      "Open follow-up for operator: figure out what mechanism spawned brain run-279 during the bot-dead window. Benign so far, but the trigger is still latent (per maint-024's anomaly note)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1002,
-      "win_rate": 35.4,
+      "total_sells": 1003,
+      "win_rate": 0.354,
       "avg_win_pct": 13.17,
       "avg_loss_pct": -16.57,
       "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 42.5,
-      "bankroll": 1.1415,
+      "stop_loss_rate_pct": 42.6,
+      "bankroll": 1.1377,
       "pnl_today": 0
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, dormant CHOP, now understood to require pair age >= 6h)",
-      "fresh_boost (REVIEW, same pair age >= 6h fix as fresh_profile)",
-      "hturn (KILL-CANDIDATE, N=8 awaiting fast-kill floor)",
-      "bear_strength (TESTING, WATCH-CLOSE, last live trade May 12)",
-      "consensus_boost (TESTING, top BULL-scale candidate)",
-      "chop_momentum_scalp (TESTING, WATCH)",
+      "fresh_profile (PROVEN, H11 in code awaiting restart)",
+      "fresh_boost (REVIEW, H11 in code awaiting restart)",
+      "consensus_boost (TESTING, top candidate, 1 new SL this run)",
+      "bear_strength (WATCH-CLOSE)",
+      "chop_momentum_scalp (TESTING)",
       "wallet_convergence (TESTING)",
-      "flash_surge (TESTING_BULL, dormant)",
       "bounce_hunter (TESTING_BULL, gated)",
+      "flash_surge (TESTING_BULL, dormant)",
+      "hturn (KILL_CANDIDATE, N=8)",
       "anchor_derivative_snipe (TESTING, N=0)",
       "boosts_top_feed_breakout (TESTING, N=0)",
-      "copy_trade (DORMANT, last sell 2026-04-05)"
+      "copy_trade (DORMANT)"
     ]
   },
   "wallet_scan": {
@@ -190,15 +186,15 @@
     "result": "Saved 20 wallets in 32m 35s",
     "completed": "2026-05-12T01:48:07.652025"
   },
-  "brain_next_sec": 21354.146252,
+  "brain_next_sec": 21048.130636,
   "brain_next_str": "6:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 230.853748,
-  "brain_last_run_str": "5:10 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "12:11 AM EST",
   "research_running": false,
   "research_last_run_str": "12:50 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 1314.146252,
+  "research_next_sec": 1008.130636,
   "research_elapsed_sec": 0,
   "research_findings": {
     "version": 1,
@@ -527,7 +523,7 @@
     "dashboard_response_note": "GET http://localhost:5555/api/state returned 200 / 72925 bytes in 2.832s. Under the 3s threshold but the third consecutive run on the slow side (maint-023 3.225s, maint-024 2.812s, maint-025 2.832s). Trend is flat-to-improving. No restart needed; keep an eye on the trajectory.",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 1.4,
+    "hours_since_last_trade": 1.48,
     "hours_since_last_buy": 1.35,
     "hours_since_last_sell": 0.51,
     "last_buy_ts": "2026-05-13T22:44:20",
@@ -618,7 +614,7 @@
     ],
     "next_run_focus": "(1) CONFIRM IN-FLIGHT BRAIN RUN COMPLETED: sol_brain_status.json should be running:false with phase:complete and a fresh last_run_reported timestamp. If still running:true after 45 min, clear the stale lock. (2) BOT CONTINUED HEALTH: PID 14400 still up, heartbeat advancing past cycle 7. (3) TRADE CADENCE: watch for another buy or for >24h dormancy if filter rejection rate climbs. (4) DASHBOARD RESPONSE: re-probe; if back under 2s, the drift from maint-023 was on the now-replaced old dashboard. If creeping over 3s, restart. (5) EFFICIENCY LAB: re-check trigger metrics after the in-flight brain run finishes \u2014 pending_hypotheses or lessons could jump.",
     "elapsed_min": 2,
-    "file_age_min": 1.1,
+    "file_age_min": 6.2,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -2063,7 +2059,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 7,
-    "age_min": 7.7,
+    "age_min": 12.8,
     "stale": false,
     "available": true
   },
@@ -2071,7 +2067,7 @@
     "requests_pending": 0,
     "requests_acknowledged": 0,
     "hypotheses_pending": 13,
-    "lessons_count": 23,
+    "lessons_count": 25,
     "killed_ideas_count": 1,
     "drift_keys": [],
     "active_strategies_count": 12,
@@ -2100,13 +2096,13 @@
     "requests_archived": 2,
     "elapsed_min": 0.0,
     "next_run_focus": "Watch entries count drift back above 40; historical_lessons now at 133 \u2014 consider archival cap if it exceeds 250.",
-    "age_hours": 51.0,
+    "age_hours": 51.1,
     "stale": true,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 414.146252,
+  "maint_next_sec": 108.130636,
   "maint_next_str": "12:15 AM EST",
   "maint_last_run_str": "12:07 AM EST",
   "maint_stale": false,
@@ -2132,153 +2128,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-13T23:44:23.209784",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip CHUD: downtrend h1=-17.2% h24=-17.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:44:23.646978",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip CHUD: downtrend h1=-17.2% h24=-17.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:44:24.085302",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip CHUD: downtrend h1=-17.2% h24=-17.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:44:24.101335",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold GxTfFiCz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:45:53.430230",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip DEGEN: deep24h h24=-60.0% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:46:59.593268",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold DPwpNzWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:47:01.809869",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip [MC]: m5=-23.4% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:47:01.825983",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold EWo6jn1q \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:47:03.934275",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip HOPE: downtrend h1=-43.5% h24=-43.5%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:48:14.101676",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ROBO: m5=14.1% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:49:11.976154",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold PiKr6kVE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:49:12.000637",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold 4XTaitDj \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:49:14.442071",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CHIMP: h1=-12.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:49:17.275181",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WTF: m5=9.7% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:49:31.464054",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip PAIN: deep24h h24=-68.4% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:50:04.933237",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip internet: downtrend h1=-23.0% h24=-23.0%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:50:43.726608",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold 5npG1gZ2 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:50:45.906718",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Josh: m5=53.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:50:45.924145",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold 4FDSFtR9 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:51:21.983846",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Helix-02: downtrend h1=-33.8% h24=-33.8%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-13T23:51:21.999821",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 6GXi5Mrc \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-13T23:51:22.454914",
       "type": "BUY_SKIP",
@@ -2831,6 +2680,153 @@
       "color": "#d29922",
       "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:06.552550",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BAr5csYt sold 2zi9eshH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:07.546257",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip DoubleT: m5=-26.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:08.356960",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip DoubleT: m5=-26.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:09.153338",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip DoubleT: m5=-26.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:19.439999",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold 6GXi5Mrc \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:53.095302",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 2zi9eshH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:53.109164",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 2zi9eshH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:08:53.123155",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold 2zi9eshH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:09:48.829795",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold 7eU5eNTo \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:09:51.216363",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TRADFI: downtrend h1=-50.1% h24=-50.1%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:09:51.223834",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold 34HsvYbt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:10:28.627022",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J23qr98G sold CjpUG322 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:11:32.938089",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip HOPIUM: m5=45.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:11:33.545436",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip HOPIUM: m5=29.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:12:05.235456",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J6TDXvar sold H4orFH8z \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:12:05.249543",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J6TDXvar sold GRxyMVLf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:12:05.264931",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J6TDXvar sold 6GXi5Mrc \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:13:01.726157",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Di75xbVU sold E5yEc9KP \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:13:01.738464",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Di75xbVU sold 2KhT7gGc \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:13:02.315080",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TRADFI: downtrend h1=-43.8% h24=-43.8%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-14T00:13:03.038008",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TRADFI: downtrend h1=-43.8% h24=-43.8%",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2898,9 +2894,9 @@
       "follow_up_action": "After restart, brain monitors fresh_profile/fresh_boost trades to verify H11 cliff holds in production. Expected fresh_profile profile shifts to 85%+ WR."
     }
   ],
-  "ts": "00:08:05",
+  "ts": "00:13:11",
   "__publish_meta": {
-    "published_at": "2026-05-14 00:08:05 EDT",
+    "published_at": "2026-05-14 00:13:11 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
