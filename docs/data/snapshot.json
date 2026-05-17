@@ -1,15 +1,15 @@
 {
-  "sol_price": 86.41830096827972,
+  "sol_price": 86.41196774119953,
   "bot_status": "RUNNING",
   "bot_last_seen": "15:11:56",
   "bot_cycles": 1,
   "bankroll": 1.1377,
-  "bankroll_usd": 98.31810101161183,
+  "bankroll_usd": 98.3108956991627,
   "budget": 0.16314797369999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 15.2,
+  "hour": 15.3,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -204,310 +204,26 @@
     "result": "Saved 20 wallets in 39m 33s",
     "completed": "2026-05-16T01:42:38.275415"
   },
-  "brain_next_sec": 10147.420442,
-  "brain_next_str": "6:04 PM EST",
+  "brain_next_sec": null,
+  "brain_next_str": "",
   "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "12:10 PM EST",
+  "brain_last_run_str": "",
+  "brain_disabled": true,
   "research_running": false,
-  "research_last_run_str": "12:49 PM EST",
-  "research_next_str": "12:30 AM EST",
-  "research_next_sec": 33307.420442,
+  "research_last_run_str": "",
+  "research_next_str": "",
+  "research_next_sec": null,
   "research_elapsed_sec": 0,
-  "research_findings": {
-    "timestamp": "2026-05-14 12:55:00 EDT",
-    "run_id": "research-151",
-    "version": 1,
-    "headline": "RPC-VERIFIED LIVE SMART WALLET: 4Be9Cv...ha7t = 100% WR / 8 RTs / +26.1 SOL realized / active 2h ago. Two of three candidates from research-150 are dead (10d-inactive, leaderboard claims unverified). SECONDARY: entry telemetry coverage is FAR worse than thought - bundle_detected fires on 1.5% of pairs, m5_buys/sells on 0.7%, vol_liq_ratio on 1.9%. F2 instrumentation is more urgent than queued status implies.",
-    "regime_note": "CHOP + ALTCOIN_WINTER (BTC.D 58.34%, SOL $92.26). Bot live PID 14400 uptime ~15h, pre-H11 code still running. Heartbeat 30 min stale at lock-time - maintenance concern only, not a finding. 0 new trades since run-280.",
-    "new_hypothesis": {
-      "name": "rpc_verified_wallet_only_copy_trade",
-      "mechanism": "copy_trade has been dormant for 30+ days because its current 23-wallet list went stale - public leaderboards (gmgn/photon/birdeye) include wallets that have stopped trading or whose claimed P&L is fabricated/inflated. The actual edge is not 'use smart money wallets' (the bot tried that, lost 0.83 SOL lifetime) but 'use ONLY direct-RPC-verified-active wallets, with mandatory reverification every 7 days.' Direct-RPC verification proves: (a) the wallet is actually trading right now (last_activity <72h), (b) it has completed enough round-trips in recent history to compute a real WR, (c) realized P&L from on-chain pre/post token balances confirms or refutes the leaderboard claim.",
-      "persistence": "Cloudflare blocks gmgn/photon/birdeye/dexscreener/solscan frontends, so most retail copy-trade tools cannot verify their own watchlists - they ingest leaderboards as-is and copy stale wallets. Bots that can directly query Solana RPC (we use paid Alchemy) have a structural moat: we filter out the dead wallets the rest of the copy-trade market is still chasing. This edge persists as long as the leaderboard-to-RPC gap exists.",
-      "entry_rules": "PROTOCOL: every 7 days, re-run getSignaturesForAddress (limit=100) + getTransaction (parsed) for every wallet in sol_target_wallets.json. Compute per-wallet: round_trips_N (FIFO buy/sell pairs on Raydium/PumpSwap/Meteora/Jupiter/Pump.fun), realized_WR, median_pnl_sol_per_RT, last_activity_h. KEEP only wallets with last_activity_h < 72 AND round_trips_N >= 5 AND realized_WR > 60% AND median_pnl_sol_per_RT > +0.10. DROP everything else. SEED: add 4Be9CvxqHW6BYiRAxW9Q3xu1ycTMWaL5z8NX4HR3ha7t immediately (100% WR / 8 RTs / +3.49 SOL median / active 2h ago). Initial copy_trade size = 0.05x (test) until N=10 new trades through the filtered list.",
-      "data_required": "Already-configured Alchemy Solana RPC (ALCHEMY_SOLANA_RPC in .env). No new data source. Estimated RPC cost: ~25 wallets x 100 sigs + 100 txns = ~5000 RPC calls per weekly verification, well within Alchemy free tier. Ops impact: a single one-shot weekly cron task.",
-      "estimated_fires_per_day": "1-5 initially with only 4Be9Cv... in the seed list, expanding as more wallets get verified weekly. Current wallet 4Be9Cv... is making ~5-10 buys/day with 1-30 SOL position sizes - we mirror only the >5 SOL concentration buys, so ~1-3 fires/day.",
-      "priority": "HIGH",
-      "evidence": "Subagent 3 verified all 3 candidate wallets from research-150 via Alchemy RPC. 4Be9CvxqHW6BYiRAxW9Q3xu1ycTMWaL5z8NX4HR3ha7t: 17 buys / 10 sells / 8 completed RTs / 8-of-8 winners / median +3.49 SOL per RT / total +26.1 SOL realized on ~$300k buy volume / last activity ~2h ago / position sizes 1-30 SOL / strategy signature is pump.fun + Raydium graduates. 4EtAJ1p8RjqccEVhEhaYnEgQ6kA4JHR8oYqyLFwARUj6: 2 swap events in last 100 sigs (1 buy / 1 sell), no completed RT, last activity ~236h (~10 days) ago - claimed $44.2M realized P&L NOT corroborated. HWdeCUjBvPP1HJ5oCJt7aNsvMWpWoDgiejUWvfFX6T7R: zero swaps in last 100 sigs, last activity ~236h ago - claimed $4.38M realized P&L NOT corroborated. So 2 of 3 'elite' leaderboard wallets are dead, validating that uncurated public leaderboards are a negative-edge source. Direct verification turns it into a positive-edge source."
-    },
-    "watchlist": [
-      {
-        "mint": "9qy89gnSE6HkPPFigfJPWppuLsL3hTpE7HR3YE4Qpump",
-        "symbol": "(pump.fun mint)",
-        "reason": "Most recent buy by verified-live wallet 4Be9Cv...ha7t (9.00 SOL, ~16h ago). Active position. pump-suffix mint = pump.fun graduate or in-curve.",
-        "expires_at": "2026-05-15T13:00:00-04:00"
-      },
-      {
-        "mint": "2J54vKQubDdkgfMNXpZUB5h9zVvjRUcsWVjrkzhyq93m",
-        "symbol": "(non-pump mint)",
-        "reason": "Largest position by 4Be9Cv...ha7t (30.00 SOL, ~19h ago). Partial exit +0.13 SOL - wallet still holding rest. High-confidence pick despite duff start.",
-        "expires_at": "2026-05-15T13:00:00-04:00"
-      },
-      {
-        "mint": "5dUWwXzPYKiDEYh3KqEmvj42KoLT1eW1FYAhn7umpump",
-        "symbol": "(pump.fun mint)",
-        "reason": "Buy by 4Be9Cv...ha7t (2.00 SOL, ~19h ago). Small position.",
-        "expires_at": "2026-05-15T13:00:00-04:00"
-      },
-      {
-        "mint": "GRKjchTpcdEY3iCwL2d2LbarCNQhS3Cy1y1JPZUgpump",
-        "symbol": "(pump.fun mint)",
-        "reason": "Older buy by 4Be9Cv...ha7t (1.00 SOL, ~40h ago). Tail of the recent window.",
-        "expires_at": "2026-05-15T13:00:00-04:00"
-      },
-      {
-        "mint": "4GJ3TCt5mTgQT5BRKb14AkjddpFQqKVfphxzS3t4foZ9",
-        "symbol": "(non-pump mint)",
-        "reason": "Larger position by 4Be9Cv...ha7t (10.00 SOL, ~40h ago).",
-        "expires_at": "2026-05-15T13:00:00-04:00"
-      }
-    ],
-    "proposals_for_survival_brain": [
-      {
-        "type": "data_source_add",
-        "target": "copy_trade_wallet_curation (NEW reverification protocol; also adds 4Be9Cv...ha7t to sol_target_wallets.json)",
-        "justification": "copy_trade is dormant after 30+ days of zero trades - its 23-wallet list is unverified and has lost -0.830 SOL lifetime over 537 trades. A direct-Alchemy-RPC sweep of 3 candidate wallets surfaced in research-150 found 2 of 3 are stale (10-day-inactive, leaderboard P&L claims fabricated/inflated) and 1 is genuinely live with 100% WR over 8 RTs and +26.1 SOL realized. The fix is not 'find more wallets' - it's 'verify ALL wallets via RPC weekly, drop the dead ones, keep only the living winners.' Implementation = one cron-style script + a recently-active filter (last_activity_h < 72) and a quality filter (round_trips_N >= 5 AND realized_WR > 60% AND median_pnl_sol_per_RT > +0.10). This is also the only viable way to revive copy_trade - the strategy is in DORMANT status and the brain's playbook has no other revival path.",
-        "confidence": "HIGH",
-        "addresses_request": null,
-        "baseline": "copy_trade DORMANT (last sell 2026-04-05, 0 trades in 30 days). Lifetime: N=537, WR=33.7%, R/R=0.72, pnl_sol=-0.830272, stop_loss_rate=46.2%. Single biggest loss source in the book. Source: sol_brain_directives.json -> active_strategies.copy_trade. Current sol_target_wallets.json has 23 entries (per research-150 brief) - none verified via RPC.",
-        "expected_effect": "After weekly RPC reverification + seeding 4Be9Cv...ha7t: copy_trade resumes trading with a single high-quality signal source. Expected: 1-3 trades/day initially, WR projected > 55% (based on 4Be9Cv's 100% WR vs unfiltered 33.7%, regressed for sampling noise on N=8). Median realized SOL per RT > +0.10. After 4-6 weekly reverifications, 2-4 additional living winners likely join the seed list.",
-        "kill_criteria": "After N=10 copy_trade entries through the new filtered whitelist, if rolling-10 WR < 40% OR net_sol < -0.030 OR median_pnl_pct < -3.0%, suspend copy_trade and revert to dormant. After N=20 if WR still < 50%, treat as KILLED and remove the new protocol.",
-        "min_sample_size": "N=10 trades through the new whitelist before first evaluation; N=20 for kill decision.",
-        "regime_scope": "ANY (initial deploy in current CHOP+ALTCOIN_WINTER regime; the verified wallet 4Be9Cv... was active in CHOP so this is in-regime evidence)",
-        "rollback_plan": "Restore prior sol_target_wallets.json from git (or zero out the file). Set copy_trade size_mult back to 0.5x global penalty. Stop running the weekly reverification cron. One line revert per file.",
-        "risk_if_wrong": "Worst case copy_trade resumes its historical -0.83 SOL bleed pattern. Mitigated by 0.05x size cap during the N=10 probation window - at -10% avg loss per trade that's -0.0005 SOL/trade x 10 = -0.005 SOL maximum exposure before kill criteria trip. ~5 SOL of wallet bankroll is at no risk."
-      },
-      {
-        "type": "new_filter",
-        "target": "F2_entry_telemetry_instrumentation_gap (priority escalation, not a new edit)",
-        "justification": "F2 is already in pending_hypotheses with the description '~1-2% coverage' on bundle/holder/security/curve/mcap/vol_liq_ratio/dex_id/m5_buys fields. This run measured the actual coverage and it is WORSE: bundle_detected fires on 15/1001 pairs (1.5%), vol_liq_ratio on 19/1001 (1.9%), m5_buys+m5_sells on only 7/1001 (0.7%). The fields started landing ~2026-04-25 to 2026-05-01, so the floor is recent-period coverage, which we measure at ~10-15% post-instrumentation (not the 90% the F2 spec aims for). This says: F2's instrumentation logic is firing on a tiny minority of buys, not all of them - there may be a code path that bypasses entry logging in most buy flows. Priority: bump F2 up the next-bundle queue. Investigate root cause of the under-coverage BEFORE the F2 ship to avoid shipping a half-fix.",
-        "confidence": "HIGH",
-        "addresses_request": null,
-        "baseline": "Field coverage in sol_trade_log.json over last 67 days (2026-03-07 to 2026-05-13), measured on completed buy->sell pairs: bundle_detected=1.5% (15/1001), vol_liq_ratio=1.9% (19/1001), m5_buys+m5_sells=0.7% (7/1001). Post-instrumentation period (~last 2 weeks): ~10-15% coverage at best - short of the 90% F2 ships for. Source: trade-log mining this run (subagent 1).",
-        "expected_effect": "After F2 fix lands AND the under-coverage bug is resolved: target >=90% of new buys carry vol_liq_ratio, m5_buys, m5_sells, bundle_detected. Unblocks vol_liq_ratio cohort analysis at N>=20 within ~2 weeks of bot resumed-trading activity, plus m5 buy-pressure cohort analysis.",
-        "kill_criteria": "If, after F2 ships and bot has done 50 new buys, field coverage is still <70% on those 50 buys, the fix is broken - revert and re-debug. If coverage stays <50%, treat as failed instrumentation pass.",
-        "min_sample_size": "50 new buys post-F2-ship to verify coverage.",
-        "regime_scope": "ANY",
-        "rollback_plan": "Revert the F2 code edits. Existing strategies unaffected because none gate on the missing fields today (they default to None and the existing entry logic ignores them).",
-        "risk_if_wrong": "+<50ms latency per buy from extra logging. No P&L risk. Pure instrumentation."
-      }
-    ],
-    "request_responses": [],
-    "subagents_dispatched": [
-      {
-        "role": "bundle_detected predictive-power miner",
-        "finding": "bundle_detected has no usable signal yet - fires on only 1.5% of completed pairs (15/1001). Strategy-stratified cells all N<10. Bootstrap WR CI on bundle=True is [0%, 50%], fully overlapping null baseline 35.3%. Verdict: IGNORE as filter, KEEP instrumentation, revisit when N=50 (~2026-07-01). Critical side-finding: m5_buys/m5_sells fires on only 0.7% of pairs - F2 telemetry is way more broken than estimated."
-      },
-      {
-        "role": "Jito MEV bundle real-time edge scout",
-        "finding": "No free, no-key, mint-filterable Jito bundle feed exists. Block Engine RPC is lookup-by-bundle-ID only. Cheapest viable path = subscribe Alchemy WS to 8 Jito tip-account pubkeys, group sibling txs by mint (~150-250 LOC). Bitquery WS works with API key (paid). ShredStream gRPC needs registered keypair (multi-day integration). Verdict: LOW-MED edge. Existing in-house bundle_detected heuristic likely already captures most signal."
-      },
-      {
-        "role": "smart-money wallet RPC verification (3 candidates)",
-        "finding": "Verified all 3 via Alchemy RPC last-100-sigs scan. 4Be9Cv...ha7t = LIVE: 100% WR / 8 RTs / +26.1 SOL realized / median +3.49 SOL/RT / active 2h ago / pump.fun + Raydium graduate strategy. 4EtAJ1p8... = INACTIVE 10d / 0 completed RTs / $44.2M leaderboard claim NOT corroborated. HWdeCUj... = DEAD 10d / 0 swaps / $4.38M claim NOT corroborated. Surfaces 5 fresh mint-watchlist entries from the live wallet."
-      }
-    ],
-    "data_sources_used": [
-      "own_trade_log",
-      "alchemy_solana_rpc",
-      "jito_block_engine_api",
-      "bitquery_docs",
-      "jito_docs",
-      "dexscreener",
-      "websearch"
-    ],
-    "next_run_focus": "Three threads: (1) Once survival brain adopts the wallet-reverification protocol, re-verify ALL 23 entries in sol_target_wallets.json (not just the 3 candidates) and produce the post-reverify live whitelist. (2) Investigate WHY entry telemetry (m5_buys, vol_liq_ratio, bundle_detected) is only firing on <2% of buys - is there a code path bypassing entry logging? This is a F2-blocker that should be debugged before F2 ships. (3) If H11 has restarted by the next run, re-mine the weekend-08-16 cohort to confirm the cell badness is not an H11-strategy artifact (deferred from research-150).",
-    "candidate_wallets_for_copy_trade": [
-      {
-        "address": "4Be9CvxqHW6BYiRAxW9Q3xu1ycTMWaL5z8NX4HR3ha7t",
-        "rpc_verified_wr": 100.0,
-        "rpc_verified_rts": 8,
-        "median_pnl_sol_per_rt": 3.49,
-        "total_realized_sol": 26.1,
-        "last_activity_h": 2,
-        "verification_status": "RPC_VERIFIED_LIVE_HIGH_CONFIDENCE",
-        "recommended_action": "ADD to sol_target_wallets.json at 0.05x size"
-      },
-      {
-        "address": "4EtAJ1p8RjqccEVhEhaYnEgQ6kA4JHR8oYqyLFwARUj6",
-        "rpc_verified_wr": null,
-        "rpc_verified_rts": 0,
-        "last_activity_h": 236,
-        "verification_status": "RPC_VERIFIED_INACTIVE_CLAIMS_UNCORROBORATED",
-        "recommended_action": "REJECT - leaderboard P&L claim of $44.2M not corroborated by 100 most-recent sigs"
-      },
-      {
-        "address": "HWdeCUjBvPP1HJ5oCJt7aNsvMWpWoDgiejUWvfFX6T7R",
-        "rpc_verified_wr": null,
-        "rpc_verified_rts": 0,
-        "last_activity_h": 236,
-        "verification_status": "RPC_VERIFIED_DEAD_CLAIMS_UNCORROBORATED",
-        "recommended_action": "REJECT - zero swap activity in last 100 sigs"
-      }
-    ],
-    "telemetry_coverage_audit": {
-      "method": "Joined buy/sell pairs FIFO by token_mint over full sol_trade_log.json (2026-03-07 to 2026-05-13, 1001 completed pairs)",
-      "bundle_detected_pct": 1.5,
-      "vol_liq_ratio_pct": 1.9,
-      "m5_buys_sells_pct": 0.7,
-      "earliest_telemetry_landing": "~2026-04-25 (vol_liq_ratio) and ~2026-05-01 (m5_buys)",
-      "post_instrumentation_period_coverage_estimate_pct": "10-15 (estimated, not 90+ that F2 spec targets)",
-      "implication": "F2 instrumentation gap is significantly worse than the brain's '~1-2% on the prior period' note. There is likely a code path bypassing entry telemetry in the majority of buy flows. Debug BEFORE shipping F2 to avoid shipping a half-fix."
-    },
-    "maintenance_note": "sol_heartbeat.json mtime was 1770s (~30 min) at lock acquisition - past the 5min liveness threshold. Bot PID 14400 reportedly live (uptime 14.7h per run-282) - heartbeat likely stale due to mid-cycle dormancy with very few candidates. Flagging here for survival brain or maintenance bot. Not a research finding.",
-    "meta": {
-      "elapsed_min": 16,
-      "subagent_count": 3,
-      "web_calls": 14,
-      "rpc_calls": "~300 (subagent 3 verified 3 wallets x 100 sigs + 100 txns each)",
-      "new_tokens_scouted": 5,
-      "novel_hypotheses_produced": 1,
-      "deployable_proposals_produced": 2,
-      "research_history_run_id": "research-151"
-    }
-  },
-  "research_status": {
-    "running": false,
-    "last_run_id": "research-151",
-    "finished_at": "2026-05-14 12:49:25 EDT"
-  },
+  "research_disabled": true,
+  "research_findings": {},
+  "research_status": {},
   "maintenance_status": {
-    "timestamp": "2026-05-14 16:06:30 EDT",
-    "run_id": "maint-041",
-    "run_ts": "2026-05-14T16:06:30-04:00",
-    "agent": "maintenance",
-    "overall": "OK_NO_ACTIONS",
-    "bot_status": "RUNNING",
-    "bot_pid": 14400,
-    "bot_alive": true,
-    "bot_uptime_h": 18.72,
-    "bot_heartbeat_age_sec": 109,
-    "bot_heartbeat_threshold_note": "heartbeat_age 109s is well inside the normal 600-1200s between-cycle band; events_age 14s is fresh; cycle counter advanced 41 -> 43 (+2 since maint-040). Section 2 liveness rule (events_age<120s AND cycle_delta>=+1) -> ALIVE. No action.",
-    "cycle": 43,
-    "cycle_delta_since_prior_run": 2,
-    "sol_balance": 1.1377,
-    "sol_price": 93.02,
-    "regime": "ALTCOIN_WINTER(58.3%)",
-    "open_positions": 0,
-    "open_position_summary": "Zero open positions. sol_positions.json is `[]`. Unchanged since WORLDCUP SL on 2026-05-13 23:35:14 EDT (mtime ~16.5h old).",
-    "trades_today": 0,
-    "rolling_24h_trades": 2,
-    "rolling_24h_buys": 1,
-    "rolling_24h_sells": 1,
-    "rolling_24h_note": "WORLDCUP buy at 22:44:20 EDT yesterday (17.37h ago) and WORLDCUP SL at 23:35:14 EDT yesterday (16.52h ago) both still inside the 24h rolling window. Aging-out point for the buy is ~22:44 EDT today (~6.63h from now). Section 4 dormancy criterion (0 trades in 24h) NOT met.",
-    "dashboard_status": "RUNNING",
-    "dashboard_pid": 30560,
-    "dashboard_uptime_h": 2.97,
-    "dashboard_port": 5555,
-    "dashboard_http": 200,
-    "dashboard_response_sec": 2.805,
-    "dashboard_response_note": "Cold probe 2805 ms is the lowest reading in the recent series (3188 -> 3105 -> 2897 -> 2901 -> 2805) and a solid 96 ms improvement over maint-040. Well under the 3000 ms Section 6 ceiling. Payload 74298 B -- ALSO trended down again from 74939 B last run (-641 B). The maint-037/038 regression has fully resolved; both latency and payload now trending favorably. No restart consideration.",
-    "dashboard_probe_series_ms": [
-      2805
-    ],
-    "duplicates_killed": [],
-    "stale_locks_cleared": [],
-    "hours_since_last_trade": 88.51,
-    "hours_since_last_buy": 17.37,
-    "hours_since_last_sell": 16.52,
-    "last_buy_ts": "2026-05-13T22:44:20",
-    "last_buy_symbol": "WORLDCUP",
-    "last_buy_strategy": "consensus_boost",
-    "last_sell_ts": "2026-05-13T23:35:14",
-    "last_sell_symbol": "WORLDCUP",
-    "last_sell_exit_reason": "Stop loss WORLDCUP (-10.5%)",
-    "last_sell_pnl_pct": -10.51,
+    "hours_since_last_trade": 88.59,
     "dormancy_alert": true,
-    "dormancy_note": "17.37h since last buy, 16.52h since last sell. Both still inside the 24h rolling window (rolling_24h_buys=1, rolling_24h_sells=1). Section 4 dormancy criterion (0 trades in 24h) NOT met. WORLDCUP buy ages out of the 24h window at ~22:44 EDT today (~6.63h from now). The maintenance run AFTER that timestamp -- if still zero new buys -- is the real DORMANCY_ALERT firing point; will append to sol_maintenance_alerts.json then.",
-    "filter_lockout_diagnosis": "Last 100 events span 2026-05-14T15:48:26 -> 16:05:15 EDT (~17 min). Tally: 49 BUY_SKIP, 48 SIGNAL (wallet sells, not buy decisions), 3 SCAN, 0 BUY, 0 errors. BUY_SKIP top reasons: m5 dump skip PICKLE (5x, run79), h24neg skip HALF (3x, run104), generic downtrend skip yacs (2x), sell-conflict (2x, wallet sold within seconds), m5 pump exit-liq DAIDAI26 (2x, run95), midpump momentum gate BULL (2x, run115). Buy-decision skip rate: 100% in window with zero buys. BUT rolling 24h still has 1 buy (WORLDCUP), so Section 4 lockout criterion (>95pct AND 0 buys in 24h) is NOT met. Pattern shifted slightly vs maint-040 -- run79 (m5 dump) and run104 (h24neg) now leading instead of run115/sell-conflict. Per-strategy gates still rejecting bad-fit candidates as designed.",
-    "actions_taken": [
-      "PROCESS INVENTORY: PID 14400 (degen_bot.py --continuous, uptime 18.72h, started 2026-05-13 21:23:33 EDT) + PID 30560 (dashboard.py, uptime 2.97h, started 2026-05-14 13:08:09 EDT). Exactly one of each, no duplicates.",
-      "LIVENESS: heartbeat_age 109s (well inside normal 600-1200s between-cycle band), events_age 14s, cycle counter 41 -> 43 (+2 in ~60 min). ALIVE on Section 2 signals (events fresh AND cycle advancing). No edge case.",
-      "BRAIN STATUS: sol_brain_status.json unchanged since maint-038 -- still showing run-282 finished 2026-05-14 12:10:30 EDT, running:false. No new brain run in the ~3.93h since run-282. Lock clean -- file mtime 12:13:30 EDT (well under 45-min stale threshold relative to running:false).",
-      "RESEARCH STATUS: sol_research_status.json unchanged -- still research-151 finished 2026-05-14 12:49:25 EDT, running:false. No new research run since maint-038. Lock clean.",
-      "POSITION STATE: sol_positions.json is `[]`. No new buys or exits since WORLDCUP SL on 2026-05-13 23:35:14 EDT. File mtime 16.5h old.",
-      "DORMANCY CHECK: rolling_24h_buys=1 (WORLDCUP at 17.37h ago, still inside window with ~6.63h before age-out), rolling_24h_sells=1 (WORLDCUP SL at 16.52h ago). NO dormancy alert this run. WORLDCUP buy ages out at ~22:44 EDT today; next maintenance run after that is the real DORMANCY_ALERT decision point.",
-      "FILTER PATTERN: 49 BUY_SKIP + 48 SIGNAL + 3 SCAN + 0 BUY + 0 errors over last ~17 min. Per-strategy gates dominating: run79 m5-dump (5), run104 h24-neg (3), generic downtrend (2), sell-conflict (2), run95 m5-pump exit-liq (2), run115 midpump (2). 100pct buy-decision skip rate in window, but rolling 24h still has 1 buy, so Section 4 lockout NOT met. Skip-reason mix shifted slightly vs maint-040 (run79/run104 now leading instead of run115/sell-conflict) -- normal variation as candidate mix changes.",
-      "ERROR SCAN: Zero CYCLE_ERROR / ERROR events in last 100. Bot loop clean.",
-      "LOG HYGIENE: bot.log 82.5 KB, bot.err.log 0 bytes, dashboard.log 88 B, dashboard.err.log 1.5 KB (all 200s, benign Flask access log). All trivially under 50 MB. No truncation needed.",
-      "DASHBOARD PROBE: cold probe 2805 ms -- LOWEST in the recent series (3188 -> 3105 -> 2897 -> 2901 -> 2805), 96 ms improvement over maint-040. Payload 74298 B -- ALSO down -641 B from last run. Both latency and payload now trending favorably. No restart consideration.",
-      "MIRROR PROBE: GitHub Pages snapshot HTTP 200, published_at 2026-05-14 16:01:15 EDT, age ~5.2 min -> HEALTHY (well under 15-min threshold). Publisher is publish_dashboard.py pushing on normal ~5-min cadence. No heal needed. consecutive_heals stays at 0 (16th consecutive healthy run).",
-      "EFFICIENCY LAB: pending_hypotheses=16 (threshold 60), lessons=30 (threshold 50, unchanged from maint-038/039/040), pending_requests=0 (threshold 8), drift_keys=none. NOT triggered. Directives version 7 (unchanged from run-282). Brain has not edited directives in ~3.93h since run-282.",
-      "H11 RESTART STATE: degen_bot.py mtime carries H11 deploy from run-280. Running bot PID 14400 started 2026-05-13 21:23:33 EDT, before the H11 edit, so pre-H11 code is still live. 16th consecutive run flagging. Maintenance lacks authority to restart for hot-deploy (only natural restart paths -- watchdog/crash-loop/no-process/publisher-escalation).",
-      "AUTO-RESTART GATE: consecutive_heals=0 (16th healthy mirror run), so Section 7 Step D condition #1 fails. No bot auto-restart consideration.",
-      "OVERALL: Zero interventions this run. Bot/dashboard healthy with no thresholds breached. Mirror fresh, brain/research idle but not stale, zero positions, zero errors. Dashboard cold probe now at series-low 2.805 s with payload also shrinking -- regression fully resolved."
-    ],
-    "brain_status": {
-      "running": false,
-      "run_id": "run-282",
-      "started_at": "2026-05-14 12:04:41 EDT",
-      "finished_at": "2026-05-14 12:10:30 EDT",
-      "phase": "complete",
-      "summary": "Unchanged since maint-038. Self-correcting run-282 retracted the H11 restart-todo rule and advanced directives v6 -> v7. No new brain run in ~3.93h since run-282 completed. Brain holding pending natural restart of bot to deploy H11.",
-      "lock_action": "NOT_NEEDED",
-      "lock_action_reason": "running:false with phase:complete and finished_at timestamp. Lock cleanly released."
-    },
-    "research_status": {
-      "file_present": true,
-      "running": false,
-      "last_run_id": "research-151",
-      "finished_at": "2026-05-14 12:49:25 EDT",
-      "lock_action": "NOT_NEEDED",
-      "lock_action_reason": "running:false with finished_at timestamp. Clean. Unchanged since maint-038."
-    },
-    "github_mirror": {
-      "url": "https://JPMendenhall.github.io/tradingBot/data/snapshot.json",
-      "http_status": 200,
-      "published_at": "2026-05-14 16:01:15 EDT",
-      "publisher": "publish_dashboard.py",
-      "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 5.2,
-      "heal_attempted": false,
-      "heal_succeeded": null,
-      "heal_output": null,
-      "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 5.2,
-      "consecutive_heals": 0,
-      "consecutive_heals_unfired": 0,
-      "auto_restart": {
-        "fired": false,
-        "skip_reason": "Mirror healthy at 5.2 min; publisher pushing on normal cadence. consecutive_heals=0 -> auto-restart gate condition #1 fails.",
-        "post_restart_verified": null
-      },
-      "note": "Plain English: the public dashboard mirror is current (~5.2 min old, well under the 15-min healthy threshold). Publisher is pushing on its normal ~5-min cadence. Nothing to heal. 16th consecutive healthy run since at least maint-026."
-    },
-    "efficiency_lab": {
-      "triggered": false,
-      "trigger_metrics": {
-        "pending_hypotheses": 16,
-        "lessons": 30,
-        "pending_requests": 0,
-        "drift_keys": []
-      },
-      "trigger_thresholds": {
-        "pending_hypotheses_gt": 60,
-        "lessons_gt": 50,
-        "pending_requests_gt": 8,
-        "drift_keys_present": false
-      },
-      "fired_this_run": false,
-      "skip_reason": "not_triggered",
-      "throttle_status": "irrelevant_no_trigger",
-      "throttle_age_h": 66.95,
-      "summary": "Brain memory load unchanged since maint-038/039/040 (lessons still 30, hypotheses still 16). Directives version still 7. Distant from all four thresholds. No cleanup needed."
-    },
-    "log_truncations": [],
-    "log_hygiene_note": "bot.log 82.5 KB, bot.err.log 0 bytes, dashboard.log 88 B, dashboard.err.log 1.5 KB (Flask access log with all 200s, benign). All trivially under 50 MB. No truncation work this run.",
-    "warnings": [
-      "FOR OPERATOR -- H11 still pending natural restart (16th consecutive run flagging). Running bot PID 14400 started 2026-05-13 21:23:33 EDT, before the H11 edit, so pre-H11 code is still live. Run-282 explicitly accepted that brain CANNOT file restart todos -- only natural restart deploys H11. Maintenance lacks authority to restart for hot-deploy. Operator decides timing.",
-      "INFO -- Brain and research both idle since maint-038 (~3 hours). No new fires this run. Brain holding for natural restart per run-282's self-correction. Research independent cadence.",
-      "INFO -- Dashboard cold-probe at series-low 2.805 s (down from 2.901 s last run, 2.897 s before) and payload also shrinking (74298 B, down from 74939 B). The maint-037/038 regression has fully resolved and both metrics now trending favorably."
-    ],
-    "next_run_focus": "(1) DORMANCY watch: WORLDCUP buy ages out of 24h window at ~22:44 EDT today (~6.63h from now). The maintenance run AFTER that timestamp with still-zero new buys is the real DORMANCY_ALERT firing point -- append to sol_maintenance_alerts.json then. (2) DASHBOARD COLD-PROBE should remain under 3 s; trending favorably now. (3) H11 deploy still pending natural restart (16th run). (4) Cycle counter should advance to ~45-47 by next run. (5) Watch whether a new brain or research run fires this hour. (6) Mirror should stay healthy; consecutive_heals=0. (7) Brain memory load 16 / 30 / 0 / 0 -- still distant from thresholds.",
-    "elapsed_min": 2,
-    "file_age_min": 4267.4,
+    "file_age_min": null,
     "watchdog_stale": false,
-    "severely_stale": true
+    "severely_stale": false
   },
   "strategy_stats": {
     "timestamp": "2026-05-17 15:11:56 EDT",
@@ -1937,48 +1653,24 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 2.9,
+    "age_min": 8.1,
     "stale": false,
     "available": true
   },
   "brain_queue": {
     "requests_pending": 0,
     "requests_acknowledged": 0,
-    "hypotheses_pending": 16,
-    "lessons_count": 30,
-    "killed_ideas_count": 2,
+    "hypotheses_pending": 0,
+    "lessons_count": 0,
+    "killed_ideas_count": 0,
     "drift_keys": [],
-    "active_strategies_count": 12,
+    "active_strategies_count": 0,
     "overloaded": false
   },
   "memory_keeper_status": {
-    "timestamp": "2026-05-11 21:08:12 EDT",
-    "run_id": "efflab-003",
-    "snapshot_path": "sol_brain_directives.json.bak.2026-05-11",
-    "drift_keys_merged": [],
-    "killed_idea_revival_conflicts": [],
-    "notes": [
-      "capped active entries: demoted 1 oldest"
-    ],
-    "lessons_before": 41,
-    "lessons_after": 40,
-    "lessons_trimmed_for_length": 7,
-    "lessons_deduped": 0,
-    "lessons_demoted_historical": 1,
-    "hypotheses_before": 57,
-    "hypotheses_after": 57,
-    "killed_ideas_audited": 18,
-    "history_entries_archived": 0,
-    "history_size_before": 53,
-    "history_size_after": 53,
-    "requests_archived": 2,
-    "elapsed_min": 0.0,
-    "next_run_focus": "Watch entries count drift back above 40; historical_lessons now at 133 \u2014 consider archival cap if it exceeds 250.",
-    "age_hours": 138.1,
-    "stale": true,
-    "available": true,
-    "ever_ran": true,
-    "source": "sol_efficiency_lab_status.json"
+    "available": false,
+    "ever_ran": false,
+    "source": "none"
   },
   "maint_next_sec": null,
   "maint_next_str": "",
@@ -1987,15 +1679,33 @@
   "maint_disabled": true,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "5.8d ago",
-  "one_time_tasks": [],
+  "memk_last_run_str": "",
+  "memk_disabled": true,
+  "one_time_tasks": [
+    {
+      "label": "Wiring Check",
+      "icon": "\ud83d\udd0c",
+      "fire_at_str": "Tue 2:30 AM EST",
+      "rel_str": "12d 12h ago",
+      "state": "OVERDUE",
+      "purpose": "Verify all agents/files/dashboards are talking"
+    },
+    {
+      "label": "Split Evaluation",
+      "icon": "\ud83d\udcca",
+      "fire_at_str": "Tue 8:30 PM EST",
+      "rel_str": "11d 18h ago",
+      "state": "OVERDUE",
+      "purpose": "Verdict on whether the brain refactor improved performance"
+    }
+  ],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "rpc_verified_wallet_only_copy_trade",
-      "run_id": "research-151",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
+      "hypothesis_name": "",
+      "run_id": "",
+      "status": "no_hypothesis",
+      "status_label": "No hypothesis this run",
+      "status_color": "#666",
       "evidence_text": "",
       "evidence_source": ""
     },
@@ -2007,76 +1717,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-17T14:28:35.172686",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip memecoins: m5=33.6% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:35.691910",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip PORKY: m5=-28.0% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:36.141073",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: 6 new profile(s) (17 young, 10 ready)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:36.673120",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "CPU: liq=$1 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:37.145423",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "PRIMEROT: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:37.680356",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "GOLDSMITH: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:38.365457",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "MAN: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:39.069531",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "CITX: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:39.763464",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "Trionda: pair_age=2.4h < 6.0h H11 gate (1-6h death zone)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T14:28:40.349021",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "shorse: pair_age=1.7h < 6.0h H11 gate (1-6h death zone)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-17T14:28:40.886311",
       "type": "FP_SKIP",
@@ -2706,12 +2346,82 @@
       "color": "#d29922",
       "msg": "Sell-conflict skip HXaBmfZN: tracked wallet sold this token 104s ago",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:15:43.651008",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4BdKaxN8 sold DaX8VjwX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:15:43.668949",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4BdKaxN8 sold 9DVSwDjv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:15:57.412076",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip \u5c0f\u798f\u745e: m5=19.6% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:15:57.422391",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4nvNc7dD sold 8JdvZhxE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:16:08.565255",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9cdZg6xR sold 9A1umr7R \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:16:08.598601",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9cdZg6xR sold 9A1umr7R \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:16:48.874509",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4vw54BmA sold sRLL9y3F \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:16:48.946236",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4vw54BmA sold 8WNjQKFL \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:16:54.176542",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip BELIEVE: downtrend h1=-65.7% h24=-65.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T15:16:54.197474",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4vw54BmA sold B88VAVZ2 \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "15:14:52",
+  "ts": "15:19:59",
   "__publish_meta": {
-    "published_at": "2026-05-17 15:14:52 EDT",
+    "published_at": "2026-05-17 15:19:59 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
