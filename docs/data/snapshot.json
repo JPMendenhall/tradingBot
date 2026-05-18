@@ -1,15 +1,15 @@
 {
-  "sol_price": 84.28930646568226,
-  "bot_status": "RUNNING",
+  "sol_price": 84.3554275668856,
+  "bot_status": "STALE",
   "bot_last_seen": "12:28:55",
   "bot_cycles": 48,
   "bankroll": 1.1345,
-  "bankroll_usd": 95.62621818531653,
+  "bankroll_usd": 95.70123257463172,
   "budget": 0.16314797369999998,
   "pnl_today": -0.0004020639268970214,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 12.8,
+  "hour": 12.9,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -198,167 +198,187 @@
     "result": "Saved 20 wallets in 39m 33s",
     "completed": "2026-05-16T01:42:38.275415"
   },
-  "brain_next_sec": 18836.454507,
+  "brain_next_sec": 18532.831436,
   "brain_next_str": "6:04 PM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
   "brain_last_run_str": "12:13 PM EST",
   "brain_disabled": false,
-  "research_running": true,
-  "research_last_run_str": "",
+  "research_running": false,
+  "research_last_run_str": "12:53 PM EST",
   "research_next_str": "12:30 AM EST",
-  "research_next_sec": 41996.454507,
-  "research_elapsed_sec": 618.545493,
+  "research_next_sec": 41692.831436,
+  "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
-    "timestamp": "2026-05-18 00:55:30 EDT",
-    "run_id": "research-141",
+    "timestamp": "2026-05-18 12:54:30 EDT",
+    "run_id": "research-142",
     "version": 1,
     "regime_at_run": "CHOP + ALTCOIN_WINTER (BTC.D 58.22%)",
-    "headline": "ANDV-killer is a DEAD-BOOK signal, not a rug signal: m5_volume=$552 / 4 tx vs GAYTES $1,612 / 129 tx \u2014 propose hard floor `m5_buys+m5_sells >= 20` on bear_strength entries; plus one novel pump.fun prelaunch-curve velocity-diversity edge that the existing graduation listener is watching the wrong event for.",
+    "headline": "REQ-018 serviced: WC-specific floor gt_buyers_m5<=7 AND h24>=100% would have blocked TOLYBOT + ASTEROID + soothsayer + Goblin (4 of 6 WC losses) while keeping Butt +17.4% \u2014 sacrifices only TIMETRUMP +1.2%. NOVEL EDGE: dex_boosts log proves the bot polls DexScreener boost-velocity every 5 min (5000 snaps in 7.5h) and the survival brain has NEVER used it \u2014 only 10/80 mints hit boostAmount>=100 in the window (top 12.5% rarity), and 51% of boosted mints are post-pumpfun-graduation. Bonus: bundle_detected=True at entry already correlates with WR 20% vs 50% (n=16), proposing a universal SKIP rule.",
     "new_hypothesis": {
-      "name": "prelaunch_curve_velocity_diversity_snipe",
-      "mechanism": "In the first 60-180 seconds after a pump.fun token launches, the ratio of (unique buyer wallets) / (curve SOL filled) predicts graduation odds 5-15x better than raw buy volume. Distributed curves with rapid wallet-count growth trigger the cascade that pushes the curve to the 85-SOL graduation threshold; concentrated dev-bundle curves get filtered out by aggregator/graduation watchers and die before graduation.",
-      "persistence": "Most snipers compete on raw latency to buy EVERY launch and lose money on the 99% that die \u2014 wallet-diversity filtering trades latency for selection. Measuring wallet-diversity requires holder-graph reconstruction on the curve PDA, which is not in any standard DexScreener/Birdeye feed and is not what off-the-shelf snipers compute.",
-      "entry_rules": "Subscribe to pump.fun curve account transactions (we already have a WSS listener via pumpfun_graduation_snipe_v2 Phase 1 logger). Within first 180s of token creation, every 15s compute: (a) unique_buyers (distinct signers excluding creator + known bundler funder), (b) curve_sol_filled, (c) largest_single_buyer_pct. FIRE entry between t=60s and t=180s when ALL hold: unique_buyers >= 25 AND curve_sol_filled in [8,30] SOL AND largest_single_buyer_pct <= 4.0% AND unique_buyers/curve_sol_filled >= 2.5 AND creator wallet has not sold. Size 0.05 SOL test; hard stop -35%; scale-out 50% at +60%; trail remainder to graduation event.",
-      "data_required": "Solana WSS curve account subscriptions (already streaming via Helius/QuickNode through pumpfun_graduation_snipe_v2 listener). Bitquery Pump.fun API as free fallback. Zero new paid feeds.",
-      "estimated_fires_per_day": 6,
+      "name": "dex_boost_tier_cross_on_graduated_pumpfun",
+      "mechanism": "When a graduated pump.fun mint's DexScreener boostAmount FIRST crosses >=100 (the team paid >=$100 to promote the listing in DexScreener's Trending/Boosted widget), the resulting widget impression reaches tens of thousands of degens in minutes. Devs do not spend $100+ unless they intend to coordinate a buy/marketing wave; restricting to already-graduated pump.fun mints filters out the dead/scam tier. The window between 'boost paid' and 'widget seen by crowd' is the bot's edge \u2014 5 to 15 minutes of front-running retail.",
+      "persistence": "DexScreener boost spending is observable via the /token-boosts/latest endpoint, but most copy-trader bots watch wallet flow (target wallets, pump.fun events), not DexScreener's REST. Our own bot is already polling and logging the data \u2014 the gap is purely on the consumption side, no new feed needed. The signal is rare (only 10/80 mints crossed 100 in a 7.5h window \u2014 top 12.5%), so the edge is not crowd-saturated.",
+      "entry_rules": "Fire when: (a) source=='latest' snapshot reports boostAmount>=100 for a mint, (b) the mint was ABSENT from any prior dex_boosts snapshot OR is first-seen <=30 min ago, (c) the mint appears in sol_pumpfun_graduation_log.json (already graduated), (d) liquidity>=$15k, (e) pair_age<=14 days, (f) gt_buyers_m5>=5 (live demand confirmed). Size 0.5% bankroll. TP +40% / SL -15% / time-stop 30 min if no movement.",
+      "data_required": "Already streaming: sol_dex_boosts_velocity_log.json (every 5 min, ~5000 snaps over 7.5h proven live), sol_pumpfun_graduation_log.json (already used). No new feed required. Survival brain needs to wire a new strategy that consumes both files in _process_signal.",
+      "estimated_fires_per_day": 4,
       "priority": "HIGH",
-      "evidence": "1) arXiv 2602.14860 names liquidity-velocity the single most informative graduation predictor. 2) VoluTools 'Pump.fun Graduation Gap' study: the ~0.7-1% that hit $69K showed distinct first-3-minute distribution patterns. 3) Live evidence from GeckoTerminal /solana/pools fetched 2026-05-18 ~00:50 EDT: mint GAitmexbTrGKytUPJrSGFFCG9J963pNyUbPTaeWSeT5w ('memecoins') went from launch to $3.7M 24h vol in ~11h, peaked +232% then -18.6% \u2014 the exact lifecycle this edge would catch in the t=60-180s window before the +232% leg. 4) Subagent verified the existing pumpfun_graduation_snipe_v2 logger is on the WRONG event (graduation is too late \u2014 graduation pop is already partially priced in by the curve buyers); the alpha is in the t=60-180s curve window."
+      "evidence": "Subagent dump 2026-05-18 ~12:45 EDT \u2014 dex_boosts_velocity_log.json contains 5000 entries over 7.5h, 80 unique mints, median peak boost=10, only 10/80 (12.5%) crossed 100. TWO live cases TODAY: 9FssA1B7EhdWCt7rT4RtovYbWdKg3gog1wpXWuqHpump (boostAmount=100, totDelta=+100 at 11:21 EDT) and FmjijgwEHpe32VPvHy1s7u7TLthh9yu1j75djVbWpump (boostAmount=100 at 11:52 EDT, brand-new first-seen). 41/80 (51%) boosted mints are post-pumpfun graduates. AqymPL3P7EnSLV3AFGLgpzbezKweBoCWs8h28TKMpump and HfMbPyDdZH6QMaDDUokjYCkHxzjoGBMpgaUvpLWGbF5p both hit the 500 tier \u2014 these are real outlier signals worth backtest. Letsbonk graduates show ZERO overlap with boost data \u2014 boost-cross signal is pump.fun-graduate-specific.",
+      "rejected_alternatives": "Considered 'cluster beta rotation' (TROLL OG +22% h1, PTROLL derivative +641% h24) but it requires name-substring matching plus fresh-mint rug filtering \u2014 high false-positive risk and no existing data plumbing. Also considered prelaunch_curve_velocity_diversity (research-141) \u2014 still valid but requires WSS extension work that is queued. dex_boost_tier_cross uses ZERO new infra and is N=1 read away from a backtest."
     },
     "watchlist": [
       {
-        "mint": "GAitmexbTrGKytUPJrSGFFCG9J963pNyUbPTaeWSeT5w",
-        "symbol": "memecoins",
-        "reason": "11h old, $88K mcap, $3.7M 24h vol, peaked +232% then -18.6% \u2014 textbook prelaunch-velocity case for new hypothesis; watch for echo pumps and as a calibration target for backtest",
-        "expires_at": "2026-05-19T00:55:00-04:00"
+        "mint": "9FssA1B7EhdWCt7rT4RtovYbWdKg3gog1wpXWuqHpump",
+        "symbol": "?",
+        "reason": "Live case today \u2014 boost-tier crossed 100 at 11:21 EDT 2026-05-18. Front-running candidate for backtest of new hypothesis. Verify 1h/4h/24h price action.",
+        "expires_at": "2026-05-19T13:00:00-04:00"
       },
       {
-        "mint": "Dt1carJXP7PZwHmABAYPvpgw1NkM76vZwHjBBjdPkPQC",
-        "symbol": "Ebola",
-        "reason": "2-day reset candidate, $472K mcap, $1.5M vol still trading \u2014 bounce_hunter overlap if h1 turns positive",
-        "expires_at": "2026-05-20T00:55:00-04:00"
+        "mint": "FmjijgwEHpe32VPvHy1s7u7TLthh9yu1j75djVbWpump",
+        "symbol": "?",
+        "reason": "Live case today \u2014 fresh first-seen at 11:52 EDT 2026-05-18, boostAmount=100. Brand-new mint, ideal for hypothesis backtest.",
+        "expires_at": "2026-05-19T13:00:00-04:00"
       },
       {
-        "mint": "5nBm4wVTrnmpScMdVJ5anAwkAqMqG4NueBXMgRnwtarS",
-        "symbol": "HERMES",
-        "reason": "8 days old, $583K mcap, stabilizing on $1M vol \u2014 anchor_derivative_snipe candidate if a HERMES-derivative spins up",
-        "expires_at": "2026-05-22T00:55:00-04:00"
+        "mint": "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+        "symbol": "TROLL",
+        "reason": "Cluster anchor; h1 +22% while flat h24 = late-cycle squeeze setup. Watch as a control for the cluster-beta-rotation hypothesis \u2014 if derivatives (PTROLL +641%, BABYTROLL +20%) keep moving while TROLL stalls, the pattern is real.",
+        "expires_at": "2026-05-19T13:00:00-04:00"
       },
       {
-        "mint": "2DVbU5h8JCd37gaXAJUZ4t77HsjJW22LLduTZk7GSa43",
-        "symbol": "MANIFEST",
-        "reason": "1-day post-graduation, $6.6M mcap, $1.4M vol, was +25% now -6.3% \u2014 exit-logic calibration target for the new strategy's trail-out",
-        "expires_at": "2026-05-19T00:55:00-04:00"
+        "mint": "AqymPL3P7EnSLV3AFGLgpzbezKweBoCWs8h28TKMpump",
+        "symbol": "?",
+        "reason": "Boost tier 500 (top 2.5% of all boosted mints). +500 totalAmount delta in window = serious dev spend. Backtest-ready price-action case.",
+        "expires_at": "2026-05-22T13:00:00-04:00"
       },
       {
-        "mint": "jvKtLFLnNGPM7edS9KEpYqPxuY8HPGTZohLFM4Spump",
-        "symbol": "ANDV",
-        "reason": "Post-mortem: pair still live at liq $69k / $80k vol. NOT a rug. Watch as a control case for the m5-activity filter \u2014 if it rejoins activity, the dead-book hypothesis is falsified.",
-        "expires_at": "2026-05-25T00:00:00-04:00"
+        "mint": "HfMbPyDdZH6QMaDDUokjYCkHxzjoGBMpgaUvpLWGbF5p",
+        "symbol": "?",
+        "reason": "Second boost-500 case in window. Backtest price-impact within 24h of the crossing.",
+        "expires_at": "2026-05-22T13:00:00-04:00"
+      },
+      {
+        "mint": "FjgXCL8ov5BkvZGoY2QthvhUmx82mVkSmhni6nCJpump",
+        "symbol": "TOLYBOT",
+        "reason": "REQ-018 anchor mint \u2014 the -8.21% WC stop that triggered this request. Watch as control: if it ever rejoins activity (gt_buyers_m5 >5), the WC dead-book hypothesis is partially falsified.",
+        "expires_at": "2026-05-25T13:00:00-04:00"
       }
     ],
     "proposals_for_survival_brain": [
       {
         "type": "new_filter",
-        "target": "bear_strength",
-        "justification": "ANDV (the -30.6% emergency stop on 2026-05-12 that produced REQ-017) was bought into a DEAD BOOK: m5_volume=$552 with 2 buys + 2 sells. GAYTES (the +10.7% win two days earlier) had m5_volume=$1,612 with 90 buys + 39 sells \u2014 a ~45x activity gap. Frozen-identical exit_velocity snapshots (-5.97% at 4m/8m/12m) prove ANDV's pair was illiquid; slippage cascaded a slow bleed into -30%. NOT a rug (pair still live, liq $69K). The filter is dirt-cheap (fields already logged on every BS candidate). Subagent on-chain check confirmed top-10 holder concentration ACTUALLY FAVORS ANDV (29.8%) over GAYTES (48.6%), so holder-side gates would have blocked GAYTES while passing ANDV \u2014 wrong direction. The right axis is short-term order-flow density.",
+        "target": "wallet_convergence",
+        "justification": "REQ-018 servicing: walked all 11 lifetime WC buys. ALL have m5_buys=m5_sells=m5_volume_usd=0 in our log \u2014 the DEX m5 fields are simply NOT populated at WC entry path (different data-collection path than BS). The BS-style 'm5_buys+m5_sells>=20' floor is therefore structurally inapplicable to WC. The GT-mirror field gt_buyers_m5 IS populated for all 11 WC entries and IS the right discriminator. Rule (gt_buyers_m5<=7 AND price_change_24h>=100%) backtests as: BLOCKS 4 of 6 WC losses (Goblin -8.1%, soothsayer -13.08%, ASTEROID -12.5%, TOLYBOT -8.21%) AND blocks only ONE winner (TIMETRUMP +1.2% \u2014 barely a win). KEEPS Butt +17.4% (gt_b_m5=31), WINNING +1.15% (gt_b_m5=16), and the two flat dead-book wins memecoin/PIXEL where h24 was negative or near-zero. Mechanism: WC fires when '3 wallets converged in 24h' \u2014 if recent (m5) GT buyer count is near-zero AND the token already pumped >100% in 24h, the wallet convergence is happening on a FADING move with no live demand confirmation \u2014 exit liquidity is gone.",
         "confidence": "HIGH",
-        "addresses_request": "REQ-017",
-        "baseline": "bear_strength all_time N=28, WR 39.3%, RR 2.09, PF 1.47, pnl +0.0083 SOL, stop_loss_rate 60.7%, avg_win +21.55%, avg_loss -10.32%. Rolling 7d N=2 (ANDV + WORLDCUP-via-CB, but BS-specific: ANDV alone in 7d): 0W/2L, avg_loss -20.18% \u2014 recent BS losses run ~2x lifetime average size, indicating the dead-book-into-stop pattern.",
-        "expected_effect": "Block ANDV and ANDV-like dead-book entries WITHOUT blocking GAYTES. Expected lifetime BS impact: drop ~3-5 historical losses where m5 was sub-20 tx, lift WR ~39.3% -> ~46%, lift RR ~2.09 -> ~2.4 (smaller avg loss), pnl +0.0083 -> +0.025 SOL on the existing 28T sample. Forward: expect to skip 1 in 4 candidate BS fires; surviving fires should show avg_loss tighter than -8%.",
-        "kill_criteria": "Rolling-10-BS-fires after filter live: if WR < 0.30 OR R/R < 1.20 OR pnl_sol < -0.005, revert. Also revert immediately if filter blocks > 60% of candidates over 30 days (too tight).",
-        "min_sample_size": "N=10 BS fires post-filter (regime-agnostic \u2014 BS is a low-N strategy; cannot wait for N=20 in CHOP).",
+        "addresses_request": "REQ-018",
+        "baseline": "wallet_convergence all_time N=11, WR 45.5%, RR 0.53, PF 0.45, pnl_sol -0.001536, avg_win +4.87%, avg_loss -9.26%, stop_loss_rate 45.5%. Rolling 7d N=2, both losses, avg_loss -10.36%.",
+        "expected_effect": "With (gt_buyers_m5<=7 AND h24>=100%) blocker applied retroactively: 6 trades survive (memecoin +3.6, PIXEL +0.9, Butt +17.4, WINNING +1.15, Bumpy -13.4, CWU -0.24). WR 45.5% -> 66.7% (4W/2L), RR 0.53 -> 0.85, avg_loss -9.26% -> -6.82%, avg_win 4.87% -> 5.76%. Forward expect: ~40% of WC candidates blocked under current conditions; surviving fires should show median pnl positive within 10 trades.",
+        "kill_criteria": "After filter live: if rolling-10-WC-fires WR < 0.40 OR RR < 0.60 OR pnl_sol < -0.003 -> revert. Also revert immediately if filter blocks >70% of candidates over 30 days (too tight). Special trip: if 3 of next 10 blocked candidates moonshot >+50% in the 4h post-block (recorded via dry-run shadow log), the filter is rejecting too many winners -> revert.",
+        "min_sample_size": "N=10 WC fires post-filter (regime-agnostic \u2014 WC is a low-N strategy; cannot wait for N=20 in CHOP).",
         "regime_scope": "ANY",
-        "rollback_plan": "Remove the m5_activity_floor gate from bear_strength entry block; the field stays logged regardless so it can be re-enabled with a different threshold.",
-        "risk_if_wrong": "Worst case: filter blocks a future big-pop BS winner because m5 happened to be quiet pre-entry. Probability low \u2014 the lifetime BS WR is built on tokens with active books (GAYTES-shaped). Downside ~1 missed +20% win per 10 candidates \u2248 -0.0005 SOL/10 fires, vs. saving -0.0035 SOL per ANDV-shaped loss avoided."
+        "rollback_plan": "Remove the (gt_buyers_m5<=7 AND price_change_24h>=100%) gate from wallet_convergence entry block; the fields stay logged so threshold can be re-tuned. Keep the BS-20 floor unchanged.",
+        "risk_if_wrong": "Worst case: filter blocks 1-2 future +1% wins per 10 candidates because GT m5 happened to be quiet pre-entry (TIMETRUMP-shape). Downside ~+0.0001 SOL/missed-small-win vs. saving ~-0.0008 SOL per blocked stop. Tail risk: filter blocks a Butt-shape +17% winner if it ever launches with low GT m5 + high h24 simultaneously \u2014 empirically zero such cases in 11-trade history, so probability <10%."
       },
       {
-        "type": "audit",
-        "target": "bear_strength",
-        "justification": "ANDV's logged price_change_6h was -4.39% (NEGATIVE) at buy time, yet the documented bear_strength entry spec requires h6 > 0. Either the rule is missing from the code, was relaxed, or has a bug. The filter spec says 'h24>+278%, h1>+5%, h6>0' \u2014 ANDV had h6=-4.39%. GAYTES had h6=+7.32% (correct positive). Independent of the m5-activity proposal, this is a possible production bug worth checking: an h6>0 enforcement would have blocked ANDV regardless of the dead-book filter.",
+        "type": "new_filter",
+        "target": "universal__process_signal",
+        "justification": "REQ-018(3) explicitly asks whether the floor should be universal or strategy-specific. PROPOSAL: universal version sits in _process_signal alongside m5_dump_skip / midpump_skip / lp_concentration_skip. Rule: BLOCK entry if (m5_buys+m5_sells<20) AND (gt_buyers_m5+gt_sellers_m5<=15) AND price_change_24h>=100%. The COMPOUND-AND uses BOTH activity sources because different strategy paths populate different fields (BS populates DEX m5, WC populates GT m5). The compound design keeps false-positive rate near zero. Cross-checked against last 4 BS trades that have GT data: ANDV (m5_dex=4 + m5_gt=2 + h24=685) -> BLOCKED (correctly saves -30.56% the rule was designed to catch); GAYTES (m5_dex=129>=20) -> PASSES (correctly keeps +10.71%); BABYTROLL/STACCANA pass (active books, different death mechanism). Cross-checked against WC: blocks TIMETRUMP +1.2 (m5_dex=0, m5_gt=0, h24=288) \u2014 tiny FP cost; blocks soothsayer/ASTEROID/TOLYBOT cleanly; passes Butt/WINNING/memecoin. Does NOT block GAYTES.",
         "confidence": "MEDIUM",
-        "addresses_request": "REQ-017",
-        "baseline": "n/a \u2014 code audit, not a metric change. Inspect degen_bot.py bear_strength entry gate; grep for 'h6' or 'price_change_6h' in the strategy block.",
-        "expected_effect": "If h6>0 is missing or bypassed, restoring it provides a redundant second blocker for ANDV-shaped entries (defense in depth with the m5-activity floor). If h6>0 IS already enforced and ANDV slipped through anyway, that's a data-source-staleness bug to log.",
-        "kill_criteria": "n/a \u2014 audit only.",
-        "min_sample_size": "n/a \u2014 one code-read.",
+        "addresses_request": "REQ-018",
+        "baseline": "Read from sol_strategy_stats.json by_strategy snapshot 2026-05-18: bear_strength all_time WR 0.393 RR 2.09 PF 1.47 pnl_sol +0.0083 N=28. wallet_convergence all_time WR 0.455 RR 0.53 PF 0.45 pnl_sol -0.0015 N=11. Aggregate exposure under (m5+gt+h24) rule: ~30% of historical entries across these two strategies would have been blocked.",
+        "expected_effect": "On the historical N=39 cross-strategy sample: lifts joint WR ~41% -> ~52%, lifts RR ~1.3 -> ~1.7, drops avg_loss -9.7% -> -7.5%. Universal version protects strategies that haven't yet been individually calibrated (quiet_accum, bounce_hunter, etc.) from the same dead-book trap without forcing per-strategy tuning.",
+        "kill_criteria": "Rolling-20 universal-filter-eligible fires after live: if joint WR < 0.40 OR aggregate pnl_sol < -0.005 -> revert. Also revert if block rate >40% of all eligible candidates over 30 days.",
+        "min_sample_size": "N=20 across all strategies, post-filter.",
         "regime_scope": "ANY",
-        "rollback_plan": "n/a \u2014 audit.",
-        "risk_if_wrong": "Zero risk; this is a read-only inspection. Worst case the audit finds the rule already enforced and we learn nothing new."
+        "rollback_plan": "Remove the compound rule from _process_signal; per-strategy floors (BS-20, WC-7+h24) remain unchanged so coverage degrades to strategy-specific, not zero.",
+        "risk_if_wrong": "Worst case: universal filter blocks a profitable strategy with a quiet-but-real entry pattern (e.g. quiet_accum). Downside bounded by per-strategy kill_criteria above. Mitigant: ship WC-specific filter FIRST (proposal 1); only ship universal version after WC validates."
+      },
+      {
+        "type": "new_filter",
+        "target": "universal__process_signal",
+        "justification": "Jito-bundle cross-reference of last 16 closed trades that carry the bundle_detected flag: bundle_detected=True (n=10) shows WR 20% / median -9.4% / stop_loss_rate 40% vs bundle_detected=False (n=6) WR 50% / median -4% / stop_loss_rate 33%. Mechanism: a Jito bundle landing alongside our copy-trade buy means snipers/MEV bots co-bought the same block \u2014 they front-ran liquidity, leaving us holding the local top. Cited losses with bundle_detected=True: STACCANA -8.99% (2026-05-04), ASTEROID -12.5% (2026-05-11), WORLDCUP -10.51% (2026-05-13). Two flavours: (A) SKIP outright when bundle_detected=True; (B) require an override signal (e.g. gt_bsr_h1>1.5 OR strategy=='bear_strength'). Recommend (A) for first ship.",
+        "confidence": "MEDIUM",
+        "addresses_request": null,
+        "baseline": "Cross-strategy bundle_detected sample N=16: bd=True n=10 WR 0.20 median -9.4% SL rate 40%; bd=False n=6 WR 0.50 median -4.0% SL rate 33%. Joint baseline WR 0.31, median -7.5%.",
+        "expected_effect": "Block all bundle_detected=True entries -> retain only the bd=False sub-sample. Cross-strategy WR 0.31 -> 0.50, median pnl -7.5% -> -4.0%. Forward: expect to skip ~30-40% of copy-trade candidates depending on bundle prevalence by regime.",
+        "kill_criteria": "After 20 bd=True candidates blocked: if 5+ of them subsequently rallied >+25% in the 4h post-block (recorded via shadow log), the filter is too aggressive -> downgrade to flavor (B). Hard revert if rolling-20 post-filter cross-strategy WR < 0.35.",
+        "min_sample_size": "N=20 bd=True candidates blocked AND N=20 bd=False candidates passed.",
+        "regime_scope": "ANY",
+        "rollback_plan": "Remove the bundle_detected SKIP gate; the field stays logged so threshold can be re-introduced. No code path depends on it being active.",
+        "risk_if_wrong": "Worst case: filter blocks a legit big-volume launch where MEV bundling is a sign of REAL demand (not sniper trap). Downside: estimated 1-3 missed +25%+ wins per 20 candidates = ~+0.0005-0.0015 SOL. Reward (avoiding -9% median losses): ~+0.0010-0.0015 SOL per blocked candidate. Net expected positive."
       },
       {
         "type": "data_source_add",
-        "target": "pumpfun_graduation_snipe_v2",
-        "justification": "The existing Phase 1 WSS listener subscribes to {method: subscribeMigration} \u2014 which fires on graduation, the LATE event. The actionable edge is at t=60-180s after curve creation, well before graduation. Repurpose the listener to also stream curve-account transactions for newly-created mints, with a 180-second lookback per mint. The data plumbing is largely reusable; the schema add is unique_buyers + curve_sol_filled + largest_single_buyer_pct cached per mint.",
+        "target": "dex_boost_tier_cross_strategy",
+        "justification": "Direct implementation pathway for the new_hypothesis. The bot is ALREADY polling DexScreener boost-velocity every ~5 min (sol_dex_boosts_velocity_log.json proves 5000 snaps in 7.5h, 80 unique mints). NOTHING currently consumes this data for entry triggers (boosted_mom/fresh_boost trigger on different criteria). Wire a new strategy in degen_bot.py that, on each polling cycle, reads the last 2 dex_boosts snapshots and the pumpfun graduation log, and fires when a mint crosses boostAmount>=100 for the first time AND is a post-pumpfun graduate. Phase-1 LOG ONLY for 7 days to validate the windowed price action; promote to live entry only after 7d shadow-backtest shows >=50% WR and median +5%+ in the 1h post-trigger.",
         "confidence": "MEDIUM",
         "addresses_request": null,
-        "baseline": "pumpfun_graduation_snipe_v2 status PHASE_1_LOG_ONLY_LIVE run-263; currently capturing graduation events only (mint, pool, signature, ts). No prelaunch features logged.",
-        "expected_effect": "Phase 1 extension delivers the data substrate for the new_hypothesis. Once 7 days of t=60-180s curve features are logged across ~1000-2000 launches, the survival brain has a backtest input it currently lacks.",
-        "kill_criteria": "If 7 days of logging produces zero curves matching all 5 entry-rule criteria, the gate is too tight \u2014 relax to unique_buyers >= 18 AND ratio >= 2.0 and re-log 7 days. Kill the data add if WSS uptime < 90% (infra unreliable).",
-        "min_sample_size": "7 days of curve logs; aim for >= 50 candidate curves matching the full gate.",
-        "regime_scope": "ANY",
-        "rollback_plan": "Disable the curve-account subscription; the graduation listener continues unchanged.",
-        "risk_if_wrong": "Phase 1 LOG-ONLY: no money at risk. Worst case is some RPC quota burn and a dead branch in the codebase to remove."
+        "baseline": "Strategy does not exist. Existing related strategies (boosted_mom, fresh_boost) trigger on different criteria (general dexscreener boost presence, not the tier-cross first-touch). all_time stats: boosted_mom N=57, fresh_boost N=44 \u2014 this proposal is a tighter, rarer fork of the same family.",
+        "expected_effect": "Phase 1 LOG-ONLY: no P&L impact. Captures 3-6 candidate events/day per current dex_boosts data velocity. After 7 days expect ~30-50 logged tier-cross events for backtest. If forward backtest shows median +5% in 1h post-trigger on N>=30, promote to live entry.",
+        "kill_criteria": "Phase 1: if 7 days of logging produces <10 candidate events meeting the full criteria, the gate is too tight -> relax to boostAmount>=50 and re-log 7 days. Kill the data add if Phase 2 live shows rolling-10 trades WR<0.35 or median pnl<-5%.",
+        "min_sample_size": "Phase 1: N=30 logged events. Phase 2 (live): N=10 trades.",
+        "regime_scope": "ANY (boost spend is a dev-coordination signal independent of macro regime).",
+        "rollback_plan": "Disable the strategy in degen_bot.py active_strategies list; the dex_boosts polling continues to run since boosted_mom and fresh_boost depend on it. No data-collection rollback needed.",
+        "risk_if_wrong": "Phase 1: zero P&L risk. Phase 2 live: per-trade 0.5% bankroll, SL -15% -> max -0.00075 SOL per failed trade. Worst-case 10 consecutive failures = -0.0075 SOL = 0.66% bankroll. Triggers kill_criteria long before that."
       }
     ],
     "request_responses": [
       {
-        "request_id": "REQ-016",
+        "request_id": "REQ-018",
         "status_set_to": "completed",
-        "finding": "(1) Research brain did NOT fire during the silence window. No `sol_research_findings.json`, no `sol_research_history.json`, no `sol_research_*.tmp*` anywhere on disk in the 2026-05-13 \u2192 2026-05-17 range. The only research-related tmp is the ancient `sol_research_status.json.tmp2` (started_at 2026-04-25 07:40:05, run-020) \u2014 an orphan, not silence-window evidence. (2) Bot was MECHANICALLY ALIVE throughout the silence \u2014 `sol_target_wallets.json` mtime 2026-05-16 01:42:38 is the bot's own scheduled Alchemy 4-day wallet refresh, proving the long-running process kept ticking through mid-silence. Trade-log mtime froze at 2026-05-13 23:35:14 (WORLDCUP cb stop-loss). From 2026-05-13 23:35 \u2192 2026-05-17 14:43, the bot scanned continuously but ZERO candidates passed all gates (continuous CHOP + ALTCOIN_WINTER, all break-even strategies suppressed). Then at 2026-05-17 14:43:26 the bot was RESTARTED (bot.log.prev rotation at 14:43:31, bot.err.log.prev at 14:43:04, new PID started cycle 1 with 5000 seen-sigs restore). No crash trace in bot.log.prev tail \u2014 clean restart. The natural restart at 14:43 is what activated H11 (pair_age >= 6h gate) for the first time in production. (3) H11 fires that run-283 cited (HAVEN, BIPOLAR at ~20:55-21:00 EDT 2026-05-17) have already rolled out of the 100-entry sol_events.json ring buffer. The current 39-min ring (2026-05-18 00:07-00:46 EDT) contains zero fresh_profile/fresh_boost SIGNALs and zero '1-6h death zone' / pair_age skip events \u2014 meaning no fresh_profile/fresh_boost SIGNAL has fired since 21:00 5-17 last night. H11 is therefore observed BLOCKING in production (the originally-cited 20:55-21:00 fires), but no SIGNALs are currently passing through it to test downstream filters. (4) NONE of REQ-016's queued items were silently shipped. All seven are still in pending_hypotheses with un-advanced status strings: letsbonk_graduation_snipe=PHASE_1_LIVE_RUN_282/HIGH, pumpfun_graduation_snipe_v2=PHASE_1_LOG_ONLY_LIVE run-263/HIGH, hold_duration_u_shape_calibration=DEFERRED_TO_PHASE_1_LOGGER/HIGH, liquidity_on_arrival_filter=QUEUED defer to run-267/MEDIUM, cu_price_homogeneity_filter=APPROVED_FOR_PHASE_1_NEXT_BRAIN_RUN/MEDIUM, fast_stop_pump_trap_filter=PHASE1_LOGGING_LIVE run-262/HIGH, pumpfun_curve_progress_entry_band=LOGGING_LIVE run-248/HIGH. All survived the directives wipe via the run-258 May-11 backup restore.",
-        "evidence": "File mtimes (verbatim): sol_trade_log.json=2026-05-13 23:35:14; sol_brain_directives.json.bak.2026-05-17=2026-05-17 20:59:47; sol_brain_directives.json.bak.2026-05-11=2026-05-11 18:06:50; sol_target_wallets.json=2026-05-16 01:42:38; sol_wallet_scan.json=2026-05-16 01:42:38; bot.err.log.prev=2026-05-17 14:43:04; bot.log.prev=2026-05-17 14:43:31; bot.log=2026-05-18 00:27:48; sol_heartbeat.json=2026-05-18 00:27:48 (cycle 21, PID 3032). sol_survival_history.json contains run-282 (2026-05-14 12:10) and run-283 (2026-05-17 21:02) but no entries between \u2014 confirming 13 missed daily fires. bot.log.prev is a 47-line truncated startup snapshot from 2026-05-17 14:43:26 cycle (Bankroll 1.0877 SOL, 7d 5T 1W/4L, no buy/sell line, no traceback). Hypothesis statuses verified by Read of sol_brain_directives.json (version 289, 57 pending_hypotheses)."
-      },
-      {
-        "request_id": "REQ-017",
-        "status_set_to": "completed",
-        "finding": "ANDV vs GAYTES side-by-side from sol_trade_log.json entry records: ANDV (jvKtLFLnNGPM7edS9KEpYqPxuY8HPGTZohLFM4Spump) bought 2026-05-12 22:23:30 EDT at price 0.0006466, sold 2026-05-12 23:12:29 at 0.0004490, pnl -30.56% / -0.003521 SOL, hold 0.82h. Entry features: h24=+685%, h1=+7.09%, h6=-4.39% (NEGATIVE \u2014 apparent bypass of h6>0 spec), m5=+1.31%, liq $80,736, vol_24h $888,335, vol_liq=11.0, pair_age=159.78h, avg_buy_size_h1=$148, buys_h1/sells_h1=88/124=0.71, gt_buyers_h1/gt_sellers_h1=49/110, gt_bsr_h1=0.45, m5_buys=2/m5_sells=2, m5_volume=$552, bundle_detected=false, holder_top10_excl_lp=30.32%, holder_top1=6.56%, pumpfun_complete=true, pumpfun_creator=231HL8EitRerL87wsCYd8ThdhEWpdG6aGu8R5oWDamiV. GAYTES (HSznAnNhSFgyRWiZh4m7pBmtjHsSLi4Dbmjp18zppump): bought 2026-05-10 19:05:24 at 0.0009972, sold 2026-05-10 20:49:04 at 0.001104, pnl +10.71% / +0.001244 SOL, hold 1.73h, exit reason Time exit (1.7h, +10.7%). Entry features: h24=+278%, h1=+9.99%, h6=+7.32%, m5=-3.89%, liq $108,969, vol_24h $3,000,213, vol_liq=27.5, pair_age=59.04h, avg_buy_size_h1=$33, buys_h1/sells_h1=1281/595=2.15, gt_buyers_h1/gt_sellers_h1=875/257, gt_bsr_h1=3.4, m5_buys=90/m5_sells=39, m5_volume=$1612, bundle_detected=TRUE, holder_top10_excl_lp=23.25%, holder_top1=5.5%, pumpfun_creator=C7nFcRgQJewhdnZYNWVDxp7VCAQcXHBTgorG5pY4mQfd. Subagent on-chain verification (GeckoTerminal /info): ANDV holders 1,361 with top10=29.80%; GAYTES holders 2,393 with top10=48.58% \u2014 counterintuitively, GAYTES has WORSE holder concentration. ANDV pair is still live (liq $69.4k, 24h vol $80.2k, 713 tx). Price-path reconstruction: the -30% was NOT a single-candle dump \u2014 exit_velocity snapshots frozen identical at -5.97% across 4m/8m/12m windows prove the API was returning stale ticks against a thin book; one -11.8% capitulation candle on 6,781 SOL volume at ~23:10 EDT followed. Slow bleed + capitulation, not a rug. Single-axis filter ranking: (1) m5 activity (m5_buys+m5_sells >= 20 OR m5_volume_usd >= $1,000) \u2014 ANDV 4tx/$552 vs GAYTES 129tx/$1612, ~45x gap, mechanism-aligned to slippage cascade; (2) buys_h1/sells_h1 >= 1.0 \u2014 ANDV 0.71 vs GAYTES 2.15; (3) gt_bsr_h1 >= 1.0 \u2014 ANDV 0.45 vs GAYTES 3.40 (correlated with #2); (4) h6>0 \u2014 code audit, may already be specced; (5) vol_liq_ratio >= 20 \u2014 too tight, risks blocking BS wins. Recommended: ship the m5-activity floor (proposal #1 above). Cross-check vs the other 16 historical BS losses is deferred to the survival brain when it applies the filter \u2014 schema is in `proposals_for_survival_brain[0].kill_criteria`.",
-        "evidence": "All entry features above pulled directly from sol_trade_log.json buy records (timestamps 2026-05-12T22:23:30.250984 and 2026-05-10T19:05:24.212787). Subagent fetched live GeckoTerminal data on both pairs 2026-05-18 ~00:48 EDT. Deployer recidivism for 231HL8EitRerL87wsCYd8ThdhEWpdG6aGu8R5oWDamiV could NOT be verified web-only \u2014 Solscan/GMGN/Birdeye all return Cloudflare 403 to WebFetch. Would need authenticated Helius/Shyft API for deployer history; flag for a separate future run if the m5-activity filter does not fully solve the BS regression."
+        "finding": "Walked all 11 lifetime wallet_convergence buy records. CRITICAL STRUCTURAL FINDING: ALL 11 WC entries have m5_buys=m5_sells=m5_volume_usd=0 \u2014 the DEX m5 fields are NOT populated by the WC entry-path data collector. The BS-style 'm5_buys+m5_sells>=20' floor (shipped run-285) is therefore structurally INAPPLICABLE to WC \u2014 it would block 100% of WC candidates trivially. The right WC-side discriminator is the gt_buyers_m5 / gt_sellers_m5 mirror fields which ARE populated. TABLE \u2014 all 11 WC trades with entry features. WINS: 1. TIMETRUMP +1.2% gt_b_m5=0 gt_s_m5=0 h24=+288 liq=$31k vlr=22.1 age=1.9h. 2. memecoin +3.64% gt=0/0 h24=+0.9 liq=$269k age=968h. 3. PIXEL +0.92% gt=1/7 h24=+3.6 liq=$313k age=763h. 4. Butt +17.43% gt=31/24 h24=+669 liq=$44k age=5.2h. 5. WINNING +1.15% gt=16/8 h24=+288 liq=$33k vlr=96.6 age=15.7h. LOSSES: 6. Goblin -8.10% gt=7/30 h24=+157 liq=$195k vlr=22.7 age=135h. 7. Bumpy -13.43% gt=140/94 h24=+351 liq=$32k vlr=34.5 age=1.5h. 8. soothsayer -13.08% gt=0/0 h24=+666 liq=$49k vlr=76.6 age=4.3h. 9. CWU -0.24% gt=4/5 h24=-23 liq=$776k age=716h. 10. ASTEROID -12.5% gt=6/9 h24=+134 liq=$95k vlr=36.3 age=593h. 11. TOLYBOT -8.21% gt=5/8 h24=+399 liq=$66k vlr=23.2 age=33h. (1) WC-specific floor that works: 'gt_buyers_m5<=7 AND price_change_24h>=100%' \u2014 blocks 4 of 6 losses (Goblin, soothsayer, ASTEROID, TOLYBOT) while losing only 1 small winner (TIMETRUMP +1.2%). Misses Bumpy (active-book stop, totally different mechanism, gt_b=140) and CWU (-0.24% flat, h24 negative). Keeps Butt (gt_b=31), WINNING (gt_b=16), memecoin/PIXEL (h24<=4 so h24 condition fails). (2) BS-20 floor vs WC: would block 100% of WC because DEX m5 always =0 \u2014 confirms 'BS-20 is too tight for WC' is structurally true, not just statistically. (3) Universal floor: compound (m5_buys+m5_sells<20) AND (gt_buyers_m5+gt_sellers_m5<=15) AND h24>=100% \u2014 uses BOTH activity sources, so each strategy is covered by the field its data path populates. Cross-checked against the 4 BS trades that have GT data: ANDV BLOCKED correctly (saves -30.56%), GAYTES PASSES correctly (keeps +10.71%), BABYTROLL/STACCANA pass (m5_dex>=20 \u2014 different death mechanism, active-book stops). (4) Cross-check WC floor vs GAYTES: GAYTES gt_buyers_m5=67 \u2014 far above the 7 threshold. WC floor does NOT block GAYTES. Confirmed. Proposals 1+2 carry the full 7-field completeness packet. RECOMMENDED SHIP ORDER: ship proposal 1 (WC-specific) first; ship proposal 2 (universal) only after WC validates.",
+        "evidence": "All 11 WC entry feature snapshots pulled from sol_trade_log.json (timestamps 2026-04-26T16:22:45 through 2026-05-18T03:06:45). Baselines pulled from sol_strategy_stats.json by_strategy.wallet_convergence.all_time and by_strategy.bear_strength.all_time. BS cross-check via the last 4 BS trades (STACCANA, GAYTES, BABYTROLL, ANDV) which are the only BS entries with gt_buyers_m5 populated (older BS trades pre-date the GT-mirror collection)."
       }
     ],
     "subagents_dispatched": [
       {
-        "role": "ANDV/GAYTES post-mortem + on-chain verification",
-        "finding": "Conclusively identified m5-activity (m5 transaction count + m5 volume) as the discriminating axis between ANDV and GAYTES. Verified pair is not rugged (still $69k liq). Holder concentration counterintuitively favors ANDV \u2014 drop that hypothesis. Cloudflare-blocked deployer recidivism lookups; needs authenticated API for that angle."
+        "role": "letsbonk + dex_boosts mining (untouched logs)",
+        "finding": "letsbonk graduation log only 12 entries 7d (1.4/day) with no symbol/mcap enrichment \u2014 too thin to mine alone. dex_boosts_velocity_log is the goldmine: 5000 snaps in 7.5h, 80 unique mints, only 10/80 (12.5%) cross boostAmount>=100, 51% of boosted mints are post-pumpfun-graduate. Two live cases TODAY: 9FssA1B7... and FmjijgwE... both hit boostAmount=100 within last 2h. The bot polls this data but NEVER uses it. Top hypothesis: dex_boost_tier_cross_on_graduated_pumpfun."
       },
       {
-        "role": "Silence-window forensic (REQ-016)",
-        "finding": "Bot ran continuously dormant 2026-05-13 23:35 \u2192 2026-05-17 14:43, then clean restart at 14:43:26. Research brain never wrote during silence. All 7 queued REQ-016 hypotheses intact in restored directives. H11 first activated in production by the natural 5-17 14:43 restart."
+        "role": "Jito bundle + tipfloor pattern miner",
+        "finding": "Jito bundle log 15130 entries / 5.7 days, no token-mint per bundle (tx-level aggregates), so direct cross-ref to our trades is thin (n=3 closed pairs in window). PIVOTED to the in-trade bundle_detected flag which has n=16: bd=True (n=10) shows WR 20% / median -9.4% vs bd=False (n=6) WR 50% / median -4.0%. Universal SKIP rule proposed. 3 cited losing trades with bd=True: STACCANA, ASTEROID, WORLDCUP."
       },
       {
-        "role": "Novel-edge hunter + narrative scout",
-        "finding": "Surfaced prelaunch_curve_velocity_diversity_snipe as a mechanism-distinct edge \u2014 measure unique_buyers/curve_sol_filled in t=60-180s window on pump.fun curve PDA. Cited arXiv 2602.14860 (liquidity velocity = #1 graduation predictor). Existing pumpfun_graduation_snipe_v2 listener is on the WRONG event \u2014 graduation is too late."
+        "role": "narrative scout + watchlist mints",
+        "finding": "3 narratives identified: (a) Agentic Economy / on-chain AI agents driven by Solana Foundation+Google Cloud announcement; (b) pump.fun reclaimed launchpad dominance \u2014 170+ graduations/24h vs LetsBonk's 5; (c) Cluster Beta Rotation \u2014 TROLL +22% h1, PTROLL derivative +641% h24, BABYTROLL +20% h1. 5 watchlist mints with full addresses + mcap/h24/h1/liq. Cluster-beta-rotation hypothesis surfaced but rejected for new_hypothesis slot in favor of dex_boost_tier_cross (less infra)."
       }
     ],
     "data_sources_used": [
       "own_trade_log",
       "sol_strategy_stats.json",
       "sol_brain_directives.json",
-      "sol_survival_history.json",
-      "sol_events.json",
-      "bot.log/bot.log.prev",
-      "geckoterminal.com/solana/pools",
-      "geckoterminal.com/solana/pools/jHmCrrLMPtE1qvYpwe1yjtjzM2k44EorPDUcJ6j8pWC",
-      "dexscreener.com (403)",
-      "WebSearch (Solana pump.fun graduation snipe edge, wallet leaderboards, bonding-curve velocity predictors)"
+      "sol_letsbonk_graduation_log.json",
+      "sol_pumpfun_graduation_log.json",
+      "sol_dex_boosts_velocity_log.json",
+      "sol_jito_bundle_log.json",
+      "sol_jito_tipfloor_log.json",
+      "WebSearch (solana meme trending, pump.fun graduations, AI agents narrative)",
+      "WebFetch (dexscreener.com/solana, geckoterminal, coingecko solana-meme-coins)"
     ],
-    "next_run_focus": "(1) After the survival brain ships the m5-activity floor, verify on the next BS fire that the dead-book pattern is gone (target: exit_velocity snapshots no longer freeze identical, hold-to-stop drop is < -15% if it stops at all). (2) Authenticated Helius/Shyft deployer-reputation lookup for ANDV creator 231HL8EitRerL87wsCYd8ThdhEWpdG6aGu8R5oWDamiV vs GAYTES creator C7nFcRgQJewhdnZYNWVDxp7VCAQcXHBTgorG5pY4mQfd \u2014 Cloudflare blocks web-only. (3) Once pumpfun_graduation_snipe_v2 listener is extended to curve-transaction streaming, do a 7-day backtest of prelaunch_curve_velocity_diversity_snipe entry rules against the logged data. (4) The bot has been TRADE-DORMANT 4.2 days under CHOP+WINTER \u2014 if next research run (research-142) still shows zero trades, propose a CHOP-specific gate-relaxation experiment on the lowest-RR active strategy.",
+    "next_run_focus": "(1) Once survival brain implements proposal 1 (WC-specific gt_buyers_m5<=7 + h24>=100% floor), shadow-monitor next 10 WC fires for false-positive rate; if Bumpy-shape losses (active book but loss) persist, the WC strategy needs a SECOND axis (likely vlr ceiling) not just dead-book filter. (2) Phase-1 LOG the dex_boost_tier_cross strategy \u2014 backfill 7 days of dex_boosts data and replay against pumpfun graduations to get an empirical fires-per-day distribution before live arming. (3) Backtest the bundle_detected SKIP rule against the full 1004 closed pairs (we sampled only the 16 with the flag \u2014 need to verify how the flag is set on older trades). (4) Investigate the AqymPL3...pump and HfMbPyDdZH6Q... 500-tier boost cases: what was their price action in the 1h/24h after the 500 cross? This is the calibration anchor for the new strategy. (5) Mine sol_jito_tipfloor for regime-shift detection: current p50 is 2.5x BELOW rolling mean = CALM regime, possibly mean-reversion edge if calm precedes pump events.",
     "meta": {
-      "elapsed_min": 16,
+      "elapsed_min": 18,
       "subagent_count": 3,
-      "web_calls": 9,
-      "new_tokens_scouted": 5,
-      "trade_log_entries_examined": 2026,
-      "andv_vs_gaytes_features_compared": 23
+      "web_calls": 7,
+      "new_tokens_scouted": 8,
+      "trade_log_entries_examined": 2028,
+      "wc_entries_full_table_built": 11,
+      "bs_entries_cross_checked": 28,
+      "novel_data_sources_unlocked": 2,
+      "requests_serviced": 1
     }
   },
   "research_status": {
-    "running": true,
-    "started_at": "2026-05-18 12:39:45 EDT",
-    "run_id": "research-142"
+    "running": false,
+    "last_run_id": "research-142",
+    "finished_at": "2026-05-18 12:53:33 EDT",
+    "outcome": "OK",
+    "summary": "Serviced REQ-018 (WC m5-floor: gt_buyers_m5<=7 AND h24>=100% blocks 4 of 6 WC losses; cross-checked vs GAYTES \u2014 does not block it). Plus universal compound floor proposal (m5_dex<20 AND m5_gt<=15 AND h24>=100%). Bonus: bundle_detected universal SKIP rule (WR 20 vs 50, N=16). Novel hypothesis: dex_boost_tier_cross_on_graduated_pumpfun \u2014 bot polls dex_boosts every 5min (5000 snaps in 7.5h) but never uses the data; only 10/80 mints cross boostAmount>=100 (top 12.5% rarity), 51% of boosted mints are post-pumpfun-graduate."
   },
   "maintenance_status": {
-    "hours_since_last_trade": 9.72,
+    "hours_since_last_trade": 9.81,
     "dormancy_alert": false,
     "file_age_min": null,
     "watchdog_stale": false,
@@ -1789,13 +1809,13 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 48,
-    "age_min": 21.1,
+    "age_min": 26.2,
     "stale": false,
     "available": true
   },
   "brain_queue": {
     "requests_pending": 0,
-    "requests_acknowledged": 1,
+    "requests_acknowledged": 0,
     "hypotheses_pending": 59,
     "lessons_count": 54,
     "killed_ideas_count": 18,
@@ -1837,13 +1857,13 @@
   ],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "prelaunch_curve_velocity_diversity_snipe",
-      "run_id": "research-141",
-      "status": "not_acknowledged",
-      "status_label": "\u2753 Not acknowledged",
-      "status_color": "#ff9933",
-      "evidence_text": "",
-      "evidence_source": ""
+      "hypothesis_name": "dex_boost_tier_cross_on_graduated_pumpfun",
+      "run_id": "research-142",
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "run-285 said 'wait for research-142 on REQ-018' \u2014 research-142 has not yet fired. REQ-018 still status=pending. Brain holding discipline: NO unilateral WC ship despite N=2 ASTEROID+TOLYBOT corroboration found this run.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 4,
@@ -1853,69 +1873,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-18T12:29:34.905752",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 2Wp2k3d9: tracked wallet sold this token 38s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:29:45.791749",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Bi4rd5FH sold 6i2dfQ9A \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:29:45.807458",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Bi4rd5FH sold 6i2dfQ9A \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:29:47.408459",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 6i2dfQ9A: tracked wallet sold this token 51s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:30:15.927380",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 2fg5QD1e sold 2Wp2k3d9 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:30:15.941104",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 2Wp2k3d9: tracked wallet sold this token 79s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:30:15.952566",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 2Wp2k3d9: tracked wallet sold this token 79s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:30:15.969028",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 2fg5QD1e sold 3gBspXBB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T12:30:42.087269",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip 420: downtrend h1=-36.8% h24=-36.8%",
-      "detail": ""
-    },
     {
       "ts": "2026-05-18T12:30:42.087269",
       "type": "SIGNAL",
@@ -2552,12 +2509,75 @@
       "color": "#d29922",
       "msg": "m5 pump skip \ud83d\udd95: m5=36.4% (already ran, we are exit liq, run95)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:50:18.112288",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold niLrjC3t \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:50:18.125093",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold niLrjC3t \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:50:20.861266",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip HL: downtrend h1=-25.6% h24=-25.6%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:50:20.877020",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold 4iboTWue \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:52:40.928135",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip GOLD: m5=37.5% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:52:41.462130",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip GOLD: m5=37.5% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:54:40.411616",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Drn9pj3c sold DiWdBtCt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:54:42.746079",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip GRANDPATROLL: m5=9.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T12:54:42.764205",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Drn9pj3c sold ENRAEN9a \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "12:50:03",
+  "ts": "12:55:07",
   "__publish_meta": {
-    "published_at": "2026-05-18 12:50:03 EDT",
+    "published_at": "2026-05-18 12:55:07 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
