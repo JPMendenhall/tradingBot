@@ -1,15 +1,15 @@
 {
-  "sol_price": 85.17875224394598,
+  "sol_price": 85.16939646217493,
   "bot_status": "RUNNING",
   "bot_last_seen": "20:54:23",
   "bot_cycles": 13,
   "bankroll": 1.1377,
-  "bankroll_usd": 96.90786642793734,
+  "bankroll_usd": 96.89722235501641,
   "budget": 0.16314797369999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 20.9,
+  "hour": 21.0,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,45 +113,56 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-14 12:10:00 EDT",
-    "run_id": "run-282",
+    "timestamp": "2026-05-17 21:02:00 EDT",
+    "run_id": "run-283",
     "market_regime": "CHOP",
     "altcoin_regime": "ALTCOIN_WINTER",
-    "system_diagnosis": "The single biggest problem is the slow-bleed cohort (1-2h hold times, -0.481 SOL across 255 trades, ~7x larger than emergency-stop damage). The shipped fix (H11) has been waiting in the code for almost 12 hours but has not yet activated because the bot has not restarted \u2014 the bot has been running on the old code for 14.7 hours and the brain is correctly NOT allowed to ask for a restart. The previous run had asked for one anyway, which was a rule violation; that has now been corrected.",
-    "exit_analysis": "Last 24 hours: 1 trade (WORLDCUP), 100% stop-loss rate, -10.5% loss, -0.0017 SOL. Last 7 days: 6 trades, 16.7% win rate, R/R 0.84, 66.7% stop-loss rate, -0.0058 SOL net. All-time: 1003 sells, 35.4% win rate, R/R 0.79, 50.6% stop-loss rate, -1.172 SOL net. No new trades since the previous run.",
-    "strategy_work": "No new trades to analyze. No code changes shipped this run \u2014 adding more edits while H11 sits un-deployed would compound deployment risk and muddy H11's measurement once it lands. The two filed proposals from the research brain (pump.fun graduation feed F3 and weekend midday filter H13) plus the new pump.fun snipe strategy (H14) remain queued behind H11. Verified that H11 is still pending: source code is correct (FRESH_PROFILE_MIN_PAIR_AGE_H=6.0 and FRESH_BOOST_MIN_AGE_H=6.0 are in degen_bot.py), but the live bot is still firing OLD fresh_profile skip reasons (h24 floor, m5 range) rather than the new H11 reason, confirming it has not restarted to pick up the new code.",
-    "directives_changes": "Bumped directives version 6 -> 7. Self-corrected the operations memory: removed the wrong rule that said to escalate restart-pending hypotheses via an operator todo, replaced with the firm rule that the brain must NOT file restart todos under any circumstances. Added a new permanently-killed idea (K2) to ensure the same rule violation cannot recur. Renamed H11 status from DEPLOYED_PENDING_RESTART to DEPLOYED_PENDING_NATURAL_RESTART so the activation mechanism (watchdog / crash / maintenance trigger) is explicit. Refreshed live stats (bot uptime, SOL price, time-since-last-trade).",
+    "system_diagnosis": "The single biggest problem this run was not a strategy edge \u2014 it was state loss. On entry I had no brain directives, no brain status file, and no research findings file. The last successful brain run was run-282 on 2026-05-14 12:10 EDT, so the brain has been silent for about 3.4 days, covering roughly thirteen daily fires at the new 04:00 cadence. The bot itself stayed mechanically alive across that window (heartbeat 28 minutes stale on entry, events log scanning live, cycle 12 on PID 3032), but no new closed trades \u2014 the trade log mtime is still pinned at 2026-05-13 23:35 EDT. This run rebuilt the brain directives from the May-11 backup plus the run-282 survival report and verified H11 (the fresh-profile / fresh-boost 1-6h death-zone gate) is now firing live in production.",
+    "exit_analysis": "Rolling 24 hours: 0 trades. Rolling 7 days: 5 trades (1 win, 4 losses), win rate 20%, average win +10.71%, average loss -15.84%, R/R 0.68, stop-loss rate 80%, net -0.0057 SOL. All five 7-day trades pre-date the May-13 trade-log freeze. All-time: 1003 sells, win rate 35.4%, R/R 0.79, stop-loss rate 50.6%, net -1.172 SOL. Exit mix lifetime: stop_loss 42.6%, time_exit 22.4%, target 14.6%, other 12.4%, trailing 8.1%. Cannot measure post-H11 cohort yet because the bot has bought zero new tokens since H11 went live.",
+    "strategy_work": "No strategy work could be done productively this run. (a) No new trades to analyze across all strategies \u2014 rolling_24h is empty across every entry in sol_strategy_stats.json. (b) H11 activation is confirmed via the new skip-reason string in the events log, but its measurement window starts at the first post-H11 fresh-profile or fresh-boost BUY \u2014 zero so far. (c) The bundle that run-282 queued for the next code-edit pass (entry telemetry, intra-trade peak tracking, pump.fun graduation feed, pump.fun snipe) is intentionally NOT shipped this run \u2014 adding new ship risk to a state-recovery run would muddy whichever effect lands next. Defer all ship work to the next clean run.",
+    "directives_changes": "Restored sol_brain_directives.json from the 2026-05-11 backup, bumped version 281 -> 288 to mark seven missed runs, set updated_by to run-283 to continue the run-282 sequence. Added a new state_reconstruction_note field that explicitly flags this is a rebuilt file. Replaced current_priority and priority_reasoning with the recovery narrative. Cleared three completed requests_for_research entries (REQ-013, REQ-014, REQ-015 \u2014 all completed by research-144/145/146 weeks ago) and filed REQ-016 asking the research brain for a recovery-context evaluation of the silence window. Refreshed track_record with the current heartbeat numbers (bankroll 1.1377 SOL, SOL price $85.00, BTC.D 58.25% ALTCOIN_WINTER, bot PID 3032, cycle 12, H11 active confirmation). Added five new condensed_lessons entries (state_loss_recovery_run283, h11_activation_confirmed_run283, brain_must_not_file_restart_todos_run282, h11_constants_separate_run280, natural_restart_pace_can_be_long_run282). Saved a dated snapshot sol_brain_directives.json.bak.2026-05-17 so the next state-loss event has a fresh starting point.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true,
       "rule_compliance_verified": true,
-      "todo_list_inspected": true,
-      "todo_list_state": "EMPTY \u2014 the previous H11 restart todo has been correctly cleared by the operator. Brain confirms it will not re-file."
+      "todo_list_inspected": false,
+      "no_restart_todo_filed": true,
+      "directives_parse_check": "passed (json.load returned dict with 8 top-level keys)",
+      "h11_live_in_events_log": true,
+      "h11_observed_skip_reasons_in_22min_window": 2
     },
     "previous_followups": [
-      "Run-281's plan was to file research-150's proposals as pending hypotheses without shipping code, then bundle F2+H8+F3+H14 for one restart after H11 lands. Status: H13/F3/H14 filed as pending \u2014 done. Code-edit bundle still queued, blocked by H11 not having landed yet. The added piece this run is the rule self-correction.",
-      "Run-281 also said maintenance auto-restart fires only on crash-loop/no-process/publisher-escalation. Status: confirmed. Maintenance bot (maint-036 at 11:04 EDT) ran clean \u2014 auto-restart gate condition #1 (consecutive_heals>=3) fails because the mirror is healthy. Translation: nothing will restart the bot soon.",
-      "Run-281 referenced operator todo todo-1778731681. Status: that todo has been CLEARED from sol_todo_list.json (now empty). Per the prompt rule the todo was never legitimate; the clear is correct. No re-file."
+      "Run-282 said: 'After H11 activates, collect at least ten new trades on fresh_profile and fresh_boost combined, then evaluate whether the inside-zone bleed has been removed as projected.' Status: H11 has activated (confirmed live this run via events log skip-reason). Post-H11 fresh_profile/fresh_boost trade count = 0. Cannot yet evaluate; bot has been mechanically dormant through the brain silence window.",
+      "Run-282 said: 'Once H11 has produced enough post-restart data: ship the queued bundle (F2 entry telemetry, H8 intra-trade peak tracking, F3 pump.fun graduation feed, H14 pump.fun snipe) as ONE follow-up code-edit pass \u2014 single restart, multiple hypotheses activating together.' Status: pre-condition not met (zero post-H11 trades). Bundle stays queued.",
+      "Run-282 said: 'If 24+ hours of trading activity pass after the natural restart and H11's data still hasn't accumulated (because chop+winter regime keeps the bot dormant), use that idle time to do paper-only backtests of H1 (volatility-scaled stops) and H6 (hold-time death zone) against the existing trade log.' Status: the idle window already played out, but the brain wasn't running to use it. The next live run should attempt the paper-only backtests if the dormancy continues."
     ],
     "changelog": [
-      "Corrected an outdated rule in the brain's memory that said to escalate a restart todo if a code change is stuck waiting. The prompt explicitly forbids this \u2014 process restarts are fully automated. Updated the brain's memory to reflect the correct rule and added it to the permanently-killed-ideas list so this same mistake cannot be repeated.",
-      "Updated the brain's tracker with fresh numbers: bot has been running for 14.7 hours on the old code, last buy was 13.4 hours ago, last trade closed 12.5 hours ago, bankroll 1.1377 SOL, SOL price $92.26.",
-      "No code changes shipped this run. The pump.fun graduation feed, pump.fun snipe strategy, and weekend filter all stay queued. Once the bot eventually restarts and the H11 fix takes effect, the brain will collect at least ten trades on the new code, then ship the queued bundle in a single follow-up restart."
+      "Rebuilt the brain's memory file from the most recent dated backup (May 11) plus the May 14 survival report. The brain went silent for 3.4 days and lost its working memory file along with its status file and the research brain's findings file. The bot itself never went down \u2014 only the brain's bookkeeping went missing.",
+      "Verified the 1-to-6-hour pair-age gate that we shipped on May 14 is now actually active in the bot. The bot's recent activity log shows it filtering out HAVEN and BIPOLAR for being too young, using the new skip reason. The natural restart we were waiting for did happen sometime in the silence window.",
+      "Saved a fresh dated backup of the brain memory file as of today so the next time anything wipes the live file, recovery starts from a clean May-17 baseline instead of a May-11 baseline.",
+      "Filed one research ask asking the research brain to walk back the 3-day timeline and tell us if the bot was truly dormant the whole time or if it briefly went down and recovered.",
+      "Did NOT ship any code changes today. A state-recovery run is the wrong place to add new ship risk."
     ],
     "actions_taken": [
-      "Read the full set of state files (bot heartbeat, strategy stats, maintenance report, research findings, brain directives, positions, events log).",
-      "Verified directly that the H11 fix is in the source code (correct constants at the expected lines).",
-      "Verified directly that the live bot is still running the OLD code: looked at the bot's recent skip-reason log entries and saw the old reason codes, not the new ones. So the H11 fix is real in source but not yet active.",
-      "Checked the operator todo list and confirmed it is empty \u2014 the previously-filed restart todo has been cleared. No new todo filed.",
-      "Bumped the brain's memory file to version 7 with the rule self-correction and refreshed stats.",
-      "Appended run 282 to the history log.",
-      "Wrote this survival report."
+      "Read the operating prompt at scheduled-task-prompt.md in full.",
+      "Confirmed sol_research_status.json does not exist on disk (research brain is not currently running).",
+      "Inventoried the state directory and found the brain memory file, status file, and research findings file all missing.",
+      "Located dated backups of the brain memory file (May 8, May 10, May 11) and confirmed May 11 was the most recent.",
+      "Read the May 14 survival report (run-282) to recover the most recent narrative state, and the survival history tail to confirm the run sequence.",
+      "Read the current heartbeat, strategy stats, events log, and budget state to capture live numbers for the brain memory rebuild.",
+      "Verified the 1-to-6-hour H11 pair-age gate is now firing in production via the new skip-reason string in the events log.",
+      "Wrote a fresh sol_brain_status.json with running:true at run start.",
+      "Restored sol_brain_directives.json from the May 11 backup and updated the head fields plus track record plus condensed lessons plus the research-request queue.",
+      "Validated the rebuilt JSON parses cleanly.",
+      "Saved a dated snapshot sol_brain_directives.json.bak.2026-05-17 to harden against the next state-loss incident.",
+      "Wrote this survival report and appended a run-283 entry to the survival history."
     ],
     "next_priorities": [
-      "Continue holding. H11 takes effect on the next natural bot restart (watchdog, crash, or maintenance trigger). Do not file restart todos. Do not crash the bot manually.",
-      "After H11 activates (events log will start showing the new 'H11 gate' skip reason): collect at least ten new trades on fresh_profile and fresh_boost combined, then evaluate whether the inside-zone bleed has been removed as projected.",
-      "Once H11 has produced enough post-restart data: ship the queued bundle (entry telemetry F2, intra-trade peak tracking H8, pump.fun graduation feed F3, pump.fun snipe strategy H14) as ONE follow-up code-edit pass \u2014 single restart, multiple hypotheses activating together.",
-      "If 24+ hours of trading activity pass after the natural restart and H11's data still hasn't accumulated (because chop+winter regime keeps the bot dormant), use that idle time to do paper-only backtests of H1 (volatility-scaled stops) and H6 (hold-time death zone) against the existing trade log."
+      "Wait for the bot to actually buy a token under H11. Until at least one post-H11 fresh_profile or fresh_boost BUY closes, the H11 effect cannot be measured and the queued code bundle cannot be evaluated for ship timing.",
+      "Next clean brain run should re-grep the codebase for the queued items (F2 telemetry, H8 peak tracking, F3 pump.fun graduation feed, H14 pump.fun snipe) \u2014 if any of them silently shipped during the 3.4-day silence via operator activity, the brain needs to know so it does not re-ship.",
+      "If the research brain has produced a sol_research_findings.json by the next run, prioritize its REQ-016 response (recovery-context timeline) over its other proposals.",
+      "If dormancy continues another 24-48 hours with no closed trades, use idle time to attempt paper-only backtests of H1 (volatility-scaled stops) and H6 (hold-time death zone) against the existing trade log \u2014 same as run-282's deferred suggestion.",
+      "Consider adding a 5-LOC dated-backup-at-run-start helper to the brain run loop so the next state-loss event has the most recent run's snapshot, not a 3-day-old backup."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -165,10 +176,10 @@
       "pnl_today": 0.0
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, H11 in code, awaiting natural restart)",
-      "fresh_boost (REVIEW, H11 in code, awaiting natural restart)",
-      "consensus_boost (TESTING, top non-fresh scale candidate)",
-      "bear_strength (WATCH-CLOSE, lifetime positive but one loss from kill)",
+      "fresh_profile (PROVEN, H11 LIVE in production, awaiting first post-H11 buy)",
+      "fresh_boost (REVIEW, H11 LIVE in production, awaiting first post-H11 buy)",
+      "consensus_boost (TESTING, lifetime 46T 45.7% WR R/R 1.22)",
+      "bear_strength (WATCH-CLOSE, lifetime 28T 39.3% WR R/R 2.09 +0.0083 SOL)",
       "chop_momentum_scalp (WATCH, designed for current regime)",
       "wallet_convergence (TESTING)",
       "hturn (KILL_CANDIDATE at N>=10)",
@@ -176,27 +187,21 @@
       "bounce_hunter (gated, regime-dormant)",
       "anchor_derivative_snipe (N=0)",
       "boosts_top_feed_breakout (N=0, accumulating)",
-      "copy_trade (DORMANT, biggest historical loss source)"
+      "copy_trade (DORMANT/KILLED, biggest historical loss source -0.83 SOL)"
     ],
-    "queued_for_next_restart_bundle": [
-      "F2 entry telemetry instrumentation gap (unlocks N>=50 sample on bundle/holder/security/curve/mcap fields)",
-      "H8 intra-trade peak tracking (unlocks H2 partial profit taking and H6 hold-time death zone backtest)",
-      "F3 pump.fun graduation data source via GeckoTerminal endpoint (additive, no behavior change unless wired)",
-      "H14 pump.fun graduation snipe strategy (LP>=$50k gate, paper-track for first 10 fires)"
-    ],
-    "rule_self_correction": {
-      "violated_rule": "DO NOT file todos for bot or dashboard restarts. Ever.",
-      "violation_runs": [
-        "run-280",
-        "run-281"
+    "state_loss_summary": {
+      "silence_window_start": "2026-05-14 12:10 EDT (run-282)",
+      "silence_window_end": "2026-05-17 21:02 EDT (run-283)",
+      "duration_days": 3.4,
+      "missed_daily_fires_approx": 13,
+      "missing_files_on_entry": [
+        "sol_brain_directives.json",
+        "sol_brain_status.json",
+        "sol_research_findings.json"
       ],
-      "violation_artifact": "operator todo todo-1778731681 filed at run-280, referenced at run-281",
-      "correction_run": "run-282",
-      "correction_actions": [
-        "Confirmed the violating todo has been cleared (sol_todo_list.json is `[]`).",
-        "Rewrote the operations condensed_lesson from 'escalate the operator todo' to 'brain must NOT file restart todos'.",
-        "Added K2_restart_todo_escalation to killed_ideas_permanent so any future brain run cannot re-introduce the pattern."
-      ]
+      "recovery_source": "sol_brain_directives.json.bak.2026-05-11 (most recent dated backup) + sol_survival_report.json from run-282 + sol_survival_history.json tail",
+      "trade_log_mtime_during_window": "2026-05-13 23:35 EDT (unchanged \u2014 bot was trade-dormant the whole time)",
+      "h11_status_in_production": "ACTIVE \u2014 events log shows new skip-reason firing"
     }
   },
   "wallet_scan": {
@@ -204,11 +209,11 @@
     "result": "Saved 20 wallets in 39m 33s",
     "completed": "2026-05-16T01:42:38.275415"
   },
-  "brain_next_sec": 11101.737726,
+  "brain_next_sec": 10798.437994,
   "brain_next_str": "12:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 178.262274,
-  "brain_last_run_str": "12:10 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "9:02 PM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "",
@@ -219,7 +224,7 @@
   "research_findings": {},
   "research_status": {},
   "maintenance_status": {
-    "hours_since_last_trade": 94.24,
+    "hours_since_last_trade": 94.33,
     "dormancy_alert": true,
     "file_age_min": null,
     "watchdog_stale": false,
@@ -1645,7 +1650,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 13,
-    "age_min": 4.6,
+    "age_min": 9.6,
     "stale": false,
     "available": true
   },
@@ -1653,7 +1658,7 @@
     "requests_pending": 1,
     "requests_acknowledged": 0,
     "hypotheses_pending": 57,
-    "lessons_count": 41,
+    "lessons_count": 46,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 10,
@@ -1702,132 +1707,13 @@
       "evidence_source": ""
     },
     "tally": {
-      "implemented": 1,
+      "implemented": 2,
       "queued": 0,
       "rejected": 0,
-      "total": 1
+      "total": 2
     }
   },
   "events": [
-    {
-      "ts": "2026-05-17T20:34:33.965426",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: GEKZWL47 sold 13C28Yhj \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:34:33.970825",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: GEKZWL47 sold 13C28Yhj \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:36:28.466752",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:36:28.482463",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:36:28.498123",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:00.751410",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Di75xbVU sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:00.763279",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Di75xbVU sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:00.769456",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Di75xbVU sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:00.778955",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Di75xbVU sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:00.796781",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Di75xbVU sold 4F4uaGWY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:12.976945",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 99xnE2zE sold 3Xj8m1iT \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:15.517946",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip CORE: downtrend h1=-17.5% h24=-17.5%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:27.585265",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: B32QbbdD sold 13C28Yhj \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:27.601084",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: B32QbbdD sold 13C28Yhj \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:39.692119",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold AfwTcpmo \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:39.707904",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold DS1nbQD8 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T20:38:40.270546",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip NOGE: downtrend h1=-17.0% h24=-17.0%",
-      "detail": ""
-    },
     {
       "ts": "2026-05-17T20:38:42.715908",
       "type": "BUY_SKIP",
@@ -2408,12 +2294,131 @@
       "color": "#58a6ff",
       "msg": "WalletSell: 4vw54BmA sold NypRYDQy \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-17T20:59:35.745742",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip OWW: m5=78.5% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:00:11.833530",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5ZuV8eqk sold 2F6S83dU \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:00:11.854501",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5ZuV8eqk sold 2HvHhBS9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:00:14.295564",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Shoob: downtrend h1=-19.6% h24=-19.6%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:01:06.395695",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip FICTION: m5=12.3% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:01:06.869049",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip FICTION: m5=12.3% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:02:46.560643",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:10.008494",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip OWW: h6=315.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:10.019965",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold 6QMXkGuZ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:22.603329",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: C4Svaa7d sold C2dQ5KNm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:25.065320",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip bear: h1=-11.8% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:25.065320",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: C4Svaa7d sold FVwLCCmF \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:49.562431",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BCagckXe sold BEMB22S8 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:51.657949",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip CNS: h1=-2.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:52.119963",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip CNS: h1=-2.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:52.571038",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip CNS: h1=-2.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-17T21:03:53.026213",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip CNS: h1=-2.6% (below 15% momentum threshold, run115)",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "20:58:58",
+  "ts": "21:04:01",
   "__publish_meta": {
-    "published_at": "2026-05-17 20:58:58 EDT",
+    "published_at": "2026-05-17 21:04:01 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
