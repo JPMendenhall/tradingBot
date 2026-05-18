@@ -1,10 +1,10 @@
 {
-  "sol_price": 84.95014393396417,
+  "sol_price": 85.08165679598622,
   "bot_status": "RUNNING",
   "bot_last_seen": "00:01:38",
   "bot_cycles": 20,
   "bankroll": 1.1377,
-  "bankroll_usd": 96.64777875367103,
+  "bankroll_usd": 96.79740093679352,
   "budget": 0.16314797369999998,
   "pnl_today": 0,
   "deployed": 0,
@@ -113,107 +113,171 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-17 21:02:00 EDT",
-    "run_id": "run-283",
+    "timestamp": "2026-05-18 00:08:00 EDT",
+    "run_id": "run-284",
     "market_regime": "CHOP",
-    "altcoin_regime": "ALTCOIN_WINTER",
-    "system_diagnosis": "The single biggest problem this run was not a strategy edge \u2014 it was state loss. On entry I had no brain directives, no brain status file, and no research findings file. The last successful brain run was run-282 on 2026-05-14 12:10 EDT, so the brain has been silent for about 3.4 days, covering roughly thirteen daily fires at the new 04:00 cadence. The bot itself stayed mechanically alive across that window (heartbeat 28 minutes stale on entry, events log scanning live, cycle 12 on PID 3032), but no new closed trades \u2014 the trade log mtime is still pinned at 2026-05-13 23:35 EDT. This run rebuilt the brain directives from the May-11 backup plus the run-282 survival report and verified H11 (the fresh-profile / fresh-boost 1-6h death-zone gate) is now firing live in production.",
-    "exit_analysis": "Rolling 24 hours: 0 trades. Rolling 7 days: 5 trades (1 win, 4 losses), win rate 20%, average win +10.71%, average loss -15.84%, R/R 0.68, stop-loss rate 80%, net -0.0057 SOL. All five 7-day trades pre-date the May-13 trade-log freeze. All-time: 1003 sells, win rate 35.4%, R/R 0.79, stop-loss rate 50.6%, net -1.172 SOL. Exit mix lifetime: stop_loss 42.6%, time_exit 22.4%, target 14.6%, other 12.4%, trailing 8.1%. Cannot measure post-H11 cohort yet because the bot has bought zero new tokens since H11 went live.",
-    "strategy_work": "No strategy work could be done productively this run. (a) No new trades to analyze across all strategies \u2014 rolling_24h is empty across every entry in sol_strategy_stats.json. (b) H11 activation is confirmed via the new skip-reason string in the events log, but its measurement window starts at the first post-H11 fresh-profile or fresh-boost BUY \u2014 zero so far. (c) The bundle that run-282 queued for the next code-edit pass (entry telemetry, intra-trade peak tracking, pump.fun graduation feed, pump.fun snipe) is intentionally NOT shipped this run \u2014 adding new ship risk to a state-recovery run would muddy whichever effect lands next. Defer all ship work to the next clean run.",
-    "directives_changes": "Restored sol_brain_directives.json from the 2026-05-11 backup, bumped version 281 -> 288 to mark seven missed runs, set updated_by to run-283 to continue the run-282 sequence. Added a new state_reconstruction_note field that explicitly flags this is a rebuilt file. Replaced current_priority and priority_reasoning with the recovery narrative. Cleared three completed requests_for_research entries (REQ-013, REQ-014, REQ-015 \u2014 all completed by research-144/145/146 weeks ago) and filed REQ-016 asking the research brain for a recovery-context evaluation of the silence window. Refreshed track_record with the current heartbeat numbers (bankroll 1.1377 SOL, SOL price $85.00, BTC.D 58.25% ALTCOIN_WINTER, bot PID 3032, cycle 12, H11 active confirmation). Added five new condensed_lessons entries (state_loss_recovery_run283, h11_activation_confirmed_run283, brain_must_not_file_restart_todos_run282, h11_constants_separate_run280, natural_restart_pace_can_be_long_run282). Saved a dated snapshot sol_brain_directives.json.bak.2026-05-17 so the next state-loss event has a fresh starting point.",
+    "altcoin_regime": "ALTCOIN_WINTER(58.2%)",
+    "system_diagnosis": "Bot is mechanically healthy (PID 3032, cycle 20, fresh heartbeat 00:01 EDT, SOL bal 1.1377). But active strategies have produced ZERO new buys in 4+ days \u2014 last buy WORLDCUP CB on May 13 22:44 EDT, last sell WORLDCUP stop on May 13 23:35 EDT. The bot is actively scanning (live events show wallet-sell signals from 8+ tracked wallets and a steady stream of m5-pump/m5-dump/downtrend skips on real candidates), but the universal filter stack is rejecting everything upstream. The H11 gate that activated sometime between May 14-17 has not been exercised on a single fresh_profile/fresh_boost buy yet, so we still cannot tell whether it's helping or hurting. Run-283 used a stale May-11 backup and missed two losses (ANDV bs EMERGENCY -30.6%, WORLDCUP cb stop -10.5%) \u2014 those got absorbed this run, refreshing bear_strength from 24T 45.8% WR to 28T 39.3% WR.",
+    "exit_analysis": "7d rolling (4 trades, all stop-losses): avg_loss -15.84%, R/R 0.0 (no wins), stop_loss_rate 100%, pnl -0.0070 SOL. All-time (1003 sells): WR 35.4%, avg_win +13.17%, avg_loss -16.57%, R/R 0.79, stop_loss_rate 50.6%, profit_factor 0.43, pnl -1.172 SOL. Exit mix all-time: stop_loss 42.6%, time_exit 22.4%, target 14.6%, other 12.4%, trailing 8.1%. ANDV's -30.56% emergency stop on May 12 is the standout 7d disaster \u2014 3x the typical -10% BS stop.",
+    "strategy_work": "No hypothesis advanced via code this run. Filed REQ-017 to research brain asking for an ANDV bear_strength post-mortem (entry-feature comparison vs GAYTES, price-path forensics, single-axis filter proposal). Re-examined bear_strength PAUSE eligibility: all four fast-kill criteria at lifetime N=28 PASS (R/R 2.09, WR 39.3%, pnl +0.0083 SOL, remove-ANDV-outlier still positive +0.0118). DO NOT PAUSE BS. But flagged next BS fire as a watched trade \u2014 a 3rd consecutive loss would re-open the PAUSE conversation regardless of fast-kill arithmetic.",
+    "directives_changes": "Bumped version 288->289, updated_by run-284, last_updated 2026-05-18 00:08 EDT. Refreshed track_record (added sol_h24_note_run284, by-strategy lifetime stats, last-buy info, ANDV post-mortem note, H11 observation status). Updated active_strategies for bear_strength (24T->28T), consensus_boost (38T->46T), wallet_convergence (9T->10T), fresh_profile (added R/R + stop-rate fields). Added fresh_boost block to active_strategies (was missing \u2014 22T 40.9% WR R/R 0.80 -0.0259 SOL). Added REQ-017 to requests_for_research (HIGH priority ANDV post-mortem). Added two new condensed_lessons entries (stale_backup_caught_subsequent_trades_run284 + andv_emergency_stop_run284).",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true,
-      "rule_compliance_verified": true,
-      "todo_list_inspected": false,
-      "no_restart_todo_filed": true,
-      "directives_parse_check": "passed (json.load returned dict with 8 top-level keys)",
-      "h11_live_in_events_log": true,
-      "h11_observed_skip_reasons_in_22min_window": 2
+      "atomic_write_used": true,
+      "no_code_ship": true
     },
     "previous_followups": [
-      "Run-282 said: 'After H11 activates, collect at least ten new trades on fresh_profile and fresh_boost combined, then evaluate whether the inside-zone bleed has been removed as projected.' Status: H11 has activated (confirmed live this run via events log skip-reason). Post-H11 fresh_profile/fresh_boost trade count = 0. Cannot yet evaluate; bot has been mechanically dormant through the brain silence window.",
-      "Run-282 said: 'Once H11 has produced enough post-restart data: ship the queued bundle (F2 entry telemetry, H8 intra-trade peak tracking, F3 pump.fun graduation feed, H14 pump.fun snipe) as ONE follow-up code-edit pass \u2014 single restart, multiple hypotheses activating together.' Status: pre-condition not met (zero post-H11 trades). Bundle stays queued.",
-      "Run-282 said: 'If 24+ hours of trading activity pass after the natural restart and H11's data still hasn't accumulated (because chop+winter regime keeps the bot dormant), use that idle time to do paper-only backtests of H1 (volatility-scaled stops) and H6 (hold-time death zone) against the existing trade log.' Status: the idle window already played out, but the brain wasn't running to use it. The next live run should attempt the paper-only backtests if the dormancy continues."
+      "Run-283 stated 'No new closed trades since run-282' \u2014 INCORRECT. The May-11 backup used as baseline was stale; two trades (ANDV May 12, WORLDCUP May 13) had landed before the bot went dormant. Corrected this run by re-reading sol_strategy_stats.json and tail-walking sol_trade_log.json.",
+      "Run-283 confirmed H11 (FRESH_PROFILE_MIN_PAIR_AGE_H=6.0) live via HAVEN/BIPOLAR skip-reason fires. Re-checked this run \u2014 no H11 skip in the current 11-min ring (no 1-6h candidates passed upstream filters this window). H11 effect still un-measurable because fresh_profile/fresh_boost have zero buys post-activation.",
+      "Run-283 filed REQ-016 (state-loss-recovery context). Status: still pending \u2014 research brain has not run; sol_research_findings.json still does not exist on disk."
     ],
     "changelog": [
-      "Rebuilt the brain's memory file from the most recent dated backup (May 11) plus the May 14 survival report. The brain went silent for 3.4 days and lost its working memory file along with its status file and the research brain's findings file. The bot itself never went down \u2014 only the brain's bookkeeping went missing.",
-      "Verified the 1-to-6-hour pair-age gate that we shipped on May 14 is now actually active in the bot. The bot's recent activity log shows it filtering out HAVEN and BIPOLAR for being too young, using the new skip reason. The natural restart we were waiting for did happen sometime in the silence window.",
-      "Saved a fresh dated backup of the brain memory file as of today so the next time anything wipes the live file, recovery starts from a clean May-17 baseline instead of a May-11 baseline.",
-      "Filed one research ask asking the research brain to walk back the 3-day timeline and tell us if the bot was truly dormant the whole time or if it briefly went down and recovered.",
-      "Did NOT ship any code changes today. A state-recovery run is the wrong place to add new ship risk."
+      "Refreshed the bot's running tally of trade results from the live stats file. Two losses that the previous brain run missed because it used an old backup file are now properly counted: a bad ANDV trade on May 12 that lost 30.6% (the worst single bear_strength loss ever), and a WORLDCUP loss on May 13 of 10.5%.",
+      "The bear_strength strategy's lifetime numbers got worse with those two losses added: win rate dropped from 45.8% to 39.3%, average risk/reward ratio dropped from 2.18 to 2.09, total profit dropped from 0.0159 SOL to 0.0083 SOL. Strategy is still profitable overall \u2014 well above the pause threshold \u2014 but the next loss would put it on watch.",
+      "The consensus_boost strategy's lifetime stats got a similar refresh: 46 trades now (was 38), win rate 45.7% (was 50%), risk/reward 0.99 (was 1.68), small loss of 0.0018 SOL overall (was a small profit). Still above the kill threshold but the profitability has eroded.",
+      "Added a brand-new entry for fresh_boost (22 trades, 40.9% win rate, 0.80 risk/reward, lost 0.0259 SOL total) \u2014 this strategy was not tracked in the active list at all before this run.",
+      "Asked the research brain to do a detailed post-mortem on the catastrophic ANDV trade: what made it look like a good entry, what went wrong, and propose one simple filter that would have caught it without also blocking the GAYTES winner from 2 days earlier.",
+      "Updated the brain's notes on H11 (the new 6-hour minimum age gate for fresh strategies) to reflect that we still haven't seen it block or pass a single trade \u2014 the bot has been trade-dormant for 4 days, so there's nothing to measure yet.",
+      "Bumped the brain version number from 288 to 289."
     ],
     "actions_taken": [
-      "Read the operating prompt at scheduled-task-prompt.md in full.",
-      "Confirmed sol_research_status.json does not exist on disk (research brain is not currently running).",
-      "Inventoried the state directory and found the brain memory file, status file, and research findings file all missing.",
-      "Located dated backups of the brain memory file (May 8, May 10, May 11) and confirmed May 11 was the most recent.",
-      "Read the May 14 survival report (run-282) to recover the most recent narrative state, and the survival history tail to confirm the run sequence.",
-      "Read the current heartbeat, strategy stats, events log, and budget state to capture live numbers for the brain memory rebuild.",
-      "Verified the 1-to-6-hour H11 pair-age gate is now firing in production via the new skip-reason string in the events log.",
-      "Wrote a fresh sol_brain_status.json with running:true at run start.",
-      "Restored sol_brain_directives.json from the May 11 backup and updated the head fields plus track record plus condensed lessons plus the research-request queue.",
-      "Validated the rebuilt JSON parses cleanly.",
-      "Saved a dated snapshot sol_brain_directives.json.bak.2026-05-17 to harden against the next state-loss incident.",
-      "Wrote this survival report and appended a run-283 entry to the survival history."
+      "Read the live state files (stats, heartbeat, events, trade log tail) and compared against what the previous brain run recorded.",
+      "Found 2 trades that the previous brain run missed because it restored from an older backup. Pulled the details of those trades from the trade log.",
+      "Updated the brain's directives file with the corrected numbers for bear_strength, consensus_boost, wallet_convergence, fresh_profile, plus added an entry for fresh_boost.",
+      "Wrote a high-priority research request asking for a detailed look at the ANDV emergency stop loss.",
+      "Confirmed the bot itself is healthy \u2014 actively scanning new tokens and correctly filtering them out \u2014 but is not finding any candidates that pass the full filter stack right now.",
+      "Did not change any code this run. Used the wakeup time to fix the data picture and queue research."
     ],
     "next_priorities": [
-      "Wait for the bot to actually buy a token under H11. Until at least one post-H11 fresh_profile or fresh_boost BUY closes, the H11 effect cannot be measured and the queued code bundle cannot be evaluated for ship timing.",
-      "Next clean brain run should re-grep the codebase for the queued items (F2 telemetry, H8 peak tracking, F3 pump.fun graduation feed, H14 pump.fun snipe) \u2014 if any of them silently shipped during the 3.4-day silence via operator activity, the brain needs to know so it does not re-ship.",
-      "If the research brain has produced a sol_research_findings.json by the next run, prioritize its REQ-016 response (recovery-context timeline) over its other proposals.",
-      "If dormancy continues another 24-48 hours with no closed trades, use idle time to attempt paper-only backtests of H1 (volatility-scaled stops) and H6 (hold-time death zone) against the existing trade log \u2014 same as run-282's deferred suggestion.",
-      "Consider adding a 5-LOC dated-backup-at-run-start helper to the brain run loop so the next state-loss event has the most recent run's snapshot, not a 3-day-old backup."
+      "Wait for research brain to deliver findings on REQ-016 (silence-window context) and REQ-017 (ANDV post-mortem). If REQ-017 returns a clean single-axis filter that blocks ANDV without blocking GAYTES, that's the next code ship candidate (~5-10 LOC).",
+      "If 24+ hours pass with zero buys (currently 97h dormant), file a new research request asking why fresh_profile/fresh_boost are producing zero candidates that pass H11 (whether the gate is too tight or whether upstream filters are catching everything first).",
+      "Watch for next bear_strength fire \u2014 third consecutive BS loss would re-open the PAUSE conversation regardless of fast-kill arithmetic.",
+      "Consider whether the consensus_boost R/R drop from 1.68 to 0.99 across the recent 8-trade absorption warrants its own audit ask to research brain (probably premature \u2014 wait until next CB fire to add datapoint)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 1003,
+      "total_buys": 1002,
       "win_rate": 35.4,
       "avg_win_pct": 13.17,
       "avg_loss_pct": -16.57,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.6,
+      "profit_factor": 0.43,
       "bankroll": 1.1377,
-      "pnl_today": 0.0
+      "pnl_today": 0.0,
+      "pnl_7d": -0.006992,
+      "pnl_24h": 0.0,
+      "trades_today": 0,
+      "trades_7d": 4,
+      "trades_24h": 0,
+      "sol_price": 84.92,
+      "btc_dom_pct": 58.22,
+      "active_strategy_dormancy_hours": 97.4,
+      "bot_pid": 3032,
+      "cycle_counter": 20
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, H11 LIVE in production, awaiting first post-H11 buy)",
-      "fresh_boost (REVIEW, H11 LIVE in production, awaiting first post-H11 buy)",
-      "consensus_boost (TESTING, lifetime 46T 45.7% WR R/R 1.22)",
-      "bear_strength (WATCH-CLOSE, lifetime 28T 39.3% WR R/R 2.09 +0.0083 SOL)",
-      "chop_momentum_scalp (WATCH, designed for current regime)",
-      "wallet_convergence (TESTING)",
-      "hturn (KILL_CANDIDATE at N>=10)",
-      "flash_surge (dormant, kill if 0-for-10 next BULL)",
-      "bounce_hunter (gated, regime-dormant)",
-      "anchor_derivative_snipe (N=0)",
-      "boosts_top_feed_breakout (N=0, accumulating)",
-      "copy_trade (DORMANT/KILLED, biggest historical loss source -0.83 SOL)"
-    ],
-    "state_loss_summary": {
-      "silence_window_start": "2026-05-14 12:10 EDT (run-282)",
-      "silence_window_end": "2026-05-17 21:02 EDT (run-283)",
-      "duration_days": 3.4,
-      "missed_daily_fires_approx": 13,
-      "missing_files_on_entry": [
-        "sol_brain_directives.json",
-        "sol_brain_status.json",
-        "sol_research_findings.json"
-      ],
-      "recovery_source": "sol_brain_directives.json.bak.2026-05-11 (most recent dated backup) + sol_survival_report.json from run-282 + sol_survival_history.json tail",
-      "trade_log_mtime_during_window": "2026-05-13 23:35 EDT (unchanged \u2014 bot was trade-dormant the whole time)",
-      "h11_status_in_production": "ACTIVE \u2014 events log shows new skip-reason firing"
-    }
+      {
+        "name": "bear_strength",
+        "status": "TESTING",
+        "lifetime_trades": 28,
+        "lifetime_wr": 39.3,
+        "lifetime_rr": 2.09,
+        "lifetime_pnl_sol": 0.0083,
+        "fast_kill_status": "All 4 criteria PASS \u2014 DO NOT PAUSE. Next fire is watched."
+      },
+      {
+        "name": "consensus_boost",
+        "status": "TESTING (CHOP-gated-off)",
+        "lifetime_trades": 46,
+        "lifetime_wr": 45.7,
+        "lifetime_rr": 0.99,
+        "lifetime_pnl_sol": -0.0018
+      },
+      {
+        "name": "fresh_profile",
+        "status": "PROVEN",
+        "lifetime_trades": 15,
+        "lifetime_wr": 60.0,
+        "lifetime_rr": 1.17,
+        "lifetime_pnl_sol": 0.0029,
+        "note": "0 recent trades; regime + H11 gated"
+      },
+      {
+        "name": "fresh_boost",
+        "status": "TESTING",
+        "lifetime_trades": 22,
+        "lifetime_wr": 40.9,
+        "lifetime_rr": 0.8,
+        "lifetime_pnl_sol": -0.0259,
+        "note": "R/R < 1.0; potentially over-bleeding but not yet in kill territory"
+      },
+      {
+        "name": "wallet_convergence",
+        "status": "TESTING",
+        "lifetime_trades": 10,
+        "lifetime_wr": 50.0,
+        "lifetime_rr": 0.51,
+        "lifetime_pnl_sol": -0.0011,
+        "note": "R/R failing one fast-kill criterion; WR holds above 35%."
+      },
+      {
+        "name": "chop_momentum_scalp",
+        "status": "TESTING",
+        "lifetime_trades": 20,
+        "lifetime_wr": 35.0,
+        "lifetime_rr": 0.93,
+        "lifetime_pnl_sol": -0.00255
+      },
+      {
+        "name": "bounce_hunter",
+        "status": "TESTING_BULL (CHOP gate closed)",
+        "lifetime_trades": 28,
+        "lifetime_wr": 50.0,
+        "lifetime_rr": 0.71,
+        "lifetime_pnl_sol": -0.0074
+      },
+      {
+        "name": "flash_surge",
+        "status": "TESTING_BULL (CHOP-dormant)",
+        "lifetime_trades": 4,
+        "lifetime_wr": 0.0,
+        "lifetime_pnl_sol": -0.01154
+      },
+      {
+        "name": "anchor_derivative_snipe",
+        "status": "TESTING",
+        "lifetime_trades": 0,
+        "lifetime_wr": 0.0,
+        "note": "N=0 since run-224 ship"
+      },
+      {
+        "name": "gecko_breadth_burst",
+        "status": "TESTING",
+        "lifetime_trades": 0,
+        "lifetime_wr": 0.0,
+        "note": "N=2 signals lifetime, both LP-blocked at age<2.1min"
+      },
+      {
+        "name": "copy_trade",
+        "status": "KILLED (run-32, watch-only)",
+        "lifetime_trades": 537,
+        "lifetime_pnl_sol": -0.83
+      }
+    ]
   },
   "wallet_scan": {
     "active": false,
     "result": "Saved 20 wallets in 39m 33s",
     "completed": "2026-05-16T01:42:38.275415"
   },
-  "brain_next_sec": 21176.874842,
+  "brain_next_sec": 20873.517631,
   "brain_next_str": "6:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 389.125158,
-  "brain_last_run_str": "9:02 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "12:15 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "",
@@ -224,7 +288,7 @@
   "research_findings": {},
   "research_status": {},
   "maintenance_status": {
-    "hours_since_last_trade": 97.45,
+    "hours_since_last_trade": 97.53,
     "dormancy_alert": true,
     "file_age_min": null,
     "watchdog_stale": false,
@@ -1650,7 +1714,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 20,
-    "age_min": 9.4,
+    "age_min": 14.5,
     "stale": false,
     "available": true
   },
@@ -1658,10 +1722,10 @@
     "requests_pending": 2,
     "requests_acknowledged": 0,
     "hypotheses_pending": 57,
-    "lessons_count": 46,
+    "lessons_count": 48,
     "killed_ideas_count": 18,
     "drift_keys": [],
-    "active_strategies_count": 10,
+    "active_strategies_count": 11,
     "overloaded": false
   },
   "memory_keeper_status": {
@@ -1714,118 +1778,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-17T23:34:27.214697",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "ConsensusBoost: 40 boosted, 4 profile+16 direct, checking 20",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:28.833837",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "DULUS: h24=+2% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:29.370345",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "BABYRAGE: h24=-84% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:29.889027",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "SCALPER: h24=-98% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:30.437078",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "TWERK: h24=-96% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:30.953489",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "CRUMBS: h24=-5% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:31.496040",
-      "type": "BS_SKIP",
-      "color": "#8b949e",
-      "msg": "TROLLINA: h24=+350% \u2014 liq=$0 < $30,000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:31.496040",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "TROLLINA: h24=+350% > 200% CB cap",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:32.065845",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "RAIDOORS: h24=-92% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:32.556543",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "PUMP.FUN: h24=-93% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:33.087017",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "WORLDCUP: h1=-4.7% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:33.612984",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "HTTPS: h24=-21% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:34.137625",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "TINY: h24=-2% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:34.664040",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "FLUFF: h24=-92% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:35.191019",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "ANDV: h24=-6% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-17T23:34:35.656569",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "LIBTURD: h1=-2.1% (need 3-15%)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-17T23:34:36.180839",
       "type": "CB_SKIP",
@@ -2413,12 +2365,124 @@
       "color": "#d29922",
       "msg": "m5 pump skip meaningless: m5=36.3% (already ran, we are exit liq, run95)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:11:26.985882",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BOLTZMANN: m5=103.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:11:26.985882",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7pDhG6Nq sold 3ATwwkTD \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:12:58.096418",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BOLTZMANN: m5=22.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:12:58.096418",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5B79fMkc sold 6QMXkGuZ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:12:58.589530",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BOLTZMANN: m5=22.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:12:59.058900",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BOLTZMANN: m5=22.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:13:38.812727",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5t9xBNuD sold EX91Wz5T \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:13:41.109689",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip 10: downtrend h1=-91.7% h24=-91.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:13:41.123588",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5t9xBNuD sold G2hWvycL \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:13:43.532103",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip 10SOL: downtrend h1=-85.7% h24=-85.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:13:43.548316",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5t9xBNuD sold Fu9os1Zm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:15:51.706817",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: A3W8psib sold FMJYM53q \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:15:54.043942",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip SLOPNALD: m5=13.1% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:15:54.043942",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: A3W8psib sold 2Wp2k3d9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:15:54.059967",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: A3W8psib sold F6etBjvG \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:15:56.268013",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Snail: deep24h h24=-87.1% (absolute floor)",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "00:11:03",
+  "ts": "00:16:06",
   "__publish_meta": {
-    "published_at": "2026-05-18 00:11:03 EDT",
+    "published_at": "2026-05-18 00:16:06 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
