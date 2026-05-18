@@ -1,15 +1,15 @@
 {
-  "sol_price": 85.58244009572611,
-  "bot_status": "RUNNING",
+  "sol_price": 85.63006200477885,
+  "bot_status": "STALE",
   "bot_last_seen": "17:51:37",
   "bot_cycles": 59,
   "bankroll": 1.1345,
-  "bankroll_usd": 97.09327828860128,
+  "bankroll_usd": 97.14730534442161,
   "budget": 0.16314797369999998,
   "pnl_today": -0.0004020639268970214,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 18.2,
+  "hour": 18.3,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,84 +113,70 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-18 12:10:00 EDT",
-    "run_id": "run-286",
-    "previous_run_id": "run-285",
+    "timestamp": "2026-05-18 18:14:41 EDT",
     "market_regime": "CHOP",
-    "altcoin_regime": "ALTCOIN_WINTER(58.2%)",
-    "system_diagnosis": "NULL-DELTA observation run. Zero new trades, zero new research, zero bot restart since run-285 (6h ago). The two BEAR_STRENGTH gates shipped run-285 are confirmed present in degen_bot.py source (verified by grep) but NOT YET ACTIVE in the running process \u2014 bot is still PID 3032 from before the run-285 ship. Run-286's contribution is a retroactive trade-log audit that (a) corroborates the dead-book pattern on a SECOND wallet_convergence trade (ASTEROID, May 11, m5_activity=0) \u2014 strengthens REQ-018 case \u2014 and (b) confirms the run-285 BS gates have NARROW scope: BABYTROLL (BS stop May 11) had m5_activity=164 and h6=+14.5%, so run-285 gates would NOT have blocked it. Forward expectation: tail improvement (no more -30% ANDV-class emergencies), not lifetime-WR transformation.",
-    "exit_analysis": "All-time: 1004 sells, 35.4% WR, avg_win +13.17%, avg_loss -16.55%, R/R 0.80, profit_factor 0.43, stop_loss_rate 50.7%. 7d: 5T 0% WR, all stop_losses, avg_loss -14.32%, pnl -0.007394 SOL (unchanged since run-285 \u2014 no new closures). 24h: 1T (TOLYBOT WC -8.21% stop, -0.000402 SOL \u2014 still the most recent sell, 8h ago). The 7d 100% stop_loss_rate persists: window is May 11-18 and contains BABYTROLL BS -9.81%, ASTEROID WC -12.5%, ANDV BS -30.56%, WORLDCUP CB -10.51%, TOLYBOT WC -8.21%. GAYTES +10.71% (May 10) falls just outside. Of these 5 losses: 2/5 (ANDV, TOLYBOT) match the dead-book frozen-exit-velocity signature; ASTEROID retroactively also matches (m5_activity=0), making the WC dead-book corroboration N=2; BABYTROLL is the active-book counter-example confirming the gates have narrow scope.",
-    "strategy_work": "No code changes. No new research requests. Retroactive trade-log audit of two May-11 losses (ASTEROID + BABYTROLL) and one May-18 loss (TOLYBOT from run-285) confirms two things: (1) the WC dead-book pattern is real at N=2 retrospective incidents (ASTEROID and TOLYBOT both had m5_buys=0, m5_sells=0, m5_volume=$0, buys_h1=0, sells_h1=0 at entry; both had h6>0 so an h6 floor wouldn't help; the discriminating axis is m5_activity); (2) the run-285 BS gates would not have caught BABYTROLL (m5_activity=164, h6=+14.5%) \u2014 so the BS gates filter only the ANDV-class catastrophic outlier, not the population of all BS losses. This refines the forward-effect estimate downward from research-141's +0.0167 SOL on the existing 28T sample. Still positive expected value (eliminating one -30% emergency saves more than a few BABYTROLL-class -10% stops cost), but smaller than the upper bound.",
-    "directives_changes": "Bumped version 290->291, updated_by run-286. Replaced current_priority with run-286 null-delta narrative and run-286 retroactive-audit findings. Replaced priority_reasoning with the rationale for not manufacturing activity when delta is zero. Updated bear_strength active_strategies with notes_run286 (BABYTROLL would-not-have-been-blocked retroactive). Updated wallet_convergence active_strategies with notes_run286 + run_286_dead_book_corroboration_ASTEROID block. Added 3 condensed_lessons: narrow_gate_scope_calibration_run286 (forward-effect calibration), wc_dead_book_n2_corroboration_run286 (ASTEROID + TOLYBOT both m5_activity=0), null_delta_run_correct_response_run286 (anti-pattern: forcing ships to feel productive). Overwrote stale May-11 run_286 entries in track_record with current real-2026-05-18 values (preserved original as stale_may11_run286_archive for continuity). REQ-018 status unchanged (pending, awaiting research-142). No new requests filed.",
+    "system_diagnosis": "#1 problem unchanged: 7d cross-strategy aggregate is N=3 0%WR (-0.005644 SOL avg_loss -16.43% SL rate 100%) - consensus_boost stop + bear_strength ANDV + wallet_convergence TOLYBOT. All three were pre-fix entries. The three remediating gates (BS m5_activity>=20, BS h6>=0, WC dead-book) are SHIPPED in source but NOT YET ACTIVE (PID 3032 still alive from at least run-285). Until natural restart, we are running on the same code that produced the losses. CHOP+ALTCOIN_WINTER dormancy is correct behavior, not malfunction - it limits the bleed while the gates wait to activate.",
+    "exit_analysis": "Rolling 24h: 1 trade, 100% stop_loss, avg_loss -8.21%, R/R 0.0. Rolling 7d: 3 trades, 100% stop_loss, avg_loss -16.43%, R/R 0.0. Lifetime (N=1004): WR 35.4%, avg_win +13.17%, avg_loss -16.55%, R/R 0.80, stop_loss_rate 50.7%. Exit-side improvement plan unchanged from run-286: WC dead-book floor (shipped this run) should reduce the kind of dead-book stops that produced TOLYBOT/ASTEROID; BS gates (run-285, pre-activation) should reduce ANDV-class catastrophic emergency stops.",
+    "strategy_work": "SHIPPED research-142 Proposal #1: wallet_convergence dead-book floor. Code added at degen_bot.py _get_wallet_convergence_signals after liq + h6 gates: if h24>=100% then call _fetch_gt_pressure(pair_address) and skip if gt_buyers_m5<=7. Constants: WC_DEAD_BOOK_H24_THRESHOLD=100.0, WC_MIN_GT_BUYERS_M5_AT_HIGH_H24=7. Compile-check PASSED. Fail-open design. Retro-backtest blocks 4 of 6 WC losses (Goblin/soothsayer/ASTEROID/TOLYBOT) while sacrificing only TIMETRUMP +1.2% from the winners side. Predicted lift on the 11-trade lifetime sample: WR 45.5%->66.7%, RR 0.53->0.85, avg_loss -9.26%->-6.82%. Min sample for kill/promote decision: N=10 WC fires post-filter. Deferred Proposals 2/3/4 from research-142 per recommended ship order and added each as a new pending_hypothesis with explicit unblock criteria.",
+    "directives_changes": "Version 291 -> 292. Updated current_priority and priority_reasoning to describe the run-287 ship and the rationale for not also shipping Proposals 2/3/4. Moved REQ-018 from active requests to archive (status=completed, archived_run=run-287, outcome_note added). Active requests array is now EMPTY. Updated wallet_convergence_m5_floor_validation hypothesis status to SHIPPED_RUN_287_AWAITS_NATURAL_RESTART with kill criteria + rollback + min sample size recorded. Appended 3 new pending_hypotheses (wc_universal_compound_dead_book_floor, bundle_detected_universal_skip, dex_boost_tier_cross_on_graduated_pumpfun). Added notes_run287 to wallet_convergence + bear_strength. Added 3 condensed_lessons entries. Updated track_record + market_adaptation.regime_note_run287.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true,
-      "compile_check_passed": "n/a (no code change)",
-      "directives_json_valid": true,
-      "no_restart_todo_filed": true,
-      "audit_notes": "Verified run-285 gates present in degen_bot.py via grep: constants at lines 8047-8048, enforcement at lines 10493/10499. Verified PID 3032 still running (heartbeat 12:02:07 EDT cycle 47 confirms same process as run-285 cycle 33 = 14 cycles in 6h = healthy ~25 min/cycle). Verified research-142 has not yet fired (sol_research_status.json shows last_run_id=research-141, finished_at 00:51:36 EDT). Verified directives JSON edits did not corrupt structure (file reads cleanly post-edit, no unclosed brackets). No restart todo filed. No bot kill / process touch."
+      "compile_check_passed": true,
+      "research_proposal_completeness_gate_applied": true,
+      "killed_ideas_conflict_check": "PASSED - none of the 18 killed_ideas entries conflict with WC dead-book floor, universal compound floor, bundle-detected skip, or dex_boost tier-cross",
+      "fail_open_design_verified": "WC gate skips ONLY when _fetch_gt_pressure returns truthy dict AND gt_buyers_m5<=7. API error / empty dict -> no skip."
     },
     "previous_followups": [
-      "run-285 said 'next BS fire post-restart is the critical test' \u2014 bot has not restarted, so no test data yet. Code is shipped but pre-activation. Will become testable when watchdog/maintenance triggers a restart.",
-      "run-285 said 'wait for research-142 on REQ-018' \u2014 research-142 has not yet fired. REQ-018 still status=pending. Brain holding discipline: NO unilateral WC ship despite N=2 ASTEROID+TOLYBOT corroboration found this run.",
-      "run-285 said 'curve-tx streaming Phase 1 extension queued for run-286+' \u2014 DEFERRED again this run. Not a forced ship; will pair naturally with research-142 delivery when that arrives.",
-      "run-285 said 'track 7d 100% stop_loss_rate' \u2014 still 100% (5T/5L) because zero new closures occurred. Sample is locked until next sell."
+      "run-286 priority 'NULL-DELTA observation run, wait for research-142': research-142 fired at 12:53:33 EDT and serviced REQ-018 - resolved.",
+      "run-285 BS gates pending natural restart: still pending (PID 3032 unchanged). WC floor shipped this run joins the queue.",
+      "run-284 / wallet_convergence m5-floor validation: research-142 delivered the validation. SHIPPED this run. Hypothesis status moved to SHIPPED_RUN_287_AWAITS_NATURAL_RESTART.",
+      "letsbonk_graduation_snipe Phase-1: still alive at PID 3032; capture rate to be re-audited after natural restart and gate-activation."
     ],
     "changelog": [
-      "No code changes this cycle. We left the bot alone \u2014 nothing new happened since the last brain run six hours ago: no new trades, no new research findings, and the bot did not restart so yesterday's safety-filter ships are still waiting to take effect.",
-      "Did a back-check on three past losses to learn how much the new filters would actually catch. Result: the filters are aimed precisely at the kind of loss that wiped us out on May 12 (ANDV, -30%). They will NOT catch the more typical -10% stops like BABYTROLL had on May 11 \u2014 that token's entry looked perfectly healthy on every filter axis we have. So expect the filters to eliminate the rare catastrophic losses, not the routine ones.",
-      "Also found that ASTEROID (the wallet_convergence emergency stop on May 11) had the EXACT same 'token-looks-frozen' signature as TOLYBOT did this morning. That's two trades now showing the same failure mode in the wallet_convergence strategy, not just one. Strengthens the case for the research request we already filed \u2014 but we are deliberately NOT shipping a copy-paste fix without research-validated numbers first."
+      "Added a wallet-convergence pre-entry filter: when a token has already pumped 100%+ in 24 hours and almost no one is buying it right now (5-minute buyer count of 7 or fewer on GeckoTerminal), skip the trade. Walking history shows this would have blocked four of the six losing wallet-convergence trades (Goblin, soothsayer, ASTEROID, TOLYBOT) while only sacrificing one tiny +1% win. Expected: turn the strategy from slight loss into solid winner.",
+      "Wrote down three new ideas the research bot delivered but that we deliberately didn't ship today: (a) a wider 'dead-book' filter that applies to every strategy, not just wallet-convergence; (b) skipping any token where pro snipers piled in the same block as our buy; (c) a brand-new strategy that watches when teams pay 100+ dollars to boost their token on DexScreener.",
+      "Moved the research request that started this whole investigation to the archive - it's officially complete.",
+      "Bumped the brain's own version number from 291 to 292 and recorded the run."
     ],
     "actions_taken": [
-      "Refreshed the bot's memory file with today's status: confirmed the safety filters from yesterday's run are in the code file and waiting for the bot's next automatic restart to take effect.",
-      "Recorded the back-check findings as three new entries in the memory file's 'lessons' section: how much the new filters will actually catch, the second wallet_convergence loss matching the dead-book pattern, and a reminder that when nothing has changed since the last run, the right answer is to NOT force a change just to feel productive.",
-      "Did not file any new operator todos. Did not kill the bot. Did not file any new research requests. Did not change any code constants. Did not modify any thresholds or sizing."
+      "Added a smart wallet-convergence filter that blocks already-pumped tokens with no current buying activity.",
+      "Ran the code-compile safety check on the change (passed).",
+      "Updated the brain's internal notes to mark the request from last week as fully resolved.",
+      "Wrote down three follow-up ideas as pending hypotheses with clear notes on what needs to happen before each one ships.",
+      "Refreshed the daily stats: 1 trade in the last 24 hours (TOLYBOT, -8.2%), 3 trades in the last 7 days (all stops, -0.0056 SOL), bot still healthy on PID 3032.",
+      "Did NOT restart the bot manually - the watchdog will pick up the new gates on the next natural restart."
     ],
     "next_priorities": [
-      "Wait for the bot to naturally restart so yesterday's two new bear_strength safety filters can take effect. Once the bot restarts and the next bear_strength trade fires, check the events log to confirm the new filters are correctly skipping dead-book candidates.",
-      "Wait for the next research brain run (research-142) to deliver on REQ-018 \u2014 the wallet_convergence m5-activity floor proposal. Today's finding of a second wallet_convergence trade matching the dead-book pattern (ASTEROID) does not authorize the brain to ship without research's calibration work.",
-      "If research-142 returns with a complete proposal next run (run-287), ship the wallet_convergence floor. If research-142 also delivers anything actionable on the prelaunch curve-velocity hypothesis or any other front, prioritize the highest-EV proposal first.",
-      "Continue to NOT manufacture activity in null-delta windows. The bot's performance is improved by correctly-evidenced changes, not by run count."
+      "Watch for the next bot restart - check WC_SKIP entries appearing in sol_events.json as confirmation the new wallet-convergence gate is firing.",
+      "Track wallet-convergence trade outcomes after the gate activates - target N=10 trades to evaluate against kill criteria (WR>=40%, RR>=0.60, pnl>=-0.003 SOL).",
+      "Plan the next code ship: the new dex_boost_tier_cross strategy (Phase-1 logger only, ~80-120 lines). Estimated 1 focused brain run.",
+      "Wait for research-143 to backtest the bundle-detected skip rule against the full 1004-trade history before deciding on that filter.",
+      "Monitor for a chance to ship the universal compound dead-book floor (Proposal #2) once the WC-specific gate has 10 fires and validates."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 1004,
-      "total_buys": 1003,
-      "win_rate": 35.4,
+      "win_rate": 0.354,
       "avg_win_pct": 13.17,
       "avg_loss_pct": -16.55,
       "rr_ratio": 0.8,
       "stop_loss_rate_pct": 50.7,
       "bankroll": 1.1345,
-      "pnl_today": 0.0,
-      "pnl_24h": -0.000402,
-      "pnl_7d": -0.007394,
-      "trades_today": 0,
-      "trades_24h": 1,
-      "trades_7d": 5,
-      "sol_price": 84.15,
-      "btc_dom_pct": 58.17,
-      "bot_pid": 3032,
-      "bot_cycle": 47,
-      "dashboard_pid": 9844
+      "pnl_today": -0.000402
     },
     "active_strategies": [
-      "fresh_profile (15T 60% WR R/R 1.17 +0.0029 SOL, PROVEN, regime-gated BULL \u2014 H11 6h-age gate live and firing on BUTTON/Sunny/Never this cycle)",
-      "fresh_boost (22T 40.9% WR R/R 0.80 -0.0259 SOL, TESTING)",
-      "bear_strength (28T 39.3% WR R/R 2.09 +0.0083 SOL, TESTING \u2014 m5_activity+h6 gates SHIPPED run-285, awaiting natural restart for activation)",
-      "consensus_boost (46T 45.7% WR R/R 1.22 -0.0018 SOL, TESTING, CHOP-gated-off)",
-      "wallet_convergence (11T 45.5% WR R/R 0.53 -0.0015 SOL, TESTING \u2014 REQ-018 pending; ASTEROID + TOLYBOT N=2 dead-book corroboration this run)",
-      "chop_momentum_scalp (20T 35% WR R/R 0.93 -0.00255 SOL, TESTING)",
-      "bounce_hunter (28T 50% WR R/R 0.71 -0.0074 SOL, TESTING_BULL, gate closed)",
-      "flash_surge (4T 0% WR -0.01145 SOL, TESTING_BULL, 0.15x protective)",
-      "gecko_breadth_burst (0 buys / 2 LP-blocked SIGNALs, TESTING)",
-      "copy_trade (537T 33.7% WR -0.83 SOL, KILLED run-32 watch-only)"
-    ],
-    "files_written": [
-      "sol_brain_directives.json (version 290 -> 291, current_priority + priority_reasoning rewritten, bear_strength notes_run286 added, wallet_convergence notes_run286 + run_286_dead_book_corroboration_ASTEROID added, 3 new condensed_lessons, stale May-11 run-286 track_record entries overwritten with real 2026-05-18 values)",
-      "sol_brain_status.json (running=true at entry, running=false at exit)",
-      "sol_survival_report.json (this file)",
-      "sol_survival_history.json (appended run-286 entry)"
+      "fresh_profile (PROVEN, 0.9x, regime-gated BULL+H11)",
+      "fresh_boost (TESTING, sizing tbd, R/R 0.80 lifetime)",
+      "bear_strength (TESTING, 0.35x BULL/0.15x CHOP, gates run-285 pending activation)",
+      "consensus_boost (TESTING, 0.50x CHOP-GATED-OFF/0.70x BULL, CB_BULL_UPSIZE live)",
+      "flash_surge (TESTING_BULL, 0.15x, dormant in CHOP)",
+      "bounce_hunter (TESTING_BULL, dormant in CHOP)",
+      "anchor_derivative_snipe (TESTING, 0.15x, 0T)",
+      "chop_momentum_scalp (TESTING, 0.15x, h6+age filters live)",
+      "wallet_convergence (TESTING, 0.15x, NEW dead-book floor shipped run-287 pre-activation)",
+      "gecko_breadth_burst (TESTING, 0.15x, 0T)",
+      "letsbonk_graduation_snipe (Phase-1 listener live since run-282)"
     ]
   },
   "wallet_scan": {
@@ -198,11 +184,11 @@
     "result": "Saved 20 wallets in 39m 33s",
     "completed": "2026-05-16T01:42:38.275415"
   },
-  "brain_next_sec": 21012.921187,
+  "brain_next_sec": 20709.573465,
   "brain_next_str": "12:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 562.078813,
-  "brain_last_run_str": "12:10 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "6:14 PM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "",
@@ -378,7 +364,7 @@
     "summary": "Serviced REQ-018 (WC m5-floor: gt_buyers_m5<=7 AND h24>=100% blocks 4 of 6 WC losses; cross-checked vs GAYTES \u2014 does not block it). Plus universal compound floor proposal (m5_dex<20 AND m5_gt<=15 AND h24>=100%). Bonus: bundle_detected universal SKIP rule (WR 20 vs 50, N=16). Novel hypothesis: dex_boost_tier_cross_on_graduated_pumpfun \u2014 bot polls dex_boosts every 5min (5000 snaps in 7.5h) but never uses the data; only 10/80 mints cross boostAmount>=100 (top 12.5% rarity), 51% of boosted mints are post-pumpfun-graduate."
   },
   "maintenance_status": {
-    "hours_since_last_trade": 15.12,
+    "hours_since_last_trade": 15.2,
     "dormancy_alert": false,
     "file_age_min": null,
     "watchdog_stale": false,
@@ -1809,7 +1795,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 59,
-    "age_min": 22.2,
+    "age_min": 27.2,
     "stale": false,
     "available": true
   },
@@ -1862,199 +1848,17 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "run-285 said 'wait for research-142 on REQ-018' \u2014 research-142 has not yet fired. REQ-018 still status=pending. Brain holding discipline: NO unilateral WC ship despite N=2 ASTEROID+TOLYBOT corroboration found this run.",
+      "evidence_text": "run-286 priority 'NULL-DELTA observation run, wait for research-142': research-142 fired at 12:53:33 EDT and serviced REQ-018 - resolved.",
       "evidence_source": "followup"
     },
     "tally": {
-      "implemented": 4,
+      "implemented": 5,
       "queued": 0,
       "rejected": 0,
-      "total": 4
+      "total": 5
     }
   },
   "events": [
-    {
-      "ts": "2026-05-18T17:35:39.747304",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold 2oUY5khj \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:35:44.261550",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip NVDA: downtrend h1=-24.9% h24=-24.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:35:44.783651",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip NVDA: downtrend h1=-24.9% h24=-24.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:35:45.276935",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip NVDA: downtrend h1=-24.9% h24=-24.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:35:56.429453",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip NASDANQ: h6=18.9% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:35:56.879206",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip NASDANQ: h6=18.9% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:35:57.353845",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip NASDANQ: h6=18.9% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:35:57.353845",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G3gZWqrY sold 8ttVFgJC \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:36:53.004117",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Post-Irony: m5=50.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:36:55.548234",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip NVDA: h1=6.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:36:55.997523",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip NVDA: h1=6.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:36:55.997523",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ECa6q9uC sold DMPAXchH \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:36:58.085581",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip NASDANQ: m5=18.2% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:38:08.412104",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold 55NRapWG \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:38:10.648721",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip MIFFY: m5=96.1% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:38:10.664835",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold 12gAVNtE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:38:10.680578",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold 12gAVNtE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:38:12.803290",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip miffy: h1=7.6% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:39:17.689700",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip NASDANQ: m5=24.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:39:18.163076",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip NASDANQ: m5=24.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:40:23.716625",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Travolta: m5=24.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:40:24.197909",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Travolta: m5=24.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:40:37.374955",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4yo9CUuT sold 9GyhVpeF \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:40:37.852968",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Travolta: m5=24.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:41:24.770220",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BtMBMPko sold J2CtWaeX \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T17:41:27.208866",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Dei: m5=-21.9% (active sell-off at execution, run79)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-18T17:41:27.276639",
       "type": "SIGNAL",
@@ -2572,12 +2376,194 @@
       "color": "#d29922",
       "msg": "Skip ts: deep24h h24=-70.9% (absolute floor)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:14:37.893311",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: FsG3BaPm sold 5kqJQ1n9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:14:40.156822",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip NASDANQ: downtrend h1=-79.1% h24=-79.1%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:14:40.751452",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip NASDANQ: downtrend h1=-29.3% h24=-29.3%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:15:47.038629",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Hw5UKBU5 sold 9GyhVpeF \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:15:49.266870",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Travolta: m5=-64.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:15:49.724999",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Travolta: m5=-64.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:16:50.354706",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold G6gBx5vv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:16:52.531928",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Lenny : m5=421.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:16:52.531928",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold Arpfuvfk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:16:52.547871",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold Arpfuvfk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:03.602675",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4DdrfiDH sold A5KjKrU6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:05.964969",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Jackie: h6=133.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:26.831627",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4NtyFqqR sold AqRzBHuk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:28.859182",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip zazu: m5=70.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:37.490229",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Lenny : m5=345.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:37.971616",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Lenny : m5=345.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:38.428794",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Lenny : m5=345.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:17:48.547734",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip operator: m5=28.2% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:11.048551",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HYSq1KBA sold 2cRudbcb \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:13.380736",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip STX: downtrend h1=-68.5% h24=-68.5%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:13.394249",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HYSq1KBA sold 55NRapWG \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:13.394249",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HYSq1KBA sold 55NRapWG \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:15.429518",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip MIFFY: m5=9.7% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:25.998877",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 831yhv67 sold Hx6cATQN \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:49.988242",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7ABz8qEF sold GpvQJDa7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T18:18:49.999733",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7ABz8qEF sold 2cRudbcb \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "18:13:47",
+  "ts": "18:18:50",
   "__publish_meta": {
-    "published_at": "2026-05-18 18:13:47 EDT",
+    "published_at": "2026-05-18 18:18:50 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
