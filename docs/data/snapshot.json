@@ -1,15 +1,15 @@
 {
-  "sol_price": 85.18383720268471,
+  "sol_price": 85.0564980173993,
   "bot_status": "RUNNING",
   "bot_last_seen": "00:27:48",
   "bot_cycles": 21,
   "bankroll": 1.1377,
-  "bankroll_usd": 96.91365158549439,
+  "bankroll_usd": 96.76877779439519,
   "budget": 0.16314797369999998,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.7,
+  "hour": 0.8,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -273,7 +273,7 @@
     "result": "Saved 20 wallets in 39m 33s",
     "completed": "2026-05-16T01:42:38.275415"
   },
-  "brain_next_sec": 19053.729734,
+  "brain_next_sec": 18750.28401,
   "brain_next_str": "6:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
@@ -282,17 +282,158 @@
   "research_running": true,
   "research_last_run_str": "",
   "research_next_str": "12:30 PM EST",
-  "research_next_sec": 42213.729734,
-  "research_elapsed_sec": 318.270266,
+  "research_next_sec": 41910.28401,
+  "research_elapsed_sec": 621.71599,
   "research_disabled": false,
-  "research_findings": {},
+  "research_findings": {
+    "timestamp": "2026-05-18 00:55:30 EDT",
+    "run_id": "research-141",
+    "version": 1,
+    "regime_at_run": "CHOP + ALTCOIN_WINTER (BTC.D 58.22%)",
+    "headline": "ANDV-killer is a DEAD-BOOK signal, not a rug signal: m5_volume=$552 / 4 tx vs GAYTES $1,612 / 129 tx \u2014 propose hard floor `m5_buys+m5_sells >= 20` on bear_strength entries; plus one novel pump.fun prelaunch-curve velocity-diversity edge that the existing graduation listener is watching the wrong event for.",
+    "new_hypothesis": {
+      "name": "prelaunch_curve_velocity_diversity_snipe",
+      "mechanism": "In the first 60-180 seconds after a pump.fun token launches, the ratio of (unique buyer wallets) / (curve SOL filled) predicts graduation odds 5-15x better than raw buy volume. Distributed curves with rapid wallet-count growth trigger the cascade that pushes the curve to the 85-SOL graduation threshold; concentrated dev-bundle curves get filtered out by aggregator/graduation watchers and die before graduation.",
+      "persistence": "Most snipers compete on raw latency to buy EVERY launch and lose money on the 99% that die \u2014 wallet-diversity filtering trades latency for selection. Measuring wallet-diversity requires holder-graph reconstruction on the curve PDA, which is not in any standard DexScreener/Birdeye feed and is not what off-the-shelf snipers compute.",
+      "entry_rules": "Subscribe to pump.fun curve account transactions (we already have a WSS listener via pumpfun_graduation_snipe_v2 Phase 1 logger). Within first 180s of token creation, every 15s compute: (a) unique_buyers (distinct signers excluding creator + known bundler funder), (b) curve_sol_filled, (c) largest_single_buyer_pct. FIRE entry between t=60s and t=180s when ALL hold: unique_buyers >= 25 AND curve_sol_filled in [8,30] SOL AND largest_single_buyer_pct <= 4.0% AND unique_buyers/curve_sol_filled >= 2.5 AND creator wallet has not sold. Size 0.05 SOL test; hard stop -35%; scale-out 50% at +60%; trail remainder to graduation event.",
+      "data_required": "Solana WSS curve account subscriptions (already streaming via Helius/QuickNode through pumpfun_graduation_snipe_v2 listener). Bitquery Pump.fun API as free fallback. Zero new paid feeds.",
+      "estimated_fires_per_day": 6,
+      "priority": "HIGH",
+      "evidence": "1) arXiv 2602.14860 names liquidity-velocity the single most informative graduation predictor. 2) VoluTools 'Pump.fun Graduation Gap' study: the ~0.7-1% that hit $69K showed distinct first-3-minute distribution patterns. 3) Live evidence from GeckoTerminal /solana/pools fetched 2026-05-18 ~00:50 EDT: mint GAitmexbTrGKytUPJrSGFFCG9J963pNyUbPTaeWSeT5w ('memecoins') went from launch to $3.7M 24h vol in ~11h, peaked +232% then -18.6% \u2014 the exact lifecycle this edge would catch in the t=60-180s window before the +232% leg. 4) Subagent verified the existing pumpfun_graduation_snipe_v2 logger is on the WRONG event (graduation is too late \u2014 graduation pop is already partially priced in by the curve buyers); the alpha is in the t=60-180s curve window."
+    },
+    "watchlist": [
+      {
+        "mint": "GAitmexbTrGKytUPJrSGFFCG9J963pNyUbPTaeWSeT5w",
+        "symbol": "memecoins",
+        "reason": "11h old, $88K mcap, $3.7M 24h vol, peaked +232% then -18.6% \u2014 textbook prelaunch-velocity case for new hypothesis; watch for echo pumps and as a calibration target for backtest",
+        "expires_at": "2026-05-19T00:55:00-04:00"
+      },
+      {
+        "mint": "Dt1carJXP7PZwHmABAYPvpgw1NkM76vZwHjBBjdPkPQC",
+        "symbol": "Ebola",
+        "reason": "2-day reset candidate, $472K mcap, $1.5M vol still trading \u2014 bounce_hunter overlap if h1 turns positive",
+        "expires_at": "2026-05-20T00:55:00-04:00"
+      },
+      {
+        "mint": "5nBm4wVTrnmpScMdVJ5anAwkAqMqG4NueBXMgRnwtarS",
+        "symbol": "HERMES",
+        "reason": "8 days old, $583K mcap, stabilizing on $1M vol \u2014 anchor_derivative_snipe candidate if a HERMES-derivative spins up",
+        "expires_at": "2026-05-22T00:55:00-04:00"
+      },
+      {
+        "mint": "2DVbU5h8JCd37gaXAJUZ4t77HsjJW22LLduTZk7GSa43",
+        "symbol": "MANIFEST",
+        "reason": "1-day post-graduation, $6.6M mcap, $1.4M vol, was +25% now -6.3% \u2014 exit-logic calibration target for the new strategy's trail-out",
+        "expires_at": "2026-05-19T00:55:00-04:00"
+      },
+      {
+        "mint": "jvKtLFLnNGPM7edS9KEpYqPxuY8HPGTZohLFM4Spump",
+        "symbol": "ANDV",
+        "reason": "Post-mortem: pair still live at liq $69k / $80k vol. NOT a rug. Watch as a control case for the m5-activity filter \u2014 if it rejoins activity, the dead-book hypothesis is falsified.",
+        "expires_at": "2026-05-25T00:00:00-04:00"
+      }
+    ],
+    "proposals_for_survival_brain": [
+      {
+        "type": "new_filter",
+        "target": "bear_strength",
+        "justification": "ANDV (the -30.6% emergency stop on 2026-05-12 that produced REQ-017) was bought into a DEAD BOOK: m5_volume=$552 with 2 buys + 2 sells. GAYTES (the +10.7% win two days earlier) had m5_volume=$1,612 with 90 buys + 39 sells \u2014 a ~45x activity gap. Frozen-identical exit_velocity snapshots (-5.97% at 4m/8m/12m) prove ANDV's pair was illiquid; slippage cascaded a slow bleed into -30%. NOT a rug (pair still live, liq $69K). The filter is dirt-cheap (fields already logged on every BS candidate). Subagent on-chain check confirmed top-10 holder concentration ACTUALLY FAVORS ANDV (29.8%) over GAYTES (48.6%), so holder-side gates would have blocked GAYTES while passing ANDV \u2014 wrong direction. The right axis is short-term order-flow density.",
+        "confidence": "HIGH",
+        "addresses_request": "REQ-017",
+        "baseline": "bear_strength all_time N=28, WR 39.3%, RR 2.09, PF 1.47, pnl +0.0083 SOL, stop_loss_rate 60.7%, avg_win +21.55%, avg_loss -10.32%. Rolling 7d N=2 (ANDV + WORLDCUP-via-CB, but BS-specific: ANDV alone in 7d): 0W/2L, avg_loss -20.18% \u2014 recent BS losses run ~2x lifetime average size, indicating the dead-book-into-stop pattern.",
+        "expected_effect": "Block ANDV and ANDV-like dead-book entries WITHOUT blocking GAYTES. Expected lifetime BS impact: drop ~3-5 historical losses where m5 was sub-20 tx, lift WR ~39.3% -> ~46%, lift RR ~2.09 -> ~2.4 (smaller avg loss), pnl +0.0083 -> +0.025 SOL on the existing 28T sample. Forward: expect to skip 1 in 4 candidate BS fires; surviving fires should show avg_loss tighter than -8%.",
+        "kill_criteria": "Rolling-10-BS-fires after filter live: if WR < 0.30 OR R/R < 1.20 OR pnl_sol < -0.005, revert. Also revert immediately if filter blocks > 60% of candidates over 30 days (too tight).",
+        "min_sample_size": "N=10 BS fires post-filter (regime-agnostic \u2014 BS is a low-N strategy; cannot wait for N=20 in CHOP).",
+        "regime_scope": "ANY",
+        "rollback_plan": "Remove the m5_activity_floor gate from bear_strength entry block; the field stays logged regardless so it can be re-enabled with a different threshold.",
+        "risk_if_wrong": "Worst case: filter blocks a future big-pop BS winner because m5 happened to be quiet pre-entry. Probability low \u2014 the lifetime BS WR is built on tokens with active books (GAYTES-shaped). Downside ~1 missed +20% win per 10 candidates \u2248 -0.0005 SOL/10 fires, vs. saving -0.0035 SOL per ANDV-shaped loss avoided."
+      },
+      {
+        "type": "audit",
+        "target": "bear_strength",
+        "justification": "ANDV's logged price_change_6h was -4.39% (NEGATIVE) at buy time, yet the documented bear_strength entry spec requires h6 > 0. Either the rule is missing from the code, was relaxed, or has a bug. The filter spec says 'h24>+278%, h1>+5%, h6>0' \u2014 ANDV had h6=-4.39%. GAYTES had h6=+7.32% (correct positive). Independent of the m5-activity proposal, this is a possible production bug worth checking: an h6>0 enforcement would have blocked ANDV regardless of the dead-book filter.",
+        "confidence": "MEDIUM",
+        "addresses_request": "REQ-017",
+        "baseline": "n/a \u2014 code audit, not a metric change. Inspect degen_bot.py bear_strength entry gate; grep for 'h6' or 'price_change_6h' in the strategy block.",
+        "expected_effect": "If h6>0 is missing or bypassed, restoring it provides a redundant second blocker for ANDV-shaped entries (defense in depth with the m5-activity floor). If h6>0 IS already enforced and ANDV slipped through anyway, that's a data-source-staleness bug to log.",
+        "kill_criteria": "n/a \u2014 audit only.",
+        "min_sample_size": "n/a \u2014 one code-read.",
+        "regime_scope": "ANY",
+        "rollback_plan": "n/a \u2014 audit.",
+        "risk_if_wrong": "Zero risk; this is a read-only inspection. Worst case the audit finds the rule already enforced and we learn nothing new."
+      },
+      {
+        "type": "data_source_add",
+        "target": "pumpfun_graduation_snipe_v2",
+        "justification": "The existing Phase 1 WSS listener subscribes to {method: subscribeMigration} \u2014 which fires on graduation, the LATE event. The actionable edge is at t=60-180s after curve creation, well before graduation. Repurpose the listener to also stream curve-account transactions for newly-created mints, with a 180-second lookback per mint. The data plumbing is largely reusable; the schema add is unique_buyers + curve_sol_filled + largest_single_buyer_pct cached per mint.",
+        "confidence": "MEDIUM",
+        "addresses_request": null,
+        "baseline": "pumpfun_graduation_snipe_v2 status PHASE_1_LOG_ONLY_LIVE run-263; currently capturing graduation events only (mint, pool, signature, ts). No prelaunch features logged.",
+        "expected_effect": "Phase 1 extension delivers the data substrate for the new_hypothesis. Once 7 days of t=60-180s curve features are logged across ~1000-2000 launches, the survival brain has a backtest input it currently lacks.",
+        "kill_criteria": "If 7 days of logging produces zero curves matching all 5 entry-rule criteria, the gate is too tight \u2014 relax to unique_buyers >= 18 AND ratio >= 2.0 and re-log 7 days. Kill the data add if WSS uptime < 90% (infra unreliable).",
+        "min_sample_size": "7 days of curve logs; aim for >= 50 candidate curves matching the full gate.",
+        "regime_scope": "ANY",
+        "rollback_plan": "Disable the curve-account subscription; the graduation listener continues unchanged.",
+        "risk_if_wrong": "Phase 1 LOG-ONLY: no money at risk. Worst case is some RPC quota burn and a dead branch in the codebase to remove."
+      }
+    ],
+    "request_responses": [
+      {
+        "request_id": "REQ-016",
+        "status_set_to": "completed",
+        "finding": "(1) Research brain did NOT fire during the silence window. No `sol_research_findings.json`, no `sol_research_history.json`, no `sol_research_*.tmp*` anywhere on disk in the 2026-05-13 \u2192 2026-05-17 range. The only research-related tmp is the ancient `sol_research_status.json.tmp2` (started_at 2026-04-25 07:40:05, run-020) \u2014 an orphan, not silence-window evidence. (2) Bot was MECHANICALLY ALIVE throughout the silence \u2014 `sol_target_wallets.json` mtime 2026-05-16 01:42:38 is the bot's own scheduled Alchemy 4-day wallet refresh, proving the long-running process kept ticking through mid-silence. Trade-log mtime froze at 2026-05-13 23:35:14 (WORLDCUP cb stop-loss). From 2026-05-13 23:35 \u2192 2026-05-17 14:43, the bot scanned continuously but ZERO candidates passed all gates (continuous CHOP + ALTCOIN_WINTER, all break-even strategies suppressed). Then at 2026-05-17 14:43:26 the bot was RESTARTED (bot.log.prev rotation at 14:43:31, bot.err.log.prev at 14:43:04, new PID started cycle 1 with 5000 seen-sigs restore). No crash trace in bot.log.prev tail \u2014 clean restart. The natural restart at 14:43 is what activated H11 (pair_age >= 6h gate) for the first time in production. (3) H11 fires that run-283 cited (HAVEN, BIPOLAR at ~20:55-21:00 EDT 2026-05-17) have already rolled out of the 100-entry sol_events.json ring buffer. The current 39-min ring (2026-05-18 00:07-00:46 EDT) contains zero fresh_profile/fresh_boost SIGNALs and zero '1-6h death zone' / pair_age skip events \u2014 meaning no fresh_profile/fresh_boost SIGNAL has fired since 21:00 5-17 last night. H11 is therefore observed BLOCKING in production (the originally-cited 20:55-21:00 fires), but no SIGNALs are currently passing through it to test downstream filters. (4) NONE of REQ-016's queued items were silently shipped. All seven are still in pending_hypotheses with un-advanced status strings: letsbonk_graduation_snipe=PHASE_1_LIVE_RUN_282/HIGH, pumpfun_graduation_snipe_v2=PHASE_1_LOG_ONLY_LIVE run-263/HIGH, hold_duration_u_shape_calibration=DEFERRED_TO_PHASE_1_LOGGER/HIGH, liquidity_on_arrival_filter=QUEUED defer to run-267/MEDIUM, cu_price_homogeneity_filter=APPROVED_FOR_PHASE_1_NEXT_BRAIN_RUN/MEDIUM, fast_stop_pump_trap_filter=PHASE1_LOGGING_LIVE run-262/HIGH, pumpfun_curve_progress_entry_band=LOGGING_LIVE run-248/HIGH. All survived the directives wipe via the run-258 May-11 backup restore.",
+        "evidence": "File mtimes (verbatim): sol_trade_log.json=2026-05-13 23:35:14; sol_brain_directives.json.bak.2026-05-17=2026-05-17 20:59:47; sol_brain_directives.json.bak.2026-05-11=2026-05-11 18:06:50; sol_target_wallets.json=2026-05-16 01:42:38; sol_wallet_scan.json=2026-05-16 01:42:38; bot.err.log.prev=2026-05-17 14:43:04; bot.log.prev=2026-05-17 14:43:31; bot.log=2026-05-18 00:27:48; sol_heartbeat.json=2026-05-18 00:27:48 (cycle 21, PID 3032). sol_survival_history.json contains run-282 (2026-05-14 12:10) and run-283 (2026-05-17 21:02) but no entries between \u2014 confirming 13 missed daily fires. bot.log.prev is a 47-line truncated startup snapshot from 2026-05-17 14:43:26 cycle (Bankroll 1.0877 SOL, 7d 5T 1W/4L, no buy/sell line, no traceback). Hypothesis statuses verified by Read of sol_brain_directives.json (version 289, 57 pending_hypotheses)."
+      },
+      {
+        "request_id": "REQ-017",
+        "status_set_to": "completed",
+        "finding": "ANDV vs GAYTES side-by-side from sol_trade_log.json entry records: ANDV (jvKtLFLnNGPM7edS9KEpYqPxuY8HPGTZohLFM4Spump) bought 2026-05-12 22:23:30 EDT at price 0.0006466, sold 2026-05-12 23:12:29 at 0.0004490, pnl -30.56% / -0.003521 SOL, hold 0.82h. Entry features: h24=+685%, h1=+7.09%, h6=-4.39% (NEGATIVE \u2014 apparent bypass of h6>0 spec), m5=+1.31%, liq $80,736, vol_24h $888,335, vol_liq=11.0, pair_age=159.78h, avg_buy_size_h1=$148, buys_h1/sells_h1=88/124=0.71, gt_buyers_h1/gt_sellers_h1=49/110, gt_bsr_h1=0.45, m5_buys=2/m5_sells=2, m5_volume=$552, bundle_detected=false, holder_top10_excl_lp=30.32%, holder_top1=6.56%, pumpfun_complete=true, pumpfun_creator=231HL8EitRerL87wsCYd8ThdhEWpdG6aGu8R5oWDamiV. GAYTES (HSznAnNhSFgyRWiZh4m7pBmtjHsSLi4Dbmjp18zppump): bought 2026-05-10 19:05:24 at 0.0009972, sold 2026-05-10 20:49:04 at 0.001104, pnl +10.71% / +0.001244 SOL, hold 1.73h, exit reason Time exit (1.7h, +10.7%). Entry features: h24=+278%, h1=+9.99%, h6=+7.32%, m5=-3.89%, liq $108,969, vol_24h $3,000,213, vol_liq=27.5, pair_age=59.04h, avg_buy_size_h1=$33, buys_h1/sells_h1=1281/595=2.15, gt_buyers_h1/gt_sellers_h1=875/257, gt_bsr_h1=3.4, m5_buys=90/m5_sells=39, m5_volume=$1612, bundle_detected=TRUE, holder_top10_excl_lp=23.25%, holder_top1=5.5%, pumpfun_creator=C7nFcRgQJewhdnZYNWVDxp7VCAQcXHBTgorG5pY4mQfd. Subagent on-chain verification (GeckoTerminal /info): ANDV holders 1,361 with top10=29.80%; GAYTES holders 2,393 with top10=48.58% \u2014 counterintuitively, GAYTES has WORSE holder concentration. ANDV pair is still live (liq $69.4k, 24h vol $80.2k, 713 tx). Price-path reconstruction: the -30% was NOT a single-candle dump \u2014 exit_velocity snapshots frozen identical at -5.97% across 4m/8m/12m windows prove the API was returning stale ticks against a thin book; one -11.8% capitulation candle on 6,781 SOL volume at ~23:10 EDT followed. Slow bleed + capitulation, not a rug. Single-axis filter ranking: (1) m5 activity (m5_buys+m5_sells >= 20 OR m5_volume_usd >= $1,000) \u2014 ANDV 4tx/$552 vs GAYTES 129tx/$1612, ~45x gap, mechanism-aligned to slippage cascade; (2) buys_h1/sells_h1 >= 1.0 \u2014 ANDV 0.71 vs GAYTES 2.15; (3) gt_bsr_h1 >= 1.0 \u2014 ANDV 0.45 vs GAYTES 3.40 (correlated with #2); (4) h6>0 \u2014 code audit, may already be specced; (5) vol_liq_ratio >= 20 \u2014 too tight, risks blocking BS wins. Recommended: ship the m5-activity floor (proposal #1 above). Cross-check vs the other 16 historical BS losses is deferred to the survival brain when it applies the filter \u2014 schema is in `proposals_for_survival_brain[0].kill_criteria`.",
+        "evidence": "All entry features above pulled directly from sol_trade_log.json buy records (timestamps 2026-05-12T22:23:30.250984 and 2026-05-10T19:05:24.212787). Subagent fetched live GeckoTerminal data on both pairs 2026-05-18 ~00:48 EDT. Deployer recidivism for 231HL8EitRerL87wsCYd8ThdhEWpdG6aGu8R5oWDamiV could NOT be verified web-only \u2014 Solscan/GMGN/Birdeye all return Cloudflare 403 to WebFetch. Would need authenticated Helius/Shyft API for deployer history; flag for a separate future run if the m5-activity filter does not fully solve the BS regression."
+      }
+    ],
+    "subagents_dispatched": [
+      {
+        "role": "ANDV/GAYTES post-mortem + on-chain verification",
+        "finding": "Conclusively identified m5-activity (m5 transaction count + m5 volume) as the discriminating axis between ANDV and GAYTES. Verified pair is not rugged (still $69k liq). Holder concentration counterintuitively favors ANDV \u2014 drop that hypothesis. Cloudflare-blocked deployer recidivism lookups; needs authenticated API for that angle."
+      },
+      {
+        "role": "Silence-window forensic (REQ-016)",
+        "finding": "Bot ran continuously dormant 2026-05-13 23:35 \u2192 2026-05-17 14:43, then clean restart at 14:43:26. Research brain never wrote during silence. All 7 queued REQ-016 hypotheses intact in restored directives. H11 first activated in production by the natural 5-17 14:43 restart."
+      },
+      {
+        "role": "Novel-edge hunter + narrative scout",
+        "finding": "Surfaced prelaunch_curve_velocity_diversity_snipe as a mechanism-distinct edge \u2014 measure unique_buyers/curve_sol_filled in t=60-180s window on pump.fun curve PDA. Cited arXiv 2602.14860 (liquidity velocity = #1 graduation predictor). Existing pumpfun_graduation_snipe_v2 listener is on the WRONG event \u2014 graduation is too late."
+      }
+    ],
+    "data_sources_used": [
+      "own_trade_log",
+      "sol_strategy_stats.json",
+      "sol_brain_directives.json",
+      "sol_survival_history.json",
+      "sol_events.json",
+      "bot.log/bot.log.prev",
+      "geckoterminal.com/solana/pools",
+      "geckoterminal.com/solana/pools/jHmCrrLMPtE1qvYpwe1yjtjzM2k44EorPDUcJ6j8pWC",
+      "dexscreener.com (403)",
+      "WebSearch (Solana pump.fun graduation snipe edge, wallet leaderboards, bonding-curve velocity predictors)"
+    ],
+    "next_run_focus": "(1) After the survival brain ships the m5-activity floor, verify on the next BS fire that the dead-book pattern is gone (target: exit_velocity snapshots no longer freeze identical, hold-to-stop drop is < -15% if it stops at all). (2) Authenticated Helius/Shyft deployer-reputation lookup for ANDV creator 231HL8EitRerL87wsCYd8ThdhEWpdG6aGu8R5oWDamiV vs GAYTES creator C7nFcRgQJewhdnZYNWVDxp7VCAQcXHBTgorG5pY4mQfd \u2014 Cloudflare blocks web-only. (3) Once pumpfun_graduation_snipe_v2 listener is extended to curve-transaction streaming, do a 7-day backtest of prelaunch_curve_velocity_diversity_snipe entry rules against the logged data. (4) The bot has been TRADE-DORMANT 4.2 days under CHOP+WINTER \u2014 if next research run (research-142) still shows zero trades, propose a CHOP-specific gate-relaxation experiment on the lowest-RR active strategy.",
+    "meta": {
+      "elapsed_min": 16,
+      "subagent_count": 3,
+      "web_calls": 9,
+      "new_tokens_scouted": 5,
+      "trade_log_entries_examined": 2026,
+      "andv_vs_gaytes_features_compared": 23
+    }
+  },
   "research_status": {
     "running": true,
     "started_at": "2026-05-18 00:41:08 EDT",
     "run_id": "research-141"
   },
   "maintenance_status": {
-    "hours_since_last_trade": 98.04,
+    "hours_since_last_trade": 98.12,
     "dormancy_alert": true,
     "file_age_min": null,
     "watchdog_stale": false,
@@ -1718,7 +1859,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 21,
-    "age_min": 18.6,
+    "age_min": 23.7,
     "stale": false,
     "available": true
   },
@@ -1766,11 +1907,11 @@
   ],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "",
-      "run_id": "",
-      "status": "no_hypothesis",
-      "status_label": "No hypothesis this run",
-      "status_color": "#666",
+      "hypothesis_name": "prelaunch_curve_velocity_diversity_snipe",
+      "run_id": "research-141",
+      "status": "pending_brain_run",
+      "status_label": "\u23f3 Pending next brain run",
+      "status_color": "#7cd3ff",
       "evidence_text": "",
       "evidence_source": ""
     },
@@ -1782,118 +1923,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-18T00:09:16.550861",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:09:28.840125",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BAr5csYt sold 7RebqMKL \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:09:31.320424",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip THING: h1=6.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:08.976279",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J9TYAsWW sold J5nExHQB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:08.991949",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J9TYAsWW sold H7Ye3xmd \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:09.010988",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J9TYAsWW sold J5nExHQB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:09.025254",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J9TYAsWW sold J5nExHQB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:09.039025",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J9TYAsWW sold J5nExHQB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:18.703451",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold 9qdPNVJB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:18.703451",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BCagckXe sold 9qdPNVJB \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:19.374167",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip meaningless: m5=36.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:10:19.866608",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip meaningless: m5=36.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:11:26.985882",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip BOLTZMANN: m5=103.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:11:26.985882",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7pDhG6Nq sold 3ATwwkTD \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:12:58.096418",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip BOLTZMANN: m5=22.7% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T00:12:58.096418",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B79fMkc sold 6QMXkGuZ \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-18T00:12:58.589530",
       "type": "BUY_SKIP",
@@ -2481,12 +2510,124 @@
       "color": "#d29922",
       "msg": "Skip Guanocoin: downtrend h1=-16.5% h24=-16.5%",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:47:56.269935",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold 9LGbwFe9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:47:56.293103",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold 9LGbwFe9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:47:58.508996",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Nauru-kun: m5=18.8% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:47:58.508996",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold Gam3BeuH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:48:00.869457",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip BASE: m5=-10.7% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:48:37.514045",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JDd3hy3g sold 3QfMKsh9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:48:38.081201",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip CARL: m5=32.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:48:38.581225",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip CARL: m5=32.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:48:39.050138",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip CARL: m5=32.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:48:39.563396",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip CARL: m5=32.4% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:49:03.445924",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3BLjRcxW sold 3QfMKsh9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:49:03.468275",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3BLjRcxW sold 3QfMKsh9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:49:03.475275",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3BLjRcxW sold 3QfMKsh9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:49:03.490958",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3BLjRcxW sold 3QfMKsh9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:49:03.490958",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3BLjRcxW sold 3QfMKsh9 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-18T00:49:28.883407",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip BELLY: m5=-40.0% (active sell-off at execution, run79)",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "00:46:26",
+  "ts": "00:51:29",
   "__publish_meta": {
-    "published_at": "2026-05-18 00:46:26 EDT",
+    "published_at": "2026-05-18 00:51:29 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
