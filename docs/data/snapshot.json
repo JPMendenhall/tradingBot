@@ -1,15 +1,15 @@
 {
-  "sol_price": 85.12636836227075,
+  "sol_price": 85.17022550380952,
   "bot_status": "RUNNING",
   "bot_last_seen": "00:06:21",
   "bot_cycles": 71,
   "bankroll": 1.1345,
-  "bankroll_usd": 96.57586490699617,
+  "bankroll_usd": 96.62562083407191,
   "budget": 0.1626697482,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 0.0,
+  "hour": 0.1,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,82 +113,87 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-18 18:14:41 EDT",
+    "timestamp": "2026-05-19 00:04:13 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "#1 problem unchanged: 7d cross-strategy aggregate is N=3 0%WR (-0.005644 SOL avg_loss -16.43% SL rate 100%) - consensus_boost stop + bear_strength ANDV + wallet_convergence TOLYBOT. All three were pre-fix entries. The three remediating gates (BS m5_activity>=20, BS h6>=0, WC dead-book) are SHIPPED in source but NOT YET ACTIVE (PID 3032 still alive from at least run-285). Until natural restart, we are running on the same code that produced the losses. CHOP+ALTCOIN_WINTER dormancy is correct behavior, not malfunction - it limits the bleed while the gates wait to activate.",
-    "exit_analysis": "Rolling 24h: 1 trade, 100% stop_loss, avg_loss -8.21%, R/R 0.0. Rolling 7d: 3 trades, 100% stop_loss, avg_loss -16.43%, R/R 0.0. Lifetime (N=1004): WR 35.4%, avg_win +13.17%, avg_loss -16.55%, R/R 0.80, stop_loss_rate 50.7%. Exit-side improvement plan unchanged from run-286: WC dead-book floor (shipped this run) should reduce the kind of dead-book stops that produced TOLYBOT/ASTEROID; BS gates (run-285, pre-activation) should reduce ANDV-class catastrophic emergency stops.",
-    "strategy_work": "SHIPPED research-142 Proposal #1: wallet_convergence dead-book floor. Code added at degen_bot.py _get_wallet_convergence_signals after liq + h6 gates: if h24>=100% then call _fetch_gt_pressure(pair_address) and skip if gt_buyers_m5<=7. Constants: WC_DEAD_BOOK_H24_THRESHOLD=100.0, WC_MIN_GT_BUYERS_M5_AT_HIGH_H24=7. Compile-check PASSED. Fail-open design. Retro-backtest blocks 4 of 6 WC losses (Goblin/soothsayer/ASTEROID/TOLYBOT) while sacrificing only TIMETRUMP +1.2% from the winners side. Predicted lift on the 11-trade lifetime sample: WR 45.5%->66.7%, RR 0.53->0.85, avg_loss -9.26%->-6.82%. Min sample for kill/promote decision: N=10 WC fires post-filter. Deferred Proposals 2/3/4 from research-142 per recommended ship order and added each as a new pending_hypothesis with explicit unblock criteria.",
-    "directives_changes": "Version 291 -> 292. Updated current_priority and priority_reasoning to describe the run-287 ship and the rationale for not also shipping Proposals 2/3/4. Moved REQ-018 from active requests to archive (status=completed, archived_run=run-287, outcome_note added). Active requests array is now EMPTY. Updated wallet_convergence_m5_floor_validation hypothesis status to SHIPPED_RUN_287_AWAITS_NATURAL_RESTART with kill criteria + rollback + min sample size recorded. Appended 3 new pending_hypotheses (wc_universal_compound_dead_book_floor, bundle_detected_universal_skip, dex_boost_tier_cross_on_graduated_pumpfun). Added notes_run287 to wallet_convergence + bear_strength. Added 3 condensed_lessons entries. Updated track_record + market_adaptation.regime_note_run287.",
+    "system_diagnosis": "Run-288 is fully null-delta: zero new trades since TOLYBOT closed at 04:00 EDT 2026-05-18 (20.5h ago), zero new research findings since research-142 (12:53 EDT 2026-05-18), zero bot restarts since at least run-285. Same-PID streak now four runs deep (285/286/287/288 all on PID 3032). The #1 problem is unchanged: the three remediating gates (BS m5_activity>=20 + BS h6>=0 from run-285, plus the WC dead-book floor from run-287) are SHIPPED in degen_bot.py source but NOT YET ACTIVE because the bot has not been restarted by watchdog or maintenance since the ships landed. Until the natural restart fires, the bot continues running the same code that produced the 7d loss cohort. CHOP+ALTCOIN_WINTER dormancy is correct behavior, not malfunction - it limits the bleed while the gates wait to activate.",
+    "exit_analysis": "Rolling 24h: 1 trade, 100% stop_loss, avg_loss -8.21%, R/R 0.0 (TOLYBOT WC). Rolling 7d: 3 trades, 100% stop_loss, avg_loss -16.43%, R/R 0.0 (TOLYBOT WC + WORLDCUP CB + ANDV BS - all pre-fix entries). Lifetime (N=1004): WR 35.4%, avg_win +13.17%, avg_loss -16.55%, R/R 0.80, stop_loss_rate 50.7%, profit_factor 0.43, pnl_sol -1.172651. Exit-mix lifetime: stop_loss 42.6%, time_exit 22.4%, target 14.5%, other 12.4%, trailing 8.1%. No exit-side change this run - all three gates remain queued for natural restart activation.",
+    "strategy_work": "Run-288 produced NO code ship. Strategy work this run was strictly the decision to RESIST the temptation to ship dex_boost_tier_cross_on_graduated_pumpfun Phase-1 LOG-ONLY (~80-120 LOC, fully specced by research-142 with novel-edge evidence: 5000 boost snaps in 7.5h, only 10/80 mints hit boostAmount>=100 = top 12.5% rarity, 51% of boosted mints are post-pumpfun graduates, two live cases pinned in research-142 watchlist). The discipline call: three unactivated code blocks stacking pre-restart compounds activation risk - run-285 BS gates and run-287 WC floor already sit in source waiting, and adding a third logger means a single regression in any of them takes down all three at once when the natural restart finally fires. Strictly safer to ship dex_boost_tier_cross AFTER the next natural restart activates BS + WC gates and they produce 1-3 fires of validation data confirming the gates work. The wallet_convergence_m5_floor_validation hypothesis stays at SHIPPED_RUN_287_AWAITS_NATURAL_RESTART (no change). The bear_strength_m5_activity_floor hypothesis stays at SHIPPED_RUN_285_AWAITS_NATURAL_RESTART (no change). No hypothesis advanced.",
+    "directives_changes": "Version bumped 292 -> 293. updated_by run-288. current_priority and priority_reasoning replaced with run-288 null-delta narrative; the run-287 versions are preserved as current_priority_run287_archived and priority_reasoning_run287_archived for trace. Added regime_note_run288 to market_adaptation (SOL $85.02 essentially flat, CHOP unchanged, bot mechanically healthy). Added one condensed_lesson null_delta_resist_stacking_pre_activation_ships_run288 codifying the discipline call. track_record refreshed: total_sells 998 -> 1004, total_buys 989 -> 1003, overall_wr 35.5 -> 35.4, bankroll 1.1556 -> 1.1345, sol_price 93.95 -> 85.02, pnl_7d -0.00324 -> -0.005644, pnl_24h -0.00065 -> -0.000402, plus added sol_h24_note_run288 / bot_pid_run288 / cycle_counter_run288 / cycle_latency_min_run288 / new_trades_since_run287 fields. requests_for_research array remains empty (no change). pending_hypotheses array unchanged - no advancement, no new additions, no deletions. exit_lab unchanged. killed_ideas_permanent unchanged - no additions this run.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true,
-      "compile_check_passed": true,
-      "research_proposal_completeness_gate_applied": true,
-      "killed_ideas_conflict_check": "PASSED - none of the 18 killed_ideas entries conflict with WC dead-book floor, universal compound floor, bundle-detected skip, or dex_boost tier-cross",
-      "fail_open_design_verified": "WC gate skips ONLY when _fetch_gt_pressure returns truthy dict AND gt_buyers_m5<=7. API error / empty dict -> no skip."
+      "json_validates": true,
+      "no_code_ship_so_no_compile_check_needed": true,
+      "resisted_ship_pressure": "dex_boost_tier_cross_on_graduated_pumpfun Phase-1 LOG-ONLY ~80-120 LOC queued but deliberately NOT shipped this run; rationale documented in current_priority and the run-288 condensed_lesson"
     },
     "previous_followups": [
-      "run-286 priority 'NULL-DELTA observation run, wait for research-142': research-142 fired at 12:53:33 EDT and serviced REQ-018 - resolved.",
-      "run-285 BS gates pending natural restart: still pending (PID 3032 unchanged). WC floor shipped this run joins the queue.",
-      "run-284 / wallet_convergence m5-floor validation: research-142 delivered the validation. SHIPPED this run. Hypothesis status moved to SHIPPED_RUN_287_AWAITS_NATURAL_RESTART.",
-      "letsbonk_graduation_snipe Phase-1: still alive at PID 3032; capture rate to be re-audited after natural restart and gate-activation."
+      "Run-287 ship of WC dead-book floor (h24>=100% AND gt_buyers_m5<=7 -> SKIP) STILL in source not active. PID 3032 unchanged. Will activate on next natural restart from watchdog or maintenance.",
+      "Run-285 ship of BS m5_activity>=20 and BS h6>=0 gates STILL in source not active. Same PID 3032 streak. Will activate alongside the WC floor on the next natural restart.",
+      "Lifetime stats unchanged: 1004 sells, WR 35.4%, RR 0.80, pnl_sol -1.173. 7d: N=3 all stop_loss (-0.005644 SOL). 24h: N=1 (TOLYBOT -8.21%). bankroll 1.1345 SOL. Active-strategy dormancy in CHOP+ALTCOIN_WINTER is expected behavior per chop_playbook."
     ],
     "changelog": [
-      "Added a wallet-convergence pre-entry filter: when a token has already pumped 100%+ in 24 hours and almost no one is buying it right now (5-minute buyer count of 7 or fewer on GeckoTerminal), skip the trade. Walking history shows this would have blocked four of the six losing wallet-convergence trades (Goblin, soothsayer, ASTEROID, TOLYBOT) while only sacrificing one tiny +1% win. Expected: turn the strategy from slight loss into solid winner.",
-      "Wrote down three new ideas the research bot delivered but that we deliberately didn't ship today: (a) a wider 'dead-book' filter that applies to every strategy, not just wallet-convergence; (b) skipping any token where pro snipers piled in the same block as our buy; (c) a brand-new strategy that watches when teams pay 100+ dollars to boost their token on DexScreener.",
-      "Moved the research request that started this whole investigation to the archive - it's officially complete.",
-      "Bumped the brain's own version number from 291 to 292 and recorded the run."
+      "Did NOTHING to the bot's trading code this run on purpose. This was a 'nothing has changed since last time, so do not invent work' run.",
+      "Decided to hold off on building a new boost-tier-cross logger (a queued ~100-line research idea about catching pump.fun graduates the moment they get a paid DexScreener boost), because three not-yet-active code changes already sit in the bot waiting for the next restart and stacking a fourth raises the risk that one bug takes them all down at once when the bot does eventually restart.",
+      "Refreshed the brain's notebook with fresh price, balance, trade count, and win-rate numbers. No trades happened in the last day so the headline numbers barely moved.",
+      "Wrote a short lesson into the brain's memory about why it is sometimes right to skip a queued improvement: three pending fixes is already a lot to land in one restart; do not pile on a fourth.",
+      "Confirmed the trading bot is still alive and ticking (PID 3032, on its 70th cycle since its last restart, heartbeat fresh as of 23:37 EDT)."
     ],
     "actions_taken": [
-      "Added a smart wallet-convergence filter that blocks already-pumped tokens with no current buying activity.",
-      "Ran the code-compile safety check on the change (passed).",
-      "Updated the brain's internal notes to mark the request from last week as fully resolved.",
-      "Wrote down three follow-up ideas as pending hypotheses with clear notes on what needs to happen before each one ships.",
-      "Refreshed the daily stats: 1 trade in the last 24 hours (TOLYBOT, -8.2%), 3 trades in the last 7 days (all stops, -0.0056 SOL), bot still healthy on PID 3032.",
-      "Did NOT restart the bot manually - the watchdog will pick up the new gates on the next natural restart."
+      "Read the brain's current to-do list (sol_brain_directives.json) and the most recent research findings to understand what's outstanding.",
+      "Checked the live trade statistics file - no new trades in roughly 20.5 hours; last trade was the TOLYBOT stop-loss on May 18 at 4:00am EDT.",
+      "Compared bot process ID and heartbeat to the previous brain run - same process ID, healthy cycle progression, no restarts.",
+      "Made a deliberate decision NOT to ship the queued boost-tier-cross logger this run, with the reasoning recorded in the brain's notes so a future run will know exactly why.",
+      "Updated the brain's notebook with today's numbers and added a short lesson explaining the no-ship decision."
     ],
     "next_priorities": [
-      "Watch for the next bot restart - check WC_SKIP entries appearing in sol_events.json as confirmation the new wallet-convergence gate is firing.",
-      "Track wallet-convergence trade outcomes after the gate activates - target N=10 trades to evaluate against kill criteria (WR>=40%, RR>=0.60, pnl>=-0.003 SOL).",
-      "Plan the next code ship: the new dex_boost_tier_cross strategy (Phase-1 logger only, ~80-120 lines). Estimated 1 focused brain run.",
-      "Wait for research-143 to backtest the bundle-detected skip rule against the full 1004-trade history before deciding on that filter.",
-      "Monitor for a chance to ship the universal compound dead-book floor (Proposal #2) once the WC-specific gate has 10 fires and validates."
+      "Wait for the natural bot restart (watchdog or maintenance-driven) to activate the three pending source-only changes: BS m5_activity>=20 gate, BS h6>=0 gate, and WC dead-book floor (h24>=100% AND gt_buyers_m5<=7 -> SKIP). Once activated, watch sol_events.json for the new skip-reason tags to confirm the gates fire when candidates appear in the death zones.",
+      "Once the gates ARE active and have produced at least 1-3 fires of validation data each, ship the queued dex_boost_tier_cross_on_graduated_pumpfun Phase-1 LOG-ONLY (~80-120 LOC). The infra (sol_dex_boosts_velocity_log.json + sol_pumpfun_graduation_log.json) is already populated; the ship is purely a consumer wiring job.",
+      "After at least N=10 wallet_convergence fires post-WC-floor-activation, evaluate the kill_criteria (rolling-10 WR<0.40 OR RR<0.60 OR pnl_sol<-0.003 -> revert). If pass, ship research-142 Proposal #2 (universal compound dead-book floor in _process_signal).",
+      "After research-143 fires (if it does) and produces new proposals with the full 7-field completeness packet, evaluate fresh ship candidates. Until then, do not fish for new edges - research-142's next_run_focus queue still owns most of the open investigative work."
     ],
     "current_stage": "SURVIVE",
     "stats": {
       "total_sells": 1004,
-      "win_rate": 0.354,
+      "total_buys": 1003,
+      "win_rate": 35.4,
       "avg_win_pct": 13.17,
       "avg_loss_pct": -16.55,
       "rr_ratio": 0.8,
       "stop_loss_rate_pct": 50.7,
       "bankroll": 1.1345,
-      "pnl_today": -0.000402
+      "pnl_today": -0.000402,
+      "pnl_7d": -0.005644
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, 0.9x, regime-gated BULL+H11)",
-      "fresh_boost (TESTING, sizing tbd, R/R 0.80 lifetime)",
-      "bear_strength (TESTING, 0.35x BULL/0.15x CHOP, gates run-285 pending activation)",
-      "consensus_boost (TESTING, 0.50x CHOP-GATED-OFF/0.70x BULL, CB_BULL_UPSIZE live)",
-      "flash_surge (TESTING_BULL, 0.15x, dormant in CHOP)",
-      "bounce_hunter (TESTING_BULL, dormant in CHOP)",
-      "anchor_derivative_snipe (TESTING, 0.15x, 0T)",
-      "chop_momentum_scalp (TESTING, 0.15x, h6+age filters live)",
-      "wallet_convergence (TESTING, 0.15x, NEW dead-book floor shipped run-287 pre-activation)",
-      "gecko_breadth_burst (TESTING, 0.15x, 0T)",
-      "letsbonk_graduation_snipe (Phase-1 listener live since run-282)"
-    ]
+      "fresh_profile (PROVEN N=15 60%WR R/R 1.17 +0.0029 SOL; BULL-gated + H11 gate live - 0 recent trades)",
+      "fresh_boost (TESTING N=22 40.9%WR R/R 0.80 -0.0259 SOL; high stop-loss rate concerning but not at kill threshold)",
+      "bear_strength (TESTING N=28 39.3%WR R/R 2.09 +0.0083 SOL; m5_activity>=20 + h6>=0 gates shipped run-285, awaiting natural restart)",
+      "consensus_boost (TESTING N=46 45.7%WR R/R 0.99 -0.0018 SOL; CHOP-gated-off, BULL-only at 0.70x)",
+      "flash_surge (TESTING_BULL N=4 0%WR; BULL-only)",
+      "bounce_hunter (TESTING_BULL N=28 50%WR R/R 0.71 -0.0074 SOL; gate CLOSED in CHOP)",
+      "anchor_derivative_snipe (TESTING N=0; 0.15x untested-lifecycle)",
+      "chop_momentum_scalp (TESTING N=20 31.3%WR R/R 0.93 -0.00213 SOL; CMS_MAX_M5_PCT=5.0 + h1 bimodal gates live; 0 post-filter trades)",
+      "wallet_convergence (TESTING N=11 45.5%WR R/R 0.53 -0.001536 SOL; WC dead-book floor shipped run-287, awaiting natural restart)",
+      "gecko_breadth_burst (TESTING N=0 BUYs lifetime; N=2 SIGNALs both LP-blocked at age<=2.1min)"
+    ],
+    "run_id": "run-288",
+    "previous_run_id": "run-287",
+    "null_delta_run": true,
+    "code_ship": false,
+    "operator_todos_filed": 0,
+    "research_requests_filed": 0,
+    "directives_version": 293
   },
   "wallet_scan": {
     "active": false,
     "result": "Saved 20 wallets in 39m 33s",
     "completed": "2026-05-16T01:42:38.275415"
   },
-  "brain_next_sec": 21343.142084,
+  "brain_next_sec": 21039.850162,
   "brain_next_str": "6:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 243.857916,
-  "brain_last_run_str": "6:14 PM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "12:11 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "",
@@ -364,7 +369,7 @@
     "summary": "Serviced REQ-018 (WC m5-floor: gt_buyers_m5<=7 AND h24>=100% blocks 4 of 6 WC losses; cross-checked vs GAYTES \u2014 does not block it). Plus universal compound floor proposal (m5_dex<20 AND m5_gt<=15 AND h24>=100%). Bonus: bundle_detected universal SKIP rule (WR 20 vs 50, N=16). Novel hypothesis: dex_boost_tier_cross_on_graduated_pumpfun \u2014 bot polls dex_boosts every 5min (5000 snaps in 7.5h) but never uses the data; only 10/80 mints cross boostAmount>=100 (top 12.5% rarity), 51% of boosted mints are post-pumpfun-graduate."
   },
   "maintenance_status": {
-    "hours_since_last_trade": 21.03,
+    "hours_since_last_trade": 21.11,
     "dormancy_alert": false,
     "file_age_min": null,
     "watchdog_stale": false,
@@ -1795,7 +1800,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 71,
-    "age_min": 1.9,
+    "age_min": 7.0,
     "stale": false,
     "available": true
   },
@@ -1803,7 +1808,7 @@
     "requests_pending": 0,
     "requests_acknowledged": 0,
     "hypotheses_pending": 62,
-    "lessons_count": 57,
+    "lessons_count": 58,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1848,38 +1853,17 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "run-286 priority 'NULL-DELTA observation run, wait for research-142': research-142 fired at 12:53:33 EDT and serviced REQ-018 - resolved.",
-      "evidence_source": "followup"
+      "evidence_text": "Run-288 is fully null-delta: zero new trades since TOLYBOT closed at 04:00 EDT 2026-05-18 (20.5h ago), zero new research findings since research-142 (12:53 EDT 2026-05-18), zero bot restarts since at least run-285. Same-PID streak now four ",
+      "evidence_source": "diagnosis"
     },
     "tally": {
-      "implemented": 5,
+      "implemented": 6,
       "queued": 0,
       "rejected": 0,
-      "total": 5
+      "total": 6
     }
   },
   "events": [
-    {
-      "ts": "2026-05-18T23:36:27.276546",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip HERMANO: h1=-7.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T23:36:27.814446",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: 4 new profile(s) (15 young, 9 ready)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-18T23:36:28.298110",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "niggercoin: liq=$0 < $3000",
-      "detail": ""
-    },
     {
       "ts": "2026-05-18T23:36:28.756676",
       "type": "FP_SKIP",
@@ -2558,12 +2542,33 @@
       "color": "#d29922",
       "msg": "Sell-conflict skip 9nEes9Hw: tracked wallet sold this token 87s ago",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-19T00:08:34.599236",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip rock: downtrend h1=-32.5% h24=-32.5%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-19T00:09:20.418379",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip escape: m5=262.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-19T00:09:20.436032",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4vw54BmA sold 22diAFMY \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "00:08:16",
+  "ts": "00:13:20",
   "__publish_meta": {
-    "published_at": "2026-05-19 00:08:16 EDT",
+    "published_at": "2026-05-19 00:13:20 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
