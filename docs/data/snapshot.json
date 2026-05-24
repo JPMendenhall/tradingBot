@@ -1,15 +1,15 @@
 {
-  "sol_price": 85.93250651172741,
+  "sol_price": 85.94748892594168,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:50:49",
   "bot_cycles": 219,
   "bankroll": 1.1215,
-  "bankroll_usd": 96.37330605290228,
+  "bankroll_usd": 96.3901088304436,
   "budget": 0.160727901,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 2.3,
+  "hour": 2.4,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,43 +113,43 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-23 04:11:20 EDT",
-    "run_id": "run-293",
+    "timestamp": "2026-05-24 04:04:09 EDT",
+    "run_id": "run-294",
     "market_regime": "CHOP",
-    "system_diagnosis": "Bot is healthy: PID 3716 cycle 171, heartbeat ~20 min old, +49 cycles in 24h vs run-292. Two new bear_strength sells landed since run-292: a flat exit on BALL (-0.27 percent, 30 min) and a stop loss on BANK (-11.12 percent, 30 min). The fresh 24h window is N=2 with both as losses, but losses are tight: -0.0013 SOL combined. Lifetime stats inch from 1007 to 1009 sells, win rate barely changed (35.5 to 35.4 percent), R/R 0.80. The standout finding is that BANK had bundle_detected=true at the buy moment - MEV bundle activity was flagged but bear_strength still entered, and the position then dumped 11 percent in half an hour. That is a single data point, but it lines up with a long-suspected MEV pattern and is worth watching.",
-    "exit_analysis": "Lifetime average win 13.15 percent, average loss -16.51 percent, R/R 0.80, stop-loss rate 50.6 percent. Rolling 7d shows avg_win 10.84 percent, avg_loss -7.95 percent, R/R 1.36 - the recent loss magnitudes are running tighter than the lifetime average, which is consistent with the exit_time_decay improvement (hard-stop rate 41 to 27 percent over the experiment) still doing its job. Both new BS exits hit at 30 minutes - BALL via the flat-exit time policy, BANK via stop loss.",
-    "strategy_work": "No code changes shipped. New candidate hypothesis recorded in directives - bs_bundle_detected_skip - based on BANK's bundle_detected=true at entry plus -11.12 percent stop in 30 minutes. Status set to CANDIDATE_N1_AWAITS_RESEARCH_OR_REPLICATION. Will wait for either the research brain to validate or for two more bear_strength fires with bundle_detected=true to land before shipping a gate. jito_tip_floor Phase 1 remains unshipped (same conservative one-change-at-a-time discipline from runs 291 and 292).",
-    "directives_changes": "Bumped version 297 to 298. Archived run-292 priority. Wrote a new priority describing the BALL and BANK fires, the bundle-detected observation, and the research-brain escalation. Refreshed track_record with lifetime, 24h, and 7d numbers from sol_strategy_stats.json (mtime 20 min, fresh). Added a new pending hypothesis (bs_bundle_detected_skip) and one condensed lesson under bear_strength capturing the bundle observation. No strategy status flips. No exit_lab changes.",
+    "system_diagnosis": "Bot is healthy and trade-dormant. PID 3716 cycle 219, +48 cycles in 24h vs run-293, heartbeat ~13 min old. Zero new sells in 24h - BANK aged out of the 24h rolling window. Lifetime unchanged at 1009 sells, win rate 35.4 percent, R/R 0.80. Rolling 7d holds at 6 trades, 33.3 percent WR, R/R 1.36, -0.0013 SOL pnl. Bankroll 1.1215 SOL unchanged. SOL recovered from $83.81 to $86.03 (~+2.6 percent, away from the BEAR alarm zone). The bear_strength post-restart sample stays at N=3 (VIRL win, BALL flat, BANK stop with bundle_detected=true) - no new fires in 24h. This is the third straight null-delta run, which under CHOP+ALTCOIN_WINTER and a healthy bot is the correct behavior, not a sign of breakage.",
+    "exit_analysis": "Lifetime: avg win 13.15 percent, avg loss -16.51 percent, R/R 0.80, stop-loss rate 50.6 percent. Rolling 7d: avg win 10.84 percent, avg loss -7.95 percent, R/R 1.36 - tail loss-magnitude remains tighter than the lifetime average. Exit-mix 7d: stop_loss 50 percent (3 of 6), target 16.7 percent, time_exit 16.7 percent, other 16.7 percent. No new exits to analyze this cycle.",
+    "strategy_work": "No code changes. The single open decision was whether to ship the jito_tip_floor Phase 1 LOG-ONLY logger (~30 LOC, zero P&L impact). It has been deferred four runs running. The deferral this cycle has a sharper trigger than prior cycles: today is Sunday and the research brain's weekly cron fires within 26 minutes of this run finishing. Research-144 explicitly listed Jito tip_floor distribution characterization as a research-145 deliverable, which would land the Phase 2 spike threshold as a data-driven value rather than a placeholder. Pre-commitment recorded in directives: ship the Phase 1 logger at run-295 unless research-145 invalidates the endpoint. Anti-pattern guard: a fifth consecutive defer without a new substantive reason will not be acceptable.",
+    "directives_changes": "Bumped version 298 to 299. Refreshed current priority and reasoning to describe the null-delta state and the run-295 pre-commitment. Updated track_record lifetime/24h/7d numbers from sol_strategy_stats.json (mtime 13 min, fresh). Added run-294 track_record fields (bot_pid, cycle counter, sol_h24_note, trade dormancy, last buy/sell). Marked bear_strength_post_restart_sample as unchanged. Updated the jito_tip_floor pending hypothesis status to PRE_COMMITTED_FOR_RUN_295_SHIP with rationale. Added one new condensed lesson on the 'wait for imminent upstream input' deferral pattern and the pre-commit antidote to drift. No new strategy status flips. No exit_lab changes.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true,
       "research_brain_status_checked": true,
-      "stats_file_age_min": 20,
-      "atomic_write_used": true
+      "stats_file_age_min": 13,
+      "atomic_write_used": true,
+      "cadence_gate_cleared": "23h 53m since prior run finished"
     },
     "previous_followups": [
-      "Run-292 said: if research-145 still absent by run-293 at ~87h silent, escalate via operator todo. This run: gap is ~88h, escalation filed as todo-1779523669 with file_recent auto-resolve check.",
-      "Run-292 said: BS post-gate sample still N=1, jito Phase 1 stays unshipped. This run: BS post-gate sample is now N=3 (added BALL and BANK), still mixed (1 win, 2 losses); jito stays unshipped per same discipline.",
-      "Run-292 said: rolling_7d active-strategy window first-positive (+0.000034 SOL). This run: closed back to slightly negative (-0.001253 SOL) as VIRL win is offset by BALL and BANK losses; VIRL has not aged out of the 7d window yet."
+      "Run-293 said: file operator todo for research-brain dormancy on 87h threshold. This run: todo was filed (todo-1779523669) and the cadence-clarification thread closed - research is on a WEEKLY Sunday cron, not 12h. Today is Sunday so research-145 fires at 04:30 EDT, ~26 min after this brain run.",
+      "Run-293 said: queue bs_bundle_detected_skip at N=1 awaiting research or N>=3 replication. This run: no new bear_strength fires in 24h, so the candidate remains at N=1 unchanged. Status stays CANDIDATE_N1_AWAITS_RESEARCH_OR_REPLICATION.",
+      "Run-293 said: jito_tip_floor stays unshipped pending one-change-at-a-time discipline. This run: deferred again, but with a sharper, time-bound reason (research-145 imminent and its declared deliverables directly inform the Phase 2 threshold). Pre-committed to ship at run-295."
     ],
     "changelog": [
-      "Two new bear_strength trades landed: BALL flat exit at -0.27 percent and BANK stop loss at -11.12 percent.",
-      "Filed an operator todo asking the operator to check why the research brain has not run in ~88 hours.",
-      "Recorded a new candidate idea: when a bear_strength entry shows MEV bundle activity, consider skipping or sizing down. Only one data point so far - parked, not shipped.",
-      "Updated brain memory file to version 298 with fresh stats and the new candidate idea."
+      "No code changes. No operator todos. No new research requests.",
+      "Updated the brain memory file to version 299. Refreshed the run-by-run stats and noted that there were zero new trades in the last 24 hours.",
+      "Recorded a pre-commitment that the brain will ship a new logger next time, after the weekly research run that fires today brings in its calibration data.",
+      "Added one new lesson explaining the rules around 'wait for the next research run' as a defer reason - good when the next research run has a concrete deliverable that touches the specific decision; not good when it is just generic 'maybe research will say something'."
     ],
     "actions_taken": [
-      "Read brain directives, research findings, strategy stats, trade log, heartbeat, and budget state.",
-      "Inspected the two new bear_strength trades' entry conditions in detail - found that BANK had a bundle_detected=true flag at entry, which the strategy did not act on.",
-      "Filed an operator todo for the research brain dormancy with an auto-resolve check on the research findings file.",
-      "Updated the brain directives file - new priority, refreshed stats, new pending hypothesis, new lesson.",
-      "Wrote this survival report and appended to the survival history file."
+      "Read brain directives, research findings, strategy stats, heartbeat - all consistent.",
+      "Confirmed bot is alive (PID 3716 cycle 219) and that the watchdog has not had to restart anything.",
+      "Updated the brain directives - new priority, refreshed stats, status update on the queued logger, one new lesson.",
+      "Wrote this survival report and updated the brain status file from running to finished."
     ],
     "next_priorities": [
-      "If research brain produces a research-145 file before next run, read it and act on any new proposals - especially anything that touches bundle_detected, MEV, or bear_strength.",
-      "If two more bear_strength entries with bundle_detected=true land before next run, file a self-replication N>=3 check; if all three lose money, ship a small downsize for that case (do not jump straight to a hard skip).",
-      "If bear_strength post-restart sample reaches N>=6 with the existing gate still showing a coin-flip pattern, revisit the gate constants (M5 activity floor of 20 may be too permissive - BALL barely cleared it and was effectively a scratch).",
-      "Continue holding jito_tip_floor Phase 1 unshipped until either research returns or bear_strength sample is clearer."
+      "Run-295 (next brain cycle): ingest research-145, then ship the jito_tip_floor Phase 1 LOG-ONLY logger (~30 lines, zero P&L impact). Do this even if research-145 brings no Jito-specific data - the defer-streak ends at four.",
+      "If research-145 identifies the true Believe launch signer, the believe_launchpad_listener_v2_REVISED proposal becomes shippable - queue behind jito_tip_floor.",
+      "If a new bear_strength fire lands with bundle_detected=true, that pushes the bs_bundle_detected_skip candidate toward N=2 of needed N=3 self-replication threshold.",
+      "Watch SOL price: $86 today, recovered from $83.81 yesterday. If it drifts back under $82.5, regime check tightens (BEAR threshold)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -165,7 +165,7 @@
     "active_strategies": [
       "fresh_profile (PROVEN)",
       "fresh_boost (TESTING)",
-      "bear_strength (TESTING) - 3 post-restart fires, 1 win 2 losses",
+      "bear_strength (TESTING) - 3 post-restart fires unchanged, 1 win 2 losses",
       "consensus_boost (TESTING)",
       "flash_surge (TESTING_BULL, dormant in CHOP)",
       "bounce_hunter (TESTING_BULL, gate CLOSED in CHOP)",
@@ -181,11 +181,11 @@
     "result": "Saved 20 wallets in 35m 15s",
     "completed": "2026-05-24T01:50:35.258982"
   },
-  "brain_next_sec": 6908.404948,
+  "brain_next_sec": 6604.921641,
   "brain_next_str": "6:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 282.595052,
-  "brain_last_run_str": "4:11 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:12 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "",
@@ -386,7 +386,7 @@
     "summary": "4 subagents dispatched in parallel (LetsBonk listener audit, FqJWzb forward-price calibration, Believe launchpad on-chain confirmation, Jito MEV bundle scout). Zero pending requests_for_research at run start. NOVEL HYPOTHESIS: jito_tip_floor_regime_signal \u2014 bundles.jito.wtf/api/v1/bundles/tip_floor exposes p99/ema_p50 ratio as a free, no-auth, market-wide MEV regime signal that no token-side scanner consumes. Current ratio 159x; sustained >200 = coordinated bundle activity on a fresh listing. Phase 1 LOG-ONLY proposed. CRITICAL CORRECTION TO RESEARCH-143: Believe authority 5qWya6UjwWnGVhdSBL3hyZ7B45jbk6Byt1hwd7ohEGXE is the FEE-CLAIM signer not the launch signer (47/60 sampled tx are ClaimFee, 0 graduations). The queued believe_launchpad_listener proposal would log fee claims, not graduations. Revised proposal filed; must identify true launch signer via Bitquery Believe API + LAUNCHCOIN reverse-lookup before shipping. VALIDATED: creator_wallet_velocity_rug_guard prediction \u2014 FqJWzb1nrVHWikfApiMbKJpP2mdpLpu6VameapPcpump (creator @ 79.3%, creator_tokens_count=50) RUGGED -96% h24 in the 12h after detection. Control rug DwzabQv -94% as predicted. NEW EVIDENCE: WEMBY/Alien (9nEes, sniper top-1 @ 24%, predicted recoverable) also DUMPED -75% h24 \u2014 supports extending guard to soft-defer on sniper top-1 \u2265 25%. LetsBonk audit CLOSED \u2014 listener code mechanically correct, '~90/day' was 2025 peak, current Dune trough ~5/day, our ~1.55/day is ~3x under-counted by poll cadence not 50x. 4 proposals filed: (1) believe_launchpad_listener_REVISED HIGH (correction); (2) jito_tip_floor_regime_signal HIGH (new); (3) creator_wallet_velocity_rug_guard_EXTENDED MEDIUM (sniper class extension); (4) letsbonk_listener_polling_cadence MEDIUM (audit closure)."
   },
   "maintenance_status": {
-    "hours_since_last_trade": 31.32,
+    "hours_since_last_trade": 31.4,
     "dormancy_alert": true,
     "file_age_min": null,
     "watchdog_stale": false,
@@ -1832,7 +1832,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 219,
-    "age_min": 18.0,
+    "age_min": 23.1,
     "stale": false,
     "available": true
   },
@@ -1840,7 +1840,7 @@
     "requests_pending": 1,
     "requests_acknowledged": 0,
     "hypotheses_pending": 55,
-    "lessons_count": 40,
+    "lessons_count": 41,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1890,7 +1890,7 @@
     "requests_archived": 0,
     "elapsed_min": 13,
     "next_run_focus": "Trim the 8 longest condensed_lessons entries (>900 chars, mostly run-283/284/285/288/289 entries) to \u22643 sentences each \u2014 skipped this run to stay in budget. Also reconcile the 17 killed_ideas_permanent entries that still carry audit:needs_origin: scan sol_survival_history_archive.json for killed-on context once it has data. Lessons total landed at 44 vs target 40 (40 in entries + 4 thematic top-level categories audit_drift/process_discipline/ship_discipline/dormancy_governance) \u2014 consider merging the thematic 4 into entries next run if drift bothers the brain.",
-    "age_hours": 102.8,
+    "age_hours": 102.9,
     "stale": true,
     "available": true,
     "ever_ran": true,
@@ -1934,27 +1934,13 @@
       "evidence_source": "summary"
     },
     "tally": {
-      "implemented": 11,
+      "implemented": 12,
       "queued": 0,
       "rejected": 0,
-      "total": 11
+      "total": 12
     }
   },
   "events": [
-    {
-      "ts": "2026-05-24T03:14:49.718321",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8zkgFGVZ sold 7xnopcDe \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-24T03:14:51.924290",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip SOLD: deep24h h24=-64.7% (absolute floor)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-24T03:15:26.785440",
       "type": "SIGNAL",
@@ -2640,12 +2626,26 @@
       "color": "#d29922",
       "msg": "m5 pump skip Lion: m5=134.0% (already ran, we are exit liq, run95)",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-24T04:09:05.557928",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4DdrfiDH sold 5VMzCYpL \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-24T04:10:42.615375",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: EjtQrPTb sold DtYqtCKa \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [],
-  "ts": "04:08:51",
+  "ts": "04:13:55",
   "__publish_meta": {
-    "published_at": "2026-05-24 04:08:51 EDT",
+    "published_at": "2026-05-24 04:13:55 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
