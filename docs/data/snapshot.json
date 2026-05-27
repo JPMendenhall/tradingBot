@@ -1,15 +1,15 @@
 {
-  "sol_price": 84.05964634494329,
+  "sol_price": 83.78509914048081,
   "bot_status": "RUNNING",
   "bot_last_seen": "12:54:15",
   "bot_cycles": 7,
   "bankroll": 1.1191,
-  "bankroll_usd": 94.07115022462604,
+  "bankroll_usd": 93.76390444811207,
   "budget": 0.16040294129999996,
   "pnl_today": 3.81886923543974e-05,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 12.8,
+  "hour": 12.9,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -113,67 +113,97 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-24 04:04:09 EDT",
-    "run_id": "run-294",
+    "timestamp": "2026-05-27 13:01:07 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "Bot is healthy and trade-dormant. PID 3716 cycle 219, +48 cycles in 24h vs run-293, heartbeat ~13 min old. Zero new sells in 24h - BANK aged out of the 24h rolling window. Lifetime unchanged at 1009 sells, win rate 35.4 percent, R/R 0.80. Rolling 7d holds at 6 trades, 33.3 percent WR, R/R 1.36, -0.0013 SOL pnl. Bankroll 1.1215 SOL unchanged. SOL recovered from $83.81 to $86.03 (~+2.6 percent, away from the BEAR alarm zone). The bear_strength post-restart sample stays at N=3 (VIRL win, BALL flat, BANK stop with bundle_detected=true) - no new fires in 24h. This is the third straight null-delta run, which under CHOP+ALTCOIN_WINTER and a healthy bot is the correct behavior, not a sign of breakage.",
-    "exit_analysis": "Lifetime: avg win 13.15 percent, avg loss -16.51 percent, R/R 0.80, stop-loss rate 50.6 percent. Rolling 7d: avg win 10.84 percent, avg loss -7.95 percent, R/R 1.36 - tail loss-magnitude remains tighter than the lifetime average. Exit-mix 7d: stop_loss 50 percent (3 of 6), target 16.7 percent, time_exit 16.7 percent, other 16.7 percent. No new exits to analyze this cycle.",
-    "strategy_work": "No code changes. The single open decision was whether to ship the jito_tip_floor Phase 1 LOG-ONLY logger (~30 LOC, zero P&L impact). It has been deferred four runs running. The deferral this cycle has a sharper trigger than prior cycles: today is Sunday and the research brain's weekly cron fires within 26 minutes of this run finishing. Research-144 explicitly listed Jito tip_floor distribution characterization as a research-145 deliverable, which would land the Phase 2 spike threshold as a data-driven value rather than a placeholder. Pre-commitment recorded in directives: ship the Phase 1 logger at run-295 unless research-145 invalidates the endpoint. Anti-pattern guard: a fifth consecutive defer without a new substantive reason will not be acceptable.",
-    "directives_changes": "Bumped version 298 to 299. Refreshed current priority and reasoning to describe the null-delta state and the run-295 pre-commitment. Updated track_record lifetime/24h/7d numbers from sol_strategy_stats.json (mtime 13 min, fresh). Added run-294 track_record fields (bot_pid, cycle counter, sol_h24_note, trade dormancy, last buy/sell). Marked bear_strength_post_restart_sample as unchanged. Updated the jito_tip_floor pending hypothesis status to PRE_COMMITTED_FOR_RUN_295_SHIP with rationale. Added one new condensed lesson on the 'wait for imminent upstream input' deferral pattern and the pre-commit antidote to drift. No new strategy status flips. No exit_lab changes.",
+    "system_diagnosis": "Bot mechanically healthy after natural restart at ~2026-05-27 07:23 EDT (PID 3716 -> 1916, cycle 7 running at ~55 min/cycle). Trade engine producing again: 2 new wallet_convergence wins in the last 30h (SQUIRE +2.32% time exit, Ball +0.79% flat exit). The run-287 WC dead-book floor (gt_buyers_m5<=7 AND h24>=100%) is now active and both new WC fires came in clean - early N=2 directional validation. PRIMARY ISSUE: research lab cron has not fired since 2026-05-19 (research-144). The 2026-05-24 Sunday fire was missed, blocking Phase-2 calibration of the jito_tip_floor regime signal, the Believe launch signer identification (REQ-019), and the LetsBonk cadence cross-check. Escalated to operator via todo-1779900984 (HIGH).",
+    "exit_analysis": "All-time avg_win +13.09% / avg_loss -16.51% / RR 0.79 / stop_loss_rate 50.5%. 7d avg_win +4.82% / avg_loss -5.69% / RR 0.85 / stop_loss_rate 20.0% (5 trades). Exit mix 7d: time_exit 40% / flat (other) 40% / stop_loss 20%. The 7d window shows the wallet_convergence floor and the BS gates pulling the stop_loss rate down from 50%+ lifetime toward 20% - but the wins are small (single-digit % WC trades) so RR is below 1.0. Need at least one +10% target hit to make the 7d window net positive in pnl_sol.",
+    "strategy_work": "(a) jito_tip_floor logger verified live (degen_bot.py:4667). Phase 1 LOG-ONLY producing data; Phase 2 (MEV_STORM regime modifier) BLOCKED on research-145 threshold calibration. (b) WC dead-book floor (run-287) - N=2 post-activation post-restart fires both POSITIVE. (c) BS gates (run-285) - sample unchanged at N=3 (1W/2L); no new BS fires since BANK 2026-05-22. (d) believe_launchpad_listener_v2_REVISED - BLOCKED on REQ-019, research lab dormant. (e) creator_wallet_velocity_rug_guard family - queued, awaits research-145.",
+    "directives_changes": "Bumped version 300 -> 301. Updated track_record with run-295 stats (PID 1916, cycle 7, 2 new WC wins). Marked jito_tip_floor_regime_signal pending hypothesis as PHASE_1_LOG_ONLY_LIVE_VERIFIED_RUN_295. Marked believe_launchpad_listener_v2_REVISED as still BLOCKED_ON_REQ_019_NO_PROGRESS_RUN_295. Added 3 condensed lessons: code_directive_drift_audit, research_lab_dormancy_real_miss, wc_dead_book_floor_post_activation_n2_positive.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true,
-      "research_brain_status_checked": true,
-      "stats_file_age_min": 13,
-      "atomic_write_used": true,
-      "cadence_gate_cleared": "23h 53m since prior run finished"
+      "jito_logger_active_verified_in_log_file": true,
+      "process_alive_via_cim": true,
+      "operator_todo_filed_for_research_dormancy": "todo-1779900984"
     },
     "previous_followups": [
-      "Run-293 said: file operator todo for research-brain dormancy on 87h threshold. This run: todo was filed (todo-1779523669) and the cadence-clarification thread closed - research is on a WEEKLY Sunday cron, not 12h. Today is Sunday so research-145 fires at 04:30 EDT, ~26 min after this brain run.",
-      "Run-293 said: queue bs_bundle_detected_skip at N=1 awaiting research or N>=3 replication. This run: no new bear_strength fires in 24h, so the candidate remains at N=1 unchanged. Status stays CANDIDATE_N1_AWAITS_RESEARCH_OR_REPLICATION.",
-      "Run-293 said: jito_tip_floor stays unshipped pending one-change-at-a-time discipline. This run: deferred again, but with a sharper, time-bound reason (research-145 imminent and its declared deliverables directly inform the Phase 2 threshold). Pre-committed to ship at run-295."
+      "Run-294 pre-committed to ship jito_tip_floor Phase 1 LOG-ONLY at run-295: ALREADY SHIPPED (verified active in code + log file; ship attribution unclear, marked as run-295 verification).",
+      "Run-294 noted research-145 expected today 2026-05-24 04:30 EDT: MISSED. Today 2026-05-27, 8 days since research-144. Operator escalation filed.",
+      "Run-294 BS post-restart sample N=3: UNCHANGED (no new BS fires in 5 days; bot trade-dormant on BS, only WC firing)."
     ],
+    "research_proposals_disposition": [
+      {
+        "proposal": "Correct the previous Believe launchpad listener authority pubkey (the original one was a fee-claim signer, not a launch signer) - ship the revised listener once the true launch signer is identified.",
+        "from_research": "research-144",
+        "status": "PENDING",
+        "why": "Blocked on REQ-019. Research lab has been dormant since 2026-05-19 and did not service this request as expected at the 2026-05-24 Sunday cron fire. Unblocks when sol_research_status.json shows a new finished_at past 2026-05-19."
+      },
+      {
+        "proposal": "Add a free no-auth Jito MEV tip-floor poller as a market-wide regime signal for memecoin launch density.",
+        "from_research": "research-144",
+        "status": "SHIPPED",
+        "why": "Verified live this run. Logger active at degen_bot.py:4667; ring-buffer log file has 20000 entries from 2026-05-25 onward. Phase 2 (regime modifier behavior) remains DEFERRED on research-145 calibration of the spike threshold from the distribution data."
+      },
+      {
+        "proposal": "Extend the creator-wallet-velocity rug guard so it also soft-defers when the top-1 holder is a sniper wallet at >= 25% concentration.",
+        "from_research": "research-144",
+        "status": "PENDING",
+        "why": "Queued behind the original creator-wallet-velocity rug guard (the base proposal has not shipped yet; this is an additive extension). Both wait on research-145 for sniper-class N>=5 sample expansion. Research lab dormant; unblocks when research-145 lands."
+      },
+      {
+        "proposal": "Verify our LetsBonk graduation listener under-count magnitude via a Bitquery cross-check query, and only then raise the poll cadence.",
+        "from_research": "research-144",
+        "status": "PENDING",
+        "why": "Cross-check requires a Bitquery query that the brain cannot run from scheduled-task context (needs interactive web). Research-145 was the next opportunity but did not fire. Re-armed by the same operator escalation."
+      },
+      {
+        "proposal": "Find the true Believe launch signer pubkey via Bitquery + LAUNCHCOIN reverse-lookup (request REQ-019 in directives).",
+        "from_research": "REQ-019",
+        "status": "PENDING",
+        "why": "REQ-019 still pending in requests_for_research (status=pending, added run-291). Awaits research lab fire. Same blocker as above - unblocks when research lab cron is repaired."
+      }
+    ],
+    "code_changes_this_run": [],
+    "no_code_change_reason": "Three confirmations and a research-dormancy escalation. (1) Jito tip_floor logger already in code and verified live - no fresh ship needed. (2) WC dead-book floor has only N=2 post-activation post-restart samples - too thin to justify any further tuning. (3) BS post-restart sample unchanged at N=3 - no new evidence. (4) Research lab dormant for 8 days; all queued ships that depend on research-145 calibration are blocked. Operator todo-1779900984 filed (HIGH, file_recent check on sol_research_status.json|10080-min) - this is the unblock action.",
     "changelog": [
-      "No code changes. No operator todos. No new research requests.",
-      "Updated the brain memory file to version 299. Refreshed the run-by-run stats and noted that there were zero new trades in the last 24 hours.",
-      "Recorded a pre-commitment that the brain will ship a new logger next time, after the weekly research run that fires today brings in its calibration data.",
-      "Added one new lesson explaining the rules around 'wait for the next research run' as a defer reason - good when the next research run has a concrete deliverable that touches the specific decision; not good when it is just generic 'maybe research will say something'."
+      "Logged a documentation drift between code and directives for the Jito tip-floor logger (code says it was shipped at run-289 / research-148, but the brain own records only go up to research-144). Functional logger is alive and writing data, so the brain marked it as verified-live this run.",
+      "Filed an operator alert because the research lab has not run since 2026-05-19, and the expected Sunday 2026-05-24 fire was missed. The follow-up steps for multiple proposals depend on the next research run."
     ],
     "actions_taken": [
-      "Read brain directives, research findings, strategy stats, heartbeat - all consistent.",
-      "Confirmed bot is alive (PID 3716 cycle 219) and that the watchdog has not had to restart anything.",
-      "Updated the brain directives - new priority, refreshed stats, status update on the queued logger, one new lesson.",
-      "Wrote this survival report and updated the brain status file from running to finished."
+      "Verified the Jito tip-floor logger is actively writing to disk: 20,000 sample ring buffer, 2 days of clean data.",
+      "Updated the jito_tip_floor_regime_signal pending hypothesis status to PHASE_1_LOG_ONLY_LIVE_VERIFIED_RUN_295.",
+      "Filed operator todo (HIGH priority, todo-1779900984) flagging that the research lab cron has not fired in 8 days.",
+      "Recorded 3 new condensed lessons covering code/directive drift, the genuine research-cron miss vs prior false-alarm, and the early-positive WC dead-book floor post-activation sample."
     ],
     "next_priorities": [
-      "Run-295 (next brain cycle): ingest research-145, then ship the jito_tip_floor Phase 1 LOG-ONLY logger (~30 lines, zero P&L impact). Do this even if research-145 brings no Jito-specific data - the defer-streak ends at four.",
-      "If research-145 identifies the true Believe launch signer, the believe_launchpad_listener_v2_REVISED proposal becomes shippable - queue behind jito_tip_floor.",
-      "If a new bear_strength fire lands with bundle_detected=true, that pushes the bs_bundle_detected_skip candidate toward N=2 of needed N=3 self-replication threshold.",
-      "Watch SOL price: $86 today, recovered from $83.81 yesterday. If it drifts back under $82.5, regime check tightens (BEAR threshold)."
+      "Wait for research-145 to fire (operator unblock). Once it lands, calibrate Phase-2 jito_tip_floor MEV_STORM threshold from the p99/ema_p50 distribution data already in the 20000-sample log.",
+      "Accumulate post-restart WC dead-book floor samples toward N=10 fires before any scale-up decision. Currently N=2 (SQUIRE, Ball - both small wins).",
+      "Accumulate post-restart BS fires toward N=5 (currently N=3) - if next fire is another loss with bundle_detected=true, advance bs_bundle_detected_skip from candidate to ship-eligible.",
+      "If research-145 fires and identifies the true Believe launch signer (REQ-019), ship believe_launchpad_listener_v2_REVISED Phase 1 LOG-ONLY in the same brain run."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1009,
-      "win_rate": 0.354,
-      "avg_win_pct": 13.15,
+      "total_sells": 1011,
+      "win_rate": 0.355,
+      "avg_win_pct": 13.09,
       "avg_loss_pct": -16.51,
-      "rr_ratio": 0.8,
-      "stop_loss_rate_pct": 50.6,
-      "bankroll": 1.1215,
-      "pnl_today": 0.0
+      "rr_ratio": 0.79,
+      "stop_loss_rate_pct": 50.5,
+      "bankroll": 1.1191,
+      "pnl_today": 0.00015
     },
     "active_strategies": [
-      "fresh_profile (PROVEN)",
-      "fresh_boost (TESTING)",
-      "bear_strength (TESTING) - 3 post-restart fires unchanged, 1 win 2 losses",
-      "consensus_boost (TESTING)",
-      "flash_surge (TESTING_BULL, dormant in CHOP)",
-      "bounce_hunter (TESTING_BULL, gate CLOSED in CHOP)",
-      "anchor_derivative_snipe (TESTING)",
-      "chop_momentum_scalp (TESTING)",
-      "wallet_convergence (TESTING)",
-      "gecko_breadth_burst (TESTING)",
-      "copy_trade (KILLED)"
+      "fresh_profile (PROVEN, 15T 60%WR RR 1.17 +0.0029 SOL)",
+      "bear_strength (TESTING, 32T 37.5%WR RR 2.08 +0.006949 SOL, gates active)",
+      "wallet_convergence (TESTING, 13T 53.8%WR RR 0.42 -0.001386 SOL, floor active, 2 post-fix wins)",
+      "consensus_boost (TESTING, 46T 45.7%WR RR 1.22 -0.001818 SOL)",
+      "chop_momentum_scalp (TESTING, 21T 38.1%WR RR 0.99 -0.002048 SOL)",
+      "fresh_boost (TESTING, 22T 40.9%WR RR 0.80 -0.025853 SOL)",
+      "bounce_hunter (TESTING_BULL, 28T 50.0%WR RR 0.71 -0.007438 SOL)",
+      "anchor_derivative_snipe (TESTING, N=0)",
+      "gecko_breadth_burst (TESTING, N=0 BUYs, 2 SIGNALs LP-blocked)",
+      "flash_surge (TESTING_BULL, 4T 0%WR -0.011452 SOL)",
+      "copy_trade (KILLED, 537T 33.7%WR -0.83 SOL, watch-only)"
     ]
   },
   "wallet_scan": {
@@ -181,16 +211,16 @@
     "result": "Saved 20 wallets in 35m 15s",
     "completed": "2026-05-24T01:50:35.258982"
   },
-  "brain_next_sec": 54406.222393,
+  "brain_next_sec": 54102.863922,
   "brain_next_str": "Thu 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 281.777607,
-  "brain_last_run_str": "Sun 4:04 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "1:01 PM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:49 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 315166.222393,
+  "research_next_sec": 314862.863922,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -402,7 +432,7 @@
     "dashboard_pid_prior": 8568,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 10.82,
+    "hours_since_last_trade": 10.9,
     "hours_since_last_buy": 9.92,
     "trades_last_24h": {
       "buys": 2,
@@ -479,7 +509,7 @@
       "Cycle cadence stepped up from ~55 min/cycle (prior two runs) to ~30 min/cycle this run. Not a stall direction \u2014 opposite, faster \u2014 but worth flagging so future runs don't read the new pace as anomalous."
     ],
     "elapsed_min": 2,
-    "file_age_min": 50.7,
+    "file_age_min": 55.8,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1927,7 +1957,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 7,
-    "age_min": 3.0,
+    "age_min": 8.0,
     "stale": false,
     "available": true
   },
@@ -1935,7 +1965,7 @@
     "requests_pending": 1,
     "requests_acknowledged": 0,
     "hypotheses_pending": 39,
-    "lessons_count": 10,
+    "lessons_count": 13,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1946,8 +1976,8 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 166.222393,
-  "maint_next_str": "1:00 PM EST",
+  "maint_next_sec": 3462.863922,
+  "maint_next_str": "2:00 PM EST",
   "maint_last_run_str": "12:06 PM EST",
   "maint_stale": false,
   "maint_disabled": false,
@@ -1960,41 +1990,20 @@
     "latest": {
       "hypothesis_name": "jito_tip_floor_regime_signal",
       "run_id": "research-144",
-      "status": "queued",
-      "status_label": "\ud83d\udfe1 Queued",
-      "status_color": "#ffaa00",
-      "evidence_text": "NULL-DELTA. Bot PID 3716 cycle 122 (+49 cycles, healthy). Zero new trades since run-291. VIRL bear_strength +11.36 percent TIME EXIT 2026-05-20 14:31 EDT remains the most-recent sell (37.6h ago); buy 38.6h ago. Lifetime 1007 sells WR 35.5 p",
-      "evidence_source": "summary"
+      "status": "implemented",
+      "status_label": "\u2705 Implemented",
+      "status_color": "#00ff88",
+      "evidence_text": "Updated the jito_tip_floor_regime_signal pending hypothesis status to PHASE_1_LOG_ONLY_LIVE_VERIFIED_RUN_295.",
+      "evidence_source": "action"
     },
     "tally": {
-      "implemented": 12,
+      "implemented": 13,
       "queued": 0,
       "rejected": 0,
-      "total": 12
+      "total": 13
     }
   },
   "events": [
-    {
-      "ts": "2026-05-27T12:32:41.300410",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip GOSLINGS: h1=-20.2% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-27T12:32:41.735534",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip GOSLINGS: h1=-20.2% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-27T12:34:29.909707",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8nqtxpFp sold 5uiSqw3n \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-05-27T12:34:32.455610",
       "type": "BUY_SKIP",
@@ -2673,6 +2682,27 @@
       "color": "#d29922",
       "msg": "Sell-conflict skip G1jnSwR1: tracked wallet sold this token 119s ago",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-27T12:59:14.063274",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4nvNc7dD sold G6GU5txo \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-27T12:59:16.997235",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip POLY: m5=-65.5% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-27T13:01:04.291788",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip COVENANT: m5=94.8% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2689,9 +2719,9 @@
       "follow_up_action": "Once research-145 lands (timestamp in sol_research_status.json updates), brain will calibrate the jito_tip_floor Phase-2 spike threshold from the p99/ema_p50 distribution data and write a follow-up disposition entry in the next survival report."
     }
   ],
-  "ts": "12:57:13",
+  "ts": "13:02:17",
   "__publish_meta": {
-    "published_at": "2026-05-27 12:57:13 EDT",
+    "published_at": "2026-05-27 13:02:17 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
