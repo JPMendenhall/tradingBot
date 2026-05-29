@@ -235,6 +235,7 @@
         <tr id="pnl-7d"><td>7d</td><td>--</td><td>--</td><td>--</td></tr>
         <tr id="pnl-all"><td>All</td><td>--</td><td>--</td><td>--</td></tr>
       </table>
+      <div id="pnl-extremes" style="margin-top:6px;font-size:9px;line-height:1.6;letter-spacing:0;text-transform:none">--</div>
     </div>
 
     <!-- Open Positions -->
@@ -268,8 +269,10 @@
 
   <!-- ====== RIGHT COLUMN ====== -->
   <div class="col">
-    <!-- Command Center (brain + research lab monitor) -->
-    <div class="sec neon">
+    <!-- Command Center (brain + research lab monitor)
+         Auto-hidden by JS when all 4 routines (brain/research/maintenance/efficiency-lab)
+         are disabled, so the section title doesn't float orphaned. -->
+    <div class="sec neon" id="command-center-section">
       <div class="sec-t">Command Center</div>
 
       <!-- Brain row -->
@@ -295,7 +298,7 @@
         <div id="maint-status-bar" class="cc-status"></div>
       </div>
 
-      <!-- Efficiency Lab row (was Memory Keeper — same purpose, on-demand) -->
+      <!-- Efficiency Lab row (on-demand brain hygiene) -->
       <div class="cc-row">
         <div id="memk-status-bar" class="cc-status"></div>
       </div>
@@ -308,6 +311,12 @@
 
     <!-- Brain Changes + Watching Next Cycle (rendered by JS) -->
     <div id="brain-custom-sections"></div>
+
+    <!-- Research Proposals This Run — SHIPPED / DEFERRED / KILLED / PENDING per proposal -->
+    <div id="brain-proposals-section"></div>
+
+    <!-- Code Changes This Run — what behavior in the bot actually changed -->
+    <div id="brain-code-changes-section"></div>
 
     <!-- Subagents Deployed — slotted directly under Brain Changes -->
     <div id="subagents-section"></div>
@@ -491,6 +500,51 @@ function applyDashboardHints(r){
       c.innerHTML=x;
     }else{c.innerHTML=''}
   }
+  /* Research Proposals This Run \u2014 one row per proposal disposition.
+     Status badge tells the operator at a glance what the brain decided. */
+  const ps=document.getElementById('brain-proposals-section');
+  if(ps){
+    const props=(r&&r.research_proposals_disposition)||[];
+    let pHtml='';
+    if(props.length){
+      pHtml+='<div class="sec neon" style="margin-top:6px"><div class="sec-t" style="font-size:11px;color:#22c55e;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">\ud83d\udd2c Research Proposals This Run</div>';
+      props.slice(0,12).forEach(p=>{
+        const status=(p&&p.status)||'PENDING';
+        const colorMap={SHIPPED:'#22c55e',DEFERRED:'#fbbf24',KILLED:'#ef4444',PENDING:'#94a3b8',SUPERSEDED:'#a855f7'};
+        const badgeColor=colorMap[status]||'#94a3b8';
+        const proposalTxt=esc(summarize(itemText(p&&p.proposal),2,180));
+        const fromTxt=p&&p.from_research?` <span style="color:#666;font-size:10px">(${esc(p.from_research)})</span>`:'';
+        const whyTxt=p&&p.why?esc(summarize(itemText(p.why),2,200)):'';
+        pHtml+=`<div style="padding:4px 0;line-height:1.4;border-bottom:1px solid #1a1a1a">`;
+        pHtml+=`<div style="font-size:12px;color:#ddd"><span style="display:inline-block;min-width:78px;padding:1px 6px;margin-right:6px;font-size:10px;font-weight:600;letter-spacing:1px;color:#0a0a0a;background:${badgeColor};border-radius:3px;text-align:center">${esc(status)}</span>${proposalTxt}${fromTxt}</div>`;
+        if(whyTxt)pHtml+=`<div style="font-size:11px;color:#888;padding-left:90px;margin-top:2px">${whyTxt}</div>`;
+        pHtml+=`</div>`;
+      });
+      pHtml+='</div>';
+    }
+    ps.innerHTML=pHtml;
+  }
+  /* Code Changes This Run \u2014 names what actually changed in the bot,
+     or the reason no code shipped. Plain English from the brain's report. */
+  const ccs=document.getElementById('brain-code-changes-section');
+  if(ccs){
+    const changes=(r&&r.code_changes_this_run)||[];
+    const reason=r&&r.no_code_change_reason;
+    let ccHtml='';
+    if(changes.length){
+      ccHtml+='<div class="sec neon" style="margin-top:6px"><div class="sec-t" style="font-size:11px;color:#00d4ff;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">\u2699\ufe0f Code Changes This Run</div>';
+      changes.slice(0,8).forEach(c=>{
+        const t=summarize(itemText(c),3,260);
+        if(t)ccHtml+=`<div style="font-size:12px;color:#ddd;padding:3px 0;line-height:1.4">\u00b7 ${esc(t)}</div>`;
+      });
+      ccHtml+='</div>';
+    }else if(reason){
+      ccHtml+='<div class="sec neon" style="margin-top:6px"><div class="sec-t" style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">\u2699\ufe0f No Code Changes This Run</div>';
+      ccHtml+=`<div style="font-size:12px;color:#999;padding:2px 0;line-height:1.4">${esc(summarize(itemText(reason),3,260))}</div>`;
+      ccHtml+='</div>';
+    }
+    ccs.innerHTML=ccHtml;
+  }
   /* Watching Next Cycle (with eye emoji) \u2014 summarized 1-2 sentences each */
   const nc=document.getElementById('brain-next-sections');
   if(nc){
@@ -579,11 +633,35 @@ function renderMaintenance(m){
   const bot=String(m.bot_status||'?').toUpperCase();
   const dash=String(m.dashboard_status||'?').toUpperCase();
   const dormant=m.dormancy_alert===true||(m.hours_since_last_trade!=null&&m.hours_since_last_trade>=24);
-  const stale=(m.stale_locks_cleared||[]).length>0;
+  const staleLocks=(m.stale_locks_cleared||[]).length>0;
   const watchdogStale=m.watchdog_stale===true;
   const restarted=(bot.includes('RESTART')||dash.includes('RESTART'));
-  // Border: red if DEAD or watchdog dead, orange if dormant/restarts, green if clean
-  const border=bot==='DEAD'||dash==='DEAD'||watchdogStale?'#ff4444':(dormant||restarted||stale?'#ffaa00':'#00ff88');
+  const dups=(m.duplicates_killed||[]).length>0;
+  const lockout=!!m.filter_lockout_diagnosis;
+  // When the maintenance file is stale, its bot_status/dashboard_status
+  // snapshot is also stale — don't let it drive a red alert. The main
+  // dashboard has its own heartbeat-based liveness check that is authoritative.
+  const botBad=!watchdogStale && bot!=='RUNNING';
+  const dashBad=!watchdogStale && dash!=='RUNNING';
+  const gh=m.github_mirror||null;
+  // GH mirror is broken if pre/post-heal or legacy `status` indicates anything
+  // other than HEALTHY/HEALED/NOT_NEEDED. Showing healthy mirror status is noise.
+  const ghStatusFinal = gh ? (gh.post_heal_status==='HEALED'?'HEALED':
+                              gh.post_heal_status==='STILL_BROKEN'?'STILL_BROKEN':
+                              gh.post_heal_status==='NOT_NEEDED'?(gh.pre_heal_status||gh.status):
+                              (gh.pre_heal_status||gh.status)) : null;
+  const ghBad = ghStatusFinal && ghStatusFinal!=='HEALTHY' && ghStatusFinal!=='HEALED';
+  const ghJustHealed = gh && gh.heal_attempted && gh.post_heal_status==='HEALED';
+
+  // Hide tile entirely when everything is healthy.
+  const healthy = !botBad && !dashBad && !watchdogStale && !dormant && !staleLocks && !restarted && !dups && !lockout && !ghBad && !ghJustHealed;
+  if(healthy){host.innerHTML='';return;}
+
+  // Border: red ONLY when something actually impacts trading (bot/dash dead,
+  // GH mirror genuinely broken). A stale maintenance status file is housekeeping —
+  // amber, not red — even if "severely_stale", as long as the bot is running.
+  const tradingImpacted = botBad||dashBad||(ghStatusFinal==='STILL_BROKEN'||ghStatusFinal==='UNREACHABLE'||ghStatusFinal==='CRITICAL');
+  const border = tradingImpacted ? '#ff4444' : '#ffaa00';
   const ts=String(m.timestamp||'').slice(11,16);
   let x='<div class="sec neon" style="margin-top:6px;border-color:transparent;background:linear-gradient(#0a0a10,#0a0a10) padding-box,linear-gradient(135deg,'+border+'aa,'+border+'66) border-box;border:1px solid transparent">';
   x+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
@@ -592,64 +670,54 @@ function renderMaintenance(m){
   x+='</div>';
   if(watchdogStale){
     const ageMin=m.file_age_min!=null?Math.round(m.file_age_min):'?';
-    x+=`<div style="font-size:11px;color:#ff4444;margin-bottom:6px;font-weight:700">⚠ Watchdog itself is stale (${esc(ageMin)} min) — maintenance task hasn't refreshed</div>`;
+    // Subtle amber note. Maintenance cron is hourly — a stale status file just
+    // means the housekeeping task missed a run; bot trading is unaffected.
+    x+=`<div style="font-size:10px;color:#b58c2f;margin-bottom:6px;opacity:0.85">· housekeeping check ${esc(ageMin)} min old (hourly cadence; bot trading unaffected)</div>`;
   }
-  // One-line health summary
-  const botBadge=bot==='RUNNING'?`<span style="color:#00ff88">●</span> bot`:bot==='RESTARTED'?`<span style="color:#ffaa00">↻</span> bot restarted`:bot==='DEAD'?`<span style="color:#ff4444">✗</span> bot DEAD`:`<span style="color:#888">○</span> bot ${esc(bot)}`;
-  const dashBadge=dash==='RUNNING'?`<span style="color:#00ff88">●</span> dash`:dash==='RESTARTED'?`<span style="color:#ffaa00">↻</span> dash restarted`:dash==='DEAD'?`<span style="color:#ff4444">✗</span> dash DEAD`:`<span style="color:#888">○</span> dash ${esc(dash)}`;
-  const hbAge=m.bot_heartbeat_age_sec!=null?`(${esc(m.bot_heartbeat_age_sec)}s hb)`:'';
-  x+=`<div style="font-size:11px;color:#ccc;margin-bottom:6px">${botBadge} ${esc(hbAge)} <span style="color:#444">·</span> ${dashBadge}</div>`;
-  // Dormancy
-  if(m.hours_since_last_trade!=null){
+  // Bot/dash badges only when not running normally
+  if(botBad){
+    const badge=bot==='RESTARTED'?`<span style="color:#ffaa00">↻</span> bot restarted`:bot==='DEAD'?`<span style="color:#ff4444">✗</span> bot DEAD`:`<span style="color:#888">○</span> bot ${esc(bot)}`;
+    const hbAge=m.bot_heartbeat_age_sec!=null?` <span style="color:#666">(${esc(m.bot_heartbeat_age_sec)}s hb)</span>`:'';
+    x+=`<div style="font-size:11px;color:#ccc;margin-bottom:6px">${badge}${hbAge}</div>`;
+  }
+  if(dashBad){
+    const badge=dash==='RESTARTED'?`<span style="color:#ffaa00">↻</span> dash restarted`:dash==='DEAD'?`<span style="color:#ff4444">✗</span> dash DEAD`:`<span style="color:#888">○</span> dash ${esc(dash)}`;
+    x+=`<div style="font-size:11px;color:#ccc;margin-bottom:6px">${badge}</div>`;
+  }
+  // Dormancy — only when actually dormant
+  if(dormant && m.hours_since_last_trade!=null){
     const hrs=m.hours_since_last_trade;
-    const dColor=hrs>=24?'#ff6b35':hrs>=8?'#ffaa00':'#888';
-    x+=`<div style="font-size:11px;color:${dColor};margin-bottom:6px">⏱ Last trade: ${hrs.toFixed(1)}h ago${dormant?' <span style="font-weight:800;letter-spacing:1px">— DORMANCY ALERT</span>':''}</div>`;
+    x+=`<div style="font-size:11px;color:#ff6b35;margin-bottom:6px">⏱ Last trade: ${hrs.toFixed(1)}h ago <span style="font-weight:800;letter-spacing:1px">— DORMANCY ALERT</span></div>`;
   }
   // Filter lockout diagnosis (THE useful field — show in full, summarized)
-  if(m.filter_lockout_diagnosis){
+  if(lockout){
     x+=`<div style="font-size:11px;color:#bbb;line-height:1.4;padding:5px 7px;background:#1a1408;border-left:2px solid #ffaa00;border-radius:3px;margin-bottom:6px">${esc(summarize(m.filter_lockout_diagnosis,3,300))}</div>`;
   }
   // Stale locks cleared
-  if(stale){
+  if(staleLocks){
     x+='<div style="font-size:10px;color:#ffaa00;margin-bottom:4px">🔓 Cleared stale locks:</div>';
     (m.stale_locks_cleared||[]).slice(0,4).forEach(s=>{x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(s,1,140))}</div>`;});
   }
   // Duplicates killed
-  if((m.duplicates_killed||[]).length){
+  if(dups){
     x+='<div style="font-size:10px;color:#ffaa00;margin-top:4px">⚠ Killed duplicates:</div>';
     m.duplicates_killed.forEach(s=>{x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(String(s),1,120))}</div>`;});
   }
-  // GitHub Pages mirror status — surfaces if the public dashboard went stale
-  // and whether maintenance actively healed it.
-  const gh=m.github_mirror||null;
-  if(gh && (gh.pre_heal_status || gh.status)){
-    // Backwards-compat: old runs used `status`/`mirror_age_min`. New runs use
-    // pre_heal_*/post_heal_*. Display the most recent meaningful state.
-    const finalStatus=gh.post_heal_status==='HEALED'?'HEALED':
-                      gh.post_heal_status==='STILL_BROKEN'?'STILL_BROKEN':
-                      gh.post_heal_status==='NOT_NEEDED'?(gh.pre_heal_status||gh.status):
-                      (gh.pre_heal_status||gh.status);
+  // GitHub mirror — only when broken or recently healed
+  if(ghBad || ghJustHealed){
     const finalAge=gh.post_heal_age_min!=null?gh.post_heal_age_min:
                    (gh.pre_heal_age_min!=null?gh.pre_heal_age_min:gh.mirror_age_min);
-    const statusColor=(finalStatus==='HEALTHY'||finalStatus==='HEALED')?'#00ff88':
-                      finalStatus==='WARN'?'#ffaa00':
-                      (finalStatus==='CRITICAL'||finalStatus==='STILL_BROKEN'||finalStatus==='UNREACHABLE')?'#ff4444':'#888';
+    const statusColor=ghStatusFinal==='HEALED'?'#00ff88':
+                      ghStatusFinal==='WARN'?'#ffaa00':'#ff4444';
     x+='<div style="font-size:10px;color:#7cd3ff;margin-top:6px;text-transform:uppercase;letter-spacing:1px">github mirror</div>';
     const ageStr=finalAge!=null?` · ${Number(finalAge).toFixed(1)} min old`:'';
-    x+=`<div style="font-size:11px;color:${statusColor};padding:2px 0"><b>${esc(String(finalStatus))}</b><span style="color:#888">${esc(ageStr)}</span></div>`;
-    // If maintenance healed it this run, show the recovery line
-    if(gh.heal_attempted && gh.post_heal_status==='HEALED'){
-      x+=`<div style="font-size:10px;color:#00ff88;padding:1px 0">↻ healed: ${esc(String(gh.pre_heal_age_min||0).slice(0,5))} min stale → fixed by manual publish</div>`;
+    x+=`<div style="font-size:11px;color:${statusColor};padding:2px 0"><b>${esc(String(ghStatusFinal))}</b><span style="color:#888">${esc(ageStr)}</span></div>`;
+    if(ghJustHealed){
+      x+=`<div style="font-size:10px;color:#00ff88;padding:1px 0">↻ healed: ${esc(String(gh.pre_heal_age_min||0).slice(0,5))} min stale → fixed</div>`;
     } else if(gh.heal_attempted && gh.post_heal_status==='STILL_BROKEN'){
-      x+=`<div style="font-size:10px;color:#ff4444;padding:1px 0">↻ heal FAILED — publisher script error (see note)</div>`;
+      x+=`<div style="font-size:10px;color:#ff4444;padding:1px 0">↻ heal FAILED — publisher script error</div>`;
     }
     if(gh.note){x+=`<div style="font-size:10px;color:#888;padding:1px 0">${esc(summarize(String(gh.note),1,140))}</div>`;}
-  }
-  // Recent actions
-  const acts=m.actions_taken||[];
-  if(acts.length){
-    x+='<div style="font-size:10px;color:#7cd3ff;margin-top:6px;text-transform:uppercase;letter-spacing:1px">actions this run</div>';
-    acts.slice(0,5).forEach(a=>{x+=`<div style="font-size:11px;color:#bbb;padding:2px 0">· ${esc(summarize(String(a),1,160))}</div>`;});
   }
   x+='</div>';
   host.innerHTML=x;
@@ -697,7 +765,7 @@ function renderStrategyStats(s){
   let x=`<div class="sec neon" style="border:1px solid ${border}">`;
   x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">📈 Per-Strategy (7d)</div>`;
   if(stale){
-    x+=`<div style="font-size:11px;color:#ff4444;margin-bottom:6px;font-weight:700">⚠ Stats stale (${esc(sub)}) — bot writer broken or bot down</div>`;
+    x+=`<div style="font-size:11px;color:#ffaa00;margin-bottom:6px;font-weight:700">⏱ Stats ${esc(sub)} — writer hasn't refreshed (check bot heartbeat at top)</div>`;
   } else {
     x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">refreshed ${esc(sub)} · ${s.computed_from_trades||0} trades · ${s.strategies_seen_count||0} strategies seen</div>`;
   }
@@ -739,74 +807,89 @@ function renderStrategyStats(s){
   host.innerHTML=x;
 }
 
-/* --- Brain memory pressure panel — early warning for overload --- */
+/* --- Brain memory pressure panel — only surfaces when overloaded or drifting.
+     When pressure is normal the tile is hidden; nothing useful to show. --- */
 function renderBrainQueue(q){
   const host=document.getElementById('brain-queue-section');
-  if(!host||!q){host&&(host.innerHTML='');return;}
-  const overloaded=q.overloaded===true;
-  const drift=(q.drift_keys||[]).length>0;
-  const border=overloaded?'#ff6b35':drift?'#ffaa00':'#7cd3ff';
+  if(!host)return;
+  const overloaded=q && q.overloaded===true;
+  const drift=q && (q.drift_keys||[]).length>0;
+  if(!overloaded && !drift){host.style.display='none';host.innerHTML='';return;}
+  host.style.display='';
+  const border=overloaded?'#ff6b35':'#ffaa00';
   let x=`<div class="sec neon" style="border:1px solid ${border}">`;
   x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">🧠 Brain Memory Pressure</div>`;
   if(overloaded){
-    x+=`<div style="font-size:11px;color:#ff6b35;margin-bottom:6px;font-weight:700">⚠ Brain overloaded — Efficiency Lab will fire next maintenance run</div>`;
+    // The Efficiency Lab fires weekly on Sunday at 5 AM (cron `0 5 * * 0`),
+    // and the brain can also trigger it inline mid-run when it notices its
+    // own memory crossing threshold. The previously-referenced hourly
+    // maintenance routine was retired 2026-05-17.
+    x+=`<div style="font-size:11px;color:#ff6b35;margin-bottom:6px;font-weight:700">⚠ Brain overloaded — Efficiency Lab runs Sunday 5 AM (or sooner if brain self-triggers)</div>`;
   }
   if(drift){
     x+=`<div style="font-size:11px;color:#ffaa00;margin-bottom:6px">↔ Drift keys detected: ${esc((q.drift_keys||[]).join(', '))}</div>`;
   }
-  // Two-column metric grid
+  // Two-column metric grid — shown only when overloaded/drifting so the user
+  // can see which threshold tripped.
   const metric=(label,val,warn)=>{
     const c=warn?'#ff6b35':'#ccc';
     return `<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0"><span style="color:#888">${esc(label)}</span><span style="color:${c};font-weight:600">${val}</span></div>`;
   };
   x+=metric('Pending requests', q.requests_pending||0, (q.requests_pending||0)>8);
-  x+=metric('Acknowledged requests', q.requests_acknowledged||0, false);
   x+=metric('Pending hypotheses', q.hypotheses_pending||0, (q.hypotheses_pending||0)>60);
   x+=metric('Condensed lessons', q.lessons_count||0, (q.lessons_count||0)>50);
-  x+=metric('Killed ideas', q.killed_ideas_count||0, false);
-  x+=metric('Active strategies', q.active_strategies_count||0, false);
   x+='</div>';
   host.innerHTML=x;
 }
 
-/* --- Memory keeper status — runs weekly --- */
+/* --- Efficiency Lab status — fires weekly on Sunday 5 AM (cron `0 5 * * 0`),
+     plus inline when the brain self-detects overload mid-run. Only renders
+     when there's something meaningful: stale (lab should have fired and
+     didn't), conflicts/drift detected, or a recent run with cleanup numbers
+     worth showing. Otherwise hidden. --- */
 function renderMemoryKeeper(m){
-  // Note: function name kept (memory-keeper) for backwards compat in calling code,
-  // but the panel itself is now "Efficiency Lab" — same purpose, on-demand trigger.
+  // Function name kept (memory-keeper) for backwards compat in calling code.
   const host=document.getElementById('memory-keeper-section');
-  if(!host){return;}
-  if(!m||!m.available){
-    // Placeholder until the lab fires for the first time
-    let x=`<div class="sec neon" style="border:1px solid #444">`;
-    x+=`<div class="sec-t" style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px">🧪 Efficiency Lab</div>`;
-    x+=`<div style="font-size:10px;color:#666">On-demand brain hygienist — fires from the maintenance bot when overload is detected. Has not fired yet.</div>`;
-    x+='</div>';
-    host.innerHTML=x;
-    return;
-  }
-  const stale=m.stale===true;
-  const border=stale?'#ffaa00':'#00ff88';
+  if(!host)return;
+  const stale=m && m.stale===true;
+  const conflicts=m && (m.killed_idea_revival_conflicts||[]).length>0;
+  const drift=m && (m.drift_keys_merged||[]).length>0;
+  if(!m||!m.available||(!conflicts && !drift && !stale)){host.style.display='none';host.innerHTML='';return;}
+  host.style.display='';
+
+  const border=stale?'#ffaa00':conflicts?'#ff4444':'#00ff88';
   let x=`<div class="sec neon" style="border:1px solid ${border}">`;
   x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">🧪 Efficiency Lab</div>`;
   const ageStr=m.age_hours!=null?`${m.age_hours<24?(m.age_hours.toFixed(1)+'h'):(m.age_hours/24).toFixed(1)+'d'} ago`:'';
-  x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">Last fired: ${esc(ageStr)}${stale?' <span style="color:#ffaa00">(brain overloaded but lab not firing)</span>':''}</div>`;
-  if(m.lessons_before!=null && m.lessons_after!=null){
+  if(stale){
+    x+=`<div style="font-size:11px;color:#ffaa00;margin-bottom:6px;font-weight:700">⚠ Brain overloaded but lab not firing (last ${esc(ageStr)})</div>`;
+  } else if(ageStr){
+    x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">Last fired: ${esc(ageStr)}</div>`;
+  }
+  if(m.lessons_before!=null && m.lessons_after!=null && m.lessons_before!==m.lessons_after){
     x+=`<div style="font-size:11px;color:#ccc">Lessons: ${m.lessons_before} → ${m.lessons_after}</div>`;
   }
-  if(m.hypotheses_before!=null && m.hypotheses_after!=null){
+  if(m.hypotheses_before!=null && m.hypotheses_after!=null && m.hypotheses_before!==m.hypotheses_after){
     x+=`<div style="font-size:11px;color:#ccc">Hypotheses: ${m.hypotheses_before} → ${m.hypotheses_after}</div>`;
   }
-  if(m.history_size_before!=null && m.history_size_after!=null){
-    x+=`<div style="font-size:11px;color:#ccc">History: ${m.history_size_before} → ${m.history_size_after} (${m.history_entries_archived||0} archived)</div>`;
-  }
-  if((m.killed_idea_revival_conflicts||[]).length){
+  if(conflicts){
     x+=`<div style="font-size:11px;color:#ff4444;margin-top:6px;font-weight:700">⚠ Killed-idea revival conflicts: ${(m.killed_idea_revival_conflicts||[]).length}</div>`;
     (m.killed_idea_revival_conflicts||[]).slice(0,3).forEach(c=>{
-      x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(String(c),1,140))}</div>`;
+      // c is an object {strategy, killed_desc} — extract fields rather than stringifying
+      let line='';
+      if(c && typeof c==='object'){
+        const strat=c.strategy?String(c.strategy):'';
+        const desc=c.killed_desc||c.description||c.desc||'';
+        line=strat?`[${strat}] ${desc}`:String(desc);
+      } else {
+        line=String(c==null?'':c);
+      }
+      x+=`<div style="font-size:10px;color:#aaa;padding-left:10px">· ${esc(summarize(line,1,140))}</div>`;
     });
   }
-  if((m.drift_keys_merged||[]).length){
-    x+=`<div style="font-size:10px;color:#ffaa00;margin-top:4px">↔ Drift merged: ${esc((m.drift_keys_merged||[]).join(', '))}</div>`;
+  if(drift){
+    const driftLabels=(m.drift_keys_merged||[]).map(k=>(k && typeof k==='object')?(k.key||k.name||JSON.stringify(k)):String(k));
+    x+=`<div style="font-size:10px;color:#ffaa00;margin-top:4px">↔ Drift merged: ${esc(driftLabels.join(', '))}</div>`;
   }
   x+='</div>';
   host.innerHTML=x;
@@ -994,54 +1077,38 @@ setInterval(function(){if(_scanData)_renderScanFrame()},1000);
 
 /* Brain status & countdown */
 let _brainNextSec=null,_brainLastFetch=0,_brainRunning=false,_brainElapsed=0;
-let _brainNextStr='',_brainLastRunStr='';
-let _researchRunning=false,_researchLastRunStr='',_researchNextStr='';
+let _brainNextStr='',_brainLastRunStr='',_brainDisabled=false;
+let _researchRunning=false,_researchLastRunStr='',_researchNextStr='',_researchDisabled=false;
 let _researchNextSec=null,_researchElapsed=0;
-let _maintNextSec=null,_maintNextStr='',_maintLastRunStr='',_maintStale=false;
-let _memkNextSec=null,_memkNextStr='',_memkLastRunStr='';
+let _maintNextSec=null,_maintNextStr='',_maintLastRunStr='',_maintStale=false,_maintDisabled=false;
+let _memkNextSec=null,_memkNextStr='',_memkLastRunStr='',_memkDisabled=false;
+let _brainQueueOverloaded=false;  // mirrored from d.brain_queue.overloaded so updateBrainDisplay can react
 let _oneTimeTasks=[];
 
-/* Render a Command Center status row — identical format for Brain and Research */
+/* Render a Command Center status row — single compact line when idle,
+   expand to progress bar + elapsed only when actually running. The "idle"
+   word is omitted; absence of the running indicator IS the idle state. */
 function renderCcRow(opts){
   const bar=document.getElementById(opts.barId);
   const runSec=document.getElementById(opts.runId);
   const runElapsed=document.getElementById(opts.elapsedId);
   if(!bar)return;
 
-  const status=opts.running?'running':'idle';
-  const statusColor=opts.running?opts.accent:'#888';
-
-  /* Countdown to next run (only when idle) */
-  let cdText='';
-  if(!opts.running && opts.nextSec!==null){
-    const remaining=Math.max(0,Math.round(opts.nextSec-opts.sinceFetch));
-    if(remaining<=0){
-      cdText=' · due now';
-    } else {
-      const h=Math.floor(remaining/3600);
-      const m=Math.floor((remaining%3600)/60);
-      const s=remaining%60;
-      let txt=' · next in ';
-      if(h>0)txt+=h+'h '+m+'m';
-      else if(m>0)txt+=m+'m '+s+'s';
-      else txt+=s+'s';
-      cdText=txt;
-    }
-  }
-
-  /* Build status line: [pulse?] [icon] [name] · [status] · last run X · next Y */
+  /* Build status line: [pulse?] [icon] [name] [· running]? · last X · next Y */
   const iconHtml=opts.running
     ? '<span class="'+opts.pulseClass+'"></span> '
     : '';
+  const runningTag = opts.running
+    ? ' <span style="color:'+opts.accent+';font-weight:600">· running</span>'
+    : '';
   let parts=[];
-  if(opts.lastRunStr)parts.push('last run '+opts.lastRunStr);
+  if(opts.lastRunStr)parts.push('last '+opts.lastRunStr);
   if(opts.nextStr)parts.push('next '+opts.nextStr);
   const trail=parts.length?' <span style="color:#666">· '+parts.join(' · ')+'</span>':'';
 
   bar.innerHTML=iconHtml
     +'<span style="color:'+opts.accent+';font-size:10px;text-transform:uppercase;letter-spacing:1px">'+opts.icon+' '+opts.label+'</span>'
-    +' <span style="color:'+statusColor+';font-weight:600">· '+status+'</span>'
-    +'<span style="color:#777">'+cdText+'</span>'
+    +runningTag
     +trail;
 
   /* Running animation bar + elapsed (skip if this row has no run section) */
@@ -1060,70 +1127,107 @@ function renderCcRow(opts){
 function updateBrainDisplay(){
   const sinceFetch=(Date.now()-_brainLastFetch)/1000;
 
-  renderCcRow({
-    barId:'brain-status-bar',
-    runId:'brain-running-section',
-    elapsedId:'brain-running-elapsed',
-    label:'Brain',
-    icon:'🧠',
-    accent:'#a855f7',
-    pulseClass:'brain-pulse',
-    running:_brainRunning,
-    elapsed:_brainElapsed,
-    lastRunStr:_brainLastRunStr,
-    nextStr:_brainNextStr,
-    nextSec:_brainNextSec,
-    sinceFetch:sinceFetch,
-  });
+  /* Brain row — hide entirely when the source routine is deleted (status file
+     missing or >4h stale). Otherwise render normally. Same pattern as the
+     Maintenance row below. */
+  const brainRow=document.getElementById('brain-status-bar')?.parentElement;
+  if(_brainDisabled){
+    if(brainRow)brainRow.style.display='none';
+  } else {
+    if(brainRow)brainRow.style.display='';
+    renderCcRow({
+      barId:'brain-status-bar',
+      runId:'brain-running-section',
+      elapsedId:'brain-running-elapsed',
+      label:'Brain',
+      icon:'🧠',
+      accent:'#a855f7',
+      pulseClass:'brain-pulse',
+      running:_brainRunning,
+      elapsed:_brainElapsed,
+      lastRunStr:_brainLastRunStr,
+      nextStr:_brainNextStr,
+      nextSec:_brainNextSec,
+      sinceFetch:sinceFetch,
+    });
+  }
 
-  renderCcRow({
-    barId:'research-status-bar',
-    runId:'research-running-section',
-    elapsedId:'research-running-elapsed',
-    label:'Research',
-    icon:'🔬',
-    accent:'#ff9933',
-    pulseClass:'research-pulse',
-    running:_researchRunning,
-    elapsed:_researchElapsed,
-    lastRunStr:_researchLastRunStr,
-    nextStr:_researchNextStr,
-    nextSec:_researchNextSec,
-    sinceFetch:sinceFetch,
-  });
+  /* Research row — same hide-when-disabled pattern. */
+  const researchRow=document.getElementById('research-status-bar')?.parentElement;
+  if(_researchDisabled){
+    if(researchRow)researchRow.style.display='none';
+  } else {
+    if(researchRow)researchRow.style.display='';
+    renderCcRow({
+      barId:'research-status-bar',
+      runId:'research-running-section',
+      elapsedId:'research-running-elapsed',
+      label:'Research',
+      icon:'🔬',
+      accent:'#ff9933',
+      pulseClass:'research-pulse',
+      running:_researchRunning,
+      elapsed:_researchElapsed,
+      lastRunStr:_researchLastRunStr,
+      nextStr:_researchNextStr,
+      nextSec:_researchNextSec,
+      sinceFetch:sinceFetch,
+    });
+  }
 
   /* Maintenance row — every 15 min, no running indicator (too brief to matter).
-     If file mtime is older than 2× cron interval, render as STALE in red so
-     the operator sees the task isn't actually firing instead of a stale ghost
-     timestamp. */
-  renderCcRow({
-    barId:'maint-status-bar',
-    runId:null, elapsedId:null,
-    label:'Maintenance',
-    icon:'🛠',
-    accent:_maintStale?'#ff4444':'#7cd3ff',
-    pulseClass:'',
-    running:false, elapsed:0,
-    lastRunStr:_maintStale?'NOT FIRING':_maintLastRunStr,
-    nextStr:_maintNextStr,
-    nextSec:_maintNextSec,
-    sinceFetch:sinceFetch,
-  });
+     When the status file is >4h stale (or missing), the routine is deliberately
+     off (Windows DegenBotWatchdog handles the actual safety net) — hide the
+     whole row to keep the dashboard quiet. Between 35 min and 4h, render as
+     STALE in red so a real cron failure is still visible. */
+  const maintRow=document.getElementById('maint-status-bar')?.parentElement;
+  if(_maintDisabled){
+    if(maintRow)maintRow.style.display='none';
+  } else {
+    if(maintRow)maintRow.style.display='';
+    renderCcRow({
+      barId:'maint-status-bar',
+      runId:null, elapsedId:null,
+      label:'Maintenance',
+      icon:'🛠',
+      accent:_maintStale?'#ff4444':'#7cd3ff',
+      pulseClass:'',
+      running:false, elapsed:0,
+      lastRunStr:_maintStale?'NOT FIRING':_maintLastRunStr,
+      nextStr:_maintNextStr,
+      nextSec:_maintNextSec,
+      sinceFetch:sinceFetch,
+    });
+  }
 
-  /* Efficiency Lab row — on-demand, triggered by maintenance bot */
-  renderCcRow({
-    barId:'memk-status-bar',
-    runId:null, elapsedId:null,
-    label:'Efficiency Lab',
-    icon:'🧪',
-    accent:'#22c55e',
-    pulseClass:'',
-    running:false, elapsed:0,
-    lastRunStr:_memkLastRunStr||'never',
-    nextStr:_memkNextStr,  // "on-demand" string from backend
-    nextSec:null,          // no countdown — event-driven
-    sinceFetch:sinceFetch,
-  });
+  /* Efficiency Lab row — fires weekly on Sunday 5 AM, plus on-demand from
+     the brain when it self-detects overload mid-run. Visibility rules:
+     - If brain is overloaded, FORCE this row visible so the user sees the
+       resolution path (even if memk_disabled would normally hide it).
+     - Otherwise hide when disabled. */
+  const memkRow=document.getElementById('memk-status-bar')?.parentElement;
+  const brainOverloaded = _brainQueueOverloaded === true;
+  if(_memkDisabled && !brainOverloaded){
+    if(memkRow)memkRow.style.display='none';
+  } else {
+    if(memkRow)memkRow.style.display='';
+    // When disabled-but-forced-visible-due-to-overload, surface that clearly.
+    const labelSuffix = (_memkDisabled && brainOverloaded) ? ' (OFF — re-enable to clear overload)' : '';
+    const nextStr = _memkDisabled ? '' : _memkNextStr;
+    renderCcRow({
+      barId:'memk-status-bar',
+      runId:null, elapsedId:null,
+      label:'Efficiency Lab' + labelSuffix,
+      icon:'🧪',
+      accent: _memkDisabled ? '#ffaa00' : '#22c55e',
+      pulseClass:'',
+      running:false, elapsed:0,
+      lastRunStr:_memkLastRunStr||'never',
+      nextStr:nextStr,
+      nextSec:null,
+      sinceFetch:sinceFetch,
+    });
+  }
 
   /* One-time tasks row — show only when there are pending ones */
   const otRow=document.getElementById('one-time-tasks-row');
@@ -1144,6 +1248,15 @@ function updateBrainDisplay(){
     } else {
       otRow.style.display='none';
     }
+  }
+
+  /* Auto-hide the whole Command Center section when ALL routines are disabled
+     AND no one-time tasks pending. Keeps the title from floating orphaned. */
+  const ccSection=document.getElementById('command-center-section');
+  if(ccSection){
+    const allHidden=_brainDisabled && _researchDisabled && _maintDisabled && _memkDisabled
+                    && !(_oneTimeTasks && _oneTimeTasks.length);
+    ccSection.style.display = allHidden ? 'none' : '';
   }
 }
 
@@ -1175,6 +1288,19 @@ async function refresh(){
     renderPnlRow('pnl-24h',d.pnl_24h,sp);
     renderPnlRow('pnl-7d',d.pnl_7d,sp);
     renderPnlRow('pnl-all',d.pnl_all,sp);
+    (function(){
+      const ex=d.pnl_extremes||{}, el=document.getElementById('pnl-extremes');
+      if(!el)return;
+      const parts=[];
+      const fmtPct=v=>{const p=v.pnl_pct||0;return (p>=0?'+':'')+p.toFixed(0)+'%';};
+      const fmtUsd=v=>{const u=(v.pnl_sol||0)*sp;return (u>=0?'+$':'-$')+Math.abs(u).toFixed(2);};
+      const dt=v=>v.date?` <span style="color:#777">· ${esc(v.date)}</span>`:'';
+      const line=(lbl,v,c)=>`<span style="color:${c}">${lbl} &nbsp;${esc(v.symbol||'?')} ${fmtPct(v)} · ${fmtUsd(v)}</span>${dt(v)}`;
+      if(ex.best_pct)parts.push(line('▲ best %',ex.best_pct,'#00ff88'));
+      if(ex.best_usd)parts.push(line('▲ best $',ex.best_usd,'#00ff88'));
+      if(ex.worst_usd)parts.push(line('▼ worst $',ex.worst_usd,'#ff6b35'));
+      el.innerHTML = parts.length ? parts.join('<br>') : '<span style="color:#555">no closed trades yet</span>';
+    })();
     renderPositions(d.positions,sp);
     renderTrades(d.recent_trades,sp);
     renderTodos(d.todos);
@@ -1184,6 +1310,7 @@ async function refresh(){
     renderMaintenance(d.maintenance_status);
     renderStrategyStats(d.strategy_stats);
     renderBrainQueue(d.brain_queue);
+    _brainQueueOverloaded = (d.brain_queue||{}).overloaded === true;
     renderMemoryKeeper(d.memory_keeper_status);
     renderSubagentsDeployed(d.research_findings);
     renderResearchLab(d.research_findings,d.research_status,d.research_action_status);
@@ -1202,6 +1329,10 @@ async function refresh(){
     _maintNextStr=d.maint_next_str||'';
     _maintLastRunStr=d.maint_last_run_str||'';
     _maintStale=d.maint_stale===true;
+    _maintDisabled=d.maint_disabled===true;
+    _brainDisabled=d.brain_disabled===true;
+    _researchDisabled=d.research_disabled===true;
+    _memkDisabled=d.memk_disabled===true;
     _memkNextSec=d.memk_next_sec;
     _memkNextStr=d.memk_next_str||'';
     _memkLastRunStr=d.memk_last_run_str||'';
