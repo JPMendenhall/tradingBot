@@ -1,15 +1,15 @@
 {
-  "sol_price": 82.27320280433595,
+  "sol_price": 82.24553756169249,
   "bot_status": "RUNNING",
-  "bot_last_seen": "20:59:00",
+  "bot_last_seen": "21:13:36",
   "bot_cycles": 1,
   "bankroll": 1.119,
-  "bankroll_usd": 92.06371393805193,
+  "bankroll_usd": 92.03275653153389,
   "budget": 0.16036485944999998,
   "pnl_today": 1.2848471390473886e-05,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 19.2,
+  "hour": 19.3,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -211,216 +211,195 @@
     "result": "Saved 20 wallets in 34m 4s",
     "completed": "2026-05-28T02:00:47.047088"
   },
-  "brain_next_sec": 24654.239623,
+  "brain_next_sec": 24356.516761,
   "brain_next_str": "Fri 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
   "brain_last_run_str": "Wed 1:01 PM EST",
   "brain_disabled": false,
-  "research_running": true,
-  "research_last_run_str": "",
+  "research_running": false,
+  "research_last_run_str": "9:13 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 199014.239623,
-  "research_elapsed_sec": 422.760377,
+  "research_next_sec": 198716.516761,
+  "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
-    "timestamp": "2026-05-19 12:48:00 EDT",
-    "run_id": "research-144",
+    "timestamp": "2026-05-28 21:12:00 EDT",
+    "run_id": "research-145",
     "version": 1,
-    "regime_at_run": "CHOP + ALTCOIN_WINTER (BTC.D 58.18%, SOL $84.41, active-strategy dormancy 133h+, bot PID 3032 cycle 96 healthy)",
-    "headline": "TWO BIG FINDS: (1) NOVEL NEW DATA SOURCE \u2014 Jito tip_floor REST endpoint (bundles.jito.wtf/api/v1/bundles/tip_floor) exposes p99 landed-tip vs EMA-p50 ratio as a free, no-auth, market-wide MEV regime signal that NO token-level scanner consumes. Current p99/ema_p50 \u2248 159; sustained spikes >200 = coordinated buy bundles fighting for one fresh-mint opportunity \u2192 opportunity-density gauge. Proposed jito_tip_floor_regime_signal (Phase 1 LOG-ONLY). (2) CRITICAL CORRECTION TO RESEARCH-143's BELIEVE PROPOSAL \u2014 Believe authority 5qWya6UjwWnGVhdSBL3hyZ7B45jbk6Byt1hwd7ohEGXE is the FEE-CLAIM signer (47/60 sampled tx are ClaimFee), NOT the launch signer. A WS listener subscribed to this address would log ~134 fee claims/day and ZERO actual graduations. Meteora DBC program ID dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN is confirmed correct, but is multi-tenant (~1.6M tx/day across all DBC users). Need to find the true Believe launch signer via Bitquery's Believe Launchpad API before shipping. THIRD FINDING: hypothesis creator_wallet_velocity_rug_guard VALIDATED LIVE \u2014 FqJWzb1nrVHWikfApiMbKJpP2mdpLpu6VameapPcpump (creator @ 79.3%, creator_tokens_count=50) closed -96% in 12h (TEXTBOOK RUG). Control rug DwzabQv (-94% as predicted) reinforces. SECONDARY: WEMBY/Alien (sniper top-1 @ 24%, predicted recoverable) ALSO dumped -75% h24 \u2014 extend the guard's classifier to soft-defer on sniper top-1 \u2265 25% even without creator concentration. FOURTH: LetsBonk listener audit CLOSES the 50x gap concern \u2014 the '~90/day' figure was the 2025 hype peak, not sustained; Dune trough is ~5/day, our ~1.55/day is plausibly under-counted ~3x by poll cadence, not 50x by listener breakage.",
+    "regime_at_run": "CHOP + ALTCOIN_WINTER (BTC.D ~57.8%, SOL ~$84). Bot ALIVE: last buy TROLL wallet_convergence 2026-05-28 18:39 EDT, stats fresh 20:59 EDT. WC is the only currently-profitable strategy (7d 3W/0L).",
+    "headline": "NOVEL EDGE on our ONLY profitable strategy: wallet_convergence's win/loss split is governed almost entirely by price_change_5m at entry \u2014 the 3 worst WC losses in history (Bumpy -13.4%, soothsayer -13.1%, ASTEROID -12.5%) were ALL entered while price was ripping >+4% in 5min; the 11 calm-entry WC trades returned +11.2% net (8W). Propose 'Convergence-Without-Chase' hard veto (skip WC if price_change_5m>+4%). SECOND BIG FIND: the live Jito tip_floor logger now has 2.4 days of real data \u2014 the proposed Phase-2 spike threshold of 200 is CATASTROPHICALLY too low (median ratio is 206; 200 fires on ~50% of polls = 674 episodes/day, permanently ON). Data-driven recalibration: ratio>25,000 = ~5.4 sustained episodes/day. REQ-019 CLOSED with NULL result: Believe has NO single launch signer (ephemeral per-launch fee-payers confirmed); fallback = DBC InitializeVirtualPool firehose filtered by config account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM. THIRD: sniper-top-1\u226525% rug signal WEAKENED at N=6 \u2014 do not promote.",
     "new_hypothesis": {
-      "name": "jito_tip_floor_regime_signal",
-      "mechanism": "Jito's bundle tip distribution is a market-wide aggregate of how aggressively MEV searchers are bidding for transaction priority. On Solana, outside of obvious arb windows (which are a constant baseline), large tip-floor spikes overwhelmingly reflect coordinated buy bundles competing to be first into a single fresh-mint listing or graduation. The p99/ema_p50 ratio (right now ~159) captures the tail's distance from the median: when it sustains >200 for 2+ consecutive minute-polls, the market is paying outsized priority fees for one specific opportunity, and that opportunity is almost always a memecoin launch/grad window. The signal is REGIME-LEVEL not per-token \u2014 but it tells the bot WHEN opportunities exist before token-level scanners (which gate on DexScreener data) see anything.",
-      "persistence": "Every existing token-side bot (DexScreener pollers, pump.fun listeners, our own brain) watches the TOKEN'S metrics (volume, holders, age). Jito tip-floor is the BLOCK-ECONOMICS metric \u2014 orthogonal data with no overlap. Searchers running bundles cannot avoid emitting this signal because the tips are how they buy block position; the signal is structurally unhideable. Free public endpoint with 1 req/sec ceiling and no auth means the data is open, but nobody on the consumption side correlates it to memecoin entry timing because that crosses a discipline boundary (block-engineers don't run memecoin bots).",
-      "entry_rules": "Phase 1 (LOG-ONLY, 7 days): poll https://bundles.jito.wtf/api/v1/bundles/tip_floor every 60s, write {timestamp, landed_tips_50th, landed_tips_99th, ema_landed_tips_50th, ratio_p99_over_ema_p50} to sol_jito_tipfloor_log.json (ring buffer 10080 entries = 7 days @ 1/min). No entry behavior changes in Phase 1. Phase 2 (regime modifier): when ratio_p99_over_ema_p50 > 200 sustained \u22652 consecutive polls, set bot regime flag JITO_MEV_STORM=True for 5 minutes. In MEV_STORM mode: (a) tighten time-stop on fresh-mint entries from 30min \u2192 10min (acknowledge the regime is fast-flowing), (b) relax m5_activity_floor by 25% on fresh-mint strategies (more opportunities are flowing through), (c) log every entry that fires during MEV_STORM to sol_jito_storm_entries.json for backtest. Phase 3 (per-token attribution, optional): scrape explorer.jito.wtf/bundle/<id> HTML to identify the specific pool the bundle targets, raising signal from regime \u2192 per-token. Out of scope for v1.",
-      "data_required": "1 line of Python: requests.get('https://bundles.jito.wtf/api/v1/bundles/tip_floor', timeout=5). No auth, no key, no rate-limit concern (1req/sec ceiling vs 1req/min usage = 60x headroom). Single shipped poller thread, ring buffer file with atomic writes. No code dependency beyond what the bot already has.",
-      "estimated_fires_per_day": 8,
+      "name": "convergence_without_chase",
+      "mechanism": "wallet_convergence's edge is information asymmetry: tracked smart-money wallets buy a token BEFORE the broader market reacts, and the bot front-runs the resulting price impact. That asymmetry only pays if the bot enters AHEAD of the move. When price_change_5m is already strongly positive (>+4% in the last 5 minutes), the smart-money buy has ALREADY been expressed in price \u2014 the bot is no longer front-running, it is buying the same candle as the retail reaction, arriving last into a spike that mean-reverts. Empirically every WC entry made into a hot 5m candle dumped 12-13%. Requiring a flat/quiet 5m at entry guarantees the wallet signal still has unexpressed alpha left to capture.",
+      "persistence": "Structural, not a curve-fit constant. Front-running only earns while you enter before price impact; the instant price has moved, the asymmetry is gone for ALL participants, permanently and regime-independently. The veto locks the bot to the only window where the edge mechanically exists, so it does not decay as regimes shift. It is also not arbitrage-able away by others because it is a constraint on OUR own entry timing, not a public signal.",
+      "entry_rules": "Add a HARD VETO to wallet_convergence entries: if price_change_5m > +4.0%, SKIP (do not enter, do not size down \u2014 a full veto). Secondary soft condition supported by the data: also skip if vol_liq_ratio > 25 (over-churned froth). Both conditions co-occur on the 3 catastrophic losses. The veto is additive to existing WC entry logic (the run-287 dead-book floor stays).",
+      "data_required": "Already in the bot's enrichment payload \u2014 price_change_5m and vol_liq_ratio are present on every WC trade-log entry. No new data source needed; this is a pure entry-gate using fields already computed at scan time.",
+      "estimated_fires_per_day": 1,
       "priority": "HIGH",
-      "evidence": "Subagent live-tested endpoint at 2026-05-19 16:39 UTC. Response 200 OK, valid JSON, payload {landed_tips_50th_percentile: 2.5e-6, landed_tips_99th_percentile: 0.000412, ema_landed_tips_50th_percentile: 2.59e-6} \u2014 current ratio 159x. Citations: (a) DeFade 'Bundle Sniping on Solana' documents ~400ms same-slot coordinated buy windows on pump.fun launches; (b) SolBundler/Alphecca tooling shows the entire memecoin launch industry routes through Jito bundles; (c) Jito JSON-RPC spec confirms public endpoint inventory. Conceptual mechanism: tip is a Veblen-style positional good \u2014 competitive overbidding only happens when multiple actors converge on the same target. Cross-validation against pump.fun launch density would convert this from circumstantial to predictive \u2014 proposed as Phase 1 logging objective.",
-      "rejected_alternatives": "Considered (a) Jito getInflightBundleStatuses RPC \u2014 rejected because requires a bundle_id we don't have; useful only after we already know what to look for. (b) Jito WS tip_stream \u2014 kept as Phase-2 upgrade once minute-poll regime trigger is validated. (c) Helius webhooks for whale movements \u2014 rejected for THIS run because Helius is paid above free tier and competes with the next research run's bandwidth; flagging as a separate scout target for next-run-focus. (d) Scraping explorer.jito.wtf for per-bundle target attribution \u2014 moved to Phase 3 because it's HTML scraping (brittle); regime signal is sufficient for v1."
+      "evidence": "Mined all 14 closed WC trades + 28 WC trade-log entries. WINS entered calm: SQUIRE +2.32% (pc5m -0.75), Butt +17.43% (pc5m -2.73), Ball +0.79% (pc5m 0), TROLL +0.27% (pc5m -0.04). LOSSES entered hot: Bumpy -13.43% (pc5m +13.8), soothsayer -13.08% (pc5m hot), ASTEROID -12.50% (pc5m hot) \u2014 the 3 worst WC losses ever, combined ~-39%. Median pc5m: wins ~0%, losses +5.2%. The single rule pc5m<=+4% cleanly separates 8 wins from the 3 catastrophic losses; calm-entry subset (11T) = +11.2% net vs all-in -27.8%. Wallet COUNT (3 vs 4) shows NO edge (nW=4 trades went +17.43, +0.27, -8.21, -13.08). NOTE: source_wallet identity is NOT logged (empty on all 28 entries) \u2014 a data gap; see proposal #4."
     },
     "watchlist": [
       {
-        "mint": "FqJWzb1nrVHWikfApiMbKJpP2mdpLpu6VameapPcpump",
-        "symbol": "?",
-        "reason": "VERDICT: RUGGED -96% h24 in the 12h after detection. Confirmed creator_wallet_velocity_rug_guard hypothesis live (top-1=creator @ 79.3%, creator_tokens_count=50). EVIDENCE-LOCKED \u2014 full mint resolved via DexScreener API. Survival brain may cite this mint as the Phase-0 prior justifying creator_wallet_velocity_rug_guard ship. Expires after brain ingests.",
-        "expires_at": "2026-05-22T01:00:00-04:00"
-      },
-      {
-        "mint": "9nEes9HwGPcJVQG9g1XhBigZBFNPkU5YdvrEoDDpump",
-        "symbol": "WEMBY/Alien",
-        "reason": "VERDICT: DUMPED -75% h24 despite sniper-only top-1 (24% predicted recoverable). Outcome UNDERMINES the original creator-vs-sniper disambiguation; suggests SNIPER concentration \u226520% is also a tail-risk signal, not just creator concentration. Triggers the proposed extension to creator_wallet_velocity_rug_guard (soft-defer on sniper top-1 \u2265 25%).",
-        "expires_at": "2026-05-22T01:00:00-04:00"
-      },
-      {
-        "mint": "DwzabQvyoSWzDECNR3H6NerargE2iAeUrUqsUCoppump",
-        "symbol": "Popgion",
-        "reason": "VERDICT: RUGGED -94% h24 as predicted. Top-1=67.5% LP. Confirms LP-classified top-1 is not by itself a rug-protect signal (the rug came from elsewhere \u2014 likely creator dump on an associated wallet). Cited as evidence that LP-only top-1 disambiguation doesn't catch everything.",
-        "expires_at": "2026-05-22T01:00:00-04:00"
-      },
-      {
-        "mint": "TBD_BELIEVE_LAUNCH_SIGNER",
-        "symbol": "?",
-        "reason": "PENDING IDENTIFICATION. The previous research run named 5qWya6UjwWnGVhdSBL3hyZ7B45jbk6Byt1hwd7ohEGXE as the Believe launch signer \u2014 wrong (it's the fee-claim signer; 47/60 sampled tx are ClaimFee, 0 graduations). Next research run must query Bitquery's Believe Launchpad API (https://docs.bitquery.io/docs/blockchain/Solana/Believe-API/) to extract the true launch signer pubkey from a recent confirmed Believe launch (LAUNCHCOIN Cn5Ne1vmR9c is the anchor). Until found, the believe_launchpad_listener proposal is BLOCKED.",
-        "expires_at": "2026-05-26T01:00:00-04:00"
-      },
-      {
-        "mint": "Cn5Ne1vmR9c",
+        "mint": "Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk",
         "symbol": "LAUNCHCOIN",
-        "reason": "Carry-forward from research-143 \u2014 anchor Believe-launched mint. Use as the reverse-lookup seed: find the launch transaction for LAUNCHCOIN on Meteora DBC program dbcij3..., extract the signer pubkey of the InitializeVirtualPool ix. That signer is (probably) the true Believe launch authority.",
-        "expires_at": "2026-05-26T01:00:00-04:00"
+        "reason": "FULL MINT RESOLVED (was truncated Cn5Ne1vmR9c in REQ-019). Believe launchpad anchor token. Survival brain: use as the seed mint when validating that DBC config account FhVo3mqL...HLuM is Believe-specific before shipping the listener.",
+        "expires_at": "2026-06-05T00:00:00-04:00"
       },
       {
-        "mint": "FjgXCL8ov5BkvZGoY2QthvhUmx82mVkSmhni6nCJpump",
-        "symbol": "TOLYBOT",
-        "reason": "Carry-forward from research-143/142 \u2014 the WC dead-book stop -8.21% that triggered REQ-018. WC floor (run-287) still pending natural restart activation. Last bot buy 2026-05-18 03:06 EDT (~33h ago at run entry). Continues as control.",
-        "expires_at": "2026-05-25T13:00:00-04:00"
+        "mint": "BtYtzaUP_250_resolve_via_dexscreener",
+        "symbol": "250",
+        "reason": "Sniper top-1 @ 21.8%, liq $27.5k, +235% h24 snapshot \u2014 a PUMPER despite high sniper concentration. Counter-evidence that sniper-top-1>=20% is NOT a clean rug signal. Informational; mint abbreviated by subagent, resolve via DexScreener if needed.",
+        "expires_at": "2026-05-31T00:00:00-04:00"
+      },
+      {
+        "mint": "66qvEv2a_AI_resolve_via_dexscreener",
+        "symbol": "AI",
+        "reason": "Sniper top-1 @ 20.9%, liq $7.9k, -68% h24 snapshot \u2014 a DUMPER. The high-sniper cohort split ~50/50 dump/pump at N=4, weakening the rug-signal hypothesis. Informational.",
+        "expires_at": "2026-05-31T00:00:00-04:00"
       }
     ],
     "proposals_for_survival_brain": [
       {
-        "type": "data_source_add",
-        "target": "believe_launchpad_listener_REVISED",
-        "justification": "CRITICAL CORRECTION to research-143's queued believe_launchpad_listener proposal. The on-chain signal selection was wrong: subscribing to authority 5qWya6UjwWnGVhdSBL3hyZ7B45jbk6Byt1hwd7ohEGXE would log ~134 ClaimFee transactions per day and ZERO graduations (47/60 sampled tx from this address in the last 7d are ClaimFee against Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB \u2192 DAMM withdraw, harvesting fees from already-graduated tokens). The DBC program ID dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN IS correct but is multi-tenant (~1.6M tx/day, pump-fun-scale firehose across ALL DBC users, not just Believe). DO NOT SHIP the original proposal as written. The revised approach: (1) Use Bitquery's Believe Launchpad API (https://docs.bitquery.io/docs/blockchain/Solana/Believe-API/) to extract the true launch signer pubkey from one known Believe-launched mint (LAUNCHCOIN = Cn5Ne1vmR9c). (2) Confirm the signer via a getTransaction RPC call against the LAUNCHCOIN mint creation slot on Meteora DBC. (3) Once the real signer is identified, replace 5qWya6... in the proposal and ship. Phase 1 LOG-ONLY then becomes well-defined. Until the signer is found, the listener proposal is BLOCKED.",
+        "type": "new_filter",
+        "target": "wallet_convergence",
+        "justification": "Add a 'Convergence-Without-Chase' HARD VETO: skip wallet_convergence entries when price_change_5m > +4.0% (and optionally when vol_liq_ratio > 25). WC is the bot's only currently-profitable strategy (7d 3W/0L) yet its all-time pnl is negative purely because of 3 catastrophic stops \u2014 Bumpy -13.4%, soothsayer -13.1%, ASTEROID -12.5% \u2014 and ALL THREE were entered into a >+4% 5-minute pump. The 11 calm-entry WC trades returned +11.2% net. This is a NEW MECHANISM (front-run only when the smart-money buy is not yet expressed in price), not a threshold tweak on an existing filter. Fields already in enrichment payload; ~1-line gate. SHIP candidate this run.",
         "confidence": "HIGH",
         "addresses_request": null,
-        "baseline": "Research-143 proposal believe_launchpad_listener is currently QUEUED_NATURAL_RESTART per run-289 directives. If shipped as written it would log fee claims, not graduations, producing zero usable data and burning a slot. Strategy / listener does not exist yet. Current Believe coverage = 0.",
-        "expected_effect": "Pre-implementation correction: zero P&L impact (proposal hasn't shipped). Prevents 7 days of wasted Phase 1 logging on the wrong stream. Once the correct launch signer is identified next run and the listener ships, expected log volume is ~10-30 grads/day (matching research-143's original estimate), giving us the data needed to evaluate forward-price action on the Believe flow.",
-        "kill_criteria": "BLOCKER for original ship: do not ship believe_launchpad_listener until next research run confirms the correct launch signer via Bitquery Believe API + LAUNCHCOIN reverse-lookup. If next research run also fails to identify the signer (e.g., Believe uses ephemeral signers per launch), then downgrade proposal to MEDIUM and use a Meteora DBC InitializeVirtualPool firehose with post-hoc filter by mint metadata pattern (more expensive, but works).",
-        "min_sample_size": "N=1 confirmed launch signer pubkey before proposal can move from BLOCKED to SHIPPABLE.",
-        "regime_scope": "ANY (launchpad graduations are dev-driven, regime-independent at the discovery layer).",
-        "rollback_plan": "No code change to revert \u2014 proposal is pre-ship. Survival brain should mark the research-143 believe_launchpad_listener proposal as SUPERSEDED-BY-RESEARCH-144 in its queue, and add the 'identify true Believe launch signer' task to requests_for_research as a high-priority ask for the next research run.",
-        "risk_if_wrong": "If the correction is wrong (i.e., 5qWya6 IS the launch signer and the subagent's 47/60 ClaimFee sample was unrepresentative): we delay shipping by one research cycle while we verify via Bitquery. Negligible cost. Conversely, if we ship the original 5qWya6 listener uncorrected and the subagent's finding is RIGHT (high confidence \u2014 78% of 60 sampled tx is structurally definitive): we burn 7 days of Phase 1 logging on a stream of fee claims, then have to debug why the log is empty of graduations. Asymmetric cost favors correction."
+        "baseline": "wallet_convergence all_time (sol_strategy_stats.json): N=14, WR 57.1%, RR 0.37, pnl_sol -0.001373, avg_win +3.46%, avg_loss -9.26%, SL rate 35.7%. The 3 pc5m>+4% entries (Bumpy/soothsayer/ASTEROID) contribute ~-39% combined and are the entire reason WC is net-negative. rolling_7d: N=3 100% WR pnl +0.000163 (SQUIRE/Ball/TROLL, all calm entries).",
+        "expected_effect": "Blocking the ~3/14 hot-5m entries lifts WR from 57.1% toward ~73% (8W/11 retained), flips all-time pnl from -0.001373 SOL toward positive (calm subset +11.2% net vs -27.8% all-in), and removes the tail-risk that produces WC's only double-digit stops. Estimated ~1 veto fire per 1-2 weeks at current WC cadence.",
+        "kill_criteria": "Revert if, over the next N=10 CWC-passed WC entries, rolling WR < 50% OR any 2 of those 10 stop out worse than -10%. (If the calm-entry subset stops winning, the pc5m gate was spurious.)",
+        "min_sample_size": "N=10 WC fires that PASS the gate (i.e. pc5m<=+4%) in any regime; WC fires ~2-4x/week so ~3-5 weeks to evaluate.",
+        "regime_scope": "ANY (front-running asymmetry is regime-independent; the 3 losses span CHOP and the calm wins span months).",
+        "rollback_plan": "Remove the pc5m>+4% veto from the wallet_convergence entry path; restore prior WC entry logic (run-287 dead-book floor stays regardless).",
+        "risk_if_wrong": "The veto could skip a WC token that pumps after a hot 5m candle. Bounded: WC sizes at 0.15x, and the live evidence is 0/3 wins on hot-5m entries, so the false-positive prior is empirically low. Worst case = sitting out an occasional small win; no added losses since it only ever SKIPS."
+      },
+      {
+        "type": "new_filter",
+        "target": "jito_tip_floor_regime_signal",
+        "justification": "RECALIBRATE the Phase-2 'MEV storm' spike threshold BEFORE any Phase-2 modifier ships. The logger (sol_jito_tipfloor_log.json) now holds 20,000 real entries over 2.43 days. The proposed threshold of ratio(p99/ema_p50)>200 is catastrophically mis-set: the MEDIAN observed ratio is 206, so >200 fires on ~half of all polls = 674 sustained episodes/day \u2014 a regime flag stuck permanently ON, signalling nothing. Also note the actual log field names are 'p99' and 'ema_p50' (NOT the verbose landed_tips_* names assumed in research-144). Data-driven recommendation: set the spike threshold to ratio > 25,000 \u2192 ~5.4 sustained episodes/day (a usable 'handful per day'); ratio>40,000 gives ~3.3/day if tighter is wanted. Avoid mean+Nsigma here \u2014 sigma is dominated by a 159,400 max outlier; a fixed absolute cut is more stable.",
+        "confidence": "HIGH",
+        "addresses_request": null,
+        "baseline": "Distribution over 20,000 entries / 2.43 days (2026-05-26 10:53 \u2192 2026-05-28 21:07, clean 10s cadence): ratio mean 657.8, median 206.2, std 3719, p90 1266, p95 2058, p99 5967, max 159,400. Sustained-episode counts/day: thr=200 \u2192 674.5/day; p95(2058) \u2192 134.3/day; p99(5967) \u2192 28.8/day; mean+3sigma(11814) \u2192 11.5/day; 25,000 \u2192 5.4/day; 40,000 \u2192 3.3/day. Current code threshold (placeholder): 200.",
+        "expected_effect": "Threshold 200 \u2192 25,000 cuts Phase-2 firing from ~674 sustained episodes/day (useless, always-on) to ~5.4/day (discriminating regime signal). Pure calibration \u2014 Phase 1 remains LOG-ONLY; no entry behavior changes until Phase-2 ships with the corrected constant.",
+        "kill_criteria": "After 48h at thr=25,000: if it fires >30 episodes/day (a sustained tail-inflation regime), recalibrate to a rolling p99 of the trailing 24h; if it fires 0 episodes in 48h, drop to 15,000. Phase-2 modifier itself trips out if MEV_STORM-tagged entries underperform baseline WR by >5pp over rolling-10.",
+        "min_sample_size": "Threshold is already derived from N=20,000 polls. Phase-2 evaluation: N=20 entries tagged inside storm windows.",
+        "regime_scope": "ANY (MEV competition is regime-independent; signal strength may correlate with regime \u2014 measure in Phase 2).",
+        "rollback_plan": "Revert the threshold constant from 25,000 back to 200 (one-line). Log file and poller unaffected.",
+        "risk_if_wrong": "Zero P&L risk \u2014 this only changes a not-yet-shipped Phase-2 trigger constant; Phase 1 stays LOG-ONLY. The only downside of a wrong threshold is Phase-2 firing too often or never, both caught by kill_criteria within 48h."
       },
       {
         "type": "data_source_add",
-        "target": "jito_tip_floor_regime_signal",
-        "justification": "NEW HYPOTHESIS \u2014 direct implementation pathway for the new_hypothesis above. The bot currently has zero MEV-side data; all signals are token-side (DexScreener, pump.fun, rugcheck, holder structure). Jito's public REST endpoint exposes the p99 landed-tip-vs-EMA-p50 ratio as a free, no-auth, 1-line-of-Python regime signal that captures coordinated bundle activity \u2014 the upstream cause of memecoin launch price-discovery windows. Phase 1: poll every 60s, log to sol_jito_tipfloor_log.json (ring buffer 10080). NO entry rule changes in Phase 1. After 7d of logging, mine the log for (timestamp_of_p99_spike, our_bot's_fresh_mint_entry_density_in_next_5_min). If positive correlation, promote to regime-modifier in Phase 2.",
-        "confidence": "HIGH",
+        "target": "believe_launchpad_listener_v3_CONFIG_FILTER",
+        "justification": "REQ-019 RESOLVED with a NULL signer result, exactly the fallback REQ-019 anticipated. There is NO single Believe launch-signer pubkey: Believe launches on Meteora DBC use EPHEMERAL per-launch fee-payer signers (3+ distinct signers across 6 decoded InitializeVirtualPool txs; e.g. 3AYQoSwzrf7TqR3QdJhR3PUaEwTdht3bBgWkDoETSmVo, G8y4gZ8dSTgWQUtRwm5L3iedpryzsnJcGVQNUYwt6GVT, FFqhWGJCUiWta7Ek9me2wgMnm9FCDUhPpkP6CexME9VG). The old 5qWya6... address is confirmed FEE-CLAIM-ONLY (56/60 sampled tx ClaimFee, 0 inits). RECOMMENDED ARCHITECTURE: a Meteora DBC InitializeVirtualPool firehose FILTERED by the pool CONFIG account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM, which clustered all sampled Believe-shaped inits. DO NOT ship until the config\u2194Believe link is positively confirmed (the subagent could not tag it Believe-specific within budget; DBC is multi-tenant).",
+        "confidence": "MEDIUM",
+        "addresses_request": "REQ-019",
+        "baseline": "Current Believe coverage = 0 (no listener exists). research-143/144 listener proposal was BLOCKED pending a launch signer that this run proves does not exist. DBC program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN is multi-tenant (~6 inits per 400 recent sigs; most traffic is other launchpads).",
+        "expected_effect": "If config FhVo3mqL...HLuM is Believe-specific, a firehose filtered by it should log ~10-30 Believe graduations/day (research-143 original estimate), enabling forward-price analysis of Believe flow. If the config is NOT Believe-specific, the listener logs noise \u2014 hence the pre-ship confirmation gate.",
+        "kill_criteria": "PRE-SHIP GATE: do not ship until \u22655 known Believe mints (seed: LAUNCHCOIN Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk) are confirmed to all carry config FhVo3mqL...HLuM. POST-SHIP: if >20% of logged tokens are demonstrably non-Believe, the config is wrong \u2014 disable and revert to a Bitquery-API-key approach.",
+        "min_sample_size": "N>=5 confirmed Believe mints all sharing the config before ship; then 48h of post-ship log to verify grad density.",
+        "regime_scope": "ANY (launchpad graduations are dev-driven, regime-independent).",
+        "rollback_plan": "Pre-ship: no code to revert; mark research-143/144 believe_launchpad_listener proposal as SUPERSEDED-BY-CONFIG-FILTER. Post-ship: remove the config-filtered firehose subscription.",
+        "risk_if_wrong": "If config is mis-attributed, the listener logs non-Believe DBC graduations \u2014 wasted log volume, no P&L impact (LOG-ONLY). Confirming the config link costs one Bitquery query or one config-account decode; cheap insurance."
+      },
+      {
+        "type": "data_source_add",
+        "target": "wallet_convergence_source_wallet_logging",
+        "justification": "DATA GAP discovered while mining WC: the source_wallet field is EMPTY on all 28 WC trade-log entries, and the reasoning field records only the COUNT of converging wallets ('N wallets bought in 24h'), never WHICH wallets. This blocks the highest-value future WC research \u2014 wallet-identity attribution (are some tracked wallets genuine alpha and others noise?). Propose: persist the triggering wallet addresses on every WC entry (and ideally on every strategy's enrichment record). This is an ENABLING change \u2014 it unlocks a future 'fire WC only when >=K of a high-alpha wallet subset converge' mechanism that cannot be built today because the data isn't captured.",
+        "confidence": "MEDIUM",
         "addresses_request": null,
-        "baseline": "Current behavior: bot has no MEV data feed. Active-strategy 7d stats per sol_strategy_stats.json: N=3 trades, WR 0%, all stop_loss, pnl_sol -0.005644 (TOLYBOT WC + WORLDCUP CB + ANDV BS, all pre-fix per run-290 directives). Lifetime: N=1004 sells, WR 35.4%, RR 0.80, pnl -1.1727. Fresh-mint strategies have no current regime modifier; entries fire equally aggressively in MEV storms and quiet windows.",
-        "expected_effect": "Phase 1 (LOG-ONLY, 7 days): no P&L impact. Generates ~10080 minute-poll samples of {p99, p50, ema_p50, ratio}. Estimated 8-20 sustained spikes per day above ratio>200 (subagent's spot-sample was 159x at one timestamp in a non-launch window). Phase 2 (regime modifier active): expected to identify ~3-10 high-quality entry windows per day where MEV competition signals concentrated launch flow. Hypothesized lift on fresh-mint strategies: WR +5-10pp during MEV_STORM windows vs baseline (conservative estimate; could be much higher if the signal is clean).",
-        "kill_criteria": "Phase 1: if 7d logging produces zero ratio spikes >200 (i.e., the threshold is mis-calibrated), recalibrate threshold to p95 of observed distribution and continue. If endpoint returns 5xx errors >5% of polls over 24h, the public endpoint is unreliable; switch to WS tip_stream or downgrade. Phase 2: if MEV_STORM-tagged entries show rolling-10-trade WR < baseline by >5pp, disable the regime modifier (logs continue). Hard revert if Phase 1 logging causes API rate-limit failures.",
-        "min_sample_size": "Phase 1: 7d logging, expected N=10080 minute samples. Phase 2: N=20 entries tagged during MEV_STORM windows before evaluation.",
-        "regime_scope": "ANY (MEV is regime-independent; the signal STRENGTH may correlate with regime \u2014 measure in Phase 1).",
-        "rollback_plan": "Phase 1: remove the poller thread and the ring-buffer log file path. No state to roll back. Phase 2: remove the regime flag check from fresh-mint strategy entry paths; log file stays.",
-        "risk_if_wrong": "Phase 1: ZERO P&L risk (LOG-ONLY). API risk: 1 req/min vs 1 req/sec ceiling = 60x headroom; no concerns. Phase 2: regime modifier could fire when MEV competition is on arb/non-memecoin opportunities (e.g., perp liquidations, NFT mint waves) \u2014 would produce false positives. Bounded by the 5-minute regime-flag TTL and the existing entry gates; worst case is ~5 false-positive fresh-mint entries per day at -7% each = -0.0015 SOL/day for \u22643 days before kill_criteria trip. Conservative."
+        "baseline": "0/28 WC entries have source_wallet populated; convergence is logged as an integer count only. Wallet COUNT (3 vs 4) shows no predictive edge in the current data, so the count is NOT the alpha \u2014 identity might be, but is unmeasurable.",
+        "expected_effect": "After ~4-8 weeks of logging triggering wallet addresses, a future research run can rank tracked wallets by the forward return of the WC trades they triggered, then propose pruning noise wallets / weighting alpha wallets. No immediate P&L effect; it is infrastructure for a future edge.",
+        "kill_criteria": "If after 8 weeks the per-wallet WC sample is still too thin (no wallet with N>=5 triggered trades) to rank, abandon wallet-identity attribution and revert the logging.",
+        "min_sample_size": "Need >=5 WC trades attributable to a single triggering wallet before any wallet-ranking analysis.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "Remove the source_wallet capture from the WC entry-logging path; no behavioral change to revert (logging-only).",
+        "risk_if_wrong": "Negligible \u2014 a few extra bytes per trade-log entry. Worst case is the data proves wallet identity has no edge, which is itself a useful null result."
       },
       {
         "type": "new_filter",
         "target": "creator_wallet_velocity_rug_guard_EXTENDED",
-        "justification": "EXTENSION to research-143's queued creator_wallet_velocity_rug_guard proposal. The 9nEes9HwGPcJVQG9g1XhBigZBFNPkU5YdvrEoDDpump (WEMBY) outcome \u2014 sniper top-1 @ 24%, predicted 'recoverable', actually dumped -75% h24 in 12h \u2014 undermines the original disambiguation that 'sniper top-1 is fine, only creator top-1 is dangerous'. The data say SNIPER concentration \u2265 ~25% is also a tail-risk signal, just slower (-75% in 12h vs creator's -96% in 12h). Extend the classifier: in addition to the original HARD-BLOCK on (owner==creator AND pct\u226550 AND creator_tokens_count>20), add a SOFT-DEFER (wait 10 min, re-poll) on (owner is SNIPER class AND pct \u2265 25 AND pair_age \u2264 15 min). If on re-poll the top-1 has DROPPED \u2265 5pp, hard-block (sniper is exiting). If unchanged or up, allow. Phase 1 LOG-ONLY along with the original proposal; promote together. The extension does NOT change the original ship plan \u2014 it's an additive classification rule.",
-        "confidence": "MEDIUM",
+        "justification": "HOLD / DO NOT SHIP the sniper-class extension (soft-defer on sniper top-1 >= 25%). Extending the N=2 evidence to N=6 WEAKENED it. The fresh pump.fun cohort naturally clusters at ~20.7-21.8% top-1 non-LP holder REGARDLESS of outcome (BBALL 20.7% +82%, 250 21.8% +235%, ADELL 20.8% -39%, AI 20.9% -68%) \u2014 so a 20-22% concentration does NOT discriminate dumpers from pumpers. Also a methodology catch: rugcheck's literal #1 holder (27-37%) is the bonding-curve/AMM pool account (matches markets.liquidityA) and must be excluded before reading 'top-1 non-LP'. Keep the original creator-class HARD-BLOCK (owner==creator AND pct>=50 AND creator_tokens_count>20) which is unaffected; only the sniper extension is unsupported.",
+        "confidence": "LOW",
         "addresses_request": null,
-        "baseline": "N=2 live samples (FqJWzb creator-class went -96%; 9nEes sniper-class went -75%). Both samples from the research-143 watchlist. Existing rugcheck call already returns top-1 owner_address; the SNIPER classification is already implied by the original proposal's classifier (owner not LP, owner not creator, pct > 5). The threshold (25%) and the velocity check (5pp drop in 10 min) are new \u2014 propose them as Phase 1 LOG-ONLY defaults to be tuned after 7d of data.",
-        "expected_effect": "Phase 1: no P&L impact, generates extended classification + velocity data on ~50-100 fresh-mint entries with sniper top-1. Phase 2 (block sniper top-1 \u226525% with 5pp drop on re-poll): adds an estimated 5-10% block rate on top of the original creator-class blocks. Combined with the original proposal, expected to block 15-30% of fresh-mint entries that would have been catastrophic stops.",
-        "kill_criteria": "Phase 1: if 7d logging shows no correlation between sniper top-1 pct and forward 30-min return at N\u226520, the extension is rejected; ship the original proposal without the extension. Phase 2: if 10 blocked sniper-class candidates show post-block 1h median return > +20%, the threshold is too tight \u2192 raise to pct \u2265 35.",
-        "min_sample_size": "Phase 1: 7d logging, expected N=50-100. Phase 2: N=10 blocked candidates before evaluation.",
-        "regime_scope": "ANY (rug mechanics are regime-independent).",
-        "rollback_plan": "Phase 1: remove the SNIPER classification's velocity layer (the re-poll); CREATOR class hard-block stays. Phase 2: remove the SOFT-DEFER conditional; classification stays as a logged field.",
-        "risk_if_wrong": "Phase 1: zero P&L risk. Phase 2: false positives block legitimate sniper-distributed tokens that recover. Bounded by per-block downside; the worst miss is a sniper-led pump we sit out. Live data: the only sniper-class fresh-mint we observed (WEMBY) dumped -75%, so the false-positive prior is empirically low \u2014 but N=2 is not statistically meaningful, hence MEDIUM confidence."
-      },
-      {
-        "type": "new_filter",
-        "target": "letsbonk_listener_polling_cadence",
-        "justification": "AUDIT CLOSURE for research-143's concern that LetsBonk listener was 50x under-indexing. Subagent walked the listener code (degen_bot.py:4524-4625, program LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj + platform config FfYek5vEz23cMkWsdJwG2oa6EphsvXSHrGpdALN4g6W1) and found: (1) filter logic correct, (2) discriminators (cf52c091fecf91df migrate_to_amm + 885cc8671cda908c migrate_to_cpswap) are right, (3) the '~90/day' public figure was the 2025 hype peak \u2014 current sustained rate per Dune trough is ~5/day, our ~1.55/day is 3x under-counted not 50x. Likely cause: 60s poll + getSignaturesForAddress limit=150 covers only ~4 min of program history at ~35 sigs/min; bursts above 150 sigs/min roll off. Recommended fix: raise limit from 150 to 1000 (Helius accepts 1000 max for getSignaturesForAddress) and/or shorten poll from 60s to 30s. Both are 1-line code changes. Verify with one Bitquery query (provided in subagent output) before shipping the cadence change.",
-        "confidence": "MEDIUM",
-        "addresses_request": null,
-        "baseline": "Current LetsBonk listener: ~14 entries / 9 days (~1.55/day). Public expected ~5/day (Dune trough) to ~25-240/day (KuCoin bullish surge estimate). Code at degen_bot.py:4524-4625. Polling 60s with getSignaturesForAddress limit=150 (~4min coverage at observed sig rate).",
-        "expected_effect": "Phase 1: run one Bitquery query against program LanMV9sAd7... + config FfYek5... for 2026-05-12 \u2192 2026-05-19 to ground-truth daily grad rate. Phase 2 (if Bitquery >3x our count): raise limit to 1000, shorten poll to 30s. Expected log density 3-10x current (~5-15/day vs current 1.55/day). Phase 2 (if Bitquery within 2x): mark audit RESOLVED \u2014 current cadence sufficient.",
-        "kill_criteria": "Phase 1 Bitquery query: if it confirms ~1.55/day actual rate \u2192 audit closed, no code change. Phase 2 ship: if log density does not increase 2x within 48h of cadence change \u2192 revert (the bottleneck is elsewhere, likely RPC rate-limit on getTransaction enrichment).",
-        "min_sample_size": "Phase 1: 1 Bitquery query covering 7d. Phase 2: 48h of post-ship log entries.",
-        "regime_scope": "ANY.",
-        "rollback_plan": "Revert limit=1000 \u2192 limit=150, poll=30s \u2192 poll=60s. One-line revert each.",
-        "risk_if_wrong": "Negligible. Raising limit and shortening poll uses more RPC calls (~2x per minute) against Alchemy paid endpoint \u2014 well within plan. Worst case is one extra getTransaction call per missed sig, which the existing enricher already handles."
+        "baseline": "N=6 snapshot (2 prior + 4 new). >=25% bucket effectively N~1-2 (both down hard, but tiny sample). 20-25% bucket: 4 tokens, ~50/50 dump/pump. <20%: no fresh samples captured. All proxied by current h24, NOT true 12h-forward returns.",
+        "expected_effect": "By NOT shipping the sniper extension, we avoid a filter that would block legitimate pumpers (BBALL +82%, 250 +235% both sit at ~21% sniper concentration). Keeps the creator-class hard-block intact.",
+        "kill_criteria": "Re-open the sniper extension ONLY if a future run with (a) a true newest-pairs feed surfacing >=25% cases and (b) real +12h forward snapshots shows the 25% cutoff cleanly separates dumpers from survivors at N>=10.",
+        "min_sample_size": "N>=10 tokens with true +12h forward returns, stratified above/below 25%.",
+        "regime_scope": "ANY (rug mechanics regime-independent).",
+        "rollback_plan": "No code change to make \u2014 this is a recommendation to keep the sniper extension UNSHIPPED. Mark it DEFERRED-WEAKENED-RESEARCH-145 in the pending_hypotheses queue.",
+        "risk_if_wrong": "If we're wrong to hold (sniper>=25% really is a rug signal), we miss blocking some rugs \u2014 but the creator-class hard-block still catches the most dangerous class, and N=6 simply doesn't justify a live filter that the data shows blocks pumpers too."
       }
     ],
-    "request_responses": [],
-    "informational_only_findings": [
+    "request_responses": [
       {
-        "topic": "research_143_believe_proposal_correction",
-        "finding": "Research-143's believe_launchpad_listener proposal is QUEUED_NATURAL_RESTART per run-289 directives. As written, it would subscribe to authority 5qWya6UjwWnGVhdSBL3hyZ7B45jbk6Byt1hwd7ohEGXE expecting graduation events. Subagent on-chain inspection (latest 1000 sigs covering ~7.3 days, then 60-sig deep dive on most recent batch) found: ~94% of recent tx are ClaimFee invocations against Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB (fee-routing wrapper) \u2192 24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi (DAMM withdraw). 0/60 sampled tx were DBC pool creations. The authority is a FEE-CLAIM signer (harvesting creator fees from already-graduated Believe tokens), not the launch signer. Survival brain should mark the proposal SUPERSEDED before the next natural restart fires.",
-        "evidence_strength": "HIGH (60-tx structural sample is decisive; 47 ClaimFee is unambiguous)"
-      },
-      {
-        "topic": "letsbonk_listener_audit_outcome",
-        "finding": "Listener is mechanically correct. Program ID + discriminators + platform config filter all verified. The 50x discrepancy concern was driven by 2025-peak public figures (~90/day) being misapplied as a 2026 baseline; actual 2026 sustained rate per Dune trough is ~5/day. Our 1.55/day observation is 3x under-counted, likely from poll-cadence saturation (150-sig limit, 60s poll) during burst windows. Two cleanups proposed (Bitquery cross-check + cadence raise). Audit can be marked partially closed even before cadence change.",
-        "evidence_strength": "HIGH on listener-correctness; MEDIUM on under-count magnitude (Bitquery query will pin it down)"
-      },
-      {
-        "topic": "wemby_sniper_top1_dump_evidence",
-        "finding": "9nEes9HwGPcJVQG9g1XhBigZBFNPkU5YdvrEoDDpump (WEMBY/Alien) was the research-143 'sniper top-1, predicted recoverable' control mint. 12h forward-price outcome: -75% h24, FDV $8.5k (down from ~$25k at sample), liq $7k, vol24h $238k (so it's still trading actively, but bleeding). Mechanism: sniper-concentrated supply with no creator-class bag still produces extended dumps when the sniper exits. This is N=2 evidence (FqJWzb creator-class -96%, WEMBY sniper-class -75%) and not statistically significant alone, but supports extending the original creator_wallet_velocity_rug_guard classifier to include a sniper-velocity layer. Logged as Phase-0 evidence for the extension proposal.",
-        "evidence_strength": "LOW (N=2) but DIRECTIONAL"
-      },
-      {
-        "topic": "jito_tipfloor_endpoint_live_validation",
-        "finding": "https://bundles.jito.wtf/api/v1/bundles/tip_floor returned 200 OK with valid JSON on first try at 2026-05-19 16:39 UTC. Payload: {landed_tips_50th_percentile: 2.5e-6, landed_tips_99th_percentile: 0.000412, ema_landed_tips_50th_percentile: 2.59e-6}. Current ratio p99/ema_p50 = ~159. Endpoint is 1-line-of-Python accessible, no auth, 1req/sec ceiling. The originally-advertised bundles-api-rest.jito.wtf subdomain refused connection \u2014 canonical host is bundles.jito.wtf.",
-        "evidence_strength": "HIGH (live response captured)"
+        "request_id": "REQ-019",
+        "status_set_to": "completed",
+        "finding": "NULL RESULT (this is a valid DONE per REQ-019's own fallback clause): Believe launchpad has NO single recurring launch-signer pubkey. Launches on Meteora DBC (dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN) use EPHEMERAL per-launch fee-payer signers. Across 6 decoded InitializeVirtualPool txs there were 3+ distinct signers (3AYQoSwzrf7TqR3QdJhR3PUaEwTdht3bBgWkDoETSmVo, G8y4gZ8dSTgWQUtRwm5L3iedpryzsnJcGVQNUYwt6GVT, FFqhWGJCUiWta7Ek9me2wgMnm9FCDUhPpkP6CexME9VG), none recurring. The old 5qWya6... address is confirmed FEE-CLAIM-ONLY (56/60 sampled signer tx are ClaimFee, 0 inits). RECOMMENDED FALLBACK (as REQ-019 requested): downgrade to a Meteora DBC InitializeVirtualPool firehose FILTERED by the shared pool CONFIG account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM, which clustered all sampled Believe-shaped inits. CAVEAT: config not yet positively tagged Believe-specific (DBC is multi-tenant) \u2014 confirm via Bitquery API key or config-account decode before shipping. See proposal believe_launchpad_listener_v3_CONFIG_FILTER. Also resolved full LAUNCHCOIN mint: Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk (was truncated Cn5Ne1vmR9c).",
+        "evidence": "Alchemy RPC: sampled 60 signer-tx of 5qWya6... (56 ClaimFee / 0 init); decoded 6 InitializeVirtualPool txs from 400 recent DBC sigs with 3+ distinct fee-payers; config FhVo3mqL...HLuM present on all sampled inits. LAUNCHCOIN resolved via DexScreener. Confidence HIGH on null-signer + fee-claim attribution; MEDIUM on config-is-Believe."
       }
     ],
     "subagents_dispatched": [
       {
-        "role": "letsbonk_listener_audit (code walk + public cross-ref)",
-        "finding": "Listener mechanically correct (program LanMV9sAd7..., discriminators cf52c091/885cc8671c, platform config filter FfYek5... working). 14 entries / 9 days. Public '~90/day' was 2025 peak; current Dune trough ~5/day. Our 1.55/day is ~3x under-counted (poll cadence saturation), not 50x. Bitquery query provided for ground-truth verification."
+        "role": "believe_launch_signer (REQ-019 on-chain forensics)",
+        "finding": "NULL: no single Believe launch signer; ephemeral per-launch fee-payers. 5qWya6 confirmed fee-claim-only (56/60 ClaimFee). Fallback = DBC firehose filtered by config FhVo3mqL...HLuM (MEDIUM \u2014 confirm Believe-specific before ship). LAUNCHCOIN full mint = Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk."
       },
       {
-        "role": "fqjwzb_forward_price_calibration (watchlist verdicts)",
-        "finding": "FqJWzb (creator-class loaded gun) RUGGED -96% h24 \u2014 hypothesis strongly supported. DwzabQv (control rug) RUGGED -94% as predicted. WEMBY/9nEes (sniper-class, predicted recoverable) DUMPED -75% h24 \u2014 undermines disambiguation, supports extending guard to sniper class. Full mints resolved via DexScreener API."
+        "role": "jito_tipfloor_log_miner (data-driven threshold)",
+        "finding": "20k entries / 2.43d. Placeholder threshold 200 is way too low \u2014 median ratio is 206 (fires ~50% of polls, 674 episodes/day). Recommend ratio>25,000 = ~5.4 sustained episodes/day. Fields are p99/ema_p50. Trade correlation 0/10 but only ~3 trades overlap the logged window (re-check in 1 week)."
       },
       {
-        "role": "believe_launchpad_onchain_confirmation (Meteora DBC + authority + 7d count)",
-        "finding": "DBC program dbcij3... CONFIRMED. Authority 5qWya6... is FEE-CLAIM signer not launch signer \u2014 47/60 sampled tx are ClaimFee, 0 DBC pool creations. 935 sigs/7d (~134/day) all fee claims. Research-143's listener proposal as written would log 0 graduations. Must find true launch signer via Bitquery Believe API + LAUNCHCOIN reverse-lookup before shipping."
+        "role": "sniper_top1_forward_returns (extend N=2\u2192N=6)",
+        "finding": "INCONCLUSIVE\u2192WEAKENED. Fresh pump.fun cohort clusters ~20.7-21.8% top-1 non-LP regardless of outcome (2 pumped, 2 dumped). 25% cutoff not supported at N=6. Methodology catch: rugcheck #1 holder is the LP/bonding-curve account, must exclude. Don't promote sniper extension."
       },
       {
-        "role": "jito_mev_bundle_scout (novel data source survey)",
-        "finding": "Jito tip_floor REST endpoint (bundles.jito.wtf/api/v1/bundles/tip_floor) is the new edge \u2014 free, no auth, 1-line Python, exposes p99/ema_p50 ratio as market-wide MEV regime signal. Current ratio 159x. Sustained >200 = coordinated buy bundles on one fresh listing. Implementation GREEN. WS upgrade available for Phase 2. Per-token attribution via explorer.jito.wtf scrape is Phase 3."
+        "role": "wallet_convergence_edge_miner (novel mechanism)",
+        "finding": "price_change_5m at entry is the clean win/loss separator. 3 worst WC losses (Bumpy/soothsayer/ASTEROID, all -12% to -13%) entered into >+4% 5m pumps; 11 calm entries +11.2% net. Wallet count (3 vs 4) no edge; source_wallet identity not logged (data gap). Proposed Convergence-Without-Chase veto (skip if pc5m>+4%)."
       }
     ],
     "data_sources_used": [
-      "own_trade_log",
+      "own_trade_log (sol_trade_log.json)",
       "sol_strategy_stats.json",
       "sol_brain_directives.json",
-      "sol_letsbonk_graduation_log.json",
-      "degen_bot.py (code walk, read-only)",
+      "sol_jito_tipfloor_log.json (LIVE 20k-entry ring buffer \u2014 first mined this run)",
       "ALCHEMY_SOLANA_RPC (getSignaturesForAddress + getTransaction)",
-      "rugcheck.xyz_v1_tokens_report (carry-forward from research-143 validation)",
-      "DexScreener API search endpoint (mint resolution)",
-      "Solscan (program + authority labeling)",
-      "Dune (oladee/lets-bonk LetsBonk grad rate)",
-      "Bitquery docs (Believe Launchpad API, LetsBonk.fun API)",
-      "Jito public REST (bundles.jito.wtf/api/v1/bundles/tip_floor \u2014 live response)",
-      "Meteora docs + GitHub (DBC program ID verification)",
-      "WebSearch (LetsBonk grad rates, Jito bundle docs, Believe authority)"
+      "Meteora DBC program decode (InitializeVirtualPool)",
+      "DexScreener API (mint resolution, fresh pairs)",
+      "rugcheck.xyz v1 token reports (holder distribution)",
+      "Bitquery docs (Believe Launchpad API)",
+      "WebSearch / WebFetch (Believe authority, launch signer)"
     ],
-    "next_run_focus": "(1) HIGHEST PRIORITY: identify the TRUE Believe launch signer pubkey. Method: query Bitquery's Believe Launchpad API (https://docs.bitquery.io/docs/blockchain/Solana/Believe-API/) for the 10 most-recent Believe-launched mints, extract the signer of the InitializeVirtualPool instruction on Meteora DBC dbcij3... for each, cluster by frequency. Cross-validate by fetching LAUNCHCOIN (Cn5Ne1vmR9c) mint creation tx and inspecting signers. Until found, believe_launchpad_listener stays BLOCKED. (2) Execute the Bitquery LetsBonk cross-check query (provided in subagent 1's output) to ground-truth our listener's 1.55/day rate vs actual. (3) Backfill 24h of jito_tip_floor data to characterize the distribution of p99/ema_p50 ratio: what's the mean, std, 95th, 99th of the ratio itself? This will tune the spike threshold from the placeholder 200 to a data-driven value (e.g., 'sustained >mean+3sigma'). (4) Spot-check 5 more sniper-class top-1 mints (top-1 in [20, 50) pct, owner != creator, owner != LP) and their 12h forward returns \u2014 extend the N=2 evidence on the sniper-velocity extension proposal. (5) DEFERRED FROM THIS RUN: Helius webhooks survey (paid-tier above free; competes with Jito ship priority). Revisit if Jito Phase 1 logging shows the signal is weaker than hypothesized. (6) Operator-touch: surface the WEMBY/9nEes -75% outcome to bot owner as a real-world calibration of how the previous research run's 'recoverable' prediction missed; this is useful priors-tuning context.",
+    "next_run_focus": "(1) Re-run the Jito tip_floor \u2194 trade-log correlation NOW that the logger window will overlap ~1 week of trades \u2014 the 0/10 this run was uninformative because only ~3 buys fell inside the 2.4-day logged window. Test whether ratio>25,000 spikes precede WC/fresh-mint entries. (2) Positively CONFIRM that DBC config account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM is Believe-specific \u2014 fetch >=5 known Believe mints (seed LAUNCHCOIN Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk) and verify all carry this config; needs a Bitquery API key or a config-account decode. This unblocks believe_launchpad_listener_v3. (3) If CWC veto shipped, audit its first WC fires for false-positive skips (tokens that pumped after a hot 5m). (4) Sniper extension: only revisit with a true newest-pairs feed (>=25% cases) AND real +12h forward snapshots \u2014 snapshot h24 was too noisy. (5) STILL DEFERRED: Helius webhooks survey (paid-tier). Revisit if Jito Phase-2 signal proves weak.",
     "meta": {
-      "elapsed_min": 10,
+      "elapsed_min": 9,
       "subagent_count": 4,
-      "web_calls": 14,
-      "new_tokens_scouted": 3,
-      "trade_log_entries_examined": 0,
-      "novel_data_sources_unlocked": 1,
-      "novel_data_sources_invalidated": 1,
-      "requests_serviced": 0,
-      "requests_for_research_pending_at_run_start": 0,
-      "critical_corrections_to_prior_research": 1
+      "web_calls": 8,
+      "new_tokens_scouted": 5,
+      "trade_log_entries_examined": 28,
+      "novel_data_sources_unlocked": 0,
+      "novel_hypotheses": 1,
+      "requests_serviced": 1,
+      "requests_for_research_pending_at_run_start": 1,
+      "live_logger_first_mined": "jito_tip_floor"
     }
   },
   "research_status": {
-    "running": true,
+    "running": false,
+    "last_run_id": "research-145",
     "started_at": "2026-05-28 21:06:03 EDT",
-    "run_id": "research-145"
+    "finished_at": "2026-05-28 21:13:30 EDT",
+    "outcome": "OK",
+    "summary": "4 subagents (Believe launch signer / Jito tipfloor log miner / sniper top-1 extension / wallet_convergence edge miner). REQ-019 CLOSED with NULL result: Believe launchpad uses EPHEMERAL per-launch fee-payer signers, no single launch authority (3+ distinct signers across 6 InitializeVirtualPool txs; 5qWya6 confirmed fee-claim-only 56/60 ClaimFee). Fallback per REQ-019 spec: DBC InitializeVirtualPool firehose filtered by config account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM (MEDIUM \u2014 confirm Believe-specific before ship). LAUNCHCOIN full mint resolved Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk. NOVEL HYPOTHESIS convergence_without_chase: wallet_convergence (only profitable strategy, 7d 3W/0L) win/loss split governed by price_change_5m at entry \u2014 the 3 worst WC losses ever (Bumpy -13.4%, soothsayer -13.1%, ASTEROID -12.5%) were ALL entered into >+4% 5m pumps; the 11 calm-entry WC trades returned +11.2% net (8W). Propose HARD VETO skip if pc5m>+4%. JITO RECALIBRATION (HIGH): logger now has 20k entries/2.43d; placeholder Phase-2 threshold ratio>200 is catastrophically too low (MEDIAN ratio is 206 = fires ~50% of polls, 674 episodes/day). Data-driven fix: ratio>25,000 = ~5.4 sustained episodes/day. Log fields are p99/ema_p50. SNIPER EXTENSION WEAKENED at N=6 (fresh cohort clusters ~21% regardless of outcome; rugcheck #1 holder is the LP account) \u2014 recommend HOLD, do not ship. Data gap found: WC source_wallet not logged \u2014 proposed enabling logging change. 5 proposals filed (CWC HIGH, jito recalibration HIGH, believe config-filter MEDIUM/REQ-019, WC wallet-identity logging MEDIUM, sniper-extension HOLD LOW)."
   },
   "maintenance_status": {
-    "hours_since_last_trade": 2.56,
+    "hours_since_last_trade": 2.64,
     "dormancy_alert": false,
-    "file_age_min": 6.4,
+    "file_age_min": 11.4,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-05-28 20:59:00 EDT",
+    "timestamp": "2026-05-28 21:13:36 EDT",
     "computed_from_trades": 2044,
     "total_buys": 1011,
     "total_sells": 1012,
@@ -1836,7 +1815,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-05-28T18:39:22.526459",
-      "hours_ago": 2.33,
+      "hours_ago": 2.57,
       "symbol": "TROLL",
       "strategy": "wallet_convergence"
     },
@@ -1855,7 +1834,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 1,
-    "age_min": 14.1,
+    "age_min": 4.5,
     "stale": false,
     "available": true
   },
@@ -1874,7 +1853,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 2814.239623,
+  "maint_next_sec": 2516.516761,
   "maint_next_str": "10:00 PM EST",
   "maint_last_run_str": "9:06 PM EST",
   "maint_stale": false,
@@ -1886,13 +1865,13 @@
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "jito_tip_floor_regime_signal",
-      "run_id": "research-144",
-      "status": "implemented",
-      "status_label": "\u2705 Implemented",
-      "status_color": "#00ff88",
-      "evidence_text": "Updated the jito_tip_floor_regime_signal pending hypothesis status to PHASE_1_LOG_ONLY_LIVE_VERIFIED_RUN_295.",
-      "evidence_source": "action"
+      "hypothesis_name": "convergence_without_chase",
+      "run_id": "research-145",
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Run-294 noted research-145 expected today 2026-05-24 04:30 EDT: MISSED. Today 2026-05-27, 8 days since research-144. Operator escalation filed.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 13,
@@ -1902,118 +1881,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-28T20:21:55.765108",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4h9GG2qw sold ArwzPFhQ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:21:56.336114",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip TOLY: m5=-13.3% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:21:56.349010",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4h9GG2qw sold DSBYVyCZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:35.788002",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip HARAMBE: downtrend h1=-28.7% h24=-42.0%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:37.848124",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip ALIENS: h1=3.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:37.848124",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CkUZV387 sold 6qn3n3Mz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:37.881250",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CkUZV387 sold 6qn3n3Mz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:37.898317",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CkUZV387 sold 6qn3n3Mz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:37.915020",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "No new signals",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:40.048903",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip POKEHEIST: m5=11.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:42.349683",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip V&T: downtrend h1=-16.1% h24=-16.1%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:43.133517",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip BUFFDON: deep24h h24=-70.3% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:43.800263",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip 250: h1=-0.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:44.333532",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip TOLY: h1=-30.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:44.824979",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: 8 new profile(s) (22 young, 4 ready)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-28T20:22:45.326362",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "POKE: pair_age=2.4h < 6.0h H11 gate (1-6h death zone)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-28T20:22:46.088379",
       "type": "FP_SKIP",
@@ -2601,6 +2468,118 @@
       "color": "#58a6ff",
       "msg": "WalletSell: 7xwDKXNG sold 4nNCYv9Y \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:13:36.365191",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 140 wallets (cycle #1)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:14:28.127938",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip ICED: downtrend h1=-72.8% h24=-72.8%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:15:10.246441",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold 4gLfCuJ5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:15:10.264944",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Bi4rd5FH sold 4gLfCuJ5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:15:11.885123",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4gLfCuJ5: tracked wallet sold this token 95s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:15:11.896535",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4gLfCuJ5: tracked wallet sold this token 95s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:15:11.914890",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4gLfCuJ5: tracked wallet sold this token 95s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:16.365909",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard block h21 2fg5QD1e: blocked hour (data-proven -EV)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:16.900137",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard block h21 2fg5QD1e: blocked hour (data-proven -EV)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:17.465291",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard block h21 2fg5QD1e: blocked hour (data-proven -EV)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:18.029574",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Hard block h21 2fg5QD1e: blocked hour (data-proven -EV)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:38.577971",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9r1BenK1 sold C9UM3Bf4 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:38.600222",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9r1BenK1 sold C9UM3Bf4 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:38.618913",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9r1BenK1 sold C9UM3Bf4 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:38.633897",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9r1BenK1 sold C9UM3Bf4 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-28T21:16:38.652529",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9r1BenK1 sold C9UM3Bf4 \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2619,9 +2598,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "21:13:05",
+  "ts": "21:18:03",
   "__publish_meta": {
-    "published_at": "2026-05-28 21:13:05 EDT",
+    "published_at": "2026-05-28 21:18:03 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
