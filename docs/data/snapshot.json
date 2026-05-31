@@ -1,15 +1,15 @@
 {
-  "sol_price": 81.33303591641358,
+  "sol_price": 81.46963294901872,
   "bot_status": "RUNNING",
-  "bot_last_seen": "11:45:33",
-  "bot_cycles": 72,
+  "bot_last_seen": "12:39:48",
+  "bot_cycles": 73,
   "bankroll": 1.1143,
-  "bankroll_usd": 90.62940192165965,
+  "bankroll_usd": 90.78161199509157,
   "budget": 0.1596413196,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 11.7,
+  "hour": 11.8,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -234,182 +234,133 @@
     "result": "Saved 20 wallets in 34m 4s",
     "completed": "2026-05-28T02:00:47.047088"
   },
-  "brain_next_sec": 55752.554407,
+  "brain_next_sec": 55449.5808,
   "brain_next_str": "Mon 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
   "brain_last_run_str": "4:19 AM EST",
   "brain_disabled": false,
-  "research_running": true,
-  "research_last_run_str": "",
+  "research_running": false,
+  "research_last_run_str": "12:38 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 575712.554407,
-  "research_elapsed_sec": 1499.445593,
+  "research_next_sec": 575409.5808,
+  "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
-    "timestamp": "2026-05-28 21:12:00 EDT",
-    "run_id": "research-145",
+    "timestamp": "2026-05-31 12:38:16 EDT",
+    "run_id": "research-146",
     "version": 1,
-    "regime_at_run": "CHOP + ALTCOIN_WINTER (BTC.D ~57.8%, SOL ~$84). Bot ALIVE: last buy TROLL wallet_convergence 2026-05-28 18:39 EDT, stats fresh 20:59 EDT. WC is the only currently-profitable strategy (7d 3W/0L).",
-    "headline": "NOVEL EDGE on our ONLY profitable strategy: wallet_convergence's win/loss split is governed almost entirely by price_change_5m at entry \u2014 the 3 worst WC losses in history (Bumpy -13.4%, soothsayer -13.1%, ASTEROID -12.5%) were ALL entered while price was ripping >+4% in 5min; the 11 calm-entry WC trades returned +11.2% net (8W). Propose 'Convergence-Without-Chase' hard veto (skip WC if price_change_5m>+4%). SECOND BIG FIND: the live Jito tip_floor logger now has 2.4 days of real data \u2014 the proposed Phase-2 spike threshold of 200 is CATASTROPHICALLY too low (median ratio is 206; 200 fires on ~50% of polls = 674 episodes/day, permanently ON). Data-driven recalibration: ratio>25,000 = ~5.4 sustained episodes/day. REQ-019 CLOSED with NULL result: Believe has NO single launch signer (ephemeral per-launch fee-payers confirmed); fallback = DBC InitializeVirtualPool firehose filtered by config account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM. THIRD: sniper-top-1\u226525% rug signal WEAKENED at N=6 \u2014 do not promote.",
+    "headline": "SOLVED the calm-entry WC catastrophe: it is the LIVE ORDER BOOK, not mcap or age - a 2-feature gate (pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5) blocks the -14% SQUIRE dump while keeping every WC win, including the SAME-MINT SQUIRE win (net-BUY book 10>2) and TROLL (aged 9676h but net-buy 5>3).",
     "new_hypothesis": {
-      "name": "convergence_without_chase",
-      "mechanism": "wallet_convergence's edge is information asymmetry: tracked smart-money wallets buy a token BEFORE the broader market reacts, and the bot front-runs the resulting price impact. That asymmetry only pays if the bot enters AHEAD of the move. When price_change_5m is already strongly positive (>+4% in the last 5 minutes), the smart-money buy has ALREADY been expressed in price \u2014 the bot is no longer front-running, it is buying the same candle as the retail reaction, arriving last into a spike that mean-reverts. Empirically every WC entry made into a hot 5m candle dumped 12-13%. Requiring a flat/quiet 5m at entry guarantees the wallet signal still has unexpressed alpha left to capture.",
-      "persistence": "Structural, not a curve-fit constant. Front-running only earns while you enter before price impact; the instant price has moved, the asymmetry is gone for ALL participants, permanently and regime-independently. The veto locks the bot to the only window where the edge mechanically exists, so it does not decay as regimes shift. It is also not arbitrage-able away by others because it is a constraint on OUR own entry timing, not a public signal.",
-      "entry_rules": "Add a HARD VETO to wallet_convergence entries: if price_change_5m > +4.0%, SKIP (do not enter, do not size down \u2014 a full veto). Secondary soft condition supported by the data: also skip if vol_liq_ratio > 25 (over-churned froth). Both conditions co-occur on the 3 catastrophic losses. The veto is additive to existing WC entry logic (the run-287 dead-book floor stays).",
-      "data_required": "Already in the bot's enrichment payload \u2014 price_change_5m and vol_liq_ratio are present on every WC trade-log entry. No new data source needed; this is a pure entry-gate using fields already computed at scan time.",
-      "estimated_fires_per_day": 1,
+      "name": "bonding_curve_velocity_pregrad_snipe",
+      "mechanism": "On pump.fun/letsBONK, the single strongest predictor of graduation (and the price pop that follows the $69K Raydium/PumpSwap migration) is LIQUIDITY VELOCITY - how few swaps it takes to reach a given vSol level. Fast accumulation in <=10-50 trades = distributed real conviction that mechanically drives the curve to migration, which itself triggers a fresh DEX-listing buy wave. Entering when velocity crosses a high band puts the bot IN before the migration crowd (median time-to-graduation ~4.4 min).",
+      "persistence": "It requires real-time on-chain swap-SEQUENCE parsing of bonding-curve accounts (Geyser/RPC or Bitquery), not price polling. DexScreener/GeckoTerminal only surface a token reliably AFTER it graduates and a DEX pool exists, so any price-polling bot is structurally minutes late. <1 in 200 of ~30k daily launches graduate, so the noise floor deters lazy competitors and the edge is not crowded out by other DexScreener bots.",
+      "entry_rules": "Extend the EXISTING pump.fun+letsBONK graduation websocket logger from an after-the-fact event recorder into a pre-graduation velocity scorer: per live bonding-curve token compute trades-to-vSol velocity + buyer-wallet diversity; flag candidates that reach the vSol threshold in <=~10-50 real (non-sub-2s-wash) trades AND have >=N distinct aged buyer wallets. Phase 1 = LOG-ONLY (record velocity score + forward 10/30-min return for every flagged candidate) to calibrate the threshold before any live entry.",
+      "data_required": "Direct RPC/Geyser subscription to the pump.fun bonding-curve program accounts (or Bitquery pump.fun bonding-curve API) to read curve PROGRESS + per-token swap-count velocity in real time. The existing graduation listener already touches this program - this extends it to read progress/velocity, not just the terminal graduation event. NOT DexScreener.",
+      "estimated_fires_per_day": 25,
       "priority": "HIGH",
-      "evidence": "Mined all 14 closed WC trades + 28 WC trade-log entries. WINS entered calm: SQUIRE +2.32% (pc5m -0.75), Butt +17.43% (pc5m -2.73), Ball +0.79% (pc5m 0), TROLL +0.27% (pc5m -0.04). LOSSES entered hot: Bumpy -13.43% (pc5m +13.8), soothsayer -13.08% (pc5m hot), ASTEROID -12.50% (pc5m hot) \u2014 the 3 worst WC losses ever, combined ~-39%. Median pc5m: wins ~0%, losses +5.2%. The single rule pc5m<=+4% cleanly separates 8 wins from the 3 catastrophic losses; calm-entry subset (11T) = +11.2% net vs all-in -27.8%. Wallet COUNT (3 vs 4) shows NO edge (nW=4 trades went +17.43, +0.27, -8.21, -13.08). NOTE: source_wallet identity is NOT logged (empty on all 28 entries) \u2014 a data gap; see proposal #4."
+      "evidence": "Peer-reviewed study arXiv 2602.14860 ('Predicting the success of new crypto-tokens: the Pump.fun case') finds liquidity velocity dominates ALL other variables as a graduation predictor; effect is monotonic and survives filtering sub-2s wash trades. Median time-to-graduation ~4.4 min. Launchpad context (late May 2026): pump.fun has REGAINED ~70-80% of launches and ~95% of graduations after the 2025 letsBONK coup reversed (The Block, Decrypt), so the bot's pump.fun-first coverage is correctly weighted and this edge fires most where the logger already listens. Of ~30k daily launches ~150 graduate; a conservative velocity+diversity filter likely yields 15-40 actionable candidates/day."
     },
     "watchlist": [
       {
         "mint": "Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk",
         "symbol": "LAUNCHCOIN",
-        "reason": "FULL MINT RESOLVED (was truncated Cn5Ne1vmR9c in REQ-019). Believe launchpad anchor token. Survival brain: use as the seed mint when validating that DBC config account FhVo3mqL...HLuM is Believe-specific before shipping the listener.",
-        "expires_at": "2026-06-05T00:00:00-04:00"
+        "reason": "Confirmed Believe launch; reference mint for validating the corrected Believe config/payer filter (REQ-020).",
+        "expires_at": "2026-06-07T12:00:00-04:00"
       },
       {
-        "mint": "BtYtzaUP_250_resolve_via_dexscreener",
-        "symbol": "250",
-        "reason": "Sniper top-1 @ 21.8%, liq $27.5k, +235% h24 snapshot \u2014 a PUMPER despite high sniper concentration. Counter-evidence that sniper-top-1>=20% is NOT a clean rug signal. Informational; mint abbreviated by subagent, resolve via DexScreener if needed.",
-        "expires_at": "2026-05-31T00:00:00-04:00"
-      },
-      {
-        "mint": "66qvEv2a_AI_resolve_via_dexscreener",
-        "symbol": "AI",
-        "reason": "Sniper top-1 @ 20.9%, liq $7.9k, -68% h24 snapshot \u2014 a DUMPER. The high-sniper cohort split ~50/50 dump/pump at N=4, weakening the rug-signal hypothesis. Informational.",
-        "expires_at": "2026-05-31T00:00:00-04:00"
+        "mint": "GsVr8GdT57gBa6GxujrtAeRGmYbFfABGFk2eaG2DzBLV",
+        "symbol": "BELIEVE-EX",
+        "reason": "Bitquery-documented Believe launch whose InitializeVirtualPoolWithSplToken was decoded this run: config index0=7SXEnhGR..., payer=5qWya6Uj... Use to lock the Believe filter.",
+        "expires_at": "2026-06-07T12:00:00-04:00"
       }
     ],
     "proposals_for_survival_brain": [
       {
         "type": "new_filter",
         "target": "wallet_convergence",
-        "justification": "Add a 'Convergence-Without-Chase' HARD VETO: skip wallet_convergence entries when price_change_5m > +4.0% (and optionally when vol_liq_ratio > 25). WC is the bot's only currently-profitable strategy (7d 3W/0L) yet its all-time pnl is negative purely because of 3 catastrophic stops \u2014 Bumpy -13.4%, soothsayer -13.1%, ASTEROID -12.5% \u2014 and ALL THREE were entered into a >+4% 5-minute pump. The 11 calm-entry WC trades returned +11.2% net. This is a NEW MECHANISM (front-run only when the smart-money buy is not yet expressed in price), not a threshold tweak on an existing filter. Fields already in enrichment payload; ~1-line gate. SHIP candidate this run.",
-        "confidence": "HIGH",
-        "addresses_request": null,
-        "baseline": "wallet_convergence all_time (sol_strategy_stats.json): N=14, WR 57.1%, RR 0.37, pnl_sol -0.001373, avg_win +3.46%, avg_loss -9.26%, SL rate 35.7%. The 3 pc5m>+4% entries (Bumpy/soothsayer/ASTEROID) contribute ~-39% combined and are the entire reason WC is net-negative. rolling_7d: N=3 100% WR pnl +0.000163 (SQUIRE/Ball/TROLL, all calm entries).",
-        "expected_effect": "Blocking the ~3/14 hot-5m entries lifts WR from 57.1% toward ~73% (8W/11 retained), flips all-time pnl from -0.001373 SOL toward positive (calm subset +11.2% net vs -27.8% all-in), and removes the tail-risk that produces WC's only double-digit stops. Estimated ~1 veto fire per 1-2 weeks at current WC cadence.",
-        "kill_criteria": "Revert if, over the next N=10 CWC-passed WC entries, rolling WR < 50% OR any 2 of those 10 stop out worse than -10%. (If the calm-entry subset stops winning, the pc5m gate was spurious.)",
-        "min_sample_size": "N=10 WC fires that PASS the gate (i.e. pc5m<=+4%) in any regime; WC fires ~2-4x/week so ~3-5 weeks to evaluate.",
-        "regime_scope": "ANY (front-running asymmetry is regime-independent; the 3 losses span CHOP and the calm wins span months).",
-        "rollback_plan": "Remove the pc5m>+4% veto from the wallet_convergence entry path; restore prior WC entry logic (run-287 dead-book floor stays regardless).",
-        "risk_if_wrong": "The veto could skip a WC token that pumps after a hot 5m candle. Bounded: WC sizes at 0.15x, and the live evidence is 0/3 wins on hot-5m entries, so the false-positive prior is empirically low. Worst case = sitting out an occasional small win; no added losses since it only ever SKIPS."
-      },
-      {
-        "type": "new_filter",
-        "target": "jito_tip_floor_regime_signal",
-        "justification": "RECALIBRATE the Phase-2 'MEV storm' spike threshold BEFORE any Phase-2 modifier ships. The logger (sol_jito_tipfloor_log.json) now holds 20,000 real entries over 2.43 days. The proposed threshold of ratio(p99/ema_p50)>200 is catastrophically mis-set: the MEDIAN observed ratio is 206, so >200 fires on ~half of all polls = 674 sustained episodes/day \u2014 a regime flag stuck permanently ON, signalling nothing. Also note the actual log field names are 'p99' and 'ema_p50' (NOT the verbose landed_tips_* names assumed in research-144). Data-driven recommendation: set the spike threshold to ratio > 25,000 \u2192 ~5.4 sustained episodes/day (a usable 'handful per day'); ratio>40,000 gives ~3.3/day if tighter is wanted. Avoid mean+Nsigma here \u2014 sigma is dominated by a 159,400 max outlier; a fixed absolute cut is more stable.",
-        "confidence": "HIGH",
-        "addresses_request": null,
-        "baseline": "Distribution over 20,000 entries / 2.43 days (2026-05-26 10:53 \u2192 2026-05-28 21:07, clean 10s cadence): ratio mean 657.8, median 206.2, std 3719, p90 1266, p95 2058, p99 5967, max 159,400. Sustained-episode counts/day: thr=200 \u2192 674.5/day; p95(2058) \u2192 134.3/day; p99(5967) \u2192 28.8/day; mean+3sigma(11814) \u2192 11.5/day; 25,000 \u2192 5.4/day; 40,000 \u2192 3.3/day. Current code threshold (placeholder): 200.",
-        "expected_effect": "Threshold 200 \u2192 25,000 cuts Phase-2 firing from ~674 sustained episodes/day (useless, always-on) to ~5.4/day (discriminating regime signal). Pure calibration \u2014 Phase 1 remains LOG-ONLY; no entry behavior changes until Phase-2 ships with the corrected constant.",
-        "kill_criteria": "After 48h at thr=25,000: if it fires >30 episodes/day (a sustained tail-inflation regime), recalibrate to a rolling p99 of the trailing 24h; if it fires 0 episodes in 48h, drop to 15,000. Phase-2 modifier itself trips out if MEV_STORM-tagged entries underperform baseline WR by >5pp over rolling-10.",
-        "min_sample_size": "Threshold is already derived from N=20,000 polls. Phase-2 evaluation: N=20 entries tagged inside storm windows.",
-        "regime_scope": "ANY (MEV competition is regime-independent; signal strength may correlate with regime \u2014 measure in Phase 2).",
-        "rollback_plan": "Revert the threshold constant from 25,000 back to 200 (one-line). Log file and poller unaffected.",
-        "risk_if_wrong": "Zero P&L risk \u2014 this only changes a not-yet-shipped Phase-2 trigger constant; Phase 1 stays LOG-ONLY. The only downside of a wrong threshold is Phase-2 firing too often or never, both caught by kill_criteria within 48h."
+        "justification": "The ONLY clean separator of the catastrophic calm-entry WC loss (SQUIRE -14.07% EMERGENCY) from the flat-wins is the live order book on an AGED token. SQUIRE-LOSS: pair_age 1718h, gt_buyers_m5=0 < gt_sellers_m5=2 (net-SELL dead/distribution tape). SQUIRE-WIN (SAME mint, 3d earlier): age 1656h but gt_buyers_m5=10 > gt_sellers_m5=2 (net-BUY). TROLL win: age 9676h but net-buy 5>3. So neither age alone nor net-sell alone works (each kills a win); the COMBO blocks exactly SQUIRE-LOSS and zero wins.",
+        "confidence": "MEDIUM",
+        "addresses_request": "REQ-021",
+        "baseline": "wallet_convergence all_time N=15, WR 53.3%, R/R 0.35, pnl -0.005885 SOL; rolling_7d N=4 WR 75% R/R 0.08 pnl -0.004349 (the single 7d loss IS SQUIRE -14.07%, which alone is -0.004512 SOL = larger than the whole 7d pnl). 7 lifetime losses: Goblin -8.1, Bumpy -13.43, soothsayer -13.08, CWU -0.24, ASTEROID -12.5, TOLYBOT -8.21, SQUIRE-L -14.07.",
+        "expected_effect": "Removes the single largest WC loss class (aged-token distribution dump). On the current 15-trade sample, blocking SQUIRE-LOSS lifts WC all-time pnl from -0.005885 to -0.001373 SOL and R/R from 0.35 toward ~0.55, with ZERO wins lost. The CWC veto (run-300) already handles the 3 hot-5m losses (Bumpy/soothsayer/ASTEROID); this gate handles the calm aged-dump that CWC misses.",
+        "kill_criteria": "Revert if, after activation, the gate blocks >=2 entries that (counterfactually, via logged would-have features) would have been WINS, OR if WC rolling-10-trade R/R falls below 0.30 with the gate live.",
+        "min_sample_size": "Evaluate at N=8 WC fires post-activation (WC fires only ~2-4x/wk, so ~3-4 weeks). The gate is near-zero-cost on wins so it can ship before N is large.",
+        "regime_scope": "ANY (the aged-distribution mechanism is regime-independent; observed in CHOP/ALTCOIN_WINTER).",
+        "rollback_plan": "Remove the two-condition WC entry skip (pair_age_hours>=1700 AND gt_sellers_m5>gt_buyers_m5); revert to CWC-veto-only WC entry logic.",
+        "risk_if_wrong": "Worst case it silently blocks a rare aged-token WC win. At N=15 it blocks 0 historical wins, and WC win contribution from aged net-sell-book tokens is empirically zero, so expected foregone profit is ~0; the realistic downside is just one missed marginal flat-win (~+0.5%) every few weeks.",
+        "anti_stacking_note": "This stacks on TWO already-shipped-but-not-yet-activated WC changes (CWC veto + source_wallet logging, both pre-activation since the bot has not restarted since 2026-05-28). Per the run-288 anti-stacking lesson, the brain may prefer to let those activate first (await natural restart) before adding a third WC entry condition - but unlike a threshold tweak this is a NEW orthogonal mechanism (live-book on aged tokens) targeting an UNHANDLED loss class, and is zero-cost on wins."
       },
       {
         "type": "data_source_add",
         "target": "believe_launchpad_listener_v3_CONFIG_FILTER",
-        "justification": "REQ-019 RESOLVED with a NULL signer result, exactly the fallback REQ-019 anticipated. There is NO single Believe launch-signer pubkey: Believe launches on Meteora DBC use EPHEMERAL per-launch fee-payer signers (3+ distinct signers across 6 decoded InitializeVirtualPool txs; e.g. 3AYQoSwzrf7TqR3QdJhR3PUaEwTdht3bBgWkDoETSmVo, G8y4gZ8dSTgWQUtRwm5L3iedpryzsnJcGVQNUYwt6GVT, FFqhWGJCUiWta7Ek9me2wgMnm9FCDUhPpkP6CexME9VG). The old 5qWya6... address is confirmed FEE-CLAIM-ONLY (56/60 sampled tx ClaimFee, 0 inits). RECOMMENDED ARCHITECTURE: a Meteora DBC InitializeVirtualPool firehose FILTERED by the pool CONFIG account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM, which clustered all sampled Believe-shaped inits. DO NOT ship until the config\u2194Believe link is positively confirmed (the subagent could not tag it Believe-specific within budget; DBC is multi-tenant).",
+        "justification": "REQ-020 premise was FALSIFIED on-chain: FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM is NOT a config account - getAccountInfo shows owner=System Program, 0 bytes (a plain signer/pool_authority wallet at init account index 1). A real DBC PoolConfig is owned by dbcij3... and is ~1048 bytes. Filtering on FhVo as 'config' would match nothing. The REAL Believe config is 7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (init account index 0, DBC-owned, 1048-byte PoolConfig), and the Believe authority/payer is 5qWya6Uj... Negative control: 5 non-Believe DBC inits each used a DISTINCT config (7pycaX6.., CfL5L7BV.., BBrtK6dD.., Fx87hHhH.., HBG9fuTv..), none FhVo, none 7SXEnhGR - so configs are per-partner, NOT multi-tenant.",
         "confidence": "MEDIUM",
-        "addresses_request": "REQ-019",
-        "baseline": "Current Believe coverage = 0 (no listener exists). research-143/144 listener proposal was BLOCKED pending a launch signer that this run proves does not exist. DBC program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN is multi-tenant (~6 inits per 400 recent sigs; most traffic is other launchpads).",
-        "expected_effect": "If config FhVo3mqL...HLuM is Believe-specific, a firehose filtered by it should log ~10-30 Believe graduations/day (research-143 original estimate), enabling forward-price analysis of Believe flow. If the config is NOT Believe-specific, the listener logs noise \u2014 hence the pre-ship confirmation gate.",
-        "kill_criteria": "PRE-SHIP GATE: do not ship until \u22655 known Believe mints (seed: LAUNCHCOIN Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk) are confirmed to all carry config FhVo3mqL...HLuM. POST-SHIP: if >20% of logged tokens are demonstrably non-Believe, the config is wrong \u2014 disable and revert to a Bitquery-API-key approach.",
-        "min_sample_size": "N>=5 confirmed Believe mints all sharing the config before ship; then 48h of post-ship log to verify grad density.",
-        "regime_scope": "ANY (launchpad graduations are dev-driven, regime-independent).",
-        "rollback_plan": "Pre-ship: no code to revert; mark research-143/144 believe_launchpad_listener proposal as SUPERSEDED-BY-CONFIG-FILTER. Post-ship: remove the config-filtered firehose subscription.",
-        "risk_if_wrong": "If config is mis-attributed, the listener logs non-Believe DBC graduations \u2014 wasted log volume, no P&L impact (LOG-ONLY). Confirming the config link costs one Bitquery query or one config-account decode; cheap insurance."
-      },
-      {
-        "type": "data_source_add",
-        "target": "wallet_convergence_source_wallet_logging",
-        "justification": "DATA GAP discovered while mining WC: the source_wallet field is EMPTY on all 28 WC trade-log entries, and the reasoning field records only the COUNT of converging wallets ('N wallets bought in 24h'), never WHICH wallets. This blocks the highest-value future WC research \u2014 wallet-identity attribution (are some tracked wallets genuine alpha and others noise?). Propose: persist the triggering wallet addresses on every WC entry (and ideally on every strategy's enrichment record). This is an ENABLING change \u2014 it unlocks a future 'fire WC only when >=K of a high-alpha wallet subset converge' mechanism that cannot be built today because the data isn't captured.",
-        "confidence": "MEDIUM",
-        "addresses_request": null,
-        "baseline": "0/28 WC entries have source_wallet populated; convergence is logged as an integer count only. Wallet COUNT (3 vs 4) shows no predictive edge in the current data, so the count is NOT the alpha \u2014 identity might be, but is unmeasurable.",
-        "expected_effect": "After ~4-8 weeks of logging triggering wallet addresses, a future research run can rank tracked wallets by the forward return of the WC trades they triggered, then propose pruning noise wallets / weighting alpha wallets. No immediate P&L effect; it is infrastructure for a future edge.",
-        "kill_criteria": "If after 8 weeks the per-wallet WC sample is still too thin (no wallet with N>=5 triggered trades) to rank, abandon wallet-identity attribution and revert the logging.",
-        "min_sample_size": "Need >=5 WC trades attributable to a single triggering wallet before any wallet-ranking analysis.",
-        "regime_scope": "ANY.",
-        "rollback_plan": "Remove the source_wallet capture from the WC entry-logging path; no behavioral change to revert (logging-only).",
-        "risk_if_wrong": "Negligible \u2014 a few extra bytes per trade-log entry. Worst case is the data proves wallet identity has no edge, which is itself a useful null result."
-      },
-      {
-        "type": "new_filter",
-        "target": "creator_wallet_velocity_rug_guard_EXTENDED",
-        "justification": "HOLD / DO NOT SHIP the sniper-class extension (soft-defer on sniper top-1 >= 25%). Extending the N=2 evidence to N=6 WEAKENED it. The fresh pump.fun cohort naturally clusters at ~20.7-21.8% top-1 non-LP holder REGARDLESS of outcome (BBALL 20.7% +82%, 250 21.8% +235%, ADELL 20.8% -39%, AI 20.9% -68%) \u2014 so a 20-22% concentration does NOT discriminate dumpers from pumpers. Also a methodology catch: rugcheck's literal #1 holder (27-37%) is the bonding-curve/AMM pool account (matches markets.liquidityA) and must be excluded before reading 'top-1 non-LP'. Keep the original creator-class HARD-BLOCK (owner==creator AND pct>=50 AND creator_tokens_count>20) which is unaffected; only the sniper extension is unsupported.",
-        "confidence": "LOW",
-        "addresses_request": null,
-        "baseline": "N=6 snapshot (2 prior + 4 new). >=25% bucket effectively N~1-2 (both down hard, but tiny sample). 20-25% bucket: 4 tokens, ~50/50 dump/pump. <20%: no fresh samples captured. All proxied by current h24, NOT true 12h-forward returns.",
-        "expected_effect": "By NOT shipping the sniper extension, we avoid a filter that would block legitimate pumpers (BBALL +82%, 250 +235% both sit at ~21% sniper concentration). Keeps the creator-class hard-block intact.",
-        "kill_criteria": "Re-open the sniper extension ONLY if a future run with (a) a true newest-pairs feed surfacing >=25% cases and (b) real +12h forward snapshots shows the 25% cutoff cleanly separates dumpers from survivors at N>=10.",
-        "min_sample_size": "N>=10 tokens with true +12h forward returns, stratified above/below 25%.",
-        "regime_scope": "ANY (rug mechanics regime-independent).",
-        "rollback_plan": "No code change to make \u2014 this is a recommendation to keep the sniper extension UNSHIPPED. Mark it DEFERRED-WEAKENED-RESEARCH-145 in the pending_hypotheses queue.",
-        "risk_if_wrong": "If we're wrong to hold (sniper>=25% really is a rug signal), we miss blocking some rugs \u2014 but the creator-class hard-block still catches the most dangerous class, and N=6 simply doesn't justify a live filter that the data shows blocks pumpers too."
+        "addresses_request": "REQ-020",
+        "baseline": "No Believe listener currently shipped; prior plan was blocked on confirming FhVo3mqL as the filter key. WC/Believe edge contributes 0 trades today.",
+        "expected_effect": "Unblocks the Believe listener with a CORRECT key. Recommend gating on BOTH config==7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (init account idx 0) AND payer==5qWya6Uj... on program dbcij3... method initializeVirtualPoolWithSplToken. Yields a clean, non-spoofable Believe-launch firehose.",
+        "kill_criteria": "Before any live trading off this feed: if the config/payer pair captures any token NOT attributable to Believe in a 50-launch sample (false-positive), do not trade it. As a listener-only addition there is no trade-level kill yet.",
+        "min_sample_size": "Confirm on >=5-10 Believe inits via Bitquery (initialize_virtual_pool_with_spl_token + authority filter) all carrying config 7SXEnhGR... before locking; this run verified the pairing on 1 real launch + 5 non-Believe negative controls.",
+        "regime_scope": "ANY (listener/data-source addition).",
+        "rollback_plan": "Disable the Believe listener; no trading logic depends on it until a separate entry proposal is filed.",
+        "risk_if_wrong": "If the single verified config is not universal across all Believe launches, the listener under-captures (misses some Believe tokens) - a coverage gap, not a loss. No capital at risk at the listener stage."
       }
     ],
     "request_responses": [
       {
-        "request_id": "REQ-019",
+        "request_id": "REQ-021",
         "status_set_to": "completed",
-        "finding": "NULL RESULT (this is a valid DONE per REQ-019's own fallback clause): Believe launchpad has NO single recurring launch-signer pubkey. Launches on Meteora DBC (dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN) use EPHEMERAL per-launch fee-payer signers. Across 6 decoded InitializeVirtualPool txs there were 3+ distinct signers (3AYQoSwzrf7TqR3QdJhR3PUaEwTdht3bBgWkDoETSmVo, G8y4gZ8dSTgWQUtRwm5L3iedpryzsnJcGVQNUYwt6GVT, FFqhWGJCUiWta7Ek9me2wgMnm9FCDUhPpkP6CexME9VG), none recurring. The old 5qWya6... address is confirmed FEE-CLAIM-ONLY (56/60 sampled signer tx are ClaimFee, 0 inits). RECOMMENDED FALLBACK (as REQ-019 requested): downgrade to a Meteora DBC InitializeVirtualPool firehose FILTERED by the shared pool CONFIG account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM, which clustered all sampled Believe-shaped inits. CAVEAT: config not yet positively tagged Believe-specific (DBC is multi-tenant) \u2014 confirm via Bitquery API key or config-account decode before shipping. See proposal believe_launchpad_listener_v3_CONFIG_FILTER. Also resolved full LAUNCHCOIN mint: Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk (was truncated Cn5Ne1vmR9c).",
-        "evidence": "Alchemy RPC: sampled 60 signer-tx of 5qWya6... (56 ClaimFee / 0 init); decoded 6 InitializeVirtualPool txs from 400 recent DBC sigs with 3+ distinct fee-payers; config FhVo3mqL...HLuM present on all sampled inits. LAUNCHCOIN resolved via DexScreener. Confidence HIGH on null-signer + fee-claim attribution; MEDIUM on config-is-Believe."
+        "finding": "CLEAN 2-feature separator found (NOT mcap). Gate: skip WC entry if pair_age_hours>=1700 AND gt_sellers_m5>gt_buyers_m5. Walked all 15 lifetime WC trades (8W/7L). This combo blocks EXACTLY SQUIRE-LOSS (mint EN2nnxrg..., age 1718h, gt_buyers_m5=0 < gt_sellers_m5=2) and ZERO wins. Critically it KEEPS the same-mint SQUIRE-WIN (5-26, age 1656h but gt_buyers_m5=10 > gt_sellers_m5=2 = net-BUY live book) and TROLL (age 9676h but gt_buyers_m5=5 > gt_sellers_m5=3). Age-alone fails (kills TROLL); net-sell-alone fails (kills PIXEL +0.92 which had gtb=1/gts=7). The live order book on an AGED token is the discriminator: aged token + net-sell tape = being distributed into; aged token + net-buy tape, or any fresh token, = safe. Full 7-field proposal packet filed in proposals_for_survival_brain.",
+        "evidence": "15-trade WC table: SQUIRE-L 05-29 LOSS -14.07 EMERG age1718 gtb0/gts2; SQUIRE-W 05-26 WIN +2.32 age1656 gtb10/gts2; TROLL 05-28 WIN +0.27 age9676 gtb5/gts3; Ball 05-27 WIN +0.79 age160 gtb0/gts0; Butt 05-03 WIN +17.43 age5 gtb31/gts24; PIXEL 04-27 WIN +0.92 age764 gtb1/gts7. Combo (age>=1700 AND gts>gtb) = {SQUIRE-L} only."
+      },
+      {
+        "request_id": "REQ-020",
+        "status_set_to": "completed",
+        "finding": "PREMISE FALSIFIED then resolved. FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM is NOT a config - getAccountInfo (Alchemy paid RPC) shows owner=System Program, data length 0 bytes. It is the pool_authority/signer wallet at init account index 1, mislabeled as 'config' by a viral tweet. The REAL Believe config is 7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (init account index 0, owner=DBC program dbcij3..., 1048-byte PoolConfig). Believe authority/payer = 5qWya6Uj... Negative control: 5 genuine non-Believe DBC pool inits each used a distinct config (7pycaX6.., CfL5L7BV.., BBrtK6dD.., Fx87hHhH.., HBG9fuTv..), none == FhVo and none == 7SXEnhGR, confirming DBC configs are per-partner (Meteora docs: private configs gate creation to one authority + carry a fee_claimer), NOT multi-tenant. RECOMMENDATION: do NOT ship a filter on FhVo; gate the listener on config==7SXEnhGR... AND payer==5qWya6Uj... on program dbcij3... method initializeVirtualPoolWithSplToken.",
+        "evidence": "Believe init tx GDm66YRiTAGmYQqNWvfd... (Squads VaultTransactionExecute -> InitializeVirtualPoolWithSplToken) on mint GsVr8GdT57gBa6GxujrtAeRGmYbFfABGFk2eaG2DzBLV: account[0]=7SXEnhGR.. (DBC-owned 1048B config), account[1]=FhVo3mqL.. (sys-owned 0B authority), account[10]=5qWya6Uj.. (payer). Most-recent ~1000 DBC txs yielded 5 non-Believe inits with distinct configs."
       }
     ],
     "subagents_dispatched": [
       {
-        "role": "believe_launch_signer (REQ-019 on-chain forensics)",
-        "finding": "NULL: no single Believe launch signer; ephemeral per-launch fee-payers. 5qWya6 confirmed fee-claim-only (56/60 ClaimFee). Fallback = DBC firehose filtered by config FhVo3mqL...HLuM (MEDIUM \u2014 confirm Believe-specific before ship). LAUNCHCOIN full mint = Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk."
+        "role": "REQ-021 WC separator miner",
+        "finding": "Walked all 15 WC trades; found clean 2-feature gate (pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5) blocking only SQUIRE-LOSS, keeping all wins incl. same-mint SQUIRE-WIN and aged TROLL. Live order book, not mcap/age, is the separator."
       },
       {
-        "role": "jito_tipfloor_log_miner (data-driven threshold)",
-        "finding": "20k entries / 2.43d. Placeholder threshold 200 is way too low \u2014 median ratio is 206 (fires ~50% of polls, 674 episodes/day). Recommend ratio>25,000 = ~5.4 sustained episodes/day. Fields are p99/ema_p50. Trade correlation 0/10 but only ~3 trades overlap the logged window (re-check in 1 week)."
+        "role": "REQ-020 Believe DBC config confirmer",
+        "finding": "Falsified the premise: FhVo3mqL is a 0-byte System-Program signer wallet, not a config. Real Believe config = 7SXEnhGR... (1048B, DBC-owned, init idx0); payer 5qWya6Uj... 5 non-Believe DBC launches used distinct configs (not multi-tenant)."
       },
       {
-        "role": "sniper_top1_forward_returns (extend N=2\u2192N=6)",
-        "finding": "INCONCLUSIVE\u2192WEAKENED. Fresh pump.fun cohort clusters ~20.7-21.8% top-1 non-LP regardless of outcome (2 pumped, 2 dumped). 25% cutoff not supported at N=6. Methodology catch: rugcheck #1 holder is the LP/bonding-curve account, must exclude. Don't promote sniper extension."
+        "role": "Novel-edge / launchpad scout",
+        "finding": "Best edge = pre-graduation bonding-curve liquidity-velocity scorer (extend existing grad logger to a leading indicator; arXiv 2602.14860). pump.fun has regained ~70-80% launches / ~95% graduations after letsBONK coup reversed; bot coverage correctly weighted."
       },
       {
-        "role": "wallet_convergence_edge_miner (novel mechanism)",
-        "finding": "price_change_5m at entry is the clean win/loss separator. 3 worst WC losses (Bumpy/soothsayer/ASTEROID, all -12% to -13%) entered into >+4% 5m pumps; 11 calm entries +11.2% net. Wallet count (3 vs 4) no edge; source_wallet identity not logged (data gap). Proposed Convergence-Without-Chase veto (skip if pc5m>+4%)."
+        "role": "Time-of-day pattern miner",
+        "finding": "CLEAN NULL across 1014 trades: no hour-of-day, day-of-week, or catastrophic-loss-clustering effect survives significance testing (all |z|<1.3). Extremes are strategy-mix confounds, not time. Do NOT add a temporal gate."
       }
     ],
     "data_sources_used": [
-      "own_trade_log (sol_trade_log.json)",
-      "sol_strategy_stats.json",
-      "sol_brain_directives.json",
-      "sol_jito_tipfloor_log.json (LIVE 20k-entry ring buffer \u2014 first mined this run)",
-      "ALCHEMY_SOLANA_RPC (getSignaturesForAddress + getTransaction)",
-      "Meteora DBC program decode (InitializeVirtualPool)",
-      "DexScreener API (mint resolution, fresh pairs)",
-      "rugcheck.xyz v1 token reports (holder distribution)",
-      "Bitquery docs (Believe Launchpad API)",
-      "WebSearch / WebFetch (Believe authority, launch signer)"
+      "own_trade_log",
+      "sol_strategy_stats",
+      "solana_rpc",
+      "dexscreener",
+      "bitquery_docs",
+      "web_search",
+      "arxiv"
     ],
-    "next_run_focus": "(1) Re-run the Jito tip_floor \u2194 trade-log correlation NOW that the logger window will overlap ~1 week of trades \u2014 the 0/10 this run was uninformative because only ~3 buys fell inside the 2.4-day logged window. Test whether ratio>25,000 spikes precede WC/fresh-mint entries. (2) Positively CONFIRM that DBC config account FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM is Believe-specific \u2014 fetch >=5 known Believe mints (seed LAUNCHCOIN Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk) and verify all carry this config; needs a Bitquery API key or a config-account decode. This unblocks believe_launchpad_listener_v3. (3) If CWC veto shipped, audit its first WC fires for false-positive skips (tokens that pumped after a hot 5m). (4) Sniper extension: only revisit with a true newest-pairs feed (>=25% cases) AND real +12h forward snapshots \u2014 snapshot h24 was too noisy. (5) STILL DEFERRED: Helius webhooks survey (paid-tier). Revisit if Jito Phase-2 signal proves weak.",
+    "next_run_focus": "1) If the brain ships the Believe listener, validate config 7SXEnhGR... across >=5-10 Believe inits via Bitquery (initialize_virtual_pool_with_spl_token + authority 5qWya6Uj filter) to confirm universality before live trading. 2) Prototype/spec the bonding_curve_velocity_pregrad_snipe Phase-1 LOG-ONLY: define the exact velocity metric (trades-to-vSol) and forward-return capture using the existing grad listener's program subscription. 3) Re-mine WC at N>=8 post-activation to confirm the aged+net-sell gate holds and check whether a net-sell-imbalance signal generalizes to OTHER strategies' aged-token entries.",
     "meta": {
-      "elapsed_min": 9,
+      "elapsed_min": 17,
       "subagent_count": 4,
-      "web_calls": 8,
-      "new_tokens_scouted": 5,
-      "trade_log_entries_examined": 28,
-      "novel_data_sources_unlocked": 0,
-      "novel_hypotheses": 1,
-      "requests_serviced": 1,
-      "requests_for_research_pending_at_run_start": 1,
-      "live_logger_first_mined": "jito_tip_floor"
+      "web_calls": 12,
+      "new_tokens_scouted": 8
     }
   },
   "research_status": {
-    "running": true,
-    "started_at": "2026-05-31 12:09:48 EDT",
-    "run_id": "research-146"
+    "running": false,
+    "last_run_id": "research-146",
+    "finished_at": "2026-05-31 12:38:16 EDT",
+    "outcome": "OK",
+    "summary": "research-146 (2026-05-31 Sun noon, CHOP/ALTCOIN_WINTER SOL ~$82). 4 subagents. BOTH pending requests CLOSED. REQ-021 (HIGH) SOLVED: clean 2-feature WC gate pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5 blocks only SQUIRE-LOSS (-14.07%), keeps every win incl same-mint SQUIRE-WIN (net-buy book 10>2) and aged TROLL (9676h, net-buy 5>3) - live order book on aged token is the separator, NOT mcap/age. Full 7-field proposal filed (MEDIUM, anti-stacking note: 2 WC ships still pre-activation). REQ-020 (MEDIUM) premise FALSIFIED: FhVo3mqL is a 0-byte System-Program signer wallet NOT a config; real Believe config=7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (1048B DBC-owned, init idx0), payer=5qWya6Uj; 5 non-Believe DBC launches used distinct configs (per-partner, not multi-tenant). Proposal: ship listener on config 7SXEnhGR AND payer 5qWya6Uj. NEW HYPOTHESIS bonding_curve_velocity_pregrad_snipe (HIGH): extend existing grad logger into a pre-graduation liquidity-velocity scorer (trades-to-vSol; arXiv 2602.14860); pump.fun regained ~70-80% launches/95% grads. Time-of-day mine = CLEAN NULL (all |z|<1.3, do not add temporal gate). 2 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
     "timestamp": "2026-05-31 12:05:00 EDT",
@@ -430,7 +381,7 @@
     "dashboard_latency": "HTTP 200 in 2.63s on /api/state. Improved from 2.81s (maint-099) / 2.82s (maint-098) -- still elevated vs ~0.8s baseline but trending DOWN and well under the 3s bar. No restart. Keep watching.",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 37.58,
+    "hours_since_last_trade": 37.67,
     "hours_since_last_buy": 37.08,
     "trades_last_24h": {
       "buys": 0,
@@ -523,7 +474,7 @@
     "next_run_focus": "1) Cycle 72->? confirm advancing (pace ~+1/hr for 4 runs; monotonic, not frozen). 2) DORMANCY TRUE (35.33h) -- EXPECTED post-FCM, NOT a stall; watch for a buy; do NOT append a new alert while INFO/unchanged; 168h bar far off. 3) MIRROR: compute age from published_at EDT string (no epoch field); HEALTHY this run. 4) RESEARCH weekly cron Sunday 05-31 noon -- this run was 12:05 (just past); CONFIRM research fired today, re-note only if it did NOT. 5) BRAIN run-302 done (v304); next daily cron ~2026-06-01 04:04. 6) SHIPPED-BUT-DORMANT: CWC veto + source_wallet logging inactive until PID 11760 restarts. 7) DASHBOARD latency 2.63s trending down -- if >3s a future run, restart dashboard. 8) PID stability ~63 runs. 9) Read bot JSONs utf-8; keep maint log flat; lessons_count=15 via entries sub-props.",
     "log_truncations": [],
     "elapsed_min": 1,
-    "file_age_min": 28.6,
+    "file_age_min": 33.6,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1958,12 +1909,12 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 72,
-    "age_min": 49.2,
+    "age_min": 54.3,
     "stale": false,
     "available": true
   },
   "brain_queue": {
-    "requests_pending": 2,
+    "requests_pending": 0,
     "requests_acknowledged": 0,
     "hypotheses_pending": 41,
     "lessons_count": 15,
@@ -1977,7 +1928,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 1512.554407,
+  "maint_next_sec": 1209.5808,
   "maint_next_str": "1:00 PM EST",
   "maint_last_run_str": "12:06 PM EST",
   "maint_stale": false,
@@ -1989,13 +1940,13 @@
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "convergence_without_chase",
-      "run_id": "research-145",
-      "status": "queued",
-      "status_label": "\ud83d\udfe1 Queued",
-      "status_color": "#ffaa00",
-      "evidence_text": "research-145 landed after 8 days dormant with 5 complete (7-field) proposals; triaged all 5.",
-      "evidence_source": "lessons"
+      "hypothesis_name": "bonding_curve_velocity_pregrad_snipe",
+      "run_id": "research-146",
+      "status": "pending_brain_run",
+      "status_label": "\u23f3 Pending next brain run",
+      "status_color": "#7cd3ff",
+      "evidence_text": "",
+      "evidence_source": ""
     },
     "tally": {
       "implemented": 15,
@@ -2005,475 +1956,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-05-31T11:44:34.842721",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "No new signals",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:35.265938",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip Odysseus\r\n: h6=480.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:35.767613",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip IBM: m5=10.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:36.262452",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip WAYPOINT: downtrend h1=-24.0% h24=-71.1%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:36.747768",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip KINS: h1=-10.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:37.289823",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip JTVO: h1=-18.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:37.786841",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: 10 new profile(s) (19 young, 7 ready)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:38.235243",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "STRAIGHTGUY: pair_age=1.1h < 6.0h H11 gate (1-6h death zone)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:38.733210",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "\u5a1c\u5854\u838e: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:39.218200",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "RAGE: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:39.719747",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "dagestan: pair_age=1.9h < 6.0h H11 gate (1-6h death zone)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:40.217894",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "Dogestan: liq=$0 < $3000",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:40.696255",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "$IPO: pair_age=2.3h < 6.0h H11 gate (1-6h death zone)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:44:41.196384",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "Closet: pair_age=1.2h < 6.0h H11 gate (1-6h death zone)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:45:33.423981",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "Scanning 140 wallets (cycle #72)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:49:27.792471",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 9cdZg6xR sold 2adMpHid \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:49:27.821070",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 9cdZg6xR sold 2adMpHid \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:53:18.639667",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: AuPp4YTM sold GmLuMSSy \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:54:44.019661",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DYmsQudN sold GLDLxf4o \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:54:46.260143",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip 4h: downtrend h1=-85.0% h24=-85.0%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:56:06.640697",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ASVzakeP sold HZpERnPX \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T11:59:58.716857",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:00:18.280909",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BAr5csYt sold GBg5Hxkz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:00:18.299808",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BAr5csYt sold GBg5Hxkz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:00:20.628827",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip COUNCIL: downtrend h1=-17.1% h24=-17.1%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:01:42.748051",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip CYCLOPE: m5=209.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:01:43.191025",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip CYCLOPE: m5=209.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:01:43.638875",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip CYCLOPE: m5=209.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:01:44.088888",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip CYCLOPE: m5=209.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:01:44.521291",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip CYCLOPE: m5=209.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:02:22.636728",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip GOBLINO: m5=-10.6% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:02:22.636728",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BQVz7fQ1 sold 8y2BGkvw \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:02:24.529205",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip peepoo: m5=-14.9% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:02:24.986280",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip peepoo: m5=-14.9% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:02:25.417720",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip peepoo: m5=-14.9% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:05:43.385477",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: PMJA8UQD sold AwMANPsF \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:05:45.408552",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Faggot: m5=51.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:05:45.865946",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Faggot: m5=51.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:05:45.881825",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: PMJA8UQD sold 9QTXgsm6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:05:47.803084",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip VRCat: m5=-10.3% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:08:04.816350",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G3gZWqrY sold 2adMpHid \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:10:16.021264",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8DGbkGgQ sold HKAHfw4f \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:10:16.040979",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8DGbkGgQ sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:10:16.052950",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8DGbkGgQ sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:10:16.068876",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8DGbkGgQ sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:10:16.068876",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8DGbkGgQ sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:12:06.029956",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:12:07.993546",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Odysseus: m5=51.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:12:08.004893",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:12:08.005962",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:12:08.021692",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CEUA7zVo sold GmshYgy1 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:13:54.634280",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6aXFYXbF sold 6yz2imGK \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:13:56.686244",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip SOLANA: h1=-4.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:15:11.281454",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: CAPn1yH4 sold 2ZLPo9g7 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:15:13.301348",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Taylor: m5=-25.0% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:15:15.297422",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Taylor: m5=-23.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:15:15.735318",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Taylor: m5=-23.1% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:18:04.930187",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Odysseus: m5=35.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:18:05.374398",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Odysseus: m5=35.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:18:35.948048",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Polyphemus: h1=8.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:18:36.407601",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Polyphemus: h1=8.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:18:36.834165",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Polyphemus: h1=8.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:21:06.703441",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Polyphemus: m5=230.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:21:07.146855",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Polyphemus: m5=230.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:21:07.590476",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Polyphemus: m5=230.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:23:43.726919",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EHg5YkU2 sold GtLbhuvW \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T12:23:44.309266",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Taylor: m5=-15.7% (active sell-off at execution, run79)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-31T12:23:44.309266",
       "type": "SIGNAL",
@@ -2704,6 +2186,475 @@
       "color": "#58a6ff",
       "msg": "WalletSell: GbeFBFuY sold DPrBZkAa \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:11.190629",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip OPAL: h1=-7.0% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:13.134970",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip SQUIRE: h1=-6.5% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:15.090672",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip SPCX: h1=-1.4% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:17.050765",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip 10m: m5=-30.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:19.053679",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Percolator: h1=-3.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:38.541599",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZsT2sHJ sold AnA9rSnr \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:40.477397",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip GOBLINO: downtrend h1=-40.8% h24=-40.8%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:35:40.477397",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZsT2sHJ sold 5ySw7WWx \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:36:26.623459",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip WAYPOINT: downtrend h1=-22.9% h24=-70.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:36:26.623459",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6MMa1Hny sold 3Hvxn5wa \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:36:26.655545",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6MMa1Hny sold EuDGQRFv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:36:26.671318",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6MMa1Hny sold EuDGQRFv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:36:26.671318",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6MMa1Hny sold HZpERnPX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:37:22.146339",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8TpovzfR sold 9VY2rDbt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:37:22.162215",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8TpovzfR sold 9VY2rDbt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:37:22.177940",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8TpovzfR sold EuDGQRFv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:37:22.194111",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8TpovzfR sold EuDGQRFv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:37:22.210129",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8TpovzfR sold 3Hvxn5wa \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:04.304123",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4h9GG2qw sold 9VY2rDbt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:04.318040",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4h9GG2qw sold 9VY2rDbt \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:04.328764",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4h9GG2qw sold EuDGQRFv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:04.345738",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4h9GG2qw sold EuDGQRFv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:04.361411",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4h9GG2qw sold HZpERnPX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:27.633892",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CkUZV387 sold BEBmNEez \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:28.156404",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip RELIEF: downtrend h1=-57.4% h24=-57.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:30.191619",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Food Jutsu: m5=-13.1% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:30.191619",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CkUZV387 sold AnA9rSnr \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:30.643035",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Food Jutsu: m5=-13.1% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:30.686085",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "No new signals",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:31.184372",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip WAYPOINT: downtrend h1=-22.9% h24=-70.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:33.557774",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Odysseus: m5=-34.5% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:35.537485",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Taylor: h6=361.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:37.515739",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Polyphemus: h1=-7.8% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:37.984091",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip RELIEF: downtrend h1=-57.4% h24=-57.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:38.466254",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "FreshProfile: 15 new profile(s) (24 young, 2 ready)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:38.958410",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "IPO: pair_age=1.7h < 6.0h H11 gate (1-6h death zone)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:39.449114",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "GENNY: liq=$50 < $3000",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:43.180738",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "ConsensusBoost: 47 boosted, 5 profile+15 direct, checking 20",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:44.691473",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "DOGEUS: h6=-12% < -10% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:45.181088",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "LOA: h24=-24% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:45.661513",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "888COIN: h24=-59% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:46.150014",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "BUBO: h24=-88% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:46.671203",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "WIBIS: h1=-0.6% (need 3-15%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:47.342281",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "TINY: h1=-7.1% (need 3-15%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:47.955871",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "MAXXING: h24=+0% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:48.446035",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "$BURN: h1=+0.0% (need 3-15%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:48.944322",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "STAKE: h24=-38% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:49.443241",
+      "type": "BS_SKIP",
+      "color": "#8b949e",
+      "msg": "ANTHROPIC: h24=+777% \u2014 h1=+41.4% (need 3-35%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:49.443241",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "ANTHROPIC: h24=+777% > 200% CB cap",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:49.940351",
+      "type": "BS_SKIP",
+      "color": "#8b949e",
+      "msg": "LEATHER: h24=+723% \u2014 liq=$9,705 < $30,000",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:49.940351",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "LEATHER: h24=+723% > 200% CB cap",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:50.437249",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "WAGMI: h24=+5% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:50.952359",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "FINALS: h6=-55% < -10% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:51.444823",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "DERP: h1=+32.6% (need 3-15%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:51.975629",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "DOGM: h24=-1% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:52.455955",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "BSPCX: h1=-14.9% (need 3-15%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:52.874700",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "IPO: h24=-79% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:53.356834",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "MT: h24=-93% < 5% floor",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:53.836738",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "PIE: buy_ratio=0.3x < 1.5x",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:54.321076",
+      "type": "BS_SKIP",
+      "color": "#8b949e",
+      "msg": "PWOJAK: h24=+395% \u2014 h6=-3.5% < 0% (run-285 h6>0 audit fix; ANDV had h6=-4.4%)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:54.321076",
+      "type": "CB_SKIP",
+      "color": "#8b949e",
+      "msg": "PWOJAK: h24=+395% > 200% CB cap",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:54.321076",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "CB market gate: 11 consecutive zero-candidate scans \u2014 copy_trade size at 50% until market recovers",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:54.352474",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "GBB: 8 breadth candidate(s)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:57.105956",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "GBB: LGBT BA=390 reserve=$25,139 liq=$26,444",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:57.121836",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "GBB: 1 signal(s)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T12:38:57.121836",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "Signal: LGBT",
+      "detail": "GBB: LGBT BA=390 reserve=$25,139 age=1.0min vol_m5=$6,324 (research-141 HIGH N=10 fast-track)"
+    },
+    {
+      "ts": "2026-05-31T12:38:57.556570",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "lp_concentration_skip: LGBT 100% in 1 pool n=1",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2722,9 +2673,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "12:34:47",
+  "ts": "12:39:50",
   "__publish_meta": {
-    "published_at": "2026-05-31 12:34:47 EDT",
+    "published_at": "2026-05-31 12:39:50 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
