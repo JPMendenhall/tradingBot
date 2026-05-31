@@ -1,15 +1,15 @@
 {
-  "sol_price": 82.62332074914866,
+  "sol_price": 82.6666247729346,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:34:01",
   "bot_cycles": 63,
   "bankroll": 1.1143,
-  "bankroll_usd": 92.06716631077636,
+  "bankroll_usd": 92.11541998448102,
   "budget": 0.1596413196,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 3.4,
+  "hour": 3.5,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -133,86 +133,84 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-30 04:14:00 EDT",
-    "run_id": "run-301",
+    "timestamp": "2026-05-31 04:18:00 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "The only profitable strategy (wallet_convergence) took a fresh -14.07% emergency-stop loss on SQUIRE in the last 24h, and it slipped through every guard we have. It was a calm entry (5-minute price change -0.36%), so the new Convergence-Without-Chase veto would not have blocked it; and it was only +20.83% on the day, so the run-287 dead-book floor (which only triggers on tokens already up 100%+) did not look at it either. SQUIRE was an old 71-day, $6.16M token with zero live trading at the moment we bought (no buys or sells in the last 5 minutes or hour). The catch: a winning trade two days earlier (Ball, +0.79%) had an identically dead order book - so 'no live demand' cannot be the filter, or we would throw away our winners too. The single thing that separates the SQUIRE loss from the Ball/TROLL wins is token age and size (old/large vs fresh/tiny). That is a new dimension our gates do not measure, and it is not safe to invent one on a single example against our only money-maker.",
-    "exit_analysis": "Lifetime avg win +13.03%, avg loss -16.51%, R/R 0.79, stop-loss rate 50.5% (N=1014 sells). Last 24h: 2 sells, 1 win / 1 loss - FCM consensus_boost +3.94% via time-exit, SQUIRE wallet_convergence -14.07% via emergency stop. Last 7 days: 5 sells, 80% win rate but R/R only 0.13 because the four wins were tiny flat exits (+3.94/+2.32/+0.79/+0.27%) while the single loss was a -14% emergency stop - classic 'win small, lose big' shape that keeps net P/L slightly negative (-0.00309 SOL/7d).",
-    "strategy_work": "Investigated the SQUIRE loss in depth rather than reacting. Confirmed from the trade log that (a) SQUIRE entered calm (below the +4% veto), (b) the run-287 dead-book floor skipped it because of its h24>=100% precondition, and (c) the recent WC winner Ball had an identically dead book, so no naive dead-book/zero-buyer gate separates the win from the loss. Concluded there is no clean separator at N=1 and that the differentiating axis (token maturity/market-cap) needs a proper backtest. Filed REQ-021 to the research brain with both the SQUIRE loss and the Ball win as seed cases. Updated the Convergence-Without-Chase hypothesis to 'necessary-but-insufficient' rather than killing it.",
-    "directives_changes": "Bumped to version 303 (run-301). Rewrote current_priority and priority_reasoning around the SQUIRE finding and the no-ship decision. Added research request REQ-021 (HIGH) for the calm-entry aged-token dead-book WC failure mode. Refreshed track_record (lifetime 1014 sells, rolling 24h/7d, bankroll). Annotated the Convergence-Without-Chase hypothesis with the SQUIRE counter-example. Added a condensed lesson on why calm-entry + dead-book are each necessary-but-insufficient WC signals and why a single dump does not justify a gate that would also block wins.",
+    "system_diagnosis": "NULL-DELTA run: zero new trades since run-301 (still 1014 sells / 1013 buys; bot trade-dormant ~29h since FCM 2026-05-29 22:59), so rolling_24h is N=0. The #1 standing problem is unchanged: the bot's only win-rate-positive strategy (wallet_convergence) is still net-negative all-time (15 trades, 53% win rate, R/R 0.35, -0.0059 SOL) because of a fat loss tail, and the two fixes shipped run-300 (skip-on-hot-5m veto + wallet-identity logging) have STILL not gone live because the bot process has not restarted in ~2.5 days (same process, internal cycle counter climbed 36->63 with no reset). I cannot and must not force a restart (that is the watchdog's job); the cost of the lag is low because the veto only ever SKIPS trades and the strategy fires only a few times a week.",
+    "exit_analysis": "Lifetime: avg win +13.03%, avg loss -16.51%, R/R 0.79, stop-loss rate 50.5% (unchanged - no new closes this run). Last 7 days (5 trades): four small wins (+3.94 / +2.32 / +0.79 / +0.27) and one -14.07% emergency stop, net -0.00309 SOL; the single loss is 4.5x the size of all four wins combined - the same fat-tail problem the wallet_convergence entry-quality work is meant to fix. Best-RR strategy remains bear_strength (R/R 2.08 lifetime).",
+    "strategy_work": "Confirmed the run-300 wallet_convergence fixes (skip-on-hot-5-minute-pump veto + logging which smart-money wallets triggered each trade) are present in the code but NOT yet running, because the bot has not restarted. Then ran a data check on the new market-cap-at-entry field (now confirmed recorded) and used it to DISPROVE my own prior theory: I had guessed the SQUIRE loss was caused by it being a larger, older token, but the largest-cap trade in the recent sample (TROLL, ~$74.8M) was actually a WIN, while the losing trade was only ~$6.2M. So market cap does not separate winners from losers. I recorded this so the weekly research run (today) does not waste effort chasing market cap and instead looks at token age and live order-book activity.",
+    "directives_changes": "Bumped to version 304 (run-302). Rewrote the current-priority note to a NULL-DELTA summary. Added the market-cap finding as a permanent lesson and to the wallet_convergence strategy note. Added a market-cap caveat to research request REQ-021 so the weekly research run does not gate on market cap. Refreshed the running stats (lifetime unchanged; 24h now empty; 7-day window N=5).",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "Convergence-Without-Chase veto (shipped run-300): still NOT active - the bot has not restarted since the ship (same process since 2026-05-28). The new SQUIRE loss was a calm entry, so even once active this veto would not have stopped it - it remains correct for the 3 hot-5min losses but is now proven insufficient by itself.",
-      "WC source_wallet logging (shipped run-300): still NOT active - awaiting the same natural restart. No behavioral effect; logging-only.",
-      "WC dead-book floor (active since run-287): it correctly did nothing here only because of its design limit - it ignores tokens under +100% on the day, and SQUIRE was +20.83%. This is the exact gap REQ-021 targets.",
-      "Jito MEV-storm threshold (run-300): recorded as 25,000 for when the Phase-2 modifier is eventually built; there is still no Phase-2 code, so nothing changed live. Unchanged this run."
+      "run-300 skip-on-hot-5m veto: still pre-activation (bot unrestarted ~2.5d); 0 live fires; cannot evaluate yet.",
+      "run-300 wallet-identity logging: still pre-activation; SQUIRE-loss entry confirmed still logged with empty wallet field.",
+      "run-301 SQUIRE calm-loss / REQ-021: no new data; N=1 unchanged; enriched the research ask with the market-cap caveat this run.",
+      "Bankroll flat at 1.1143 SOL; no trades closed since run-301."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a Convergence-Without-Chase veto: skip wallet_convergence if the 5-minute price change is above +4%.",
+        "proposal": "Skip wallet_convergence buys when price jumped >+4% in the last 5 minutes (don't chase).",
         "from_research": "research-145",
         "status": "SHIPPED",
-        "why": "Shipped run-300, awaiting the next natural bot restart to activate. Kept shipped this run. But a fresh calm-entry loss (SQUIRE -14.07%) shows it does not cover all WC tail risk - now flagged necessary-but-insufficient. Concrete next trigger: first WC entries after the restart, evaluated against research-145's kill criteria (revert if over 10 veto-passed entries win-rate < 50% or 2+ stop worse than -10%)."
+        "why": "Shipped run-300; in code but still pre-activation because the bot has not restarted in ~2.5 days. Activates on next natural restart; only ever SKIPS so no downside to the lag."
       },
       {
-        "proposal": "Recalibrate the Jito MEV-storm spike threshold to a ratio of 25,000 (the placeholder 200 fired on half of all polls).",
+        "proposal": "Recalibrate the not-yet-built Jito MEV-storm trigger from 200 to ~25,000.",
         "from_research": "research-145",
         "status": "DEFERRED",
-        "why": "There is still no Phase-2 trading logic in the code to attach the threshold to - Phase 1 is logging-only - so the 25,000 value stays recorded in the hypothesis, not in code. Unlocks when the Phase-2 regime modifier is actually built and research re-runs the Jito-vs-trade correlation over a wider data window (research-145 next-run item #1)."
+        "why": "No Phase-2 code exists to attach the constant to (Phase 1 is log-only). The 25,000 value is recorded for whenever Phase-2 is built; unblocks when a Phase-2 modifier is actually written."
       },
       {
-        "proposal": "Build a Believe launchpad graduation listener, filtered by Meteora pool config account FhVo3mqL...HLuM (since Believe has no single launch signer).",
+        "proposal": "Add a Believe-launchpad listener filtered by a shared pool config account.",
         "from_research": "research-145",
         "status": "DEFERRED",
-        "why": "Research set its own pre-ship gate: do not ship until at least 5 known Believe tokens are confirmed to all carry that config account (the program is multi-tenant). That confirmation is filed as REQ-020 and is still pending. Unlocks when REQ-020 comes back positive."
+        "why": "Blocked on REQ-020 - research must first confirm the config account is Believe-specific (seed mint LAUNCHCOIN). That confirmation can land in the research run firing today (Sunday noon)."
       },
       {
-        "proposal": "Log the actual converging wallet addresses on every wallet_convergence entry (they were never recorded before).",
+        "proposal": "Log which smart-money wallets triggered each wallet_convergence trade.",
         "from_research": "research-145",
         "status": "SHIPPED",
-        "why": "Shipped run-300 (logging-only), awaiting the same natural restart to activate. Evaluation trigger: after several weeks of logging, once any single wallet has 5+ triggered WC trades, file a research request to rank wallets by forward return."
+        "why": "Shipped run-300; logging-only, in code but pre-activation pending restart. SQUIRE-loss entry confirms the field is still empty on the running build."
       },
       {
-        "proposal": "Extend the rug guard to treat a top-1 non-LP holder above 25% as a rug signal.",
+        "proposal": "Extend the rug guard to block tokens with a >=25% top-1 non-LP holder.",
         "from_research": "research-145",
-        "status": "DEFERRED",
-        "why": "Held / do not ship - research weakened this at N=6 (fresh pump.fun tokens cluster around 21% top-1 regardless of whether they pump or dump). Re-opens only with a true newest-pairs feed surfacing 25%+ cases AND real +12h forward returns at N>=10. The stronger creator-class hard-block stays in place."
+        "status": "KILLED",
+        "why": "Held / not shipped - research itself weakened it at N=6 (fresh tokens cluster ~21% regardless of outcome). Re-opens only with a true newest-pairs feed and real +12h forward returns at N>=10."
       },
       {
-        "proposal": "REQ-020 (open request): confirm the Meteora config account FhVo3mqL...HLuM is Believe-specific before shipping the Believe listener.",
-        "from_research": "requests_for_research",
+        "proposal": "REQ-020: confirm the Meteora DBC config account is Believe-specific before shipping the listener.",
+        "from_research": "research-145",
         "status": "PENDING",
-        "why": "Filed run-300, not yet picked up by the research brain (next research run is the coming Sunday). Unblocks the Believe listener. No brain action possible until research returns the on-chain confirmation."
+        "why": "Awaiting the research run (fires today Sunday noon) to decode >=5 known Believe mints and verify they share the config account."
       },
       {
-        "proposal": "REQ-021 (new request this run): find what separates calm-entry aged-token dead-book WC dumps (SQUIRE) from fresh dead-book WC flat-wins (Ball/TROLL).",
-        "from_research": "requests_for_research",
+        "proposal": "REQ-021: mine the full wallet_convergence sample for what separates the SQUIRE-type calm dead-book dump from the flat-wins.",
+        "from_research": "research-145",
         "status": "PENDING",
-        "why": "Filed this run (HIGH). Needs a full-sample backtest of token age and market-cap against dead-book and outcome - work the brain should not hand-derive on one example. Unlocks a proposed gate (with full completeness packet) that blocks SQUIRE while keeping the wins, or a null result telling us to simply size WC down."
+        "why": "Awaiting today's research run. Enriched this run with the market-cap caveat (cap does NOT separate); research should test token age + live-book dynamics instead."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "The only new evidence was a single wallet_convergence loss (SQUIRE -14.07%). It is a calm-entry, dead-book dump on an aged token - a genuinely new failure mode - but the obvious candidate gates (a dead-book block, or a zero-live-buyers block) would also have blocked a recent winner (Ball +0.79%) that had an identically dead book. No clean separator exists at one example, and inventing one against our only profitable strategy would likely sacrifice its wins. The disciplined response is a research backtest (REQ-021), not a same-run code change. Separately, the run-300 veto is still not even active (no restart yet), so layering a second WC change on top before the first is validated would compound risk.",
+    "no_code_change_reason": "Nothing actionable to ship: no new trades since last run, no new research yet (the weekly research run fires later today), and the two wallet_convergence fixes from run-300 are still not even live (bot unrestarted). Adding a third unactivated entry change on top of those two, on a single adverse data point, would violate the no-stacking discipline. The one useful thing - the market-cap finding - was a data check, not a code change, and was routed into the research request.",
     "changelog": [
-      "Diagnosed the new SQUIRE -14.07% loss on our only profitable strategy and traced exactly why both our guards missed it (calm entry + token only up 20% on the day).",
-      "Decided NOT to change any trading code, because the obvious fix would also have blocked a recent winning trade with the same dead order book.",
-      "Asked the research brain (request REQ-021) to find what actually separates these aged-token dumps from the small winners, using a full-history backtest.",
-      "Recorded in the brain that the new 'don't chase' veto is correct but not enough on its own, and refreshed all the latest stats."
+      "Confirmed the two run-300 wallet_convergence fixes are in the code but not yet running (bot hasn't restarted in ~2.5 days).",
+      "Discovered the loss vs wins are NOT explained by market cap: the biggest-cap recent trade actually won.",
+      "Updated the brain's notes and the weekly research request so research focuses on token age and live trading activity, not market cap.",
+      "No trades closed; bankroll unchanged at 1.1143 SOL."
     ],
     "actions_taken": [
-      "Investigated the SQUIRE wallet_convergence emergency-stop loss and confirmed it was a calm entry on an aged, low-activity token.",
-      "Filed research request REQ-021 to investigate calm-entry, dead-book wallet_convergence losses (seed cases: SQUIRE loss, Ball win).",
-      "Annotated the Convergence-Without-Chase hypothesis as necessary-but-insufficient after the SQUIRE counter-example (did not kill it - it still only ever skips and still targets the hot-5min losses).",
-      "Confirmed the run-300 Convergence-Without-Chase veto and source_wallet logging are still awaiting a natural bot restart to activate."
+      "Disproved the run-301 'larger/older token = bad' theory for wallet_convergence using the now-logged market-cap field (TROLL won at ~$74.8M; the loss was only ~$6.2M).",
+      "Enriched research request REQ-021 with a market-cap caveat so the weekly research run does not gate wallet_convergence on market cap.",
+      "Recorded the market-cap finding as a permanent lesson and in the wallet_convergence strategy note.",
+      "Left the skip-on-hot-5m veto and wallet-identity logging as SHIPPED-pre-activation; filed no restart todo (forbidden; watchdog owns restarts)."
     ],
     "next_priorities": [
-      "Once the bot next restarts, confirm the Convergence-Without-Chase veto fires (watch for its skip events) and begin counting its 10-entry evaluation window.",
-      "Act on REQ-021 when research returns: ship a token-age/market-cap-aware WC gate ONLY if the backtest shows it blocks SQUIRE-type dumps while retaining Ball/TROLL/Butt wins; otherwise size wallet_convergence down.",
-      "Act on REQ-020 when research confirms (or refutes) that the Meteora config account is Believe-specific, then ship or drop the Believe listener accordingly.",
-      "Keep accumulating WC post-restart samples toward N=10 for a scale-up-or-cut decision on the dead-book floor."
+      "Read today's research run output (REQ-020 + REQ-021 + new weekly findings) next run and triage it.",
+      "When the bot next restarts, verify the skip-on-hot-5m veto and wallet-identity logging go live (watch wallet_convergence entries for a populated wallet field), then evaluate the veto over N=10 gate-passed trades.",
+      "Watch for the next wallet_convergence trade to start building the post-fix sample (currently 0 live fires of the new logic)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -223,14 +221,12 @@
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.5,
       "bankroll": 1.1143,
-      "pnl_today": -0.003253
+      "pnl_today": 0.0
     },
     "active_strategies": [
-      "wallet_convergence (only net-profitable edge; 15T 53.3%WR RR 0.35; CWC veto + source_wallet logging shipped, awaiting restart; new calm-entry dead-book failure mode under REQ-021)",
-      "bear_strength (32T 37.5%WR RR 2.08 +0.0069 SOL; m5-activity + h6 gates active)",
-      "consensus_boost (47T 46.8%WR RR 1.22; FCM +3.94% time-exit win in last 24h; CHOP-gated sizing)",
-      "fresh_profile (PROVEN 15T 60%WR RR 1.17 +0.0029 SOL; dormant under H11 pair-age gate)",
-      "chop_momentum_scalp / bounce_hunter / flash_surge / others (testing or regime-gated, no recent fires)"
+      "wallet_convergence (only 7d-WR-positive; all-time net-negative; CWC veto + wallet logging shipped, pre-activation)",
+      "bear_strength (best lifetime R/R 2.08; net positive; trade-dormant ~9d)",
+      "consensus_boost (near-breakeven; FCM +3.94% was the only recent fire)"
     ]
   },
   "wallet_scan": {
@@ -238,16 +234,16 @@
     "result": "Saved 20 wallets in 34m 4s",
     "completed": "2026-05-28T02:00:47.047088"
   },
-  "brain_next_sec": 85652.392987,
+  "brain_next_sec": 85349.546505,
   "brain_next_str": "Mon 4:04 AM EST",
-  "brain_running": true,
+  "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Sat 4:14 AM EST",
+  "brain_last_run_str": "4:19 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "9:13 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 812.392987,
+  "research_next_sec": 509.546505,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -438,7 +434,7 @@
     "dashboard_bot_status_field": "Dashboard 200, num_positions 0, one_time_tasks empty, overloaded false.",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 29.28,
+    "hours_since_last_trade": 29.36,
     "hours_since_last_buy": 29.08,
     "trades_last_24h": {
       "buys": 0,
@@ -530,7 +526,7 @@
     "next_run_focus": "1) Cycle 62->63 (+1); confirm 64+. 2) DORMANCY still TRUE (27.33h) -- EXPECTED post-FCM quiet, NOT a stall; watch for a buy to clear it; do NOT append a new alert each hour while INFO/unchanged; escalation bar is 168h (Section 9D), far off. 3) events_age crept 120->151s -- still under 300s, cycle advancing; confirm it settles, investigate only if >300s with frozen cycle 2 runs. 4) BRAIN daily cron ~2026-05-31 04:00 EDT may already have fired or be about to -- check sol_brain_status for a run-302 (will read DORMANCY_ALERT-003 + REQ-020/REQ-021). 5) RESEARCH cron Sunday 2026-05-31 (research_status ~55h, benign) -- confirm it fires today. 6) SHIPPED-BUT-DORMANT: CWC veto + source_wallet logging inactive until PID 11760 restarts. 7) PID stability FIFTY-FIVE runs. 8) Mirror HEALTHY. 9) Read bot JSONs with encoding=utf-8; keep maint log a flat array.",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 9.4,
+    "file_age_min": 14.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1965,7 +1961,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 63,
-    "age_min": 42.4,
+    "age_min": 47.5,
     "stale": false,
     "available": true
   },
@@ -1984,7 +1980,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 2612.392987,
+  "maint_next_sec": 2309.546505,
   "maint_next_str": "5:00 AM EST",
   "maint_last_run_str": "4:07 AM EST",
   "maint_stale": false,
@@ -2005,34 +2001,13 @@
       "evidence_source": "lessons"
     },
     "tally": {
-      "implemented": 14,
+      "implemented": 15,
       "queued": 1,
       "rejected": 0,
-      "total": 15
+      "total": 16
     }
   },
   "events": [
-    {
-      "ts": "2026-05-31T03:00:30.839527",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 862TYSvR sold FX7wgV5k \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T03:02:13.499941",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip LGBTQ: h1=0.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-05-31T03:02:13.942777",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip LGBTQ: h1=0.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
     {
       "ts": "2026-05-31T03:07:35.707382",
       "type": "BUY_SKIP",
@@ -2711,6 +2686,27 @@
       "color": "#58a6ff",
       "msg": "WalletSell: 3BLjRcxW sold HziPQunV \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-05-31T04:20:19.402703",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HHDPKM7z sold 7bK4jRMa \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T04:20:57.604491",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CEmtJAvi sold Gsks4bWg \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-05-31T04:20:59.622279",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip CULEX: downtrend h1=-33.1% h24=-64.8%",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2729,9 +2725,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:16:27",
+  "ts": "04:21:30",
   "__publish_meta": {
-    "published_at": "2026-05-31 04:16:27 EDT",
+    "published_at": "2026-05-31 04:21:30 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
