@@ -1,10 +1,10 @@
 {
-  "sol_price": 80.71485697612312,
+  "sol_price": 80.67299597498847,
   "bot_status": "STALE",
   "bot_last_seen": "03:39:33",
   "bot_cycles": 89,
   "bankroll": 1.1143,
-  "bankroll_usd": 89.94056512849399,
+  "bankroll_usd": 89.89391941492966,
   "budget": 0.1596413196,
   "pnl_today": 0,
   "deployed": 0,
@@ -133,84 +133,67 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-05-31 04:18:00 EDT",
+    "timestamp": "2026-06-01 04:05:35 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "NULL-DELTA run: zero new trades since run-301 (still 1014 sells / 1013 buys; bot trade-dormant ~29h since FCM 2026-05-29 22:59), so rolling_24h is N=0. The #1 standing problem is unchanged: the bot's only win-rate-positive strategy (wallet_convergence) is still net-negative all-time (15 trades, 53% win rate, R/R 0.35, -0.0059 SOL) because of a fat loss tail, and the two fixes shipped run-300 (skip-on-hot-5m veto + wallet-identity logging) have STILL not gone live because the bot process has not restarted in ~2.5 days (same process, internal cycle counter climbed 36->63 with no reset). I cannot and must not force a restart (that is the watchdog's job); the cost of the lag is low because the veto only ever SKIPS trades and the strategy fires only a few times a week.",
-    "exit_analysis": "Lifetime: avg win +13.03%, avg loss -16.51%, R/R 0.79, stop-loss rate 50.5% (unchanged - no new closes this run). Last 7 days (5 trades): four small wins (+3.94 / +2.32 / +0.79 / +0.27) and one -14.07% emergency stop, net -0.00309 SOL; the single loss is 4.5x the size of all four wins combined - the same fat-tail problem the wallet_convergence entry-quality work is meant to fix. Best-RR strategy remains bear_strength (R/R 2.08 lifetime).",
-    "strategy_work": "Confirmed the run-300 wallet_convergence fixes (skip-on-hot-5-minute-pump veto + logging which smart-money wallets triggered each trade) are present in the code but NOT yet running, because the bot has not restarted. Then ran a data check on the new market-cap-at-entry field (now confirmed recorded) and used it to DISPROVE my own prior theory: I had guessed the SQUIRE loss was caused by it being a larger, older token, but the largest-cap trade in the recent sample (TROLL, ~$74.8M) was actually a WIN, while the losing trade was only ~$6.2M. So market cap does not separate winners from losers. I recorded this so the weekly research run (today) does not waste effort chasing market cap and instead looks at token age and live order-book activity.",
-    "directives_changes": "Bumped to version 304 (run-302). Rewrote the current-priority note to a NULL-DELTA summary. Added the market-cap finding as a permanent lesson and to the wallet_convergence strategy note. Added a market-cap caveat to research request REQ-021 so the weekly research run does not gate on market cap. Refreshed the running stats (lifetime unchanged; 24h now empty; 7-day window N=5).",
+    "system_diagnosis": "The #1 problem remains a deeply negative lifetime book: 1014 sells, 35.6% win rate, R/R 0.79, -1.18 SOL all-time (copy_trade alone is -0.83 SOL). But the live edge is now narrow and protected: the only recently-active strategy, wallet_convergence, is 15 trades 53.3% WR but R/R just 0.35 because a SINGLE -14.07% loss (SQUIRE, 2026-05-29) is larger than its entire 7-day P/L. That exact loss now has a gate. The bot has been trade-dormant ~53 hours under CHOP/ALTCOIN_WINTER (SOL $81, drifting down) - regime-appropriate, not a fault.",
+    "exit_analysis": "All-time: avg win +13.03%, avg loss -16.51%, R/R 0.79, stop-loss rate 50.5%. Rolling 7d (N=5): avg win +1.83%, avg loss -14.07% (the single SQUIRE loss), R/R 0.13, stop rate 20%. Rolling 24h: N=0 (dormant). The recent damage is concentrated in one aged-token wallet_convergence dump, which is exactly what this run's new gate targets.",
+    "strategy_work": "Triaged research-146 (the weekly Sunday run, which fired AFTER the prior brain run, so this is the first run to see it). It closed both open research questions. Shipped its highest-value finding: a live-order-book veto for the wallet_convergence strategy that would have blocked the worst recent loss while touching none of the wins. Deferred its Believe-launchpad listener pending more confirmation. Queued its new pre-graduation velocity idea for a future build. Recorded its time-of-day analysis as a clean no-signal result.",
+    "directives_changes": "Bumped to version 305 (run-303). Rewrote current_priority and reasoning for the research-146 triage. Removed the two now-completed research requests (the wallet-convergence loss investigation and the Believe-config confirmation) and archived them with outcomes. Filed one new request (REQ-022) to confirm the Believe config is used across many Believe launches before any listener is built. Updated the Believe-listener hypothesis with the corrected config address and a deferred status. Added a new high-priority hypothesis for the pre-graduation velocity scorer. Added two condensed lessons (the live-book separator + why this stacking was acceptable) and recorded the time-of-day no-signal result.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-300 skip-on-hot-5m veto: still pre-activation (bot unrestarted ~2.5d); 0 live fires; cannot evaluate yet.",
-      "run-300 wallet-identity logging: still pre-activation; SQUIRE-loss entry confirmed still logged with empty wallet field.",
-      "run-301 SQUIRE calm-loss / REQ-021: no new data; N=1 unchanged; enriched the research ask with the market-cap caveat this run.",
-      "Bankroll flat at 1.1143 SOL; no trades closed since run-301."
+      "Run-302 deferred a wallet_convergence fix pending research, enriched REQ-021 with the mcap caveat - research-146 confirmed mcap does NOT separate and found the live-book separator instead; fix now shipped.",
+      "Run-300 shipped the convergence-without-chase veto + source-wallet logging - both still pre-activation (bot has not restarted since 2026-05-28, cycle counter monotonic 63->89 on the same process). They will activate together with this run's new gate at the next restart.",
+      "Bot trade-dormant ~53h (last buy FCM 2026-05-29 22:59 EDT) - acceptable under CHOP/ALTCOIN_WINTER per the regime playbook; no forced trades."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Skip wallet_convergence buys when price jumped >+4% in the last 5 minutes (don't chase).",
-        "from_research": "research-145",
+        "proposal": "Add a wallet-convergence veto that skips entry on an aged token (over ~71 days old) whose live order book is net-selling (more sellers than buyers in the last 5 minutes) - the profile of the -14% SQUIRE loss.",
+        "from_research": "research-146",
         "status": "SHIPPED",
-        "why": "Shipped run-300; in code but still pre-activation because the bot has not restarted in ~2.5 days. Activates on next natural restart; only ever SKIPS so no downside to the lag."
+        "why": "Backtested across all 15 wallet_convergence trades it blocks exactly the one catastrophic loss and zero wins (it keeps the same-token earlier win, which had a net-buy book, and the very old TROLL win, also net-buy). Skip-only, so it cannot create a loss; near-zero expected cost. Activates at the next restart with the two prior wallet-convergence changes."
       },
       {
-        "proposal": "Recalibrate the not-yet-built Jito MEV-storm trigger from 200 to ~25,000.",
-        "from_research": "research-145",
+        "proposal": "Build a Believe-launchpad listener filtered on the now-corrected config account 7SXEnhGR... and payer 5qWya6Uj... (the old FhVo3mqL key was falsified - it is a 0-byte signer, not a config).",
+        "from_research": "research-146",
         "status": "DEFERRED",
-        "why": "No Phase-2 code exists to attach the constant to (Phase 1 is log-only). The 25,000 value is recorded for whenever Phase-2 is built; unblocks when a Phase-2 modifier is actually written."
+        "why": "The corrected config/payer pairing was verified on only one real Believe launch plus five negative controls. Building a new on-chain listener on a single confirmation risks under-capturing. Unblocks when REQ-022 confirms the same config across at least 5-10 Believe launches; until then there is zero trade value at risk by waiting."
       },
       {
-        "proposal": "Add a Believe-launchpad listener filtered by a shared pool config account.",
-        "from_research": "research-145",
-        "status": "DEFERRED",
-        "why": "Blocked on REQ-020 - research must first confirm the config account is Believe-specific (seed mint LAUNCHCOIN). That confirmation can land in the research run firing today (Sunday noon)."
-      },
-      {
-        "proposal": "Log which smart-money wallets triggered each wallet_convergence trade.",
-        "from_research": "research-145",
-        "status": "SHIPPED",
-        "why": "Shipped run-300; logging-only, in code but pre-activation pending restart. SQUIRE-loss entry confirms the field is still empty on the running build."
-      },
-      {
-        "proposal": "Extend the rug guard to block tokens with a >=25% top-1 non-LP holder.",
-        "from_research": "research-145",
-        "status": "KILLED",
-        "why": "Held / not shipped - research itself weakened it at N=6 (fresh tokens cluster ~21% regardless of outcome). Re-opens only with a true newest-pairs feed and real +12h forward returns at N>=10."
-      },
-      {
-        "proposal": "REQ-020: confirm the Meteora DBC config account is Believe-specific before shipping the listener.",
-        "from_research": "research-145",
+        "proposal": "New idea: extend the existing graduation logger into a pre-graduation liquidity-velocity scorer to enter before the migration buy-wave.",
+        "from_research": "research-146",
         "status": "PENDING",
-        "why": "Awaiting the research run (fires today Sunday noon) to decode >=5 known Believe mints and verify they share the config account."
+        "why": "Added to the hypothesis pipeline at HIGH priority. Cannot build yet: it needs research-147 to define the exact velocity metric (trades-to-liquidity) and the forward-return capture method on the live curve subscription. Building a real-time curve reader with zero calibration data would be premature."
       },
       {
-        "proposal": "REQ-021: mine the full wallet_convergence sample for what separates the SQUIRE-type calm dead-book dump from the flat-wins.",
-        "from_research": "research-145",
+        "proposal": "REQ-022 (my new request this run): confirm the Believe config 7SXEnhGR... is shared across 5-10 Believe launches before the listener ships.",
+        "from_research": "run-303 (brain-filed)",
         "status": "PENDING",
-        "why": "Awaiting today's research run. Enriched this run with the market-cap caveat (cap does NOT separate); research should test token age + live-book dynamics instead."
+        "why": "Just filed; research has not picked it up. Unblocks the Believe listener. Trigger: next weekly research run validating config universality via Bitquery."
       }
     ],
-    "code_changes_this_run": [],
-    "no_code_change_reason": "Nothing actionable to ship: no new trades since last run, no new research yet (the weekly research run fires later today), and the two wallet_convergence fixes from run-300 are still not even live (bot unrestarted). Adding a third unactivated entry change on top of those two, on a single adverse data point, would violate the no-stacking discipline. The one useful thing - the market-cap finding - was a data check, not a code change, and was routed into the research request.",
+    "code_changes_this_run": [
+      "The bot now refuses a wallet-convergence buy when the token is more than ~71 days old AND its live order book is net-selling (more distinct sellers than buyers in the last 5 minutes). This catches the exact pattern of the -14% SQUIRE loss - an old token being quietly distributed into - which the two earlier wallet-convergence safeguards both missed (one only blocks fast 5-minute price spikes, the other only fires on tokens already up 100%+ in a day). If the order-book data cannot be fetched, the bot does not block (fail-open). This change is in the code now and will switch on the next time the bot restarts."
+    ],
     "changelog": [
-      "Confirmed the two run-300 wallet_convergence fixes are in the code but not yet running (bot hasn't restarted in ~2.5 days).",
-      "Discovered the loss vs wins are NOT explained by market cap: the biggest-cap recent trade actually won.",
-      "Updated the brain's notes and the weekly research request so research focuses on token age and live trading activity, not market cap.",
-      "No trades closed; bankroll unchanged at 1.1143 SOL."
+      "Added a new safety check to the wallet-convergence strategy: skip old tokens (over ~71 days) that are being sold into right now (more sellers than buyers in the last 5 minutes). This blocks the kind of trade that caused our worst recent loss without blocking any of our past wins.",
+      "Decided NOT to build the Believe-launchpad listener yet - the address we would filter on has only been confirmed on one launch. Asked the research lab to confirm it across more launches first.",
+      "Added the research lab's new idea (spotting tokens about to graduate by how fast money is flowing in) to the idea pipeline for a future build.",
+      "Recorded that time-of-day has no effect on results across all 1014 trades - so we will not add any time-based rules."
     ],
     "actions_taken": [
-      "Disproved the run-301 'larger/older token = bad' theory for wallet_convergence using the now-logged market-cap field (TROLL won at ~$74.8M; the loss was only ~$6.2M).",
-      "Enriched research request REQ-021 with a market-cap caveat so the weekly research run does not gate wallet_convergence on market cap.",
-      "Recorded the market-cap finding as a permanent lesson and in the wallet_convergence strategy note.",
-      "Left the skip-on-hot-5m veto and wallet-identity logging as SHIPPED-pre-activation; filed no restart todo (forbidden; watchdog owns restarts)."
+      "Shipped the research-146 wallet-convergence aged-token live-book veto (closes the REQ-021 investigation into the SQUIRE -14% calm-entry loss).",
+      "Deferred the research-146 Believe-launchpad listener proposal; replaced the closed REQ-020 with REQ-022 to validate the corrected Believe config across 5-10 launches first.",
+      "Updated the believe_launchpad_listener hypothesis with the corrected config (7SXEnhGR) and a deferred status.",
+      "Added bonding_curve_velocity_pregrad_snipe as a new HIGH-priority hypothesis from research-146.",
+      "Compile-checked degen_bot.py (passed) after the wallet-convergence code change."
     ],
     "next_priorities": [
-      "Read today's research run output (REQ-020 + REQ-021 + new weekly findings) next run and triage it.",
-      "When the bot next restarts, verify the skip-on-hot-5m veto and wallet-identity logging go live (watch wallet_convergence entries for a populated wallet field), then evaluate the veto over N=10 gate-passed trades.",
-      "Watch for the next wallet_convergence trade to start building the post-fix sample (currently 0 live fires of the new logic)."
+      "After the next bot restart, confirm all three wallet-convergence safeguards are live (watch the event log for the new 'aged-token distribution veto' skip line) and verify no false blocks of would-be wins.",
+      "Re-evaluate the wallet-convergence aged-livebook gate at N=8 fires post-activation (wallet_convergence fires ~2-4x/week, so ~3-4 weeks): revert if it blocks 2+ would-be wins or 10-trade R/R falls below 0.30.",
+      "When research-147 returns, validate the Believe config across 5-10 launches (REQ-022) and spec the pre-graduation velocity metric before any build."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -224,9 +207,12 @@
       "pnl_today": 0.0
     },
     "active_strategies": [
-      "wallet_convergence (only 7d-WR-positive; all-time net-negative; CWC veto + wallet logging shipped, pre-activation)",
-      "bear_strength (best lifetime R/R 2.08; net positive; trade-dormant ~9d)",
-      "consensus_boost (near-breakeven; FCM +3.94% was the only recent fire)"
+      "wallet_convergence",
+      "consensus_boost",
+      "bear_strength",
+      "fresh_profile",
+      "fresh_boost",
+      "chop_momentum_scalp"
     ]
   },
   "wallet_scan": {
@@ -234,16 +220,16 @@
     "result": "Saved 20 wallets in 34m 57s",
     "completed": "2026-06-01T01:48:43.015437"
   },
-  "brain_next_sec": 86029.242189,
+  "brain_next_sec": 85726.256768,
   "brain_next_str": "Tue 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 275.757811,
-  "brain_last_run_str": "Sun 4:18 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:05 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:38 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 519589.242189,
+  "research_next_sec": 519286.256768,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -382,7 +368,7 @@
     "dashboard_curl": "200 (len 68622)",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 53.17,
+    "hours_since_last_trade": 53.26,
     "hours_since_last_buy": 53.09,
     "trades_last_24h": {
       "buys": 0,
@@ -473,7 +459,7 @@
     "next_run_focus": "1) Cycle 89->? advancing. 2) Process bot=1/dash=1. 3) Dormancy ~53h since buy EXPECTED post-FCM; watch for first buy; 168h bar ~4.8 days off. 4) Mirror HEALTHY. 5) Brain daily cron ~04:04 today should have run -- verify it ingested research-146 (2 proposals + bonding_curve_velocity hypothesis) and bumped directives past v304. 6) Research next weekly ~2026-06-07 noon.",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 3.9,
+    "file_age_min": 8.9,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1908,15 +1894,15 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 89,
-    "age_min": 30.6,
+    "age_min": 35.7,
     "stale": false,
     "available": true
   },
   "brain_queue": {
-    "requests_pending": 0,
+    "requests_pending": 1,
     "requests_acknowledged": 0,
-    "hypotheses_pending": 41,
-    "lessons_count": 15,
+    "hypotheses_pending": 42,
+    "lessons_count": 16,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1927,7 +1913,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 2989.242189,
+  "maint_next_sec": 2686.256768,
   "maint_next_str": "5:00 AM EST",
   "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
@@ -1941,27 +1927,20 @@
     "latest": {
       "hypothesis_name": "bonding_curve_velocity_pregrad_snipe",
       "run_id": "research-146",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "implemented",
+      "status_label": "\u2705 Implemented",
+      "status_color": "#00ff88",
+      "evidence_text": "Added bonding_curve_velocity_pregrad_snipe as a new HIGH-priority hypothesis from research-146.",
+      "evidence_source": "action"
     },
     "tally": {
-      "implemented": 15,
+      "implemented": 16,
       "queued": 1,
       "rejected": 0,
-      "total": 16
+      "total": 17
     }
   },
   "events": [
-    {
-      "ts": "2026-06-01T03:17:49.349197",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4DdrfiDH sold 657cVxje \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-06-01T03:17:51.524472",
       "type": "BUY_SKIP",
@@ -2654,6 +2633,13 @@
       "color": "#d29922",
       "msg": "midpump skip grail: h1=2.5% (below 15% momentum threshold, run115)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-01T04:10:52.765213",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip NVDA: h1=-11.4% (below 15% momentum threshold, run115)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2672,9 +2658,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:10:10",
+  "ts": "04:15:13",
   "__publish_meta": {
-    "published_at": "2026-06-01 04:10:10 EDT",
+    "published_at": "2026-06-01 04:15:13 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
