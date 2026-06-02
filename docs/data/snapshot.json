@@ -1,15 +1,15 @@
 {
-  "sol_price": 79.42690791227113,
-  "bot_status": "STALE",
+  "sol_price": 79.45323953047071,
+  "bot_status": "RUNNING",
   "bot_last_seen": "03:29:22",
   "bot_cycles": 117,
   "bankroll": 1.1143,
-  "bankroll_usd": 88.50540348664373,
+  "bankroll_usd": 88.53474480880352,
   "budget": 0.1596413196,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 3.3,
+  "hour": 3.4,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -133,67 +133,64 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-01 04:05:35 EDT",
+    "timestamp": "2026-06-02 04:08:11 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "The #1 problem remains a deeply negative lifetime book: 1014 sells, 35.6% win rate, R/R 0.79, -1.18 SOL all-time (copy_trade alone is -0.83 SOL). But the live edge is now narrow and protected: the only recently-active strategy, wallet_convergence, is 15 trades 53.3% WR but R/R just 0.35 because a SINGLE -14.07% loss (SQUIRE, 2026-05-29) is larger than its entire 7-day P/L. That exact loss now has a gate. The bot has been trade-dormant ~53 hours under CHOP/ALTCOIN_WINTER (SOL $81, drifting down) - regime-appropriate, not a fault.",
-    "exit_analysis": "All-time: avg win +13.03%, avg loss -16.51%, R/R 0.79, stop-loss rate 50.5%. Rolling 7d (N=5): avg win +1.83%, avg loss -14.07% (the single SQUIRE loss), R/R 0.13, stop rate 20%. Rolling 24h: N=0 (dormant). The recent damage is concentrated in one aged-token wallet_convergence dump, which is exactly what this run's new gate targets.",
-    "strategy_work": "Triaged research-146 (the weekly Sunday run, which fired AFTER the prior brain run, so this is the first run to see it). It closed both open research questions. Shipped its highest-value finding: a live-order-book veto for the wallet_convergence strategy that would have blocked the worst recent loss while touching none of the wins. Deferred its Believe-launchpad listener pending more confirmation. Queued its new pre-graduation velocity idea for a future build. Recorded its time-of-day analysis as a clean no-signal result.",
-    "directives_changes": "Bumped to version 305 (run-303). Rewrote current_priority and reasoning for the research-146 triage. Removed the two now-completed research requests (the wallet-convergence loss investigation and the Believe-config confirmation) and archived them with outcomes. Filed one new request (REQ-022) to confirm the Believe config is used across many Believe launches before any listener is built. Updated the Believe-listener hypothesis with the corrected config address and a deferred status. Added a new high-priority hypothesis for the pre-graduation velocity scorer. Added two condensed lessons (the live-book separator + why this stacking was acceptable) and recorded the time-of-day no-signal result.",
+    "system_diagnosis": "No new problem surfaced. The bot is healthy (PID 11760, cycle advancing 89->117, heartbeat ~35min old within one ~50min cycle) and trade-dormant ~76.5h, which is correct behavior under CHOP/ALTCOIN_CHOP with SOL drifting down -2% to $79.36. The standing #1 issue is unchanged: the three wallet_convergence safety changes shipped over runs 300/303 are still PRE-ACTIVATION because the bot has not naturally restarted in ~4.5 days. They are all skip-only gates, so the cost of the lag is at most a few un-blocked WC entries until the next restart - not a capital risk. No restart can be forced (forbidden; watchdog/maintenance own it).",
+    "exit_analysis": "Lifetime (N=1014 sells): avg win +13.03%, avg loss -16.51%, R/R 0.79, stop-loss rate 50.5%. rolling_7d (N=5): WR 80%, avg win +1.83%, avg loss -14.07% (the single loss is the SQUIRE -14.07% emergency stop that the run-303 aged-livebook veto blocks once activated), R/R 0.13. rolling_24h: zero closes (dormant). No new exits this run.",
+    "strategy_work": "No hypothesis advanced and none could be: the sole research delivery in play (research-146) was fully triaged at run-303, and no new research fires until Sunday 2026-06-07. Self-audited degen_bot.py source to confirm the run-303 aged-livebook veto is genuinely present (WC_AGED_LIVEBOOK_MIN_AGE_H gate, skip when pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5) rather than assuming it - confirmed, alongside the run-300 CWC veto and source_wallet logging. The high-priority bonding_curve_velocity_pregrad_snipe idea stays queued, blocked on research-147 delivering the exact trades-to-vSol metric spec.",
+    "directives_changes": "Bumped to version 306. Refreshed the run-304 market/dormancy note in track_record (SOL $79.36, BTC.D 56.35%, regime label shifted ALTCOIN_WINTER->ALTCOIN_CHOP, 76.5h dormancy, same-PID 4.5d). Rewrote current_priority to record the NULL-DELTA decision and the still-pending activation of all three WC changes. No hypotheses moved (no new evidence), no killed_ideas added, no requests added or removed (REQ-022 remains pending the Sunday research run).",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "Run-302 deferred a wallet_convergence fix pending research, enriched REQ-021 with the mcap caveat - research-146 confirmed mcap does NOT separate and found the live-book separator instead; fix now shipped.",
-      "Run-300 shipped the convergence-without-chase veto + source-wallet logging - both still pre-activation (bot has not restarted since 2026-05-28, cycle counter monotonic 63->89 on the same process). They will activate together with this run's new gate at the next restart.",
-      "Bot trade-dormant ~53h (last buy FCM 2026-05-29 22:59 EDT) - acceptable under CHOP/ALTCOIN_WINTER per the regime playbook; no forced trades."
+      "run-303 WC aged-livebook veto: CONFIRMED still in source and still pre-activation (bot unrestarted since 2026-05-28). Will block the SQUIRE -14.07% loss class once the next natural restart activates it.",
+      "run-303 Believe listener defer (REQ-022): still pending - the research brain has not run since (weekly Sunday cadence). No change.",
+      "run-303 bonding_curve_velocity hypothesis: still queued HIGH, awaiting research-147 velocity-metric spec.",
+      "run-303 time-of-day null: recorded, no temporal gate added (correct - research-146 returned all |z|<1.3)."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a wallet-convergence veto that skips entry on an aged token (over ~71 days old) whose live order book is net-selling (more sellers than buyers in the last 5 minutes) - the profile of the -14% SQUIRE loss.",
+        "proposal": "Add a wallet_convergence filter that skips entry on an aged token (pair age >= 1700h) when the live order book is net-selling (more sellers than buyers in the last 5 min) - blocks the -14% SQUIRE dump while keeping every past win.",
         "from_research": "research-146",
         "status": "SHIPPED",
-        "why": "Backtested across all 15 wallet_convergence trades it blocks exactly the one catastrophic loss and zero wins (it keeps the same-token earlier win, which had a net-buy book, and the very old TROLL win, also net-buy). Skip-only, so it cannot create a loss; near-zero expected cost. Activates at the next restart with the two prior wallet-convergence changes."
+        "why": "Already shipped to source at run-303 and confirmed present this run by direct code read. It sits pre-activation only because the bot has not restarted; it activates automatically at the next natural restart. Nothing further for the brain to do."
       },
       {
-        "proposal": "Build a Believe-launchpad listener filtered on the now-corrected config account 7SXEnhGR... and payer 5qWya6Uj... (the old FhVo3mqL key was falsified - it is a 0-byte signer, not a config).",
+        "proposal": "Build a Believe-launchpad listener gated on the corrected on-chain config key (7SXEnhGR...) and payer (5qWya6Uj...), after research falsified the old viral FhVo3mqL key as a 0-byte signer wallet.",
         "from_research": "research-146",
         "status": "DEFERRED",
-        "why": "The corrected config/payer pairing was verified on only one real Believe launch plus five negative controls. Building a new on-chain listener on a single confirmation risks under-capturing. Unblocks when REQ-022 confirms the same config across at least 5-10 Believe launches; until then there is zero trade value at risk by waiting."
+        "why": "The config/payer pairing was verified on only one real Believe launch. Building a new listener on N=1 is premature engineering with zero immediate trade value. Unblocks when REQ-022 confirms the config is universal across >=5-10 Believe launches - which only the research brain can run, next firing Sunday 2026-06-07."
       },
       {
-        "proposal": "New idea: extend the existing graduation logger into a pre-graduation liquidity-velocity scorer to enter before the migration buy-wave.",
+        "proposal": "REQ-022: research brain to validate that Believe config 7SXEnhGR... appears at init account index 0 across >=5-10 distinct recent Believe launches before any listener is built.",
+        "from_research": "REQ-022 (filed run-303)",
+        "status": "PENDING",
+        "why": "Owned by the research brain, which runs weekly on Sundays and has not fired since the request was filed. Unblocks at the next research run (2026-06-07); the brain cannot self-service a Bitquery on-chain validation."
+      },
+      {
+        "proposal": "New hypothesis: a pre-graduation bonding-curve liquidity-velocity scorer (extend the existing graduation logger into a leading indicator using trades-to-vSol).",
         "from_research": "research-146",
-        "status": "PENDING",
-        "why": "Added to the hypothesis pipeline at HIGH priority. Cannot build yet: it needs research-147 to define the exact velocity metric (trades-to-liquidity) and the forward-return capture method on the live curve subscription. Building a real-time curve reader with zero calibration data would be premature."
-      },
-      {
-        "proposal": "REQ-022 (my new request this run): confirm the Believe config 7SXEnhGR... is shared across 5-10 Believe launches before the listener ships.",
-        "from_research": "run-303 (brain-filed)",
-        "status": "PENDING",
-        "why": "Just filed; research has not picked it up. Unblocks the Believe listener. Trigger: next weekly research run validating config universality via Bitquery."
+        "status": "DEFERRED",
+        "why": "Queued HIGH at run-303. Phase-1 LOG-ONLY ship is blocked on research-147 delivering the exact velocity-metric definition; coding it on a guessed metric would curve-fit. Unblocks at the next research run."
       }
     ],
-    "code_changes_this_run": [
-      "The bot now refuses a wallet-convergence buy when the token is more than ~71 days old AND its live order book is net-selling (more distinct sellers than buyers in the last 5 minutes). This catches the exact pattern of the -14% SQUIRE loss - an old token being quietly distributed into - which the two earlier wallet-convergence safeguards both missed (one only blocks fast 5-minute price spikes, the other only fires on tokens already up 100%+ in a day). If the order-book data cannot be fetched, the bot does not block (fail-open). This change is in the code now and will switch on the next time the bot restarts."
-    ],
+    "code_changes_this_run": [],
+    "no_code_change_reason": "Nothing new was actionable. The only research in play (research-146) was fully acted on at run-303, no new research fires until Sunday, there were zero new trades to learn from (bot dormant 76h under CHOP), and three wallet_convergence changes are already shipped-but-unactivated - so a fourth change would violate the anti-stacking rule and buy no activation speed.",
     "changelog": [
-      "Added a new safety check to the wallet-convergence strategy: skip old tokens (over ~71 days) that are being sold into right now (more sellers than buyers in the last 5 minutes). This blocks the kind of trade that caused our worst recent loss without blocking any of our past wins.",
-      "Decided NOT to build the Believe-launchpad listener yet - the address we would filter on has only been confirmed on one launch. Asked the research lab to confirm it across more launches first.",
-      "Added the research lab's new idea (spotting tokens about to graduate by how fast money is flowing in) to the idea pipeline for a future build.",
-      "Recorded that time-of-day has no effect on results across all 1014 trades - so we will not add any time-based rules."
+      "Confirmed the bot is healthy and correctly idle: it has not placed a trade in about 76 hours, which is the right call while the market is choppy and Solana is drifting down.",
+      "Double-checked that the previous run three copy-trade safety rules are really saved in the program. They are, but they only switch on the next time the bot restarts on its own.",
+      "Made no changes to the bot this run because there was nothing new to act on - no fresh research, no new trades, and adding another rule on top of three not-yet-active ones would be premature."
     ],
     "actions_taken": [
-      "Shipped the research-146 wallet-convergence aged-token live-book veto (closes the REQ-021 investigation into the SQUIRE -14% calm-entry loss).",
-      "Deferred the research-146 Believe-launchpad listener proposal; replaced the closed REQ-020 with REQ-022 to validate the corrected Believe config across 5-10 launches first.",
-      "Updated the believe_launchpad_listener hypothesis with the corrected config (7SXEnhGR) and a deferred status.",
-      "Added bonding_curve_velocity_pregrad_snipe as a new HIGH-priority hypothesis from research-146.",
-      "Compile-checked degen_bot.py (passed) after the wallet-convergence code change."
+      "Verified in code that the run-303 wallet_convergence aged-token safety rule (skip old tokens that are being sold into) is present and waiting to activate, along with the two earlier wallet_convergence rules from run-300.",
+      "Kept the Believe-launchpad listener deferred under request REQ-022, which is waiting on the research brain to confirm the launchpad config across more launches this coming Sunday.",
+      "Recorded a NULL-DELTA decision in the brain notes (version 305 to 306) with refreshed market and dormancy figures."
     ],
     "next_priorities": [
-      "After the next bot restart, confirm all three wallet-convergence safeguards are live (watch the event log for the new 'aged-token distribution veto' skip line) and verify no false blocks of would-be wins.",
-      "Re-evaluate the wallet-convergence aged-livebook gate at N=8 fires post-activation (wallet_convergence fires ~2-4x/week, so ~3-4 weeks): revert if it blocks 2+ would-be wins or 10-trade R/R falls below 0.30.",
-      "When research-147 returns, validate the Believe config across 5-10 launches (REQ-022) and spec the pre-graduation velocity metric before any build."
+      "On the next natural bot restart, confirm via the events log that all three wallet_convergence gates fire (look for the aged net-sell skip reason) and re-check WC stats at N>=8 post-activation fires.",
+      "Sunday 2026-06-07: triage research-147 - expect the REQ-022 Believe config-universality result and the exact trades-to-vSol velocity metric to unblock bonding_curve_velocity Phase-1 LOG-ONLY.",
+      "If dormancy exceeds ~7 days with zero active-strategy buys post-restart, audit the filter stack (run-290 rule); currently NOT tripped (post-2026-05-28-restart buys exist)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -207,12 +204,15 @@
       "pnl_today": 0.0
     },
     "active_strategies": [
-      "wallet_convergence",
-      "consensus_boost",
-      "bear_strength",
       "fresh_profile",
       "fresh_boost",
-      "chop_momentum_scalp"
+      "bear_strength",
+      "consensus_boost",
+      "wallet_convergence",
+      "chop_momentum_scalp",
+      "bounce_hunter",
+      "anchor_derivative_snipe",
+      "gecko_breadth_burst"
     ]
   },
   "wallet_scan": {
@@ -220,16 +220,16 @@
     "result": "Saved 20 wallets in 34m 57s",
     "completed": "2026-06-01T01:48:43.015437"
   },
-  "brain_next_sec": 86304.73763,
+  "brain_next_sec": 86001.731716,
   "brain_next_str": "Wed 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 64.26237,
-  "brain_last_run_str": "Mon 4:05 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:08 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:38 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 433464.73763,
+  "research_next_sec": 433161.731716,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -349,27 +349,27 @@
     "summary": "research-146 (2026-05-31 Sun noon, CHOP/ALTCOIN_WINTER SOL ~$82). 4 subagents. BOTH pending requests CLOSED. REQ-021 (HIGH) SOLVED: clean 2-feature WC gate pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5 blocks only SQUIRE-LOSS (-14.07%), keeps every win incl same-mint SQUIRE-WIN (net-buy book 10>2) and aged TROLL (9676h, net-buy 5>3) - live order book on aged token is the separator, NOT mcap/age. Full 7-field proposal filed (MEDIUM, anti-stacking note: 2 WC ships still pre-activation). REQ-020 (MEDIUM) premise FALSIFIED: FhVo3mqL is a 0-byte System-Program signer wallet NOT a config; real Believe config=7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (1048B DBC-owned, init idx0), payer=5qWya6Uj; 5 non-Believe DBC launches used distinct configs (per-partner, not multi-tenant). Proposal: ship listener on config 7SXEnhGR AND payer 5qWya6Uj. NEW HYPOTHESIS bonding_curve_velocity_pregrad_snipe (HIGH): extend existing grad logger into a pre-graduation liquidity-velocity scorer (trades-to-vSol; arXiv 2602.14860); pump.fun regained ~70-80% launches/95% grads. Time-of-day mine = CLEAN NULL (all |z|<1.3, do not add temporal gate). 2 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-02 03:05:57 EDT",
-    "run_id": "maint-139",
-    "finished_at": "2026-06-02 03:05:57 EDT",
+    "timestamp": "2026-06-02 04:05:00 EDT",
+    "run_id": "maint-140",
+    "finished_at": "2026-06-02 04:05:00 EDT",
     "run_outcome": "HEALTHY_DORMANCY_EXPECTED",
     "bot_status": "RUNNING",
     "bot_pid": 11760,
     "bot_pid_prior": 11760,
     "bot_restarted_since_last_run": false,
-    "bot_cycle": 116,
-    "bot_cycle_prior": 115,
+    "bot_cycle": 117,
+    "bot_cycle_prior": 116,
     "bot_cycle_delta": 1,
-    "bot_heartbeat_age_sec": 1944,
-    "bot_events_age_sec": 222,
+    "bot_heartbeat_age_sec": 2130,
+    "bot_events_age_sec": 106,
     "cycle_error_last100": 0,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 12908,
     "dashboard_curl": "200",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 77.1,
-    "hours_since_last_buy": 76.1,
+    "hours_since_last_trade": 77.18,
+    "hours_since_last_buy": 77.1,
     "trades_last_24h": {
       "buys": 0,
       "sells": 0
@@ -377,32 +377,32 @@
     "open_positions": 0,
     "total_trades_logged": 2048,
     "dormancy_alert": true,
-    "dormancy_status": "TRUE (EXPECTED, CONTINUING) -- post-FCM quiet into a 4th day. Last buy 2026-05-29 22:59:51 (~76.1h ago); last sell 2026-05-30 00:44:50 +3.94% (~74.4h ago). 0 buys/0 sells trailing-24h, 0 open positions, total trades 2048 unchanged. Bot ALIVE (cycle 115->116 +1, heartbeat 02:33:33 cycle 116 ~1944s mid-cycle, events ~222s last event 03:02:14 BUY_SKIP m5 dump, 0 CYCLE_ERROR/100). ~76.1h still ~91.9h (~3.8 days) below the 168h Section 9D bar. Did NOT append a new alert; DORMANCY_ALERT-003 already standing for this exact episode (same last buy 2026-05-29 22:59:51).",
-    "filter_lockout_diagnosis": "NOT in lockout. Scanner live (36 SIGNAL + 5 SCAN of last 100, last event 03:02:14, cycle 115->116). 59/100 BUY_SKIP -- selective BUY gating (e.g. m5 dump skip Magpie m5=-15.5%), far below the >95pct lockout bar.",
+    "dormancy_status": "TRUE (EXPECTED, CONTINUING) -- post-FCM quiet into a 4th day. Last buy 2026-05-29 22:59:51 FCM (~77.1h ago); last sell 2026-05-30 00:44:50 FCM +3.94% WIN (~75.3h ago). 0 buys/0 sells trailing-24h, 0 open positions, total trades 2048 unchanged. Bot ALIVE (cycle 116->117 +1, heartbeat 03:29:22 cycle 117 ~2130s mid-cycle, events ~106s last event 04:03:06 BUY_SKIP, 0 CYCLE_ERROR/100). ~77.1h is still ~90.9h (~3.8 days) below the 168h Section 9D bar. Did NOT append a new alert; DORMANCY_ALERT-003 already standing for this exact episode (same last buy 2026-05-29 22:59:51).",
+    "filter_lockout_diagnosis": "NOT in lockout. Scanner live (34 SIGNAL + 8 SCAN of last 100, last event 04:03:06, cycle 116->117). 58/100 BUY_SKIP -- selective BUY gating, far below the >95pct lockout bar.",
     "coordination": {
       "brain_running": false,
       "research_running": false
     },
     "actions_taken": [
-      "Cadence gate: prior maint-138 finished 2026-06-02 02:05:00 EDT, now ~03:04 EDT (~59 min gap >= 30 min) -> proceeded.",
+      "Cadence gate: prior maint-139 finished 2026-06-02 03:05:57 EDT, now ~04:04 EDT (~58 min gap >= 30 min) -> proceeded.",
       "Process: bot pid 11760 (pythonw degen_bot.py --continuous), dash pid 12908 (pythonw dashboard.py). Exactly one each, both unchanged -- no dedupe/start needed.",
-      "Liveness: cycle 115->116 (+1), heartbeat 02:33:33 (~1944s mid-cycle, normal), events ~222s last event 03:02:14. cycle advancing + events fresh -> ALIVE. No action.",
+      "Liveness: cycle 116->117 (+1), heartbeat 03:29:22 (~2130s mid-cycle, normal), events ~106s last event 04:03:06. cycle advancing + events fresh -> ALIVE. No action.",
       "Coordination: brain idle (running=False, run-303 finished 06-01 04:05, directives v305). Research idle (running=False, research-146 finished 05-31 12:38). No stale locks to clear.",
-      "Dormancy: True (last_buy ~76.1h, last_sell ~74.4h, 24h 0/0, open_pos 0). Escalate(>168h)=False. EXPECTED post-FCM quiet -- no new alert (DORMANCY_ALERT-003 already standing, same last buy).",
+      "Dormancy: True (last_buy ~77.1h, last_sell ~75.3h, 24h 0/0, open_pos 0). Escalate(>168h)=False. EXPECTED post-FCM quiet -- no new alert (DORMANCY_ALERT-003 already standing, same last buy).",
       "Section 9 audit: 9A one_time_tasks=[] (0), 9B no stuck running flags, 9C status files fresh, 9D dormancy <168h (no escalation), 9E brain_queue.overloaded=False. Clean.",
-      "Mirror HEALTHY at ~6.04min (published 2026-06-02 02:59:55 EDT) -- no heal needed. Dashboard 200.",
+      "Mirror HEALTHY at ~3.8min (published 2026-06-02 04:00:32 EDT) -- no heal needed. Dashboard 200.",
       "Eff-lab metrics ph42/60 lessons16/50 reqs1/8 (REQ-022) drift[] -> triggered=False. Directives v305 unchanged since run-303. lessons=16 via count of condensed_lessons.entries keys.",
-      "Log hygiene: bot.log 0.26MB, dashboard.log 0MB -- far under 50MB cap, no truncation. Largest sol_*.json = sol_trade_log.json 1.15MB, no oversized (>2MB) files."
+      "Log hygiene: bot.log 0.27MB, dashboard.log 0MB -- far under 50MB cap, no truncation. Largest sol_*.json = sol_trade_log.json 1.15MB, no oversized (>2MB) files."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 6.04,
+      "pre_heal_age_min": 3.8,
       "heal_attempted": false,
       "heal_succeeded": false,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 6.04,
+      "post_heal_age_min": 3.8,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
@@ -411,7 +411,7 @@
         "reason": "No restart -- mirror HEALTHY, publisher daemon alive.",
         "post_restart_verified": null
       },
-      "note": "Mirror age from published_at EDT string 2026-06-02 02:59:55. HEALTHY at ~6.04min (publisher daemon healthy)."
+      "note": "Mirror age from published_at EDT string 2026-06-02 04:00:32. HEALTHY at ~3.8min (publisher daemon healthy)."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -429,7 +429,7 @@
       },
       "fired_this_run": false,
       "skip_reason": "not_triggered",
-      "summary": "ph 42/60, lessons 16/50, reqs 1/8 (REQ-022), drift []. Directives v305 unchanged since run-303. Comfortable margin -- no cleanup. lessons=16 via count of condensed_lessons.entries keys."
+      "summary": "ph 42/60, lessons 16/50, reqs 1/8 (REQ-022), drift []. Directives v305 unchanged since run-303. Comfortable margin -- no cleanup. lessons=16 via count of condensed_lessons.entries keys. sol_efficiency_lab_status.json absent (never run / no prior fire)."
     },
     "state_file_footprint": {
       "largest_state_file_mb": 1.15,
@@ -455,13 +455,13 @@
       "memory_pressure_auto_trigger": false
     },
     "warnings": [
-      "DORMANCY TRUE (EXPECTED): ~76.1h since last buy, ~74.4h since last sell; ~91.9h (~3.8 days) from the 168h bar; NOT a stall (cycle 115->116 +1, last event 03:02:14, 0 CYCLE_ERROR/100).",
-      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto all still INACTIVE until bot PID next restarts (still 11760, ~4.7d uptime since 2026-05-28 21:28). All three batch-activate at the next natural restart. Maintenance does NOT restart for activation (only for publisher-daemon escalation, not needed -- mirror healthy)."
+      "DORMANCY TRUE (EXPECTED): ~77.1h since last buy, ~75.3h since last sell; ~90.9h (~3.8 days) from the 168h bar; NOT a stall (cycle 116->117 +1, last event 04:03:06, 0 CYCLE_ERROR/100).",
+      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto all still INACTIVE until bot PID next restarts (still 11760, ~4.8d uptime since 2026-05-28 21:28). All three batch-activate at the next natural restart. Maintenance does NOT restart for activation (only for publisher-daemon escalation, not needed -- mirror healthy)."
     ],
-    "next_run_focus": "1) Cycle 116->? advancing (watch pace). 2) Process bot=1/dash=1. 3) Dormancy ~76h since last buy EXPECTED post-FCM; watch for first buy; 168h bar ~3.8 days off. 4) Mirror HEALTHY. 5) Brain next daily cron ~04:00 2026-06-02 (~1h out). 6) Research next weekly ~2026-06-07 noon. 7) Three WC ships remain pre-activation pending next bot restart.",
+    "next_run_focus": "1) Cycle 117->? advancing (watch pace). 2) Process bot=1/dash=1. 3) Dormancy ~77h since last buy EXPECTED post-FCM; watch for first buy; 168h bar ~3.8 days off. 4) Mirror HEALTHY. 5) Brain next daily cron ~04:00 already passed for 06-01; confirm 06-02 04:00 run wrote status (sol_brain_status still run-303 06-01 -- check whether today's brain fired). 6) Research next weekly ~2026-06-07 noon. 7) Three WC ships remain pre-activation pending next bot restart.",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 59.6,
+    "file_age_min": 3.7,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1896,7 +1896,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 117,
-    "age_min": 36.2,
+    "age_min": 41.3,
     "stale": false,
     "available": true
   },
@@ -1915,9 +1915,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3264.73763,
+  "maint_next_sec": 2961.731716,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:05 AM EST",
+  "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1932,108 +1932,17 @@
       "status": "implemented",
       "status_label": "\u2705 Implemented",
       "status_color": "#00ff88",
-      "evidence_text": "Added bonding_curve_velocity_pregrad_snipe as a new HIGH-priority hypothesis from research-146.",
-      "evidence_source": "action"
+      "evidence_text": "run-303 time-of-day null: recorded, no temporal gate added (correct - research-146 returned all |z|<1.3).",
+      "evidence_source": "followup"
     },
     "tally": {
-      "implemented": 16,
+      "implemented": 17,
       "queued": 1,
       "rejected": 0,
-      "total": 17
+      "total": 18
     }
   },
   "events": [
-    {
-      "ts": "2026-06-02T02:32:40.032547",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "BounceHunter: quiet hours skip (02:xx ET, block=23:00-05:00)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:32:40.032547",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: overnight skip (02:xx ET, block=00:00-04:59)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:32:40.054603",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FlashSurge: overnight skip (02:xx ET)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:33:33.535381",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "Scanning 141 wallets (cycle #116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:40:21.646969",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip SEA: deep24h h24=-41.0% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:45:29.191463",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: gangJEP5 sold 8FnHeWRC \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:45:31.486604",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip KILOCORN: m5=-27.7% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:48:33.088531",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:49:45.902508",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: AGqjivJr sold GoJcFkdS \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:49:48.580678",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip daqf9y: m5=-46.5% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:50:13.449862",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: C4Svaa7d sold 7Tu2C1W7 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:50:15.928277",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Trilly: m5=507.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-02T02:52:55.552872",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Trilly: m5=80.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
     {
       "ts": "2026-06-02T02:52:55.558634",
       "type": "SIGNAL",
@@ -2642,6 +2551,97 @@
       "color": "#d29922",
       "msg": "m5 pump skip crapto: m5=29.6% (already ran, we are exit liq, run95)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:06:08.837466",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7ABz8qEF sold CBi3Cm3X \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:06:08.869061",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7ABz8qEF sold CBi3Cm3X \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:06:33.853245",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: kiLogfWU sold H9fRd8hC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:06:56.871008",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: EaVboaPx sold 2B9GGHYK \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:06:59.434304",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Akira: downtrend h1=-17.4% h24=-17.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:06:59.450220",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: EaVboaPx sold 6SjdwEzP \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:09:18.628236",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold Gc78hWdJ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:09:20.860401",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip PTARDIO: m5=-13.1% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:10:29.251242",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JDd3hy3g sold 5GbhDpdS \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:10:31.349324",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip RPGKITTY: m5=-23.6% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:10:31.380924",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JDd3hy3g sold VH6qkdPe \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:10:33.481621",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip JEW: h1=-10.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-02T04:10:33.956064",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip JEW: h1=-10.6% (below 15% momentum threshold, run115)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2660,9 +2660,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:05:35",
+  "ts": "04:10:38",
   "__publish_meta": {
-    "published_at": "2026-06-02 04:05:35 EDT",
+    "published_at": "2026-06-02 04:10:38 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
