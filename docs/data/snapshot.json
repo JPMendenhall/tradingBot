@@ -1,15 +1,15 @@
 {
-  "sol_price": 75.08577967574085,
+  "sol_price": 74.99238137658632,
   "bot_status": "STALE",
   "bot_last_seen": "03:36:11",
   "bot_cycles": 144,
   "bankroll": 1.0769,
-  "bankroll_usd": 80.85987613280533,
+  "bankroll_usd": 80.7592955044458,
   "budget": 0.15913353075,
   "pnl_today": 0,
   "deployed": 0.031826706149999995,
   "trades_today": 1,
-  "hour": 4.0,
+  "hour": 4.1,
   "positions": [
     {
       "token_mint": "HfAFNsnjmbWMMRkwNeUUoHJ8V6UnUGFzkpu3Seajpump",
@@ -155,74 +155,77 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-02 04:08:11 EDT",
-    "market_regime": "CHOP",
-    "system_diagnosis": "No new problem surfaced. The bot is healthy (PID 11760, cycle advancing 89->117, heartbeat ~35min old within one ~50min cycle) and trade-dormant ~76.5h, which is correct behavior under CHOP/ALTCOIN_CHOP with SOL drifting down -2% to $79.36. The standing #1 issue is unchanged: the three wallet_convergence safety changes shipped over runs 300/303 are still PRE-ACTIVATION because the bot has not naturally restarted in ~4.5 days. They are all skip-only gates, so the cost of the lag is at most a few un-blocked WC entries until the next restart - not a capital risk. No restart can be forced (forbidden; watchdog/maintenance own it).",
-    "exit_analysis": "Lifetime (N=1014 sells): avg win +13.03%, avg loss -16.51%, R/R 0.79, stop-loss rate 50.5%. rolling_7d (N=5): WR 80%, avg win +1.83%, avg loss -14.07% (the single loss is the SQUIRE -14.07% emergency stop that the run-303 aged-livebook veto blocks once activated), R/R 0.13. rolling_24h: zero closes (dormant). No new exits this run.",
-    "strategy_work": "No hypothesis advanced and none could be: the sole research delivery in play (research-146) was fully triaged at run-303, and no new research fires until Sunday 2026-06-07. Self-audited degen_bot.py source to confirm the run-303 aged-livebook veto is genuinely present (WC_AGED_LIVEBOOK_MIN_AGE_H gate, skip when pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5) rather than assuming it - confirmed, alongside the run-300 CWC veto and source_wallet logging. The high-priority bonding_curve_velocity_pregrad_snipe idea stays queued, blocked on research-147 delivering the exact trades-to-vSol metric spec.",
-    "directives_changes": "Bumped to version 306. Refreshed the run-304 market/dormancy note in track_record (SOL $79.36, BTC.D 56.35%, regime label shifted ALTCOIN_WINTER->ALTCOIN_CHOP, 76.5h dormancy, same-PID 4.5d). Rewrote current_priority to record the NULL-DELTA decision and the still-pending activation of all three WC changes. No hypotheses moved (no new evidence), no killed_ideas added, no requests added or removed (REQ-022 remains pending the Sunday research run).",
+    "timestamp": "2026-06-03 04:08:00 EDT",
+    "market_regime": "BEAR",
+    "system_diagnosis": "The bot's biggest live fact this run is a regime flip: SOL fell to $75.05, about -5.4% over the last day from $79.36, crossing into BEAR territory (BTC.D 55.95%). The bot came out of its ~76-hour quiet stretch and made one small copy-style trade: KINS, a wallet-convergence pick that exited flat at -1.37% after 57 minutes - essentially breakeven minus fees, not a real problem. It also currently holds one open position (HENRY, another wallet-convergence pick) bought a few minutes before this run, with a healthy buy-heavy order book. The standing structural issue is unchanged: the three protective copy-trade rules shipped over the last week are still sitting in the code unactivated because the bot has been running on the same process for ~5.5 days without a restart, and I am not allowed to force a restart. The only loss those rules would have prevented so far is the known SQUIRE -14% from May 29; neither of the new trades would have been blocked by them.",
+    "exit_analysis": "Lifetime (1015 sells): win rate 35.6%, avg win +13.0%, avg loss -16.5%, R/R 0.79, stop-loss rate 50.4%. Last 24h: 1 trade (KINS -1.37% flat exit), R/R 0 (no win). Last 7 days: 4 trades, 50% win rate, R/R 0.27, P/L -0.0037 SOL - made up of TROLL +0.27% flat, the SQUIRE -14.07% emergency stop, KINS -1.37% flat, and the FCM +3.94% timed win. The week's loss is dominated entirely by the single SQUIRE -14% (the aged dead-book dump the pending gate targets).",
+    "strategy_work": "No hypothesis advanced and no experiment moved this run - by design. The copy-trade order-book gate (research-146/REQ-021) remains shipped-but-not-yet-active; I confirmed all three pending copy-trade rules are physically present in the code and that the order-book fields (buyers/sellers in the last 5 min) are now being recorded on every copy-trade buy. The new KINS trade was examined and found to be a benign flat loss on a 254-hour-old token, far below the aged-token gate's threshold, so it neither tests nor justifies any rule. The open HENRY position cannot be judged until it closes.",
+    "directives_changes": "Bumped version 306 to 307. Rewrote current_priority and reasoning for run-305 (regime flip to BEAR, bot back trading, KINS benign loss, HENRY open, no restart, no code ship). Refreshed all track-record stats to the live numbers (lifetime 1015 sells, 24h N=1, 7d N=4, copy-trade all-time 16 trades 50% win rate, bankroll 1.0769 SOL available). Added a fresh copy-trade post-restart sample summary (6 fires: 3 wins / 3 losses, only SQUIRE-loss would be gated). Logged the day's regime note.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-303 WC aged-livebook veto: CONFIRMED still in source and still pre-activation (bot unrestarted since 2026-05-28). Will block the SQUIRE -14.07% loss class once the next natural restart activates it.",
-      "run-303 Believe listener defer (REQ-022): still pending - the research brain has not run since (weekly Sunday cadence). No change.",
-      "run-303 bonding_curve_velocity hypothesis: still queued HIGH, awaiting research-147 velocity-metric spec.",
-      "run-303 time-of-day null: recorded, no temporal gate added (correct - research-146 returned all |z|<1.3)."
+      "Three copy-trade safety rules pending activation (since run-300/303): STILL pre-activation - bot on same process PID 11760 for ~5.5 days, cycle 117->144 monotonic, no restart. Confirmed all three present in source. Lag cost to date = the single SQUIRE -14.07% loss only.",
+      "REQ-022 (verify the Believe-launchpad config key is universal across many launches): still pending - only the research brain can run this, next research fires Sunday 2026-06-07.",
+      "bonding_curve_velocity new edge (research-146, HIGH): still queued - needs research-147 to define the exact velocity metric before any Phase-1 logging can be built.",
+      "Dormancy: cleared - bot resumed trading (KINS closed 06-02, HENRY opened 06-03) after the ~76h CHOP-era quiet stretch."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a wallet_convergence filter that skips entry on an aged token (pair age >= 1700h) when the live order book is net-selling (more sellers than buyers in the last 5 min) - blocks the -14% SQUIRE dump while keeping every past win.",
+        "proposal": "Add a copy-trade safety rule that skips entries on old tokens (>=1700h) when the recent order book is net-sell, to block the aged dead-book dump that cost -14%.",
         "from_research": "research-146",
         "status": "SHIPPED",
-        "why": "Already shipped to source at run-303 and confirmed present this run by direct code read. It sits pre-activation only because the bot has not restarted; it activates automatically at the next natural restart. Nothing further for the brain to do."
+        "why": "Shipped to code at run-303 and re-confirmed present this run; it is waiting for the next natural restart to go live. I cannot force that restart (forbidden), and it is the bot's own healthy uptime keeping it pending."
       },
       {
-        "proposal": "Build a Believe-launchpad listener gated on the corrected on-chain config key (7SXEnhGR...) and payer (5qWya6Uj...), after research falsified the old viral FhVo3mqL key as a 0-byte signer wallet.",
+        "proposal": "Build a Believe-launchpad listener using the corrected config key (7SXEnhGR...) and payer (5qWya6Uj...) instead of the falsified old key.",
         "from_research": "research-146",
         "status": "DEFERRED",
-        "why": "The config/payer pairing was verified on only one real Believe launch. Building a new listener on N=1 is premature engineering with zero immediate trade value. Unblocks when REQ-022 confirms the config is universal across >=5-10 Believe launches - which only the research brain can run, next firing Sunday 2026-06-07."
+        "why": "Deferred until the corrected config key is confirmed across 5-10 real Believe launches. That validation is filed as REQ-022 and can only be done by the research brain; concrete unblock trigger = research run on Sunday 2026-06-07 returning the multi-launch confirmation."
       },
       {
-        "proposal": "REQ-022: research brain to validate that Believe config 7SXEnhGR... appears at init account index 0 across >=5-10 distinct recent Believe launches before any listener is built.",
-        "from_research": "REQ-022 (filed run-303)",
+        "proposal": "New edge: a pre-graduation bonding-curve liquidity-velocity scorer (enter before the migration crowd on fast-accumulating pump.fun/letsBONK tokens).",
+        "from_research": "research-146 (new_hypothesis)",
         "status": "PENDING",
-        "why": "Owned by the research brain, which runs weekly on Sundays and has not fired since the request was filed. Unblocks at the next research run (2026-06-07); the brain cannot self-service a Bitquery on-chain validation."
+        "why": "Queued as HIGH but blocked: it needs research-147 to deliver the exact trades-to-vSol velocity metric and forward-return capture spec. Building it on a guess would curve-fit. Concrete unblock trigger = research-147 metric specification (next research Sunday 2026-06-07)."
       },
       {
-        "proposal": "New hypothesis: a pre-graduation bonding-curve liquidity-velocity scorer (extend the existing graduation logger into a leading indicator using trades-to-vSol).",
-        "from_research": "research-146",
-        "status": "DEFERRED",
-        "why": "Queued HIGH at run-303. Phase-1 LOG-ONLY ship is blocked on research-147 delivering the exact velocity-metric definition; coding it on a guessed metric would curve-fit. Unblocks at the next research run."
+        "proposal": "REQ-022: validate Believe-launchpad config universality across 5-10 launches before shipping the listener.",
+        "from_research": "requests_for_research (pending)",
+        "status": "PENDING",
+        "why": "Owned by the research brain, not the trading brain - I cannot run the Bitquery on-chain validation. Concrete unblock trigger = Sunday 2026-06-07 research run."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Nothing new was actionable. The only research in play (research-146) was fully acted on at run-303, no new research fires until Sunday, there were zero new trades to learn from (bot dormant 76h under CHOP), and three wallet_convergence changes are already shipped-but-unactivated - so a fourth change would violate the anti-stacking rule and buy no activation speed.",
+    "no_code_change_reason": "Nothing shipped. Anti-stacking rule forbids a 4th unactivated copy-trade change on top of three already waiting to activate; the one new closed trade (KINS -1.37% flat) is a benign breakeven loss with no new mechanism to fix; the two open research items (Believe listener, velocity edge) are blocked on the next research run; and the regime just flipped to BEAR, whose playbook is to hold back rather than force new trades or code.",
     "changelog": [
-      "Confirmed the bot is healthy and correctly idle: it has not placed a trade in about 76 hours, which is the right call while the market is choppy and Solana is drifting down.",
-      "Double-checked that the previous run three copy-trade safety rules are really saved in the program. They are, but they only switch on the next time the bot restarts on its own.",
-      "Made no changes to the bot this run because there was nothing new to act on - no fresh research, no new trades, and adding another rule on top of three not-yet-active ones would be premature."
+      "Recorded the regime flip from chop to bear (SOL down about 5.4% on the day to $75).",
+      "Logged the bot's return to trading after roughly three days quiet: one closed copy-trade (KINS, flat -1.4%) and one open position (HENRY).",
+      "Re-confirmed the three pending copy-trade safety rules are still in the code and still waiting on a restart to take effect.",
+      "Updated all the running stats to current numbers."
     ],
     "actions_taken": [
-      "Verified in code that the run-303 wallet_convergence aged-token safety rule (skip old tokens that are being sold into) is present and waiting to activate, along with the two earlier wallet_convergence rules from run-300.",
-      "Kept the Believe-launchpad listener deferred under request REQ-022, which is waiting on the research brain to confirm the launchpad config across more launches this coming Sunday.",
-      "Recorded a NULL-DELTA decision in the brain notes (version 305 to 306) with refreshed market and dormancy figures."
+      "Examined the new KINS wallet_convergence trade and confirmed it is a benign flat loss (254-hour token, far below the aged-token gate threshold) - no rule change warranted.",
+      "Self-audited the source to verify the research-146 aged order-book copy-trade gate, the run-300 chase veto, and source-wallet logging are all present and merely pre-activation.",
+      "Marked the research-146 Believe-listener proposal DEFERRED pending REQ-022, and the bonding-curve-velocity hypothesis PENDING the research-147 metric spec.",
+      "Left REQ-022 in place as the single open research request; filed no new requests and no operator todos."
     ],
     "next_priorities": [
-      "On the next natural bot restart, confirm via the events log that all three wallet_convergence gates fire (look for the aged net-sell skip reason) and re-check WC stats at N>=8 post-activation fires.",
-      "Sunday 2026-06-07: triage research-147 - expect the REQ-022 Believe config-universality result and the exact trades-to-vSol velocity metric to unblock bonding_curve_velocity Phase-1 LOG-ONLY.",
-      "If dormancy exceeds ~7 days with zero active-strategy buys post-restart, audit the filter stack (run-290 rule); currently NOT tripped (post-2026-05-28-restart buys exist)."
+      "When HENRY closes, record its outcome and check whether the healthy net-buy order book at entry predicted a better result than KINS's marginal book (copy-trade entries split by order-book skew).",
+      "At the next natural restart, confirm all three copy-trade gates activate together and start tracking copy-trade fires post-activation toward the N=8 evaluation target from research-146.",
+      "On Sunday 2026-06-07, triage research-147: act on REQ-022 (Believe config universality) and the bonding-curve-velocity metric spec if delivered.",
+      "If SOL stays in BEAR (<-5% h24), expect and accept reduced trading; do not force new strategy code while the regime is hostile."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1014,
+      "total_sells": 1015,
       "win_rate": 35.6,
       "avg_win_pct": 13.03,
-      "avg_loss_pct": -16.51,
+      "avg_loss_pct": -16.49,
       "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 50.5,
-      "bankroll": 1.1143,
+      "stop_loss_rate_pct": 50.4,
+      "bankroll": 1.0769,
       "pnl_today": 0.0
     },
     "active_strategies": [
@@ -233,8 +236,7 @@
       "wallet_convergence",
       "chop_momentum_scalp",
       "bounce_hunter",
-      "anchor_derivative_snipe",
-      "gecko_breadth_burst"
+      "flash_surge"
     ]
   },
   "wallet_scan": {
@@ -242,16 +244,16 @@
     "result": "Saved 20 wallets in 34m 57s",
     "completed": "2026-06-01T01:48:43.015437"
   },
-  "brain_next_sec": 86282.289939,
+  "brain_next_sec": 85979.058818,
   "brain_next_str": "Thu 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 117.710061,
-  "brain_last_run_str": "Tue 4:08 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:09 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:38 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 347042.289939,
+  "research_next_sec": 346739.058818,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -371,73 +373,73 @@
     "summary": "research-146 (2026-05-31 Sun noon, CHOP/ALTCOIN_WINTER SOL ~$82). 4 subagents. BOTH pending requests CLOSED. REQ-021 (HIGH) SOLVED: clean 2-feature WC gate pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5 blocks only SQUIRE-LOSS (-14.07%), keeps every win incl same-mint SQUIRE-WIN (net-buy book 10>2) and aged TROLL (9676h, net-buy 5>3) - live order book on aged token is the separator, NOT mcap/age. Full 7-field proposal filed (MEDIUM, anti-stacking note: 2 WC ships still pre-activation). REQ-020 (MEDIUM) premise FALSIFIED: FhVo3mqL is a 0-byte System-Program signer wallet NOT a config; real Believe config=7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (1048B DBC-owned, init idx0), payer=5qWya6Uj; 5 non-Believe DBC launches used distinct configs (per-partner, not multi-tenant). Proposal: ship listener on config 7SXEnhGR AND payer 5qWya6Uj. NEW HYPOTHESIS bonding_curve_velocity_pregrad_snipe (HIGH): extend existing grad logger into a pre-graduation liquidity-velocity scorer (trades-to-vSol; arXiv 2602.14860); pump.fun regained ~70-80% launches/95% grads. Time-of-day mine = CLEAN NULL (all |z|<1.3, do not add temporal gate). 2 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-03 03:05:59 EDT",
-    "run_id": "maint-162",
-    "finished_at": "2026-06-03 03:05:59 EDT",
+    "timestamp": "2026-06-03 04:05:00 EDT",
+    "run_id": "maint-163",
+    "finished_at": "2026-06-03 04:05:00 EDT",
     "run_outcome": "HEALTHY",
     "bot_status": "RUNNING",
     "bot_pid": 11760,
     "bot_pid_prior": 11760,
     "bot_restarted_since_last_run": false,
-    "bot_cycle": 143,
-    "bot_cycle_prior": 142,
+    "bot_cycle": 144,
+    "bot_cycle_prior": 143,
     "bot_cycle_delta": 1,
-    "bot_heartbeat_age_sec": 1367,
-    "bot_events_age_sec": 158,
+    "bot_heartbeat_age_sec": 1674,
+    "bot_events_age_sec": 711,
     "cycle_error_last100": 0,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 3752,
     "dashboard_pid_prior": 3752,
     "dashboard_restarted_since_last_run": false,
     "dashboard_curl": "200",
-    "dashboard_bytes": 69173,
+    "dashboard_bytes": 70083,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 0.51,
-    "hours_since_last_buy": 22.72,
+    "hours_since_last_trade": 0.6,
+    "hours_since_last_buy": 0.49,
     "trades_last_24h": {
-      "buys": 1,
+      "buys": 2,
       "sells": 1
     },
-    "open_positions": 0,
-    "total_trades_logged": 2050,
+    "open_positions": 1,
+    "total_trades_logged": 2051,
     "dormancy_alert": false,
-    "dormancy_status": "FALSE -- not dormant. Last buy 22.72h ago (KINS 2026-06-02 04:22:38 EDT), last sell 21.77h ago (KINS 05:19:34 EDT). Both still inside 24h window. 1 buy / 1 sell trailing-24h, 0 open positions (sol_positions.json []). Trade log steady 2050. EDGE: KINS buy ages out of the 24h window at ~04:22 EDT 06-03 (~1.3h from now); if no new buy by then, trailing-24h buys hit 0 -- next run should flag dormancy_alert if so.",
-    "filter_lockout_diagnosis": "NOT in lockout. Events last100: BUY_SKIP 45, SIGNAL 29, CB_SKIP 19, SCAN 5, BS_SKIP 2. Total skips 66/100 (~66pct) -- selective gating, far below 95pct lockout. Pipeline emitting SIGNALs (29). A buy occurred inside the 24h window. Healthy selectivity, not lockout.",
-    "liveness_note": "ALIVE -- cycle advanced 142->143 (+1), monotonic same PID 11760. Heartbeat cycle #143 02:41:24 EDT (heartbeat_age 1367s ~22.8min, under 1800s STALLED floor). Last event BUY_SKIP (events_age 158s -- just over 120s but well under 300s STALLED floor; normal mid-cycle quiet at ~15-20min pace). 0 CYCLE_ERROR/100. No restart needed or taken.",
+    "dormancy_status": "FALSE -- not dormant, and the prior-run dormancy edge is RESOLVED. A fresh buy landed at 2026-06-03 03:35:16 EDT (HENRY, wallet_convergence, 3-wallet N=10 fast-track), ~29 min before this run. That is now the most recent trade. 1 open position (HENRY, +0.82pct unrealized at entry snapshot). Trailing-24h: 2 buys / 1 sell. Trade log grew 2050->2051. The KINS buy that was about to age out of the 24h window was superseded by this new buy, so trailing-24h buys did NOT hit 0. Healthy.",
+    "filter_lockout_diagnosis": "NOT in lockout. Events last100: BUY_SKIP 48, SIGNAL 42, SCAN 7, BUY_OK 1, BUNDLE_DETECTED 1, SIZING_FLOOR 1. Skip share ~48pct -- selective gating, far below the 95pct lockout line. Pipeline emitting SIGNALs (42) AND it converted one to a real BUY_OK this window (the HENRY buy). Healthy selectivity, not lockout.",
+    "liveness_note": "ALIVE -- cycle advanced 143->144 (+1), monotonic same PID 11760. Heartbeat cycle #144 written 03:36:11 (heartbeat_age 1674s ~27.9min, under the 1800s STALLED floor). events_age 711s (~11.8min) is above the 120s fresh-scan mark but below the 300s+1800s STALLED combo and the 600s+3600s DEAD combo -- normal mid-cycle quiet at the ~15-20min pace, and a BUY_OK plus a buy 29min ago confirm the pipeline is live. 0 CYCLE_ERROR/100. No restart needed or taken.",
     "coordination": {
       "brain_running": false,
       "research_running": false
     },
     "actions_taken": [
-      "Cadence gate: prior maint-161 finished 2026-06-03 02:05:06 EDT, now ~03:06 EDT (~61min gap >= 30min) -> proceeded.",
+      "Cadence gate: prior maint-162 finished 2026-06-03 03:05:59 EDT, now ~04:05 EDT (~58min gap >= 30min) -> proceeded.",
       "Process: bot pid 11760 (pythonw degen_bot.py --continuous) unchanged; dash pid 3752 (pythonw dashboard.py) unchanged. Exactly one each -- no dedupe/start needed.",
-      "Liveness ALIVE: cycle 142->143 (+1), heartbeat_age 1367s, events_age 158s -- both under STALLED thresholds. 0 CYCLE_ERROR/100. No restart.",
-      "Trading active: positions 0 (sol_positions.json []), trade log steady 2050. Last buy 22.72h / last sell 21.77h ago -- both inside 24h. 1 buy / 1 sell trailing-24h. dormancy_alert False. No alert.",
-      "Coordination/locks: brain idle (running=False, run-304 finished 06-02 04:08, directives v306). Research idle (running=False, research-146 finished 05-31 12:38, next weekly Sun 06-07 noon). Neither lock stale -- nothing to clear.",
+      "Liveness ALIVE: cycle 143->144 (+1), heartbeat_age 1674s (<1800), events_age 711s (elevated but under stall combo), 0 CYCLE_ERROR/100. No restart.",
+      "Trading active -- DORMANCY EDGE RESOLVED: a fresh buy hit at 03:35:16 EDT (HENRY, wallet_convergence), ~29min ago; it superseded the aging KINS buy so trailing-24h buys stayed positive (2 buys / 1 sell). 1 open position (HENRY). Trade log 2050->2051. dormancy_alert False. No alert filed.",
+      "Coordination/locks: brain idle (running=False, run-304 finished 06-02 04:08, directives v306). Research idle (running=False, research-146 finished 05-31 12:38, next weekly Sun 06-07 noon). Neither lock stale -- nothing to clear. NOTE: daily brain run (~04:00) had not yet started/logged at probe time.",
       "Section 9 audit: 9A one_time_tasks=0 none, 9B no stuck running flags (brain/research False), 9C status files fresh, 9D dormancy False, 9E brain_queue.overloaded False. Clean.",
-      "Mirror HEALTHY (published 03:00:14 EDT, age ~5min at probe) -- no heal needed, consecutive_heals=0. Dashboard 200, 69173 bytes.",
-      "Eff-lab metrics ph42/60 lessons16/50 (canonical condensed_lessons.entries=16) reqs1/8 (REQ-022) drift[] -> triggered=False. Directives v306 unchanged.",
+      "Mirror HEALTHY (published 04:00:54 EDT, age ~3.8min at probe) -- no heal needed, consecutive_heals=0. Dashboard 200, 70083 bytes.",
+      "Eff-lab metrics ph42/60 lessons16/50 (canonical condensed_lessons.entries dict = 16 keys) reqs1/8 (REQ-022) drift[] -> triggered=False. Directives v306 unchanged.",
       "Log hygiene: bot.log 0.31MB, dashboard.log 0MB, watchdog.log 0.1MB -- far under 50MB. Largest sol_*.json = sol_trade_log.json 1.15MB, no oversized (>2MB) files."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 5.0,
+      "pre_heal_age_min": 3.8,
       "heal_attempted": false,
       "heal_succeeded": false,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 5.0,
+      "post_heal_age_min": 3.8,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
         "old_pid": null,
         "new_pid": null,
-        "reason": "No restart -- mirror HEALTHY, publisher daemon alive (published 03:00:14 EDT on schedule).",
+        "reason": "No restart -- mirror HEALTHY, publisher daemon alive (published 04:00:54 EDT on schedule).",
         "post_restart_verified": null
       },
-      "note": "Mirror age from published_at EDT string 2026-06-03 03:00:14 vs probe ~03:05. HEALTHY at ~5min."
+      "note": "Mirror age from published_at EDT string 2026-06-03 04:00:54 vs probe 04:04:40. HEALTHY at ~3.8min."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -481,12 +483,12 @@
       "memory_pressure_auto_trigger": false
     },
     "warnings": [
-      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto all still INACTIVE until bot PID next restarts (still 11760, ~6.2d uptime since 2026-05-28 21:28). All three WC changes batch-activate at the next natural restart. Maintenance does NOT restart for activation."
+      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto all still INACTIVE until bot PID next restarts (still 11760, ~6.3d uptime since 2026-05-28 21:28). Confirmation this run: the new HENRY position has source_wallet empty, so run-300 source_wallet logging is NOT yet active -- consistent with no restart. All three WC changes batch-activate at the next natural restart. Maintenance does NOT restart for activation."
     ],
-    "next_run_focus": "1) DORMANCY EDGE: KINS buy ages out of 24h window at ~04:22 EDT 06-03 (~1.3h after this run); if no new buy by then, trailing-24h buys hit 0 -- flag dormancy_alert next run if so. 2) Confirm cycle keeps advancing (>=144) with live events. 3) Process bot=1/dash=1 stable. 4) Mirror HEALTHY. 5) Skip ratio ~66pct (selective, normal); flag only if it pins 95pct+ with 0 buys/24h. 6) Brain next ~06-03 04:00 (daily). 7) Research next weekly ~2026-06-07 noon. 8) Three WC ships remain pre-activation pending next bot restart. 9) Eff-lab lessons count = 16 (canonical condensed_lessons.entries key).",
+    "next_run_focus": "1) Confirm cycle keeps advancing (>=145) with live events; watch events_age (711s this run -- recheck it falls back under ~300s next cycle). 2) HENRY open position (entry 03:35 EDT, wallet_convergence) -- confirm it exits normally; not maintenance's job to act, just visibility. 3) Process bot=1/dash=1 stable. 4) Mirror HEALTHY. 5) Daily brain run (~04:00 EDT 06-03) was idle at this probe -- expect run-305 status by next maintenance run; if brain still shows run-304 (06-02) tomorrow, flag 'brain fired but didnt write status'. 6) Research next weekly ~2026-06-07 noon. 7) Three WC ships remain pre-activation pending next bot restart (HENRY source_wallet empty confirms). 8) Eff-lab lessons count = 16 (canonical condensed_lessons.entries dict key count).",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 60.0,
+    "file_age_min": 3.7,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1922,7 +1924,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 144,
-    "age_min": 29.8,
+    "age_min": 34.8,
     "stale": false,
     "available": true
   },
@@ -1941,9 +1943,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3242.289939,
+  "maint_next_sec": 2939.058818,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:05 AM EST",
+  "maint_last_run_str": "4:07 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1955,17 +1957,17 @@
     "latest": {
       "hypothesis_name": "bonding_curve_velocity_pregrad_snipe",
       "run_id": "research-146",
-      "status": "implemented",
-      "status_label": "\u2705 Implemented",
-      "status_color": "#00ff88",
-      "evidence_text": "run-303 time-of-day null: recorded, no temporal gate added (correct - research-146 returned all |z|<1.3).",
-      "evidence_source": "followup"
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Self-audited the source to verify the research-146 aged order-book copy-trade gate, the run-300 chase veto, and source-wallet logging are all present and merely pre-activation.",
+      "evidence_source": "action"
     },
     "tally": {
-      "implemented": 17,
+      "implemented": 18,
       "queued": 1,
       "rejected": 0,
-      "total": 18
+      "total": 19
     }
   },
   "events": [
@@ -2686,9 +2688,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:05:57",
+  "ts": "04:11:00",
   "__publish_meta": {
-    "published_at": "2026-06-03 04:05:57 EDT",
+    "published_at": "2026-06-03 04:11:00 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
