@@ -1,10 +1,10 @@
 {
-  "sol_price": 65.756821294155,
+  "sol_price": 65.5365849879123,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:56:38",
   "bot_cycles": 198,
   "bankroll": 1.1019,
-  "bankroll_usd": 72.45744138402941,
+  "bankroll_usd": 72.21476299818057,
   "budget": 0.15337540919999998,
   "pnl_today": -0.003031340574837869,
   "deployed": 0,
@@ -133,88 +133,90 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-04 04:09:30 EDT",
-    "market_regime": "BEAR",
-    "system_diagnosis": "BEAR deepening (SOL $69.11, -7.9% over 24h; breakdown $79.36->75.05->69.11 across the last three runs). The #1 finding this run is the HENRY trade: a calm, mid-aged wallet-convergence entry with a HEALTHY live order book (more buyers than sellers, 43 vs 28) that still crashed -17% and hit the emergency stop within an hour. That contradicts the safety rule we just built (the idea that a buyer-heavy order book on an older token means the trade is safe). It is only one trade, though, and the SAME day also produced a +24% copy-trade winner, so on balance the strategy made money over the last 24 hours. The bot has now run ~6.5 days on the same process without restarting, so the three copy-trade safety filters we wrote earlier are all still sitting in the code unactivated.",
-    "exit_analysis": "Last 24h: 3 copy-trade exits - one +24.07% target win, one -17.03% emergency stop, one liquidity-rug that the bot caught and exited at exactly break-even (0.0%). Net 24h profit +0.0022 SOL, reward/risk 2.83. 7-day: 7 trades, 42.9% win rate, reward/risk 1.16, slightly negative -0.0015 SOL. Lifetime: 35.6% win rate, reward/risk 0.79, stop-loss rate 50.4%. The break-even rug exit on an ancient token shows the rug-detection is doing its job - it turned a likely big loss into zero loss.",
-    "strategy_work": "Investigated the HENRY -17% loss against the +24% same-window winner. Could not find a clean separator that blocks the loss without also blocking the winner: the loss was a mid-aged (335h) buyer-heavy entry, the winner was a younger (53h) higher-liquidity entry. Because that is only one loss and the obvious filters would also kill the winner, I deliberately did not add a new filter (same discipline as the earlier SQUIRE investigation). Instead I handed the question to the research brain as a structured request (REQ-023) to slice all 19 copy-trade trades and find a real separator or confirm there isn't one.",
-    "directives_changes": "Refreshed all the running stats. Logged the HENRY counter-example as a new lesson (a safety rule that looked right when research derived it was falsified by a single later trade - treat the copy-trade safety filters as provisional). Filed research request REQ-023 to characterize the HENRY-class failure. Bumped the strategy brain's version to 308.",
+    "timestamp": "2026-06-05 04:10:00 EDT",
+    "market_regime": "CHOP",
+    "system_diagnosis": "#1 problem stays the wallet_convergence exit tail in a downtrend. Since run-306, one new WC trade: BURNIE -9.59% stop (aged 1514h token, NET-BUY live book 11 buyers vs 4 sellers, calm entry, ~1.5h hold). This is the SECOND net-buy-book aged-token WC dump in two runs (HENRY -17.03% at 335h last run). At N=2 it confirms research-146's 'a net-buy live book on an aged token means safe' conclusion is incomplete - the sign of the order book does not separate WC winners from losers. But there is no clean fix to ship: the obvious next pattern (both losses are aged, the recent +24% winner was young) also fails, because research already found aged net-buy WINNERS (TROLL, the same-mint SQUIRE win, PIXEL). So an aged-token gate would kill winners too. Bot healthy (PID unchanged ~7.5 days, heartbeat and stats both fresh), 0 open positions, bankroll 1.1019 SOL.",
+    "exit_analysis": "Lifetime 1019 sells: avg win +13.06%, avg loss -16.45%, R/R 0.79, stop-loss rate 50.4%. Last 24h: 1 trade, 1 loss (-9.59%), R/R 0, 100% stop. Last 7d: 7 trades, 2 wins / 5 losses, avg win +14.01%, avg loss -8.41%, R/R 1.66 (held up by the +24% target win), stop rate 42.9%. wallet_convergence all-time: 20 trades, 45% win rate, R/R 0.65, -0.0072 SOL.",
+    "strategy_work": "Advanced REQ-023 (the HENRY-class WC failure investigation) rather than shipping a gate. Added BURNIE as a second confirmed example and sharpened the research ask: because both losses are aged AND net-buy, the order-book sign is ruled out as the separator, so research must test pair-age bands combined with order-book VELOCITY/ratio, liquidity, and holder concentration jointly. No hypothesis moved to TESTING/PROVEN this run - the only actionable item is a research request, not code.",
+    "directives_changes": "Bumped to version 309 (run-307). Refreshed all rolling stats. Rewrote current_priority and reasoning around the BURNIE N=2 net-buy-aged-dump finding and the no-ship decision. Strengthened REQ-023 with the second seed loss and a joint-separator method. Added a condensed lesson on resisting the urge to hand-patch a confirmed-incomplete separator with the next single feature. Logged the continued ~7.5-day same-process streak and that the three pending WC gates still would not have caught BURNIE.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-305 said HENRY (then open) couldn't be judged yet - it has now closed as a -17.03% emergency stop, the headline of this run.",
-      "run-305 KINS -1.37% benign flat loss: confirmed benign, no follow-on losses of that type.",
-      "Three copy-trade safety filters from runs 300/303 are STILL unactivated (~6.5 days, same process) - none of this run's three trades would have been blocked by them anyway, so the delay cost nothing.",
-      "REQ-022 (Believe launchpad config check) still waiting on the weekly research run (next Sunday 2026-06-07)."
+      "run-306 HENRY -17.03% net-buy aged dump: now corroborated by BURNIE -9.59% (also net-buy, aged 1514h). N=2 pattern; routed to research, not gated.",
+      "run-306 +24.07% WC target win (young 53h): aged out of the 24h window; was the reason rolling_24h was positive last run, now rolling_24h is back to -0.003031 with only BURNIE in-window.",
+      "run-306 JTVO rug-breakeven (8820h, 69% liq drop): no recurrence; existing rug detection still the right tool, no aged-token loss gate needed.",
+      "Three WC gates (CWC veto + source_wallet logging run-300, aged-livebook veto run-303): STILL pre-activation, now ~7.5 days same-PID. Neither HENRY nor BURNIE would have been caught by them, so the lag continues to leak no material loss."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add the aged-token live-order-book safety filter for copy trades (skip very old tokens with a seller-heavy book).",
+        "proposal": "Add a wallet_convergence skip-gate for aged tokens whose live order book is net-sell (block the SQUIRE-class -14% distribution dump).",
         "from_research": "research-146",
         "status": "SHIPPED",
-        "why": "Shipped run-303, still pre-activation (~6.5d no restart). NOTE: this run's HENRY loss is a counter-example to its core premise (HENRY had a BUYER-heavy book and still lost) - filed REQ-023 to re-examine, but kept the filter in place since it still cleanly blocks the original SQUIRE loss."
+        "why": "Already shipped to source at run-303 (skip WC if token age >= 1700h AND more sellers than buyers in the last 5 min). Still pre-activation behind the ~7.5-day same-process streak; activates at the next natural restart. BURNIE/HENRY this run confirm it is INCOMPLETE (net-buy aged tokens still lose), which is now tracked under REQ-023 rather than reopening this proposal."
       },
       {
-        "proposal": "Build a listener for the Believe launchpad (watch new launches on a specific config/payer).",
+        "proposal": "Build a Believe-launchpad listener gated on the corrected pool-config and payer keys.",
         "from_research": "research-146",
         "status": "DEFERRED",
-        "why": "Blocked on REQ-022: research must first confirm the launchpad config is shared across 5-10 real Believe launches (verified on only 1 so far). Unlocks at the next weekly research run, Sunday 2026-06-07."
+        "why": "Config universality verified on only one real Believe launch. Unlocks when research validates the same config across 5-10 Believe launches (filed as REQ-022, due Sunday research-147 on 2026-06-07)."
       },
       {
-        "proposal": "New idea: score pre-graduation tokens by liquidity-buildup velocity to snipe before they graduate.",
+        "proposal": "New hypothesis: pre-graduation bonding-curve liquidity-velocity scorer (enter before the migration crowd).",
         "from_research": "research-146",
         "status": "PENDING",
-        "why": "Blocked on research-147 delivering the exact velocity metric (trades-to-virtual-SOL spec). Building it on a guess would curve-fit. Unlocks Sunday 2026-06-07."
+        "why": "Blocked on the exact trades-to-vSol velocity metric spec and a Phase-1 log-only design, which research-147 (2026-06-07) is committed to deliver. Cannot build the scorer without the metric definition."
       },
       {
-        "proposal": "REQ-022: validate Believe launchpad config universality before building the listener.",
-        "from_research": "brain-request",
+        "proposal": "REQ-022 - validate Believe pool-config universality across 5-10 launches before building the listener.",
+        "from_research": "requests_for_research (pending)",
         "status": "PENDING",
-        "why": "Still 'pending' - research brain has not picked it up. Unlocks at the Sunday 2026-06-07 research run."
+        "why": "Owned by the research brain; next research run is Sunday 2026-06-07. No brain action available until those findings land."
       },
       {
-        "proposal": "REQ-023 (filed this run): characterize the HENRY-class copy-trade failure vs the winners and find a clean separator.",
-        "from_research": "brain-request",
+        "proposal": "REQ-023 - find a joint separator for net-buy-book aged WC dumps (HENRY/BURNIE) vs WC wins.",
+        "from_research": "requests_for_research (pending)",
         "status": "PENDING",
-        "why": "Just filed this run; research brain runs next Sunday 2026-06-07. Needs a full walk of all 19 copy-trade trades, which is research's job, not a hand-derived N=1 gate."
+        "why": "Strengthened this run with BURNIE as a second seed. Unlocks at the next research run (Sunday 2026-06-07) when research walks all 20 WC trades; brain cannot derive the joint separator by hand without that backtest, and gating on N=2 with a known winner-class confound is the documented run-301 trap."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Nothing shipped because: the one new failure (HENRY -17%) is a single trade confounded by a +24% winner in the same day - any filter that blocked HENRY would also have blocked the winner; the market is in a deepening bear (don't force trades or code); three copy-trade filters are already waiting unactivated, so a fourth would pile on; and the liquidity-rug was already handled perfectly at break-even. The actionable piece was routed to research as REQ-023 instead.",
+    "no_code_change_reason": "Nothing shipped. The only new failure (BURNIE) would not have been caught by any of the three gates already waiting to activate, and there is no clean new gate to add: both net-buy-book aged WC losses (HENRY, BURNIE) sit in the same age-and-book region as known WC WINNERS, so any age or order-book gate that blocks them also blocks winners. With three WC changes still un-activated after ~7.5 days, a fourth would also make it impossible to tell which change caused what. The right move is the research request (REQ-023), not code.",
     "changelog": [
-      "Recorded that the HENRY copy-trade lost 17% despite looking healthy at entry (more buyers than sellers) - this breaks the safety rule we recently added, so we asked the research brain to re-investigate.",
-      "Noted a +24% copy-trade win and a perfectly-handled liquidity rug (exited at zero loss) in the same 24 hours - the strategy was net profitable for the day.",
-      "Updated all the running stats and added one new lesson; did not change any bot code."
+      "Logged BURNIE as the second net-buy-book aged-token wallet-convergence loss in two runs and confirmed neither it nor last run's HENRY would have been blocked by the gates currently waiting to turn on.",
+      "Strengthened the open research request (REQ-023) with BURNIE as a second example and asked research to test token-age bands combined with order-book speed/ratio and liquidity, since the simple buy-vs-sell book sign has now been ruled out.",
+      "Refreshed all performance stats and bumped the brain's notes to version 309."
     ],
     "actions_taken": [
-      "Filed research request REQ-023 to characterize the HENRY-class copy-trade failure (calm, mid-aged, buyer-heavy entries that still dump) against the copy-trade winners.",
-      "Kept the aged-token live-book filter in place despite the HENRY counter-example, because it still cleanly blocks the original SQUIRE -14% loss.",
-      "Logged a new lesson: treat the copy-trade safety filters as provisional - a separator that looked right when derived was falsified by one later trade.",
-      "Left REQ-022 (Believe config check), the Believe listener, and the pre-graduation velocity idea all PENDING/DEFERRED on next Sunday's research run."
+      "Decided NOT to add a wallet-convergence gate for the BURNIE/HENRY net-buy aged-dump pattern, because the obvious gates would also block known winners (the run-301 trap) and BURNIE is not catchable by the gates already pending.",
+      "Updated REQ-023 (the net-buy aged-dump research request) with the BURNIE example and a joint-separator method.",
+      "Noted the wallet-convergence aged-livebook gate from research-146 remains shipped-but-not-yet-active and is now confirmed incomplete; tracking the gap under REQ-023 instead of reopening it.",
+      "Confirmed no operator action is needed (no restart, no credentials, no manual step)."
     ],
     "next_priorities": [
-      "Ingest REQ-023 results next Sunday (research-147): if it finds a clean separator for the HENRY-class loss across all 19 copy-trade trades, ship it; if null, size copy-trade down in bear instead.",
-      "Watch for the next natural restart - it will activate all three pending copy-trade filters at once; first 1-3 fires after that are the real validation data.",
-      "Ingest REQ-022 (Believe config universality) and the pre-graduation velocity metric spec next Sunday."
+      "Ingest research-147 (Sunday 2026-06-07): expect the REQ-023 joint separator for net-buy aged WC dumps (or a documented null result -> then size WC down via a skip in down-trends), the REQ-022 Believe config universality check, and the bonding-curve velocity metric spec.",
+      "If research-147 returns a clean REQ-023 separator with all 7 completeness fields, ship it; evaluate at N=8 WC fires post-activation.",
+      "Watch for the next natural bot restart to activate the three pending wallet-convergence gates; after activation, collect 1-3 WC fires before stacking any further WC change.",
+      "Continue no-force discipline while SOL is in a down-trend; do not add an aged-token WC loss gate that the emergency stop and rug detection already bound."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1018,
-      "win_rate": 35.6,
+      "total_sells": 1019,
+      "win_rate": 35.5,
       "avg_win_pct": 13.06,
-      "avg_loss_pct": -16.46,
+      "avg_loss_pct": -16.45,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.1042,
-      "pnl_today": 0.002176
+      "bankroll": 1.1019,
+      "pnl_today": -0.003031
     },
     "active_strategies": [
       "wallet_convergence",
-      "fresh_profile",
       "bear_strength",
-      "consensus_boost"
+      "consensus_boost",
+      "fresh_profile",
+      "chop_momentum_scalp"
     ]
   },
   "wallet_scan": {
@@ -222,16 +224,16 @@
     "result": "Saved 20 wallets in 37m 49s",
     "completed": "2026-06-05T02:09:07.478625"
   },
-  "brain_next_sec": 86266.577476,
+  "brain_next_sec": 85963.172714,
   "brain_next_str": "Sat 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 112.422524,
-  "brain_last_run_str": "Thu 4:09 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:10 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:38 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 174226.577476,
+  "research_next_sec": 173923.172714,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -351,19 +353,19 @@
     "summary": "research-146 (2026-05-31 Sun noon, CHOP/ALTCOIN_WINTER SOL ~$82). 4 subagents. BOTH pending requests CLOSED. REQ-021 (HIGH) SOLVED: clean 2-feature WC gate pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5 blocks only SQUIRE-LOSS (-14.07%), keeps every win incl same-mint SQUIRE-WIN (net-buy book 10>2) and aged TROLL (9676h, net-buy 5>3) - live order book on aged token is the separator, NOT mcap/age. Full 7-field proposal filed (MEDIUM, anti-stacking note: 2 WC ships still pre-activation). REQ-020 (MEDIUM) premise FALSIFIED: FhVo3mqL is a 0-byte System-Program signer wallet NOT a config; real Believe config=7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (1048B DBC-owned, init idx0), payer=5qWya6Uj; 5 non-Believe DBC launches used distinct configs (per-partner, not multi-tenant). Proposal: ship listener on config 7SXEnhGR AND payer 5qWya6Uj. NEW HYPOTHESIS bonding_curve_velocity_pregrad_snipe (HIGH): extend existing grad logger into a pre-graduation liquidity-velocity scorer (trades-to-vSol; arXiv 2602.14860); pump.fun regained ~70-80% launches/95% grads. Time-of-day mine = CLEAN NULL (all |z|<1.3, do not add temporal gate). 2 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-05 03:07:23 EDT",
-    "run_id": "maint-210",
-    "finished_at": "2026-06-05 03:07:23 EDT",
+    "timestamp": "2026-06-05 04:04:30 EDT",
+    "run_id": "maint-211",
+    "finished_at": "2026-06-05 04:04:30 EDT",
     "run_outcome": "HEALTHY",
     "bot_status": "RUNNING",
     "bot_pid": 11760,
     "bot_pid_prior": 11760,
     "bot_restarted_since_last_run": false,
-    "bot_cycle": 197,
-    "bot_cycle_prior": 195,
-    "bot_cycle_delta": 2,
-    "bot_heartbeat_age_sec": 110.0,
-    "bot_events_age_sec": 110.0,
+    "bot_cycle": 198,
+    "bot_cycle_prior": 197,
+    "bot_cycle_delta": 1,
+    "bot_heartbeat_age_sec": 463.0,
+    "bot_events_age_sec": 463.0,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 3752,
     "dashboard_pid_prior": 3752,
@@ -371,8 +373,8 @@
     "dashboard_curl": "200",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 2.6,
-    "hours_since_last_buy": 1.62,
+    "hours_since_last_trade": 2.68,
+    "hours_since_last_buy": 2.57,
     "trades_last_24h": {
       "buys": 1,
       "sells": 1
@@ -380,44 +382,44 @@
     "open_positions": 0,
     "total_trades_logged": 2058,
     "dormancy_alert": false,
-    "dormancy_status": "FALSE. Last buy BURNIE 01:30:25 06-05 (~1.62h ago) keeps the trailing-24h alive. JTVO buy/sell 02:10-02:11 06-04 (~25h) rolled out of the 24h window this run, so trailing-24h is now 1 buy / 1 sell -- both the BURNIE buy (01:30) and the BURNIE stop-loss sell (03:02). Healthy trade flow; no dormancy.",
-    "filter_lockout_diagnosis": "NOT in lockout. Bot scanning normally (cycle 195->197, events fresh 110s). Last events show live SCAN/SIGNAL flow incl a GBB DEX signal 03:01 and a BUY_SKIP -- normal selectivity for ALTCOIN_CHOP, not accumulation lockout.",
-    "liveness_note": "ALIVE -- CLEANLY. The prior run's stale heartbeat/events (~2040s) is fully RESOLVED: the in-flight wallet-discovery backtest completed, cycle advanced 195->197 (delta +2), and heartbeat+events both refreshed to 110s (<300s). No CYCLE_ERROR in sol_events.json. Process pid 11760 alive, sol_balance 1.1019, SOL $64.75, regime ALTCOIN_CHOP(56.0%). Well clear of every staleness gate.",
+    "dormancy_status": "FALSE. Last buy BURNIE 01:30:25 06-05 (~2.57h ago) still inside trailing-24h. BURNIE stop-loss sell 03:02 (~1.04h ago). No new trades since maint-210. Trailing-24h = 1 buy / 1 sell (both BURNIE). Healthy, no dormancy. BURNIE buy rolls out of window ~01:30 06-06.",
+    "filter_lockout_diagnosis": "NOT in lockout. Bot scanning normally (cycle 197->198, last events 03:55-03:56 show live SIGNAL/SCAN/BUY_SKIP flow). BUY_SKIPs are normal ALTCOIN_CHOP selectivity, not accumulation lockout. No CYCLE_ERROR in last 50 events.",
+    "liveness_note": "ALIVE. Cycle 197->198 (+1). Heartbeat+events both 463s (~7.7min) -- normal mid-cycle gap at ~28min/cycle pace, well under the 1800s heartbeat / 300s+1800s STALLED gate. Last heartbeat 03:56:38 cycle 198 pid 11760, sol_balance 1.1019, SOL $65.89, regime ALTCOIN_CHOP(56.2%). No CYCLE_ERROR. No restart needed.",
     "coordination": {
       "brain_running": false,
       "research_running": false
     },
     "actions_taken": [
-      "Cadence gate: prior maint-209 finished 2026-06-05 02:06:30 EDT, now ~03:07 06-05 (~57min gap >= 30min) -> proceeded.",
+      "Cadence gate: prior maint-210 finished 2026-06-05 03:07:23 EDT, now ~04:04 06-05 (~57min gap >= 30min) -> proceeded.",
       "Process: bot pid 11760 (pythonw degen_bot.py --continuous) unchanged; dash pid 3752 (pythonw dashboard.py) unchanged. Exactly one each -- no dedupe/start.",
-      "Liveness ALIVE & prior staleness RESOLVED: cycle 195->197 (+2), heartbeat+events refreshed to 110s (was ~2040s last run during the backtest). No CYCLE_ERROR. No restart needed.",
-      "Trade flow: BURNIE (bought 01:30 wallet_convergence) hit stop loss -9.59pct at 03:02:00 (-0.003031 SOL, hold 1.53h). Now 0 open positions. Total trades 2057->2058.",
-      "Dormancy FALSE: last buy BURNIE 01:30 (~1.62h). JTVO 02:10-02:11 06-04 aged out of the 24h window; trailing-24h now 1 buy / 1 sell (both BURNIE). No dormancy watch.",
-      "Coordination/locks: brain idle (run-306 06-04 04:09:30 OK_MINOR_DELTA, directives v308; next daily run-307 ~04:00 06-05). Research idle (research-146 05-31, next weekly Sun 06-07 noon). Neither lock running=true -- nothing to clear.",
-      "Section 9 audit: 9A one_time_tasks empty (0 zombies); 9B no stuck flags (brain running None/false, research false, brain_queue.overloaded False); 9C brain mtime <48h, research within weekly cadence; 9D dormancy False; 9E brain_queue not overloaded. Clean.",
-      "Mirror HEALTHY (published 2026-06-05 03:00:34 EDT, age ~5min <15). curl 200, no heal, consecutive_heals=0. Dashboard 200 in 0.88s.",
-      "Eff-lab metrics ph42/60 lessons17/50 (condensed_lessons.entries dict len=17 via Python) reqs2/8 (REQ-022 MEDIUM + REQ-023 HIGH) drift[] -> triggered=False. Directives v308. sol_efficiency_lab_status.json MISSING (never run).",
-      "Log hygiene: bot.log 0.44MB, dashboard.log 0MB, watchdog.log 0.11MB, bot.err.log 0MB -- far under 50MB. Largest sol_*.json = sol_trade_log.json 1.16MB, no oversized (>2MB).",
-      "Maintenance-log: read existing flat array (46 entries), appended maint-210 (fresh flat array write, now 47)."
+      "Liveness ALIVE: cycle 197->198 (+1), heartbeat+events 463s (~7.7min, normal mid-cycle). Live SIGNAL/SCAN/BUY_SKIP flow 03:55-03:56, no CYCLE_ERROR. No restart needed.",
+      "Trade flow: no new trades since maint-210. Last buy BURNIE 01:30 (~2.57h), last trade BURNIE stop-loss sell 03:02 (~1.04h). 0 open positions. Total trades 2058 (unchanged).",
+      "Dormancy FALSE: BURNIE buy 01:30 keeps trailing-24h alive (1 buy / 1 sell). No dormancy watch.",
+      "Coordination/locks: brain idle (run-306 06-04 04:09:30 OK_MINOR_DELTA, directives v308; next daily ~04:00 06-05). Research idle (research-146 05-31, next weekly Sun 06-07 noon). Neither lock running=true -- nothing to clear.",
+      "Section 9 audit: 9A one_time_tasks 0 (no zombies); 9B brain/research running=False (no stuck flags); 9C brain mtime <48h, research within weekly cadence; 9D dormancy False; 9E brain_queue.overloaded False. Clean.",
+      "Mirror HEALTHY (published 2026-06-05 04:01:10 EDT, age ~3min <15). curl 200, no heal, consecutive_heals=0. Dashboard 200 in 2.91s.",
+      "Eff-lab metrics ph42/60 lessons17/50 (condensed_lessons.entries dict len=17 via Python) reqs2/8 (REQ-022 + REQ-023) drift[] -> triggered=False. Directives v308. sol_efficiency_lab_status.json MISSING (never run).",
+      "Log hygiene: bot.log 0.44MB, watchdog.log 0.11MB, dashboard/err logs ~0MB -- far under 50MB. Largest sol_*.json = sol_trade_log.json 1.16MB, no oversized (>2MB).",
+      "Maintenance-log: read existing flat array (47 entries), appended maint-211 (fresh flat array write, now 48)."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 5.0,
+      "pre_heal_age_min": 3.0,
       "heal_attempted": false,
       "heal_succeeded": false,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 5.0,
+      "post_heal_age_min": 3.0,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
         "old_pid": null,
         "new_pid": null,
-        "reason": "No restart -- mirror HEALTHY, publisher daemon alive (published 03:00:34 EDT on schedule). Gate requires consecutive_heals>=3 which is 0.",
+        "reason": "No restart -- mirror HEALTHY, published 04:01:10 EDT on schedule. Gate requires consecutive_heals>=3 which is 0.",
         "post_restart_verified": null
       },
-      "note": "Mirror age from published_at EDT string 2026-06-05 03:00:34 vs probe ~03:05. HEALTHY ~5min. curl 200 first try."
+      "note": "Mirror age from published_at EDT string 2026-06-05 04:01:10 vs probe ~04:04. HEALTHY ~3min. curl 200 first try."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -435,7 +437,7 @@
       },
       "fired_this_run": false,
       "skip_reason": "not_triggered",
-      "summary": "ph 42/60, lessons 17/50 (condensed_lessons.entries dict len=17), reqs 2/8 (REQ-022 MEDIUM + REQ-023 HIGH), drift []. Directives v308. Comfortable margin -- no cleanup. Lab status file never written (MISSING)."
+      "summary": "ph 42/60, lessons 17/50 (condensed_lessons.entries dict len=17), reqs 2/8 (REQ-022 + REQ-023), drift []. Directives v308. Comfortable margin -- no cleanup. Lab status file never written (MISSING)."
     },
     "state_file_footprint": {
       "largest_state_file_mb": 1.16,
@@ -461,15 +463,14 @@
       "memory_pressure_auto_trigger": false
     },
     "warnings": [
-      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto + run-306 anti-stacking WC gates all still INACTIVE until bot PID next restarts (still 11760, uptime since 2026-05-28 21:28, ~7.5d). All batch-activate at the next natural restart. Maintenance does NOT restart for activation. BURNIE bought 01:30 has source_wallet empty -- consistent with pre-activation source_wallet logging.",
-      "BURNIE LOSS: wallet_convergence entry 0.003016, exited -9.59pct stop loss after 1.53h (-0.003031 SOL). Single N=1 result; brain owns any strategy read. Bankroll ~1.1019 SOL, 0 open positions.",
-      "CYCLE PACE: cycle interval normalized this run (195->197, +2 over ~57min ~28min/cycle) now that the wallet-discovery backtest completed. Prior ~52-57min pace included the backtest phase. Surfacing for brain visibility; brain owns any tuning.",
-      "MINOR (unchanged): Google Sheets dashboard push may still fail on DNS (getaddrinfo googleapis.com) per prior bot.err.log; bot.err.log currently 0MB. Secondary export, gracefully caught; GitHub Pages mirror + local dashboard healthy so core connectivity is fine. No action."
+      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto + run-306 anti-stacking WC gates all still INACTIVE until bot PID next restarts (still 11760, uptime since 2026-05-28 21:28, ~7.5d). All batch-activate at the next natural restart. Maintenance does NOT restart for activation.",
+      "BRAIN DAILY RUN OVERDUE-ish: prior next_run_focus expected brain daily run-307 ~04:00-04:10 06-05. As of ~04:04 brain still idle at run-306 (directives v308). If run-307 hasn't fired by next maintenance (~05:04), surface for operator -- could be a missed cron. Not actionable this run.",
+      "MINOR (unchanged): Google Sheets dashboard push may still fail on DNS (getaddrinfo googleapis.com) per prior bot.err.log; bot.err.log currently 0MB. Secondary export, gracefully caught; GitHub Pages mirror + local dashboard healthy. No action."
     ],
-    "next_run_focus": "1) Confirm cycle keeps advancing 197->199+ with heartbeat/events fresh (<300s). 2) 0 open positions -- watch for the next WC buy and confirm dormancy stays resolved (trailing-24h needs >=1 buy; BURNIE buy rolls out ~01:30 06-06). 3) Process bot=1/dash=1 stable. 4) Mirror HEALTHY. 5) Brain daily run-307 expected ~04:00-04:10 06-05 -- if it fires, expect directives v308->v309 and WC ships may activate on any natural restart. 6) Research next weekly ~2026-06-07 noon (REQ-022 + REQ-023 pending). 7) WC ships remain pre-activation pending next bot restart (~7.5d uptime).",
+    "next_run_focus": "1) Confirm brain daily run-307 fired (expected ~04:00 06-05); if still idle at run-306 by ~05:04, flag possible missed cron to operator. 2) Confirm cycle keeps advancing 198->200+ with heartbeat/events fresh. 3) 0 open positions -- watch for next WC buy; dormancy stays resolved until BURNIE buy rolls out ~01:30 06-06. 4) Process bot=1/dash=1 stable. 5) Mirror HEALTHY. 6) Research next weekly ~2026-06-07 noon (REQ-022 + REQ-023 pending). 7) WC ships remain pre-activation pending next bot restart (~7.5d uptime).",
     "log_truncations": [],
     "elapsed_min": 3,
-    "file_age_min": 58.8,
+    "file_age_min": 5.0,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1913,7 +1914,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 198,
-    "age_min": 9.6,
+    "age_min": 14.6,
     "stale": false,
     "available": true
   },
@@ -1921,7 +1922,7 @@
     "requests_pending": 2,
     "requests_acknowledged": 0,
     "hypotheses_pending": 42,
-    "lessons_count": 17,
+    "lessons_count": 18,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1932,9 +1933,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3226.577476,
+  "maint_next_sec": 2923.172714,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:07 AM EST",
+  "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1949,101 +1950,17 @@
       "status": "implemented",
       "status_label": "\u2705 Implemented",
       "status_color": "#00ff88",
-      "evidence_text": "NULL-DELTA run with nothing new actionable: research-146 already fully triaged at run-303, no new research until Sun 2026-06-07, zero new trades (76.5h dormant, CHOP-appropriate), and three WC changes still shipped-but-unactivated (bot unre",
-      "evidence_source": "lessons"
+      "evidence_text": "Noted the wallet-convergence aged-livebook gate from research-146 remains shipped-but-not-yet-active and is now confirmed incomplete; tracking the gap under REQ-023 instead of reopening it.",
+      "evidence_source": "action"
     },
     "tally": {
       "implemented": 18,
-      "queued": 1,
+      "queued": 2,
       "rejected": 0,
-      "total": 19
+      "total": 20
     }
   },
   "events": [
-    {
-      "ts": "2026-06-05T03:17:16.154357",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ZEC: m5=59.1% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:17:16.596421",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ZEC: m5=59.1% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:17:17.038208",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ZEC: m5=59.1% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:17:17.495198",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ZEC: m5=59.1% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:18:59.273215",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip ATTENTION: h1=-0.4% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:20:43.288358",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip ZEC: downtrend h1=-22.6% h24=-53.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:20:43.719866",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip ZEC: downtrend h1=-22.6% h24=-53.2%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:20:55.800516",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ZEC: m5=497.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:20:56.259175",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ZEC: m5=497.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:20:56.273839",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7pDhG6Nq sold H8AbkTuA \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:20:56.286288",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7pDhG6Nq sold FgATeLqb \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-05T03:20:58.216382",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Zionist: h1=-13.7% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
     {
       "ts": "2026-06-05T03:21:41.618487",
       "type": "SIGNAL",
@@ -2659,6 +2576,90 @@
       "color": "#555555",
       "msg": "Scanning 141 wallets (cycle #198)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:08:46.514526",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Garrett: m5=84.2% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:08:46.540568",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 719sfKUj sold 4ev3UvnL \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:10:14.386420",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Opus4.8: m5=-20.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:10:14.826543",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Opus4.8: m5=-20.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:10:15.273486",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Opus4.8: m5=-20.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:10:15.697988",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Opus4.8: m5=-20.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:10:15.697988",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:11:12.463137",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold 61uaHBdW \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:11:12.472856",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold HLPVRC7E \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:11:15.071643",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Jobs: h1=-7.1% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:11:15.513632",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Jobs: h1=-7.1% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-05T04:11:16.143439",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Jobs: h1=-7.1% (below 15% momentum threshold, run115)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2677,9 +2678,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:06:13",
+  "ts": "04:11:16",
   "__publish_meta": {
-    "published_at": "2026-06-05 04:06:13 EDT",
+    "published_at": "2026-06-05 04:11:16 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
