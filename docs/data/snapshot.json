@@ -1,15 +1,15 @@
 {
-  "sol_price": 62.89282091384228,
+  "sol_price": 62.907720984436146,
   "bot_status": "STALE",
   "bot_last_seen": "03:42:36",
   "bot_cycles": 225,
   "bankroll": 1.0909,
-  "bankroll_usd": 68.60977833491054,
+  "bankroll_usd": 68.62603282192138,
   "budget": 0.15613428075,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 4.0,
+  "hour": 4.1,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -133,90 +133,86 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-05 04:10:00 EDT",
+    "timestamp": "2026-06-06 04:10:00 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "#1 problem stays the wallet_convergence exit tail in a downtrend. Since run-306, one new WC trade: BURNIE -9.59% stop (aged 1514h token, NET-BUY live book 11 buyers vs 4 sellers, calm entry, ~1.5h hold). This is the SECOND net-buy-book aged-token WC dump in two runs (HENRY -17.03% at 335h last run). At N=2 it confirms research-146's 'a net-buy live book on an aged token means safe' conclusion is incomplete - the sign of the order book does not separate WC winners from losers. But there is no clean fix to ship: the obvious next pattern (both losses are aged, the recent +24% winner was young) also fails, because research already found aged net-buy WINNERS (TROLL, the same-mint SQUIRE win, PIXEL). So an aged-token gate would kill winners too. Bot healthy (PID unchanged ~7.5 days, heartbeat and stats both fresh), 0 open positions, bankroll 1.1019 SOL.",
-    "exit_analysis": "Lifetime 1019 sells: avg win +13.06%, avg loss -16.45%, R/R 0.79, stop-loss rate 50.4%. Last 24h: 1 trade, 1 loss (-9.59%), R/R 0, 100% stop. Last 7d: 7 trades, 2 wins / 5 losses, avg win +14.01%, avg loss -8.41%, R/R 1.66 (held up by the +24% target win), stop rate 42.9%. wallet_convergence all-time: 20 trades, 45% win rate, R/R 0.65, -0.0072 SOL.",
-    "strategy_work": "Advanced REQ-023 (the HENRY-class WC failure investigation) rather than shipping a gate. Added BURNIE as a second confirmed example and sharpened the research ask: because both losses are aged AND net-buy, the order-book sign is ruled out as the separator, so research must test pair-age bands combined with order-book VELOCITY/ratio, liquidity, and holder concentration jointly. No hypothesis moved to TESTING/PROVEN this run - the only actionable item is a research request, not code.",
-    "directives_changes": "Bumped to version 309 (run-307). Refreshed all rolling stats. Rewrote current_priority and reasoning around the BURNIE N=2 net-buy-aged-dump finding and the no-ship decision. Strengthened REQ-023 with the second seed loss and a joint-separator method. Added a condensed lesson on resisting the urge to hand-patch a confirmed-incomplete separator with the next single feature. Logged the continued ~7.5-day same-process streak and that the three pending WC gates still would not have caught BURNIE.",
+    "system_diagnosis": "WC is the only strategy firing and it is bleeding: rolling_7d is now 1W/5L (WR 16.7%), the entire 6-trade window is wallet_convergence, and the newest trade HUNTER lost -28.40% on an EMERGENCY STOP - the largest WC loss in the recent run. Net-buy live book is no longer any kind of safety signal: HUNTER is the THIRD straight net-buy-book WC loss (after HENRY -17.03% and BURNIE -9.59%). The deeper problem is that these three losses are NOT one pattern - HENRY/BURNIE were calm + aged with flat tape, HUNTER was hot/parabolic (+483% h24) + bundled + mid-aged. The WC loss class is heterogeneous, so a single hand-built feature cannot separate losses from wins. The one tempting gate (the bot's existing pump_trap flag, which fired live on HUNTER) blocks 3 WC winners when applied across full history, so it is confounded, not a fix.",
+    "exit_analysis": "Lifetime: avg win +13.06%, avg loss -16.47%, R/R 0.79, stop-loss rate 50.5% (N=1020). Rolling 24h: 1 trade, HUNTER -28.40% emergency stop (R/R 0.0, 100% stop). Rolling 7d: 6 trades 1W/5L, avg win +24.07%, avg loss -11.28%, R/R 2.13 (propped entirely by the single +24% target win), stop rate 50%. WC all-time: 21 trades 9W/12L, WR 42.9%, R/R 0.55, pnl -0.01614 SOL. HUNTER's exit velocity snapshots (4m/8m/12m) were all -28.4% identical = a single gap-down capitulation candle, the dead-book/thin-liquidity slippage signature that turns a stop into a ~3x emergency bleed.",
+    "strategy_work": "Investigated whether the bot's existing research-134 pump_trap flag (h1>+25% AND h24>+100%, currently Phase-1 LOG-ONLY) can gate the HUNTER loss on wallet_convergence. HUNTER fired the flag live (pump_trap_would_skip=true) and was the ONLY flagged WC trade in the live-populated sample - which looked like a clean separator. Re-derived the rule across ALL 21 lifetime WC trades from raw h1/h24 values (the stored field only exists post-run-262): it flags 5 trades, including 3 WINNERS (Butt +17.43%, TIMETRUMP +1.20%, WINNING +1.15%) against 2 losers (HUNTER -28.4%, Bumpy -13.43%). So pump_trap is a win class AND a loss class on WC - confounded, the run-301 trap. Outcome: no clean hand-gate exists; strengthened REQ-023 with HUNTER as a third seed loss and the specific pumped-winner-vs-pumped-loser confound for research to resolve.",
+    "directives_changes": "Bumped version 309->310, updated_by run-308. Rewrote current_priority and priority_reasoning around the HUNTER loss and the pump_trap confound. Strengthened REQ-023: added HUNTER as SEED LOSS 3 (flagging the heterogeneous loss class), added pump_trap and bundle_detected to the candidate-feature list, and documented the new pumped-winner confound with a first candidate hypothesis (pumped AND age>~30h, since the 3 pumped winners are all <=16h old while HUNTER is 80h). Refreshed track_record (lifetime 1020 sells, rolling_24h HUNTER, rolling_7d 1W/5L, bankroll 1.0909, SOL $62.88). Added condensed lesson wc_netbuy_loss_n3_heterogeneous_and_pumptrap_confound_run308.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-306 HENRY -17.03% net-buy aged dump: now corroborated by BURNIE -9.59% (also net-buy, aged 1514h). N=2 pattern; routed to research, not gated.",
-      "run-306 +24.07% WC target win (young 53h): aged out of the 24h window; was the reason rolling_24h was positive last run, now rolling_24h is back to -0.003031 with only BURNIE in-window.",
-      "run-306 JTVO rug-breakeven (8820h, 69% liq drop): no recurrence; existing rug detection still the right tool, no aged-token loss gate needed.",
-      "Three WC gates (CWC veto + source_wallet logging run-300, aged-livebook veto run-303): STILL pre-activation, now ~7.5 days same-PID. Neither HENRY nor BURNIE would have been caught by them, so the lag continues to leak no material loss."
+      "RUN-307 (BURNIE -9.59% 2nd net-buy aged dump, no ship): HELD - no fix was justified at N=2 and HUNTER at N=3 confirms a single hand-gate would have been wrong (the loss class is heterogeneous). REQ-023 remained the right channel.",
+      "Anti-stacking (3 WC gates pre-activation since 2026-05-28): STILL pre-activation - PID 11760 unchanged at cycle 225 (~8.5d, no restart). Gates remain unmeasured; correctly did not add a 4th.",
+      "REQ-022 (Believe config universality): still pending; research-147 fires Sunday 2026-06-07 (1 day out).",
+      "bonding_curve_velocity_pregrad_snipe HIGH: still blocked on research-147 trades-to-vSol metric spec."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a wallet_convergence skip-gate for aged tokens whose live order book is net-sell (block the SQUIRE-class -14% distribution dump).",
+        "proposal": "Skip wallet_convergence entries on an aged token (>=1700h old) when the live order book is net-sell - blocks the SQUIRE-class dead-book dump.",
         "from_research": "research-146",
         "status": "SHIPPED",
-        "why": "Already shipped to source at run-303 (skip WC if token age >= 1700h AND more sellers than buyers in the last 5 min). Still pre-activation behind the ~7.5-day same-process streak; activates at the next natural restart. BURNIE/HENRY this run confirm it is INCOMPLETE (net-buy aged tokens still lose), which is now tracked under REQ-023 rather than reopening this proposal."
+        "why": "Already shipped to code at run-303; still pre-activation behind the same-PID streak (no restart since 2026-05-28). It would not have caught HUNTER (80h, net-buy) anyway, so no action needed this run."
       },
       {
-        "proposal": "Build a Believe-launchpad listener gated on the corrected pool-config and payer keys.",
+        "proposal": "Add a Believe-launchpad listener gated on the corrected config 7SXEnhGR + payer 5qWya6Uj.",
         "from_research": "research-146",
         "status": "DEFERRED",
-        "why": "Config universality verified on only one real Believe launch. Unlocks when research validates the same config across 5-10 Believe launches (filed as REQ-022, due Sunday research-147 on 2026-06-07)."
+        "why": "Research's own pre-ship gate is unmet: the config is verified on only 1 real Believe launch. Unlocks when research-147 (Sunday 2026-06-07) confirms config universality across >=5-10 Believe inits, tracked as REQ-022."
       },
       {
-        "proposal": "New hypothesis: pre-graduation bonding-curve liquidity-velocity scorer (enter before the migration crowd).",
-        "from_research": "research-146",
+        "proposal": "REQ-022: validate Believe config universality before building the listener.",
+        "from_research": "REQ-022 (pending)",
         "status": "PENDING",
-        "why": "Blocked on the exact trades-to-vSol velocity metric spec and a Phase-1 log-only design, which research-147 (2026-06-07) is committed to deliver. Cannot build the scorer without the metric definition."
+        "why": "Awaiting the next research run. research-147 fires Sunday 2026-06-07 (1 day out); it owns this Bitquery validation. No brain action available until then."
       },
       {
-        "proposal": "REQ-022 - validate Believe pool-config universality across 5-10 launches before building the listener.",
-        "from_research": "requests_for_research (pending)",
+        "proposal": "REQ-023: find a joint multi-feature separator that isolates the net-buy-book WC losses from the WC wins.",
+        "from_research": "REQ-023 (pending)",
         "status": "PENDING",
-        "why": "Owned by the research brain; next research run is Sunday 2026-06-07. No brain action available until those findings land."
-      },
-      {
-        "proposal": "REQ-023 - find a joint separator for net-buy-book aged WC dumps (HENRY/BURNIE) vs WC wins.",
-        "from_research": "requests_for_research (pending)",
-        "status": "PENDING",
-        "why": "Strengthened this run with BURNIE as a second seed. Unlocks at the next research run (Sunday 2026-06-07) when research walks all 20 WC trades; brain cannot derive the joint separator by hand without that backtest, and gating on N=2 with a known winner-class confound is the documented run-301 trap."
+        "why": "Strengthened this run with HUNTER as a third seed and the pump_trap-vs-pumped-winner confound, but it requires the research lab's full-sample backtest. Unlocks at research-147 (Sunday 2026-06-07). The brain confirmed no clean hand-gate exists, so routing to research is the only valid path."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Nothing shipped. The only new failure (BURNIE) would not have been caught by any of the three gates already waiting to activate, and there is no clean new gate to add: both net-buy-book aged WC losses (HENRY, BURNIE) sit in the same age-and-book region as known WC WINNERS, so any age or order-book gate that blocks them also blocks winners. With three WC changes still un-activated after ~7.5 days, a fourth would also make it impossible to tell which change caused what. The right move is the research request (REQ-023), not code.",
+    "no_code_change_reason": "The only candidate fix this run was enforcing the bot's existing pump-trap rule (skip a buy when a token is already up >25% in an hour AND >100% in a day) on the copy-of-wallets strategy. Testing it against every past copy-wallet trade showed it would have blocked three past WINNERS (one a +17.4% win) as well as the HUNTER loss - so it is not a clean fix, it would cost more in lost winners than it saves. The three loss examples also turned out to be two different kinds of failure, so no single rule separates them. The right move is to hand this to the weekly research lab (which runs tomorrow) rather than bolt on a confounded filter. Also, three earlier copy-wallet safety changes are still waiting for the bot to restart before they take effect, so adding a fourth unmeasured change now would make it impossible to tell which change did what.",
     "changelog": [
-      "Logged BURNIE as the second net-buy-book aged-token wallet-convergence loss in two runs and confirmed neither it nor last run's HENRY would have been blocked by the gates currently waiting to turn on.",
-      "Strengthened the open research request (REQ-023) with BURNIE as a second example and asked research to test token-age bands combined with order-book speed/ratio and liquidity, since the simple buy-vs-sell book sign has now been ruled out.",
-      "Refreshed all performance stats and bumped the brain's notes to version 309."
+      "Recorded the newest copy-wallet trade: HUNTER, a token already up +483% on the day, bought then dumped -28.4% in under an hour (an emergency stop). It is the third copy-wallet loss in a row where the live buy/sell tape looked healthy (more buyers than sellers) yet the token still crashed.",
+      "Checked whether the bot's existing 'already-pumped' warning flag could have caught HUNTER. It would have - but it also would have blocked three past winning trades, so it is not a safe filter to switch on for this strategy.",
+      "Sent a sharpened request to the weekly research lab to find a real rule that separates these losing pumped/aged tokens from the winning ones, including the new clue that the winning pumped tokens were all very young (under ~16 hours) while the losing one was older (80 hours).",
+      "Updated the brain's memory with fresh numbers and a lesson about not trusting a warning flag that was only added to recent trades - you have to re-check it against the whole history."
     ],
     "actions_taken": [
-      "Decided NOT to add a wallet-convergence gate for the BURNIE/HENRY net-buy aged-dump pattern, because the obvious gates would also block known winners (the run-301 trap) and BURNIE is not catchable by the gates already pending.",
-      "Updated REQ-023 (the net-buy aged-dump research request) with the BURNIE example and a joint-separator method.",
-      "Noted the wallet-convergence aged-livebook gate from research-146 remains shipped-but-not-yet-active and is now confirmed incomplete; tracking the gap under REQ-023 instead of reopening it.",
-      "Confirmed no operator action is needed (no restart, no credentials, no manual step)."
+      "Diagnosed the HUNTER wallet_convergence -28.40% emergency stop as the third consecutive net-buy-book WC loss and a new (hot/parabolic/bundled) loss sub-type distinct from the calm/aged HENRY and BURNIE losses.",
+      "Tested and rejected enforcing the research-134 pump_trap flag on wallet_convergence: confounded (blocks Butt +17.43%, TIMETRUMP, WINNING winners).",
+      "Strengthened REQ-023 to the research lab with HUNTER as seed loss 3 plus the pumped-winner-vs-pumped-loser confound and a first candidate split (pumped AND age>~30h).",
+      "Marked the research-146 Believe-listener proposal DEFERRED pending REQ-022, and confirmed the already-shipped aged-livebook WC gate remains pre-activation.",
+      "Refreshed brain directives stats and added a condensed lesson about re-deriving candidate gates from full history rather than a partially-populated logged flag."
     ],
     "next_priorities": [
-      "Ingest research-147 (Sunday 2026-06-07): expect the REQ-023 joint separator for net-buy aged WC dumps (or a documented null result -> then size WC down via a skip in down-trends), the REQ-022 Believe config universality check, and the bonding-curve velocity metric spec.",
-      "If research-147 returns a clean REQ-023 separator with all 7 completeness fields, ship it; evaluate at N=8 WC fires post-activation.",
-      "Watch for the next natural bot restart to activate the three pending wallet-convergence gates; after activation, collect 1-3 WC fires before stacking any further WC change.",
-      "Continue no-force discipline while SOL is in a down-trend; do not add an aged-token WC loss gate that the emergency stop and rug detection already bound."
+      "Ingest research-147 (Sunday 2026-06-07) answers to REQ-023 (joint WC loss separator across all 21 WC trades) and REQ-022 (Believe config universality). Act on any clean separator with a full 7-field proposal; if null, size WC down via a skip gate in bear trend.",
+      "Watch for the natural bot restart (PID 11760 unchanged ~8.5d). Once it fires, the three pending WC gates activate - then evaluate them at N>=8 WC fires post-activation before any further WC change.",
+      "Track the pump_trap Phase-1 logger toward research-134's N>=20 flagged-live-buys Phase-2 threshold (now at N=1: HUNTER, -28.4% confirmed loss)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1019,
+      "total_sells": 1020,
       "win_rate": 35.5,
       "avg_win_pct": 13.06,
-      "avg_loss_pct": -16.45,
+      "avg_loss_pct": -16.47,
       "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.1019,
-      "pnl_today": -0.003031
+      "stop_loss_rate_pct": 50.5,
+      "bankroll": 1.0909,
+      "pnl_today": -0.008963
     },
     "active_strategies": [
       "wallet_convergence",
       "bear_strength",
       "consensus_boost",
       "fresh_profile",
-      "chop_momentum_scalp"
+      "chop_momentum_scalp",
+      "bounce_hunter"
     ]
   },
   "wallet_scan": {
@@ -224,16 +220,16 @@
     "result": "Saved 20 wallets in 37m 49s",
     "completed": "2026-06-05T02:09:07.478625"
   },
-  "brain_next_sec": 85958.420782,
+  "brain_next_sec": 85655.460593,
   "brain_next_str": "Sun 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Fri 4:10 AM EST",
+  "brain_last_run_str": "4:15 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:38 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 87518.420782,
+  "research_next_sec": 87215.460593,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -373,7 +369,7 @@
     "dashboard_curl": "200",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 14.56,
+    "hours_since_last_trade": 14.64,
     "hours_since_last_buy": 14.44,
     "trades_last_24h": {
       "buys": 1,
@@ -471,7 +467,7 @@
     "next_run_focus": "1) Cycle cadence: confirm cycle advances 225->226+ and does NOT freeze (+0 twice = SCAN STALLED). 2) 0 open positions -- watch for next WC/strategy buy. 3) Dormancy False; watch if no new trade by ~13:38 06-06 (~24h since last buy). 4) Process bot=1/dash=1 stable. 5) Mirror HEALTHY -- keep cache-busting. 6) Brain daily run was due ~04:04 06-06 (right now); next run confirm it fired + wrote sol_brain_status (run-308) and clear any stale running=true lock. 7) WC ships + _convergence_tracker remain pre-activation pending next bot restart (~9.3d uptime).",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 5.2,
+    "file_age_min": 10.2,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1906,7 +1902,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 225,
-    "age_min": 28.8,
+    "age_min": 33.8,
     "stale": false,
     "available": true
   },
@@ -1914,7 +1910,7 @@
     "requests_pending": 2,
     "requests_acknowledged": 0,
     "hypotheses_pending": 42,
-    "lessons_count": 18,
+    "lessons_count": 19,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1925,7 +1921,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 2918.420782,
+  "maint_next_sec": 2615.460593,
   "maint_next_str": "5:00 AM EST",
   "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
@@ -1939,17 +1935,17 @@
     "latest": {
       "hypothesis_name": "bonding_curve_velocity_pregrad_snipe",
       "run_id": "research-146",
-      "status": "implemented",
-      "status_label": "\u2705 Implemented",
-      "status_color": "#00ff88",
-      "evidence_text": "Noted the wallet-convergence aged-livebook gate from research-146 remains shipped-but-not-yet-active and is now confirmed incomplete; tracking the gap under REQ-023 instead of reopening it.",
-      "evidence_source": "action"
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "bonding_curve_velocity_pregrad_snipe HIGH: still blocked on research-147 trades-to-vSol metric spec.",
+      "evidence_source": "followup"
     },
     "tally": {
-      "implemented": 18,
+      "implemented": 19,
       "queued": 2,
       "rejected": 0,
-      "total": 20
+      "total": 21
     }
   },
   "events": [
@@ -2670,9 +2666,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:11:21",
+  "ts": "04:16:24",
   "__publish_meta": {
-    "published_at": "2026-06-06 04:11:21 EDT",
+    "published_at": "2026-06-06 04:16:24 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
