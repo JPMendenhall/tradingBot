@@ -1,15 +1,15 @@
 {
-  "sol_price": 65.08951168393071,
+  "sol_price": 65.14955007323445,
   "bot_status": "RUNNING",
   "bot_last_seen": "12:09:14",
   "bot_cycles": 262,
   "bankroll": 1.0909,
-  "bankroll_usd": 71.006148296,
+  "bankroll_usd": 71.07164417489146,
   "budget": 0.15613428075,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 11.8,
+  "hour": 11.9,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -224,131 +224,146 @@
     "result": "Saved 20 wallets in 37m 49s",
     "completed": "2026-06-05T02:09:07.478625"
   },
-  "brain_next_sec": 55961.473108,
+  "brain_next_sec": 55658.620999,
   "brain_next_str": "Mon 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
   "brain_last_run_str": "4:15 AM EST",
   "brain_disabled": false,
-  "research_running": true,
-  "research_last_run_str": "",
+  "research_running": false,
+  "research_last_run_str": "12:35 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 575921.473108,
-  "research_elapsed_sec": 1268.526892,
+  "research_next_sec": 575618.620999,
+  "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
-    "timestamp": "2026-05-31 12:38:16 EDT",
-    "run_id": "research-146",
+    "timestamp": "2026-06-07 12:33:14 EDT",
+    "run_id": "research-147",
     "version": 1,
-    "headline": "SOLVED the calm-entry WC catastrophe: it is the LIVE ORDER BOOK, not mcap or age - a 2-feature gate (pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5) blocks the -14% SQUIRE dump while keeping every WC win, including the SAME-MINT SQUIRE win (net-BUY book 10>2) and TROLL (aged 9676h but net-buy 5>3).",
+    "headline": "REQ-023 SOLVED with a clean 2-feature WC gate - skip if pair_age>30h AND (h1>+25% OR h24<-10%) - that blocks ALL THREE seed losses (HUNTER -28.4, HENRY -17.0, BURNIE -9.6) plus KINS/CWU/JTVO and kills ZERO wins; the age>30h arm is exactly what spares the young pumped winners (Butt +17.4, TIMETRUMP, WINNING).",
     "new_hypothesis": {
-      "name": "bonding_curve_velocity_pregrad_snipe",
-      "mechanism": "On pump.fun/letsBONK, the single strongest predictor of graduation (and the price pop that follows the $69K Raydium/PumpSwap migration) is LIQUIDITY VELOCITY - how few swaps it takes to reach a given vSol level. Fast accumulation in <=10-50 trades = distributed real conviction that mechanically drives the curve to migration, which itself triggers a fresh DEX-listing buy wave. Entering when velocity crosses a high band puts the bot IN before the migration crowd (median time-to-graduation ~4.4 min).",
-      "persistence": "It requires real-time on-chain swap-SEQUENCE parsing of bonding-curve accounts (Geyser/RPC or Bitquery), not price polling. DexScreener/GeckoTerminal only surface a token reliably AFTER it graduates and a DEX pool exists, so any price-polling bot is structurally minutes late. <1 in 200 of ~30k daily launches graduate, so the noise floor deters lazy competitors and the edge is not crowded out by other DexScreener bots.",
-      "entry_rules": "Extend the EXISTING pump.fun+letsBONK graduation websocket logger from an after-the-fact event recorder into a pre-graduation velocity scorer: per live bonding-curve token compute trades-to-vSol velocity + buyer-wallet diversity; flag candidates that reach the vSol threshold in <=~10-50 real (non-sub-2s-wash) trades AND have >=N distinct aged buyer wallets. Phase 1 = LOG-ONLY (record velocity score + forward 10/30-min return for every flagged candidate) to calibrate the threshold before any live entry.",
-      "data_required": "Direct RPC/Geyser subscription to the pump.fun bonding-curve program accounts (or Bitquery pump.fun bonding-curve API) to read curve PROGRESS + per-token swap-count velocity in real time. The existing graduation listener already touches this program - this extends it to read progress/velocity, not just the terminal graduation event. NOT DexScreener.",
-      "estimated_fires_per_day": 25,
+      "name": "buyer_diversity_velocity_divergence",
+      "mechanism": "Among bonding-curve tokens with IDENTICAL SOL-raise velocity, the ones with a high distinct-buyer ratio (distinct_buyer_wallets / buy_trade_count over the first 5 min) outperform low-ratio tokens on 10-30 min forward return. High ratio = a real crowd is forming; low ratio = one or a few wallets (bundler/sniper cluster) are faking the velocity. Velocity alone is necessary but spoofable; the second-order diversity ratio separates organic acceleration from manufactured acceleration.",
+      "persistence": "The cheap PumpPortal websocket exposes raw velocity (vSolInBondingCurve, marketCapSol) to every sniper, so velocity-only edges get crowded out fast. Wallet-diversity is a SECOND-ORDER computation (you must dedupe traderPublicKey across the trade stream and ratio it against trade count) that most snipers skip - and in the current sub-1% graduation regime, genuine crowd formation is the scarce, high-information ingredient while bundled velocity mean-reverts within minutes. The edge lives in the computation gap, not the data gap.",
+      "entry_rules": "Phase-1 LOG-ONLY (no trades). For each new pump.fun mint, over its first 5 minutes compute (a) velocity = SOL-raised-per-minute = [vSolInBondingCurve(t=5m) - vSolInBondingCurve(t0)] / 5, and (b) diversity_ratio = distinct buy-side traderPublicKey / buy_trade_count. Flag 'hot' tokens whose 5-min velocity is in the trailing-24h top decile, and for every flagged token log diversity_ratio at flag time plus forward return at +10m and +30m and a graduated_bool/time_to_graduation. After ~2-4 weeks of logging, test whether high-diversity flagged tokens beat low-diversity flagged tokens at equal velocity. Only then consider a live entry rule (e.g. enter flagged tokens with diversity_ratio above the learned cutoff).",
+      "data_required": "PumpPortal websocket wss://pumpportal.fun/api/data: subscribeNewToken (FREE, enrolls every new mint at t0) + subscribeTokenTrade for the flagged cohort (each trade event carries mint, traderPublicKey, SOL amount, vSolInBondingCurve, marketCapSol - progress and buyer identity both readable off the stream, no extra RPC). subscribeTokenTrade meters at ~0.01 SOL/10k events and caps ~100 mints/call, so cap the watched cohort. Free fallback for backfill: Bitquery GraphQL DEXTrades(ProtocolName:'pump') exposes count and count(distinct: Transaction_Signer, if: buy).",
+      "estimated_fires_per_day": 20,
       "priority": "HIGH",
-      "evidence": "Peer-reviewed study arXiv 2602.14860 ('Predicting the success of new crypto-tokens: the Pump.fun case') finds liquidity velocity dominates ALL other variables as a graduation predictor; effect is monotonic and survives filtering sub-2s wash trades. Median time-to-graduation ~4.4 min. Launchpad context (late May 2026): pump.fun has REGAINED ~70-80% of launches and ~95% of graduations after the 2025 letsBONK coup reversed (The Block, Decrypt), so the bot's pump.fun-first coverage is correctly weighted and this edge fires most where the logger already listens. Of ~30k daily launches ~150 graduate; a conservative velocity+diversity filter likely yields 15-40 actionable candidates/day."
+      "evidence": "Launchpad scout (2026-06-07, real web calls): graduation rates collapsed below 1% platform-wide since ~May 22 (pump.fun 0.80%, LaunchLab 0.31%, Boop 0.14% - beincrypto), which sharpens the thesis: when <1% graduate, an abnormally-fast token is a rarer, higher-information event. pump.fun re-took #1 by mints/traders/graduates after letsBONK's collapse (The Block), so the bot's existing pump.fun grad-listener is correctly weighted to host this. pump.fun graduation completes at ~85 SOL raised / ~$69k mcap; progress = 100 - leftTokens*100/initialRealTokenReserves (Bitquery bonding-curve API). The existing graduation websocket already subscribes to this program - extending it to read per-token swap velocity + buyer diversity is incremental, not new infrastructure."
     },
     "watchlist": [
       {
         "mint": "Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk",
         "symbol": "LAUNCHCOIN",
-        "reason": "Confirmed Believe launch; reference mint for validating the corrected Believe config/payer filter (REQ-020).",
-        "expires_at": "2026-06-07T12:00:00-04:00"
+        "reason": "Believe reference mint. NOTE: now low-value - Believe daily launches collapsed from ~4000/day (May) to <100/day (late June 2026), see REQ-022 response.",
+        "expires_at": "2026-06-21T12:00:00-04:00"
       },
       {
         "mint": "GsVr8GdT57gBa6GxujrtAeRGmYbFfABGFk2eaG2DzBLV",
         "symbol": "BELIEVE-EX",
-        "reason": "Bitquery-documented Believe launch whose InitializeVirtualPoolWithSplToken was decoded this run: config index0=7SXEnhGR..., payer=5qWya6Uj... Use to lock the Believe filter.",
-        "expires_at": "2026-06-07T12:00:00-04:00"
+        "reason": "The single confirmed Believe init carrying config 7SXEnhGR at idx0; reconfirmed real this run (owner dbcij3, 1048 bytes). Used only to re-anchor REQ-022; no fresh velocity mints surfaced this run (honest null - scout would not fabricate June-2026 addresses).",
+        "expires_at": "2026-06-21T12:00:00-04:00"
       }
     ],
     "proposals_for_survival_brain": [
       {
         "type": "new_filter",
         "target": "wallet_convergence",
-        "justification": "The ONLY clean separator of the catastrophic calm-entry WC loss (SQUIRE -14.07% EMERGENCY) from the flat-wins is the live order book on an AGED token. SQUIRE-LOSS: pair_age 1718h, gt_buyers_m5=0 < gt_sellers_m5=2 (net-SELL dead/distribution tape). SQUIRE-WIN (SAME mint, 3d earlier): age 1656h but gt_buyers_m5=10 > gt_sellers_m5=2 (net-BUY). TROLL win: age 9676h but net-buy 5>3. So neither age alone nor net-sell alone works (each kills a win); the COMBO blocks exactly SQUIRE-LOSS and zero wins.",
+        "justification": "REQ-023's heterogeneous net-buy-book WC loss class has a CLEAN 2-feature separator. Walked all 21 lifetime WC trades (9W/12L). Gate: SKIP WC entry if pair_age_hours > 30 AND (price_change_1h > 25 OR price_change_24h < -10). Plain English: on an AGED token (>30h) skip it if it's either showing a fresh 1h pump (an aged coin going vertical = exit liquidity / late pump) OR already bleeding on the day (distribution). The age>30h arm is the key: it spares the genuinely-young pumped winners (Butt +17.43 age5h, TIMETRUMP +1.20 age2h, WINNING +1.15 age16h) while catching the aged pumped/bleeding losers. This is COMPLEMENTARY to (not overlapping) the already-shipped REQ-021 gate (age>=1700h AND net-sell book), which catches SQUIRE-L; the two gates' blocked sets are DISJOINT.",
         "confidence": "MEDIUM",
-        "addresses_request": "REQ-021",
-        "baseline": "wallet_convergence all_time N=15, WR 53.3%, R/R 0.35, pnl -0.005885 SOL; rolling_7d N=4 WR 75% R/R 0.08 pnl -0.004349 (the single 7d loss IS SQUIRE -14.07%, which alone is -0.004512 SOL = larger than the whole 7d pnl). 7 lifetime losses: Goblin -8.1, Bumpy -13.43, soothsayer -13.08, CWU -0.24, ASTEROID -12.5, TOLYBOT -8.21, SQUIRE-L -14.07.",
-        "expected_effect": "Removes the single largest WC loss class (aged-token distribution dump). On the current 15-trade sample, blocking SQUIRE-LOSS lifts WC all-time pnl from -0.005885 to -0.001373 SOL and R/R from 0.35 toward ~0.55, with ZERO wins lost. The CWC veto (run-300) already handles the 3 hot-5m losses (Bumpy/soothsayer/ASTEROID); this gate handles the calm aged-dump that CWC misses.",
-        "kill_criteria": "Revert if, after activation, the gate blocks >=2 entries that (counterfactually, via logged would-have features) would have been WINS, OR if WC rolling-10-trade R/R falls below 0.30 with the gate live.",
-        "min_sample_size": "Evaluate at N=8 WC fires post-activation (WC fires only ~2-4x/wk, so ~3-4 weeks). The gate is near-zero-cost on wins so it can ship before N is large.",
-        "regime_scope": "ANY (the aged-distribution mechanism is regime-independent; observed in CHOP/ALTCOIN_WINTER).",
-        "rollback_plan": "Remove the two-condition WC entry skip (pair_age_hours>=1700 AND gt_sellers_m5>gt_buyers_m5); revert to CWC-veto-only WC entry logic.",
-        "risk_if_wrong": "Worst case it silently blocks a rare aged-token WC win. At N=15 it blocks 0 historical wins, and WC win contribution from aged net-sell-book tokens is empirically zero, so expected foregone profit is ~0; the realistic downside is just one missed marginal flat-win (~+0.5%) every few weeks.",
-        "anti_stacking_note": "This stacks on TWO already-shipped-but-not-yet-activated WC changes (CWC veto + source_wallet logging, both pre-activation since the bot has not restarted since 2026-05-28). Per the run-288 anti-stacking lesson, the brain may prefer to let those activate first (await natural restart) before adding a third WC entry condition - but unlike a threshold tweak this is a NEW orthogonal mechanism (live-book on aged tokens) targeting an UNHANDLED loss class, and is zero-cost on wins."
+        "addresses_request": "REQ-023",
+        "baseline": "wallet_convergence all_time N=21 WR 42.9% R/R 0.55 pnl -0.01614 SOL avg_win 5.75% avg_loss -10.5% PF 0.36 (sol_strategy_stats.json). rolling_7d N=6 1W/5L WR 16.7% R/R 2.13 pnl -0.010255 PF 0.43. The 12 lifetime losses include the three seed dumps HUNTER -28.40, HENRY -17.03, BURNIE -9.59.",
+        "expected_effect": "On the 21-trade sample the gate blocks 6 of 12 losses (HUNTER -28.40, HENRY -17.03, BURNIE -9.59, KINS -1.37, CWU -0.24, JTVO 0.00 = -56.63% of return) and ZERO of 9 wins, moving the sample from 9W/12L to 9W/6L. Projected: WR 42.9% -> ~60%, R/R 0.55 -> ~1.1+, all_time pnl -0.01614 -> roughly -0.005 SOL (the HUNTER -0.008963 SOL loss alone is removed). Forward-going it should remove the largest WC tail losses while leaving win-rate of fired trades intact.",
+        "kill_criteria": "Revert if, after activation, the gate blocks >=2 entries that (counterfactually, via logged would-have features) would have been WINS, OR if WC rolling-10-trade R/R falls below 0.40 with the gate live.",
+        "min_sample_size": "Evaluate at N=8 WC fires post-activation (WC fires ~2-4x/wk -> ~3-4 weeks). Gate is zero-cost on the 21-trade win set, so it can ship before N is large.",
+        "regime_scope": "ANY (both mechanisms - aged-token going vertical = late/exit pump, aged-token already bleeding = active distribution - are regime-independent; all three seeds were observed in CHOP/ALTCOIN_CHOP).",
+        "rollback_plan": "Remove the single WC entry skip condition (pair_age_hours>30 AND (h1>25 OR h24<-10)); revert to prior WC entry logic (CWC-veto + REQ-021 aged-net-sell gate only).",
+        "risk_if_wrong": "Worst case it silently blocks a rare aged token that pumps and keeps running, or an aged bleeder that V-reverses. At N=21 it blocks 0 historical wins and the aged-pump/aged-bleed cohort contributed zero WC wins, so expected foregone profit ~0; realistic downside is one missed marginal flat-win (~+0.5%) every few weeks.",
+        "anti_stacking_note": "This would be the 4TH unactivated WC entry change. The bot has run on the same PID since 2026-05-28 (~9.5d), so CWC veto + source_wallet logging + the REQ-021 aged-net-sell-livebook gate are ALL still pre-activation and unmeasured. Per the run-288 anti-stacking lesson the brain may prefer to force/await a restart, let the existing 3 gates produce post-activation samples, THEN add this 4th. COUNTERPOINT: this gate targets a DIFFERENT, currently-UNHANDLED loss class (it catches HUNTER/HENRY/BURNIE which none of the 3 pending gates catch - verified disjoint from REQ-021's SQUIRE-L), and is zero-cost on wins, so shipping it together with a restart is defensible. Brain's call on sequencing."
       },
       {
         "type": "data_source_add",
-        "target": "believe_launchpad_listener_v3_CONFIG_FILTER",
-        "justification": "REQ-020 premise was FALSIFIED on-chain: FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM is NOT a config account - getAccountInfo shows owner=System Program, 0 bytes (a plain signer/pool_authority wallet at init account index 1). A real DBC PoolConfig is owned by dbcij3... and is ~1048 bytes. Filtering on FhVo as 'config' would match nothing. The REAL Believe config is 7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (init account index 0, DBC-owned, 1048-byte PoolConfig), and the Believe authority/payer is 5qWya6Uj... Negative control: 5 non-Believe DBC inits each used a DISTINCT config (7pycaX6.., CfL5L7BV.., BBrtK6dD.., Fx87hHhH.., HBG9fuTv..), none FhVo, none 7SXEnhGR - so configs are per-partner, NOT multi-tenant.",
+        "target": "bonding_curve_velocity_diversity_logger",
+        "justification": "Phase-1 LOG-ONLY extension of the EXISTING pump.fun graduation websocket: compute per-mint 5-min SOL-raise velocity AND distinct-buyer diversity ratio, and log forward returns. This operationalizes both the research-146 bonding_curve_velocity hypothesis (HIGH, previously blocked on a concrete trades-to-vSol spec) and this run's new buyer_diversity_velocity_divergence hypothesis in ONE logger - no new trading risk, just observation to calibrate a future entry rule.",
         "confidence": "MEDIUM",
-        "addresses_request": "REQ-020",
-        "baseline": "No Believe listener currently shipped; prior plan was blocked on confirming FhVo3mqL as the filter key. WC/Believe edge contributes 0 trades today.",
-        "expected_effect": "Unblocks the Believe listener with a CORRECT key. Recommend gating on BOTH config==7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (init account idx 0) AND payer==5qWya6Uj... on program dbcij3... method initializeVirtualPoolWithSplToken. Yields a clean, non-spoofable Believe-launch firehose.",
-        "kill_criteria": "Before any live trading off this feed: if the config/payer pair captures any token NOT attributable to Believe in a 50-launch sample (false-positive), do not trade it. As a listener-only addition there is no trade-level kill yet.",
-        "min_sample_size": "Confirm on >=5-10 Believe inits via Bitquery (initialize_virtual_pool_with_spl_token + authority filter) all carrying config 7SXEnhGR... before locking; this run verified the pairing on 1 real launch + 5 non-Believe negative controls.",
-        "regime_scope": "ANY (listener/data-source addition).",
-        "rollback_plan": "Disable the Believe listener; no trading logic depends on it until a separate entry proposal is filed.",
-        "risk_if_wrong": "If the single verified config is not universal across all Believe launches, the listener under-captures (misses some Believe tokens) - a coverage gap, not a loss. No capital at risk at the listener stage."
+        "addresses_request": null,
+        "baseline": "No pre-graduation velocity/diversity signal currently captured; the existing listener only records the terminal graduation event. The bonding_curve_velocity hypothesis has sat HIGH-but-blocked since research-146 purely for lack of an exact metric + data source - now resolved.",
+        "expected_effect": "Produces a labeled dataset: per flagged token {5-min velocity, diversity_ratio, +10m return, +30m return, graduated_bool, time_to_graduation}. After ~2-4 weeks, enables a tested decision on whether (velocity AND high diversity) predicts forward return well enough to justify a live entry. No P/L effect at the logging stage.",
+        "kill_criteria": "Listener-only, so no trade-level kill. Abandon the logger if after 2 weeks it captures <30 flagged tokens (insufficient fire rate) OR if PumpPortal event metering cost exceeds ~0.05 SOL/wk (cap the watched cohort to stay free/cheap). Before ANY live entry off this feed, require diversity_ratio to show a statistically separated forward-return gap (high vs low) at N>=50 flagged tokens.",
+        "min_sample_size": "N=50 flagged tokens with closed +30m forward returns before evaluating the high-vs-low-diversity split; N>=30 to even confirm the fire rate is viable.",
+        "regime_scope": "ANY (data-source/listener addition; observation is regime-independent).",
+        "rollback_plan": "Disable the velocity/diversity logger; no trading logic depends on it until a separate entry proposal is filed. The existing graduation listener is untouched.",
+        "risk_if_wrong": "Near-zero capital risk (no trades). Worst case is wasted compute + a small PumpPortal metering spend (bounded by capping the watched cohort to ~100 mints) and a logger that produces a null result - which is itself a useful finding (velocity/diversity does not predict forward return)."
+      },
+      {
+        "type": "pause_strategy",
+        "target": "believe_launchpad_listener",
+        "justification": "REQ-022 outcome: do NOT build the Believe listener right now. The config key 7SXEnhGR is reconfirmed a real DBC PoolConfig (owner dbcij3, 1048 bytes) and matches the one known Believe init, but universality could NOT be validated to N>=5 because (a) the payer/authority 5qWya6Uj no longer top-level-signs inits (they are now Squads-VaultTransactionExecute-wrapped, so 'recent inits signed by the payer' is no longer a queryable set) and (b) Believe launch volume has COLLAPSED from ~4000/day in May to <100/day by late June 2026. Building a listener for a dying launchpad is low ROI.",
+        "confidence": "MEDIUM",
+        "addresses_request": "REQ-022",
+        "baseline": "No Believe listener shipped; the strategy has contributed 0 trades. Validation was the gate to building it; that gate is now effectively unreachable on-chain and the underlying flow is drying up.",
+        "expected_effect": "Deprioritize/shelve the Believe listener; redirect the freed effort to the bonding_curve_velocity_diversity_logger (pump.fun, where >95% of graduations now occur). If Believe ever re-accelerates, re-validate via a paid Bitquery Believe Launchpad API query (initializeVirtualPoolWithSplToken filtered on the Squads vault/authority) pulling 5-10 historical May-peak mints, then re-run the (working) idx0 config decoder on each.",
+        "kill_criteria": "Re-open ONLY if Believe daily launch volume recovers above ~500/day for a sustained week (re-check via DexScreener/GMGN launchpad volume).",
+        "min_sample_size": "N/A (shelving decision). Re-validation would need >=5-10 confirmed Believe inits all carrying 7SXEnhGR before any ship.",
+        "regime_scope": "ANY.",
+        "rollback_plan": "Trivial - nothing is shipped; this just keeps the listener un-built. Un-shelve by filing a fresh validation request when Believe volume recovers.",
+        "risk_if_wrong": "If Believe quietly re-accelerates and we miss the listener, we forgo a coverage edge on a secondary launchpad - a coverage gap, not capital loss. Low downside given pump.fun hosts the vast majority of graduations."
       }
     ],
     "request_responses": [
       {
-        "request_id": "REQ-021",
+        "request_id": "REQ-023",
         "status_set_to": "completed",
-        "finding": "CLEAN 2-feature separator found (NOT mcap). Gate: skip WC entry if pair_age_hours>=1700 AND gt_sellers_m5>gt_buyers_m5. Walked all 15 lifetime WC trades (8W/7L). This combo blocks EXACTLY SQUIRE-LOSS (mint EN2nnxrg..., age 1718h, gt_buyers_m5=0 < gt_sellers_m5=2) and ZERO wins. Critically it KEEPS the same-mint SQUIRE-WIN (5-26, age 1656h but gt_buyers_m5=10 > gt_sellers_m5=2 = net-BUY live book) and TROLL (age 9676h but gt_buyers_m5=5 > gt_sellers_m5=3). Age-alone fails (kills TROLL); net-sell-alone fails (kills PIXEL +0.92 which had gtb=1/gts=7). The live order book on an AGED token is the discriminator: aged token + net-sell tape = being distributed into; aged token + net-buy tape, or any fresh token, = safe. Full 7-field proposal packet filed in proposals_for_survival_brain.",
-        "evidence": "15-trade WC table: SQUIRE-L 05-29 LOSS -14.07 EMERG age1718 gtb0/gts2; SQUIRE-W 05-26 WIN +2.32 age1656 gtb10/gts2; TROLL 05-28 WIN +0.27 age9676 gtb5/gts3; Ball 05-27 WIN +0.79 age160 gtb0/gts0; Butt 05-03 WIN +17.43 age5 gtb31/gts24; PIXEL 04-27 WIN +0.92 age764 gtb1/gts7. Combo (age>=1700 AND gts>gtb) = {SQUIRE-L} only."
+        "finding": "CLEAN 2-feature separator FOUND. Gate: SKIP WC entry if pair_age_hours > 30 AND (price_change_1h > 25 OR price_change_24h < -10). Walked all 21 lifetime WC trades (9W/12L). This blocks 6 of 12 losses - HUNTER -28.40 (age80h, h1=42.8, h24=483), HENRY -17.03 (age335h, h1=57.9), BURNIE -9.59 (age1514h, h24=-18.2), KINS -1.37 (age255h, h24=-17.3), CWU -0.24 (age716h, h24=-23.2), JTVO 0.00 (age8820h, h24=-38.1) - and kills ZERO of 9 wins. All THREE seed losses caught. The age>30h band is the discriminator that spares the young pumped winners (Butt +17.43 age5h h1=31.9/h24=669; TIMETRUMP +1.20 age2h; WINNING +1.15 age16h) - they pump too but they are <30h old so the gate ignores them. RESIDUAL: 6 losses cannot be cleanly gated (Goblin -8.1, Bumpy -13.43, soothsayer -13.08, ASTEROID -12.5, TOLYBOT -8.21, SQUIRE-L -14.07) - these are young/mid parabolic-bundled (overlapping the young pumped winners on h1/h6/h24) or the calm-aged net-sell SQUIRE-L (already handled by the shipped REQ-021 gate). For that residual cohort the recommendation is a regime-conditional SIZE-DOWN (mult->0 in BEAR/down-trend) rather than a feature gate, since 'bundle_detected AND h6>120' (which would reach Goblin/Bumpy/soothsayer) also kills Butt +17.43 and the +24.07 young winner. Full 7-field proposal filed in proposals_for_survival_brain with anti-stacking note (this is a 4th unactivated WC change, but its blocked set is DISJOINT from REQ-021's and zero-cost on wins).",
+        "evidence": "21-trade WC table (sym|WL|ret%|age_h|gtb/gts|h1|h24): HUNTER L -28.40 80 76/64 42.8 483 | HENRY L -17.03 335 43/28 57.9 51.9 | SQUIRE-L L -14.07 1718 0/2 0.5 20.8 | Bumpy L -13.43 1.5 140/94 28.5 351 | soothsayer L -13.08 4.3 0/0 19.1 666 | ASTEROID L -12.50 593 6/9 5.1 134 | BURNIE L -9.59 1514 11/4 -3.1 -18.2 | TOLYBOT L -8.21 33 5/8 -2.0 399 | Goblin L -8.10 135 7/30 15.0 157 | KINS L -1.37 255 1/2 0.1 -17.3 | CWU L -0.24 716 4/5 -2.0 -23.2 | JTVO L 0.00 8820 2/0 8.2 -38.1 | TROLL W +0.27 9676 5/3 4.1 15 | Ball W +0.79 160 0/0 1.1 -7.6 | PIXEL W +0.92 764 1/7 0.2 3.6 | WINNING W +1.15 16 16/8 43.0 288 | TIMETRUMP W +1.20 2 . 45.1 288 | SQUIRE-W W +2.32 1656 10/2 -4.5 6.7 | memecoin W +3.64 968 . 1.9 -7.0 | Butt W +17.43 5 31/24 31.9 669 | three W +24.07 53 3/3 3.4 83.9. Gate (age>30 AND (h1>25 OR h24<-10)) = {HUNTER,HENRY,BURNIE,KINS,CWU,JTVO}, 0 wins. Net -56.63% return removed."
       },
       {
-        "request_id": "REQ-020",
+        "request_id": "REQ-022",
         "status_set_to": "completed",
-        "finding": "PREMISE FALSIFIED then resolved. FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM is NOT a config - getAccountInfo (Alchemy paid RPC) shows owner=System Program, data length 0 bytes. It is the pool_authority/signer wallet at init account index 1, mislabeled as 'config' by a viral tweet. The REAL Believe config is 7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (init account index 0, owner=DBC program dbcij3..., 1048-byte PoolConfig). Believe authority/payer = 5qWya6Uj... Negative control: 5 genuine non-Believe DBC pool inits each used a distinct config (7pycaX6.., CfL5L7BV.., BBrtK6dD.., Fx87hHhH.., HBG9fuTv..), none == FhVo and none == 7SXEnhGR, confirming DBC configs are per-partner (Meteora docs: private configs gate creation to one authority + carry a fee_claimer), NOT multi-tenant. RECOMMENDATION: do NOT ship a filter on FhVo; gate the listener on config==7SXEnhGR... AND payer==5qWya6Uj... on program dbcij3... method initializeVirtualPoolWithSplToken.",
-        "evidence": "Believe init tx GDm66YRiTAGmYQqNWvfd... (Squads VaultTransactionExecute -> InitializeVirtualPoolWithSplToken) on mint GsVr8GdT57gBa6GxujrtAeRGmYbFfABGFk2eaG2DzBLV: account[0]=7SXEnhGR.. (DBC-owned 1048B config), account[1]=FhVo3mqL.. (sys-owned 0B authority), account[10]=5qWya6Uj.. (payer). Most-recent ~1000 DBC txs yielded 5 non-Believe inits with distinct configs."
+        "finding": "Universality of config 7SXEnhGR could NOT be confirmed to N>=5, AND the practical recommendation is to DEPRIORITIZE building the Believe listener. Reconfirmed: 7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn is a real DBC PoolConfig (getAccountInfo via Alchemy paid RPC: owner=dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN, data=1048 bytes) and the one known Believe init (mint GsVr8GdT) carries it at account idx0 (decoder validated, N=1). BLOCKERS to reaching N>=5: (1) payer/authority 5qWya6Uj no longer top-level-signs inits - its 250 most-recent sigs are all ClaimFee-type, 0 initializeVirtualPool; the known Believe init was executed via Squads VaultTransactionExecute (SQDS4ep...) with 5qWya6Uj only an inner account, so 'recent inits signed by the payer' is not a queryable set. (2) The DBC firehose surfaced only 2 inits in 250 recent txs, both NON-Believe configs (3oHcS1Ej.., 6M4szJtR..) - consistent with web data that Believe daily launches collapsed from ~4000/day (May) to <100/day (late June 2026). RECOMMENDATION: do NOT ship the listener on N=1; either pull 5-10 historical May-peak Believe mints via a paid Bitquery Believe Launchpad API query and re-run the working idx0 decoder, OR (preferred) shelve the Believe strategy entirely given the volume collapse and redirect effort to the pump.fun bonding-curve velocity logger where >95% of graduations now occur. Proposal filed (pause_strategy believe_launchpad_listener).",
+        "evidence": "getAccountInfo(7SXEnhGR): owner dbcij3..., 1048 bytes. Init tx GDm66YRiTAGmYQqNWv... idx0=7SXEnhGR (N=1 Believe, decoder validated). Payer 5qWya6Uj 250 recent sigs: 0 initializeVirtualPool (all ClaimFee). DBC 250-tx firehose: 2 inits, configs 3oHcS1EjFRrCrPm4F45x1eEsT8cvR9YBAMmSAFnn8Eim + 6M4szJtR7hEBQHTK7hkNjLskUxArKFojGjj8v9sGUmvx, neither == 7SXEnhGR. Web: Believe launches ~4000/day May -> <100/day late June 2026."
       }
     ],
     "subagents_dispatched": [
       {
-        "role": "REQ-021 WC separator miner",
-        "finding": "Walked all 15 WC trades; found clean 2-feature gate (pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5) blocking only SQUIRE-LOSS, keeping all wins incl. same-mint SQUIRE-WIN and aged TROLL. Live order book, not mcap/age, is the separator."
+        "role": "REQ-023 WC loss-class separator miner",
+        "finding": "Found clean 2-feature gate (pair_age>30h AND (h1>25 OR h24<-10)) blocking all 3 seed losses (HUNTER/HENRY/BURNIE) + KINS/CWU/JTVO = 6/12 losses, killing 0/9 wins; age>30h spares the young pumped winners. Residual 6 losses (young-bundled-parabolic + SQUIRE-L) have no clean gate -> recommend regime size-down."
       },
       {
-        "role": "REQ-020 Believe DBC config confirmer",
-        "finding": "Falsified the premise: FhVo3mqL is a 0-byte System-Program signer wallet, not a config. Real Believe config = 7SXEnhGR... (1048B, DBC-owned, init idx0); payer 5qWya6Uj... 5 non-Believe DBC launches used distinct configs (not multi-tenant)."
+        "role": "REQ-022 Believe config universality validator",
+        "finding": "Reconfirmed 7SXEnhGR is a real DBC config (1048B, owner dbcij3) and matches the N=1 known Believe init, but could not reach N>=5: payer now Squads-wrapped (not a queryable signer) and Believe volume collapsed to <100/day. Verdict INCONCLUSIVE on universality -> deprioritize the listener."
       },
       {
-        "role": "Novel-edge / launchpad scout",
-        "finding": "Best edge = pre-graduation bonding-curve liquidity-velocity scorer (extend existing grad logger to a leading indicator; arXiv 2602.14860). pump.fun has regained ~70-80% launches / ~95% graduations after letsBONK coup reversed; bot coverage correctly weighted."
+        "role": "Novel-edge launchpad / velocity scout",
+        "finding": "Graduation rates collapsed <1% platform-wide since ~May 22 (pump.fun 0.80%), sharpening the velocity thesis; pump.fun re-took #1. Delivered a concrete Phase-1 LOG-ONLY spec via PumpPortal websocket (vSolInBondingCurve/marketCapSol, grad ~85 SOL) and a NEW sub-hypothesis: buyer-diversity-divergence (high distinct-buyer ratio beats low at equal velocity)."
       },
       {
-        "role": "Time-of-day pattern miner",
-        "finding": "CLEAN NULL across 1014 trades: no hour-of-day, day-of-week, or catastrophic-loss-clustering effect survives significance testing (all |z|<1.3). Extremes are strategy-mix confounds, not time. Do NOT add a temporal gate."
+        "role": "Novel-edge scout (re-dispatch of stalled Believe agent)",
+        "finding": "First Believe agent stalled mid-poll without a verdict; re-dispatched synchronous-only and obtained the full INCONCLUSIVE finding above (payer Squads-wrapped + Believe volume collapse)."
       }
     ],
     "data_sources_used": [
       "own_trade_log",
       "sol_strategy_stats",
       "solana_rpc",
-      "dexscreener",
-      "bitquery_docs",
       "web_search",
-      "arxiv"
+      "bitquery_docs",
+      "pumpportal_docs"
     ],
-    "next_run_focus": "1) If the brain ships the Believe listener, validate config 7SXEnhGR... across >=5-10 Believe inits via Bitquery (initialize_virtual_pool_with_spl_token + authority 5qWya6Uj filter) to confirm universality before live trading. 2) Prototype/spec the bonding_curve_velocity_pregrad_snipe Phase-1 LOG-ONLY: define the exact velocity metric (trades-to-vSol) and forward-return capture using the existing grad listener's program subscription. 3) Re-mine WC at N>=8 post-activation to confirm the aged+net-sell gate holds and check whether a net-sell-imbalance signal generalizes to OTHER strategies' aged-token entries.",
+    "next_run_focus": "1) If the brain ships the bonding_curve_velocity_diversity_logger, after ~2 weeks re-mine the logged {velocity, diversity_ratio, +10m/+30m return} dataset to test the buyer_diversity_velocity_divergence split at N>=50 flagged tokens. 2) Re-mine WC at N>=8 POST-activation to confirm the REQ-023 gate (age>30 AND (h1>25 OR h24<-10)) holds out-of-sample and check whether it also helps OTHER strategies' aged-token entries. 3) Do NOT re-chase Believe on-chain (volume collapse + Squads-wrapped payer make N>=5 impractical); only revisit via paid Bitquery if Believe daily volume recovers >500/day. 4) Investigate Virl.fun as the emerging secondary launchpad if pump.fun dominance shows any crack.",
     "meta": {
-      "elapsed_min": 17,
+      "elapsed_min": 23,
       "subagent_count": 4,
-      "web_calls": 12,
-      "new_tokens_scouted": 8
+      "web_calls": 14,
+      "new_tokens_scouted": 5
     }
   },
   "research_status": {
-    "running": true,
-    "started_at": "2026-06-07 12:10:10 EDT",
-    "run_id": "research-147"
+    "running": false,
+    "last_run_id": "research-147",
+    "finished_at": "2026-06-07 12:35:34 EDT",
+    "outcome": "OK",
+    "summary": "research-147 (2026-06-07 Sun noon, CHOP SOL ~4.75 ALTCOIN_CHOP). 4 subagents (1 re-dispatch). BOTH pending requests CLOSED. REQ-023 HIGH SOLVED: clean 2-feature WC gate skip if pair_age>30h AND (h1>+25% OR h24<-10%) blocks all 3 seed losses HUNTER -28.4/HENRY -17.0/BURNIE -9.6 plus KINS/CWU/JTVO (6/12 losses, -56.63% return) and kills 0/9 wins; age>30h arm spares young pumped winners Butt/TIMETRUMP/WINNING; DISJOINT from shipped REQ-021 gate. Full 7-field proposal filed w/ anti-stacking note (4th unactivated WC change, same PID since 05-28). Residual 6 losses (young-bundled-parabolic + SQUIRE-L) no clean gate -> recommend regime size-down. REQ-022 MEDIUM: config 7SXEnhGR reconfirmed real (owner dbcij3, 1048B) + matches N=1 Believe init, but universality UNREACHABLE to N>=5 (payer 5qWya6Uj now Squads-wrapped, not a queryable signer; Believe volume collapsed ~4000/day May -> <100/day June) -> proposal to DEPRIORITIZE the Believe listener. NEW HYPOTHESIS buyer_diversity_velocity_divergence (HIGH): at equal bonding-curve SOL-raise velocity, high distinct-buyer ratio beats low (organic vs bundled); Phase-1 LOG-ONLY via PumpPortal wss (vSolInBondingCurve/marketCapSol, grad ~85 SOL); grad rates collapsed <1% platform-wide sharpens it. 3 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
     "timestamp": "2026-06-07 12:11:56 EDT",
@@ -371,7 +386,7 @@
     "dashboard_curl": "200",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 46.89,
+    "hours_since_last_trade": 46.97,
     "hours_since_last_buy": 46.57,
     "trades_last_24h": {
       "buys": 0,
@@ -481,7 +496,7 @@
     "next_run_focus": "1) RESEARCH SKIP (TOP PRIORITY): research-147 did NOT fire at noon today -- self-skipped to 06-14 (RESEARCH_SKIP-001 WARN filed). Next run MUST check if the operator manually triggered the researcher: if sol_research_status.json now shows research-147 -> resolved, note it. If still research-146 -> keep visibility high (research won't run until 06-14 otherwise). Do NOT re-append RESEARCH_SKIP-001 (already filed); update status only. Maintenance must NOT self-trigger research. 2) DORMANCY (TRUE, continuation): INFO at ~45.66h. Do NOT append a new dormancy alert each hour -- clock-only; re-append ONLY on material change (cross 168h/7d -> Section 9D todo, lockout >95pct, or SIGNAL events disappear). Watch for a fresh buy clearing dormancy. 3) Cycle cadence healthy (260->261); only restart if heartbeat frozen AND cycle_delta==0 next run WITH CYCLE_ERROR. 4) 0 open positions. 5) Process bot=1/dash=1 stable. 6) Mirror HEALTHY -- keep cache-busting. 7) WC ships + _convergence_tracker remain pre-activation pending next bot restart (~10.0d uptime).",
     "log_truncations": [],
     "elapsed_min": 6,
-    "file_age_min": 19.4,
+    "file_age_min": 24.4,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1911,13 +1926,13 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 262,
-    "age_min": 22.1,
+    "age_min": 27.1,
     "stale": false,
     "available": true
   },
   "brain_queue": {
     "requests_pending": 0,
-    "requests_acknowledged": 2,
+    "requests_acknowledged": 0,
     "hypotheses_pending": 42,
     "lessons_count": 19,
     "killed_ideas_count": 18,
@@ -1930,7 +1945,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 1721.473108,
+  "maint_next_sec": 1418.620999,
   "maint_next_str": "1:00 PM EST",
   "maint_last_run_str": "12:11 PM EST",
   "maint_stale": false,
@@ -1942,13 +1957,13 @@
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
-      "hypothesis_name": "bonding_curve_velocity_pregrad_snipe",
-      "run_id": "research-146",
+      "hypothesis_name": "buyer_diversity_velocity_divergence",
+      "run_id": "research-147",
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "Reviewed research-146's two proposals and one hypothesis: the wallet_convergence aged-token guard is already shipped (awaiting restart), the Believe-launch listener stays deferred as REQ-022, and the bonding-curve-velocity idea stays blocke",
-      "evidence_source": "action"
+      "evidence_text": "RUN-308 strengthened REQ-023 (HUNTER 3rd seed + pump_trap confound): still pending, unblocks at research-147 today noon.",
+      "evidence_source": "followup"
     },
     "tally": {
       "implemented": 20,
@@ -1958,27 +1973,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-06-07T11:42:11.258915",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip POKETCG: h6=10.6% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T11:42:11.686644",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip POKETCG: h6=10.6% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T11:42:12.122368",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip POKETCG: h6=10.6% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
     {
       "ts": "2026-06-07T11:42:30.064286",
       "type": "SIGNAL",
@@ -2657,6 +2651,27 @@
       "color": "#d29922",
       "msg": "Skip $tupid: downtrend h1=-43.4% h24=-56.0%",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-07T12:34:44.495398",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip $tupid: downtrend h1=-40.2% h24=-55.6%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T12:34:44.511145",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CEUA7zVo sold J4x1EMmQ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T12:34:44.525430",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CEUA7zVo sold J4x1EMmQ \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2675,9 +2690,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "12:31:18",
+  "ts": "12:36:21",
   "__publish_meta": {
-    "published_at": "2026-06-07 12:31:18 EDT",
+    "published_at": "2026-06-07 12:36:21 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
