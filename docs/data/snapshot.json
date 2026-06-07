@@ -1,15 +1,15 @@
 {
-  "sol_price": 64.54025935544601,
+  "sol_price": 64.59890090903829,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:22:15",
   "bot_cycles": 252,
   "bankroll": 1.0909,
-  "bankroll_usd": 70.40696893085605,
+  "bankroll_usd": 70.47094100166987,
   "budget": 0.15613428075,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 3.4,
+  "hour": 3.5,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -133,67 +133,72 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-06 04:10:00 EDT",
+    "timestamp": "2026-06-07 04:14:30 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "WC is the only strategy firing and it is bleeding: rolling_7d is now 1W/5L (WR 16.7%), the entire 6-trade window is wallet_convergence, and the newest trade HUNTER lost -28.40% on an EMERGENCY STOP - the largest WC loss in the recent run. Net-buy live book is no longer any kind of safety signal: HUNTER is the THIRD straight net-buy-book WC loss (after HENRY -17.03% and BURNIE -9.59%). The deeper problem is that these three losses are NOT one pattern - HENRY/BURNIE were calm + aged with flat tape, HUNTER was hot/parabolic (+483% h24) + bundled + mid-aged. The WC loss class is heterogeneous, so a single hand-built feature cannot separate losses from wins. The one tempting gate (the bot's existing pump_trap flag, which fired live on HUNTER) blocks 3 WC winners when applied across full history, so it is confounded, not a fix.",
-    "exit_analysis": "Lifetime: avg win +13.06%, avg loss -16.47%, R/R 0.79, stop-loss rate 50.5% (N=1020). Rolling 24h: 1 trade, HUNTER -28.40% emergency stop (R/R 0.0, 100% stop). Rolling 7d: 6 trades 1W/5L, avg win +24.07%, avg loss -11.28%, R/R 2.13 (propped entirely by the single +24% target win), stop rate 50%. WC all-time: 21 trades 9W/12L, WR 42.9%, R/R 0.55, pnl -0.01614 SOL. HUNTER's exit velocity snapshots (4m/8m/12m) were all -28.4% identical = a single gap-down capitulation candle, the dead-book/thin-liquidity slippage signature that turns a stop into a ~3x emergency bleed.",
-    "strategy_work": "Investigated whether the bot's existing research-134 pump_trap flag (h1>+25% AND h24>+100%, currently Phase-1 LOG-ONLY) can gate the HUNTER loss on wallet_convergence. HUNTER fired the flag live (pump_trap_would_skip=true) and was the ONLY flagged WC trade in the live-populated sample - which looked like a clean separator. Re-derived the rule across ALL 21 lifetime WC trades from raw h1/h24 values (the stored field only exists post-run-262): it flags 5 trades, including 3 WINNERS (Butt +17.43%, TIMETRUMP +1.20%, WINNING +1.15%) against 2 losers (HUNTER -28.4%, Bumpy -13.43%). So pump_trap is a win class AND a loss class on WC - confounded, the run-301 trap. Outcome: no clean hand-gate exists; strengthened REQ-023 with HUNTER as a third seed loss and the specific pumped-winner-vs-pumped-loser confound for research to resolve.",
-    "directives_changes": "Bumped version 309->310, updated_by run-308. Rewrote current_priority and priority_reasoning around the HUNTER loss and the pump_trap confound. Strengthened REQ-023: added HUNTER as SEED LOSS 3 (flagging the heterogeneous loss class), added pump_trap and bundle_detected to the candidate-feature list, and documented the new pumped-winner confound with a first candidate hypothesis (pumped AND age>~30h, since the 3 pumped winners are all <=16h old while HUNTER is 80h). Refreshed track_record (lifetime 1020 sells, rolling_24h HUNTER, rolling_7d 1W/5L, bankroll 1.0909, SOL $62.88). Added condensed lesson wc_netbuy_loss_n3_heterogeneous_and_pumptrap_confound_run308.",
+    "system_diagnosis": "No new trades have closed in ~24h (last buy HUNTER 37.7h ago, rolling_24h N=0, 0 open positions), so there is no fresh failure mode this run. The standing #1 problem is unchanged and structural: wallet_convergence keeps producing aged/net-buy-book losses (HENRY -17.03%, BURNIE -9.59%, HUNTER -28.40% over the last three WC fires), making the WC loss class heterogeneous (calm-aged vs hot-parabolic-bundled). That question is fully delegated to research-147 (fires today at noon) via REQ-023; nothing actionable can be added by hand without new trade data.",
+    "exit_analysis": "Lifetime (1020 sells): avg win +13.06%, avg loss -16.47%, R/R 0.79, stop-loss rate 50.5%. Rolling 7d (N=6): avg win +24.07% (single winner), avg loss -11.28%, R/R 2.13, stop-loss rate 50.0%, pnl -0.010255 SOL. Rolling 24h: no closed trades. WC all-time (N=21): WR 42.9%, R/R 0.55, pnl -0.01614 SOL. The 7d R/R looks healthy only because the lone win was a +24% target hit; the five losses still dominate pnl.",
+    "strategy_work": "No hypothesis advanced this run because there is no new evidence (zero trades since run-308). The active analytical thread - characterizing the heterogeneous net-buy-book WC loss class - is already specified in full as REQ-023 (HIGH), including all three seed losses and the pump_trap-vs-pumped-winner confound, and its unblock trigger (research-147) arrives today at noon. Re-deriving it by hand would duplicate delegated work. The bonding-curve-velocity edge stays blocked on research-147's trades-to-vSol spec.",
+    "directives_changes": "Bumped version 310->311, updated_by run-309. Rewrote current_priority and priority_reasoning to the null-delta no-ship posture (prior run-308 prose archived in _prev_run308 keys). Refreshed track_record as_of to run-309 and added the run-309 SOL/health note. REQ-022 and REQ-023 left unchanged (both pending research-147).",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "RUN-307 (BURNIE -9.59% 2nd net-buy aged dump, no ship): HELD - no fix was justified at N=2 and HUNTER at N=3 confirms a single hand-gate would have been wrong (the loss class is heterogeneous). REQ-023 remained the right channel.",
-      "Anti-stacking (3 WC gates pre-activation since 2026-05-28): STILL pre-activation - PID 11760 unchanged at cycle 225 (~8.5d, no restart). Gates remain unmeasured; correctly did not add a 4th.",
-      "REQ-022 (Believe config universality): still pending; research-147 fires Sunday 2026-06-07 (1 day out).",
-      "bonding_curve_velocity_pregrad_snipe HIGH: still blocked on research-147 trades-to-vSol metric spec."
+      "RUN-308 HUNTER -28.40% 3rd net-buy WC loss / no-ship decision: held correctly - HUNTER remains the most recent WC trade, no new WC fire has tested it, and the no-ship call stands. (rolling_24h N=0)",
+      "RUN-308 strengthened REQ-023 (HUNTER 3rd seed + pump_trap confound): still pending, unblocks at research-147 today noon.",
+      "RUN-308 anti-stacking (3 WC gates pre-activation, PID unchanged ~8.5d): still true, now ~9.5d same-PID; no restart occurred, so the gates remain unmeasured and a 4th change stays correctly blocked.",
+      "RUN-303 Believe listener deferral (REQ-022 config universality): still pending, unblocks at research-147 today noon."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Skip wallet_convergence entries on an aged token (>=1700h old) when the live order book is net-sell - blocks the SQUIRE-class dead-book dump.",
+        "proposal": "Add a wallet_convergence skip gate: block entry when the token is aged (pair_age >= 1700h) AND the live order book is net-sell (more sellers than buyers in the last 5 min).",
         "from_research": "research-146",
         "status": "SHIPPED",
-        "why": "Already shipped to code at run-303; still pre-activation behind the same-PID streak (no restart since 2026-05-28). It would not have caught HUNTER (80h, net-buy) anyway, so no action needed this run."
+        "why": "Already shipped to source in run-303 (REQ-021). It is in degen_bot.py but still pre-activation because the bot has not restarted since 2026-05-28 (~9.5d same PID). It will activate at the next natural restart; no further action needed this run."
       },
       {
-        "proposal": "Add a Believe-launchpad listener gated on the corrected config 7SXEnhGR + payer 5qWya6Uj.",
+        "proposal": "Build a Believe-launchpad listener filtered on the corrected config key 7SXEnhGR... plus payer 5qWya6Uj... (the old FhVo3mqL key was falsified as a 0-byte signer wallet, not a config).",
         "from_research": "research-146",
         "status": "DEFERRED",
-        "why": "Research's own pre-ship gate is unmet: the config is verified on only 1 real Believe launch. Unlocks when research-147 (Sunday 2026-06-07) confirms config universality across >=5-10 Believe inits, tracked as REQ-022."
+        "why": "Deferred in run-303 pending universality validation, tracked as REQ-022. The single verified config was confirmed on only 1 real Believe launch; shipping a listener before confirming 7SXEnhGR... holds across >=5-10 Believe inits risks an under-capture bug. Unblock trigger: research-147 (today noon) services REQ-022."
       },
       {
-        "proposal": "REQ-022: validate Believe config universality before building the listener.",
-        "from_research": "REQ-022 (pending)",
+        "proposal": "Build bonding_curve_velocity_pregrad_snipe - extend the existing graduation logger into a pre-graduation liquidity-velocity scorer (trades-to-vSol), Phase 1 log-only.",
+        "from_research": "research-146 (new_hypothesis)",
         "status": "PENDING",
-        "why": "Awaiting the next research run. research-147 fires Sunday 2026-06-07 (1 day out); it owns this Bitquery validation. No brain action available until then."
+        "why": "Cannot start the Phase-1 log-only build until research-147 delivers the exact velocity metric (trades-to-vSol) and forward-return capture spec, which research-146 explicitly listed as its own next_run_focus item #2. Unblock trigger: research-147 today noon."
       },
       {
-        "proposal": "REQ-023: find a joint multi-feature separator that isolates the net-buy-book WC losses from the WC wins.",
-        "from_research": "REQ-023 (pending)",
+        "proposal": "REQ-023 (HIGH): characterize the heterogeneous net-buy-book WC loss class (HENRY/BURNIE calm-aged + HUNTER hot-parabolic-bundled) and find a multi-feature separator that splits pumped losers from pumped winners without sacrificing wins.",
+        "from_research": "requests_for_research (pending)",
         "status": "PENDING",
-        "why": "Strengthened this run with HUNTER as a third seed and the pump_trap-vs-pumped-winner confound, but it requires the research lab's full-sample backtest. Unlocks at research-147 (Sunday 2026-06-07). The brain confirmed no clean hand-gate exists, so routing to research is the only valid path."
+        "why": "Awaiting research-147, which runs today (Sunday) at noon - the request is fully specified with all three seed losses and the pump_trap confound, so no further brain input is needed before research acts."
+      },
+      {
+        "proposal": "REQ-022 (MEDIUM): validate Believe config 7SXEnhGR... universality across >=5-10 Believe inits before shipping the listener.",
+        "from_research": "requests_for_research (pending)",
+        "status": "PENDING",
+        "why": "Awaiting research-147 today noon; this is research-146's own next_run_focus item #1, so research will pick it up without additional brain input."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "The only candidate fix this run was enforcing the bot's existing pump-trap rule (skip a buy when a token is already up >25% in an hour AND >100% in a day) on the copy-of-wallets strategy. Testing it against every past copy-wallet trade showed it would have blocked three past WINNERS (one a +17.4% win) as well as the HUNTER loss - so it is not a clean fix, it would cost more in lost winners than it saves. The three loss examples also turned out to be two different kinds of failure, so no single rule separates them. The right move is to hand this to the weekly research lab (which runs tomorrow) rather than bolt on a confounded filter. Also, three earlier copy-wallet safety changes are still waiting for the bot to restart before they take effect, so adding a fourth unmeasured change now would make it impossible to tell which change did what.",
+    "no_code_change_reason": "Null-delta run: zero new trades closed since the prior run (last buy 37.7h ago, no open positions, rolling_24h N=0), so there is no new failure mode to address. The only live analytical question (heterogeneous WC losses) is already delegated to research-147, which fires today at noon. Anti-stacking also forbids a 4th wallet_convergence change while the three already-shipped WC gates remain unmeasured (bot has not restarted in ~9.5 days).",
     "changelog": [
-      "Recorded the newest copy-wallet trade: HUNTER, a token already up +483% on the day, bought then dumped -28.4% in under an hour (an emergency stop). It is the third copy-wallet loss in a row where the live buy/sell tape looked healthy (more buyers than sellers) yet the token still crashed.",
-      "Checked whether the bot's existing 'already-pumped' warning flag could have caught HUNTER. It would have - but it also would have blocked three past winning trades, so it is not a safe filter to switch on for this strategy.",
-      "Sent a sharpened request to the weekly research lab to find a real rule that separates these losing pumped/aged tokens from the winning ones, including the new clue that the winning pumped tokens were all very young (under ~16 hours) while the losing one was older (80 hours).",
-      "Updated the brain's memory with fresh numbers and a lesson about not trusting a warning flag that was only added to recent trades - you have to re-check it against the whole history."
+      "Confirmed the bot is alive and trading-capable (process steady ~9.5 days, latest health write ~42 min old).",
+      "Confirmed no trades closed in the past day and no positions are open - a quiet, expected lull for this market.",
+      "Refreshed the brain's saved stats and notes to today's numbers; made no strategy or code changes.",
+      "Held both outstanding research questions open for the weekly research run happening today at noon."
     ],
     "actions_taken": [
-      "Diagnosed the HUNTER wallet_convergence -28.40% emergency stop as the third consecutive net-buy-book WC loss and a new (hot/parabolic/bundled) loss sub-type distinct from the calm/aged HENRY and BURNIE losses.",
-      "Tested and rejected enforcing the research-134 pump_trap flag on wallet_convergence: confounded (blocks Butt +17.43%, TIMETRUMP, WINNING winners).",
-      "Strengthened REQ-023 to the research lab with HUNTER as seed loss 3 plus the pumped-winner-vs-pumped-loser confound and a first candidate split (pumped AND age>~30h).",
-      "Marked the research-146 Believe-listener proposal DEFERRED pending REQ-022, and confirmed the already-shipped aged-livebook WC gate remains pre-activation.",
-      "Refreshed brain directives stats and added a condensed lesson about re-deriving candidate gates from full history rather than a partially-populated logged flag."
+      "Verified the research brain is idle (last run 2026-05-31) so this run could proceed without collision.",
+      "Reviewed research-146's two proposals and one hypothesis: the wallet_convergence aged-token guard is already shipped (awaiting restart), the Believe-launch listener stays deferred as REQ-022, and the bonding-curve-velocity idea stays blocked on the upcoming research spec.",
+      "Kept REQ-023 (the wallet_convergence loss-pattern investigation) and REQ-022 (Believe config check) queued for today's noon research run.",
+      "Decided against any wallet_convergence change because the three prior guards have not yet taken effect and stacking a fourth would make results impossible to read."
     ],
     "next_priorities": [
-      "Ingest research-147 (Sunday 2026-06-07) answers to REQ-023 (joint WC loss separator across all 21 WC trades) and REQ-022 (Believe config universality). Act on any clean separator with a full 7-field proposal; if null, size WC down via a skip gate in bear trend.",
-      "Watch for the natural bot restart (PID 11760 unchanged ~8.5d). Once it fires, the three pending WC gates activate - then evaluate them at N>=8 WC fires post-activation before any further WC change.",
-      "Track the pump_trap Phase-1 logger toward research-134's N>=20 flagged-live-buys Phase-2 threshold (now at N=1: HUNTER, -28.4% confirmed loss)."
+      "RUN-310 (2026-06-08): ingest research-147's output (fires today noon) and disposition its findings against REQ-023 and REQ-022; if a clean multi-feature WC separator is delivered with a full 7-field proposal, ship it (subject to anti-stacking).",
+      "Watch for a natural bot restart: once PID 11760 cycles, the three pre-activation WC gates go live - begin collecting the post-activation WC sample (target N=8 fires) to evaluate the aged-livebook gate.",
+      "If research-147 delivers the bonding_curve_velocity trades-to-vSol spec, scope the Phase-1 log-only build (no live entries)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -204,15 +209,14 @@
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.5,
       "bankroll": 1.0909,
-      "pnl_today": -0.008963
+      "pnl_today": 0.0
     },
     "active_strategies": [
       "wallet_convergence",
       "bear_strength",
       "consensus_boost",
-      "fresh_profile",
       "chop_momentum_scalp",
-      "bounce_hunter"
+      "fresh_profile"
     ]
   },
   "wallet_scan": {
@@ -220,16 +224,16 @@
     "result": "Saved 20 wallets in 37m 49s",
     "completed": "2026-06-05T02:09:07.478625"
   },
-  "brain_next_sec": 86254.164731,
+  "brain_next_sec": 85951.179352,
   "brain_next_str": "Mon 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Sat 4:15 AM EST",
+  "brain_last_run_str": "",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:38 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 1414.164731,
+  "research_next_sec": 1111.179352,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -349,19 +353,19 @@
     "summary": "research-146 (2026-05-31 Sun noon, CHOP/ALTCOIN_WINTER SOL ~$82). 4 subagents. BOTH pending requests CLOSED. REQ-021 (HIGH) SOLVED: clean 2-feature WC gate pair_age>=1700h AND gt_sellers_m5>gt_buyers_m5 blocks only SQUIRE-LOSS (-14.07%), keeps every win incl same-mint SQUIRE-WIN (net-buy book 10>2) and aged TROLL (9676h, net-buy 5>3) - live order book on aged token is the separator, NOT mcap/age. Full 7-field proposal filed (MEDIUM, anti-stacking note: 2 WC ships still pre-activation). REQ-020 (MEDIUM) premise FALSIFIED: FhVo3mqL is a 0-byte System-Program signer wallet NOT a config; real Believe config=7SXEnhGRXVkR5LEE4o6xXYwcX6QJbFemMS3mbmMRHSDn (1048B DBC-owned, init idx0), payer=5qWya6Uj; 5 non-Believe DBC launches used distinct configs (per-partner, not multi-tenant). Proposal: ship listener on config 7SXEnhGR AND payer 5qWya6Uj. NEW HYPOTHESIS bonding_curve_velocity_pregrad_snipe (HIGH): extend existing grad logger into a pre-graduation liquidity-velocity scorer (trades-to-vSol; arXiv 2602.14860); pump.fun regained ~70-80% launches/95% grads. Time-of-day mine = CLEAN NULL (all |z|<1.3, do not add temporal gate). 2 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-07 03:05:00 EDT",
-    "run_id": "maint-258",
-    "finished_at": "2026-06-07 03:05:00 EDT",
+    "timestamp": "2026-06-07 04:05:30 EDT",
+    "run_id": "maint-259",
+    "finished_at": "2026-06-07 04:05:30 EDT",
     "run_outcome": "HEALTHY",
     "bot_status": "RUNNING",
     "bot_pid": 11760,
     "bot_pid_prior": 11760,
     "bot_restarted_since_last_run": false,
-    "bot_cycle": 251,
-    "bot_cycle_prior": 250,
+    "bot_cycle": 252,
+    "bot_cycle_prior": 251,
     "bot_cycle_delta": 1,
-    "bot_heartbeat_age_sec": 2160,
-    "bot_events_age_sec": 870,
+    "bot_heartbeat_age_sec": 2544,
+    "bot_events_age_sec": 9,
     "dashboard_status": "RUNNING",
     "dashboard_pid": 3752,
     "dashboard_pid_prior": 3752,
@@ -369,8 +373,8 @@
     "dashboard_curl": "200",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 38.47,
-    "hours_since_last_buy": 37.44,
+    "hours_since_last_trade": 38.56,
+    "hours_since_last_buy": 38.45,
     "trades_last_24h": {
       "buys": 0,
       "sells": 0
@@ -378,45 +382,45 @@
     "open_positions": 0,
     "total_trades_logged": 2060,
     "dormancy_alert": true,
-    "dormancy_status": "TRUE (continuation, same episode as DORMANCY_ALERT-004). 0 trades in trailing 24h. Last buy HUNTER wallet_convergence 06-05 13:37:59 (~37.44h); last trade HUNTER -28.40% EMERGENCY STOP sell 06-05 14:29:19 (~36.6h), 2060 total unchanged. Per policy only update clock here; no new alert appended -- no material change (no 168h/7d cross, no >95% lockout, SIGNAL stream still live 35/100). 36.6h far under 168h so no Section 9D operator todo.",
-    "filter_lockout_diagnosis": "NOT in lockout. Cycle 250->251 (+1). Last-100 events: BUY_SKIP 41, SIGNAL 35, CB_SKIP 13, SCAN 8, BS_SKIP 3 -- skip class 57/100 (well under 95% lockout bar) interleaved with a live 35-SIGNAL stream. Filters evaluating REAL candidates (e.g. m5 pump/dump exit-liquidity skips on live tokens), not starved. 0 CYCLE_ERROR.",
-    "liveness_note": "ALIVE. Cycle 250->251 (+1); latest event ts 2026-06-07T02:50:32 (~14min at probe); events mtime age 870s, heartbeat mtime age 2160s. STALLED numeric bar (events>300 AND heartbeat>1800) is met but the gate's restart trigger is a CYCLE_ERROR crash loop -- there are 0 CYCLE_ERROR, cycle advanced +1, events fresher than heartbeat, and bot.log shows live 'Polling 141 target wallets'. This is a normal long mid-cycle (heartbeat writes at cycle boundaries; cycle 252 in progress). No restart.",
+    "dormancy_status": "TRUE (continuation, same episode as DORMANCY_ALERT-004). 0 trades in trailing 24h. Last buy HUNTER wallet_convergence 06-05 13:37:59 (~38.45h); last trade HUNTER -28.40% EMERGENCY STOP sell 06-05 14:29:19 (~37.6h), 2060 total unchanged. Per policy only update clock here; no new alert appended -- no material change (no 168h/7d cross, no >95% lockout, SIGNAL stream still live 40/100). 37.6h far under 168h so no Section 9D operator todo.",
+    "filter_lockout_diagnosis": "NOT in lockout. Cycle 251->252 (+1). Last-100 events: BUY_SKIP 52, SIGNAL 40, SCAN 8 -- skip class 52/100 (well under 95% lockout bar) interleaved with a live 40-SIGNAL stream. Filters evaluating REAL candidates, not starved. 0 CYCLE_ERROR.",
+    "liveness_note": "ALIVE. Cycle 251->252 (+1); latest event ts 2026-06-07T04:04:30 (~1min at probe); events mtime age 9s, heartbeat mtime age 2544s (~42min). Heartbeat writes at cycle boundaries so cycle 253 is just running long; events are 9s fresh and bot is actively logging SIGNAL/BUY_SKIP. STALLED numeric bar (events>300 AND heartbeat>1800) NOT met (events only 9s). No CYCLE_ERROR, no crash loop. No restart.",
     "coordination": {
       "brain_running": false,
       "research_running": false
     },
     "actions_taken": [
-      "Cadence gate: prior maint-257 finished 2026-06-07 02:05:30 EDT, now ~03:04 EDT 06-07 (~59min gap >= 30min) -> proceeded.",
+      "Cadence gate: prior maint-258 finished 2026-06-07 03:05:00 EDT, now ~04:04 EDT 06-07 (~59min gap >= 30min) -> proceeded.",
       "Process: bot pid 11760 (pythonw degen_bot.py --continuous) unchanged; dash pid 3752 (pythonw dashboard.py) unchanged. Exactly one each -- no dedupe/start.",
-      "Liveness ALIVE: cycle 250->251 (+1), latest event 02:50:32, 0 CYCLE_ERROR, bot.log live wallet polling. Heartbeat/events ages tripped STALLED numbers but no crash loop -> long mid-cycle, no restart.",
-      "Coordination/locks: brain run-308 (06-06 04:15 OK_NO_SHIP, v310) running=false; research-146 (05-31, next weekly Sun 06-07 noon = today) running=false. Neither running=true -- nothing to clear.",
-      "Trade flow: 0 open positions (sol_positions.json []). Last buy HUNTER 06-05 13:37:59 (~37.44h); last trade HUNTER -28.40% sell 06-05 14:29:19 (~36.6h). 2060 total, unchanged.",
+      "Liveness ALIVE: cycle 251->252 (+1), latest event 04:04:30 (events age 9s), 0 CYCLE_ERROR. Heartbeat 42min old is a normal long mid-cycle (writes at cycle boundaries); fresh events prove scanner alive -> no restart.",
+      "Coordination/locks: brain run-308 (06-06 04:15 OK_NO_SHIP, v310) running=false; research-146 (05-31) running=false. Neither running=true -- nothing to clear. NOTE: brain daily cron ~04:00 is due/imminent (still shows yesterday's run-308); did not fire yet at probe.",
+      "Trade flow: 0 open positions (sol_positions.json empty). Last buy HUNTER 06-05 13:37:59 (~38.45h); last trade HUNTER -28.40% sell 06-05 14:29:19 (~37.6h). 2060 total, unchanged.",
       "DORMANCY TRUE (continuation of DORMANCY_ALERT-004). Updated dormancy clock only; did NOT append a new alert (still INFO, SIGNAL stream live, not lockout, <168h). No Section 9D operator todo.",
-      "Dashboard: HTTP 200 on /api/state (2.71s). Section 9: one_time_tasks=0, brain_queue.overloaded=False, brain idle, research idle.",
-      "Mirror: cache-busted probe published_at 2026-06-07 03:00:47 EDT (age ~3.6min, <15) AND HTTP 200. Mirror HEALTHY; publisher daemon alive. No heal. consecutive_heals=0.",
-      "Eff-lab: hyp 42/60, lessons 19/50 (condensed_lessons.entries=19 keys), reqs 2/8, drift [] -> triggered=False. Directives v310. sol_efficiency_lab_status.json MISSING (never run).",
+      "Dashboard: HTTP 200 on /api/state (2.91s). Section 9: one_time_tasks=0, brain_queue.overloaded=False.",
+      "Mirror: cache-busted probe published_at 2026-06-07 04:01:22 EDT (age ~4min, <15) AND HTTP 200. Mirror HEALTHY; publisher daemon alive. No heal. consecutive_heals=0.",
+      "Eff-lab: hyp 42/60, lessons 19/50 (condensed_lessons=19 keys), reqs 2/8, drift [] -> triggered=False. Directives v310. sol_efficiency_lab_status.json MISSING (never run).",
       "Section 9 audit: 9A 0 one_time_tasks; 9B brain/research not running=true; 9C status files within cadence; 9D dormancy True but <168h so no todo; 9E brain_queue.overloaded False. Clean.",
-      "Log hygiene: bot.log 0.54MB, watchdog.log 0.12MB, dashboard.log 0MB, bot.err.log 0MB, all far under 50MB. Largest sol_*.json = sol_trade_log.json 1.16MB, none oversized (>2MB).",
-      "Maintenance-log: read existing flat array (94), appended maint-258 (fresh flat array write via Python)."
+      "Log hygiene: bot.log 0.54MB, watchdog.log 0.12MB, dashboard.err.log 0.02MB, rest ~0MB, all far under 50MB. Largest sol_*.json = sol_trade_log.json 1.16MB, none oversized (>2MB).",
+      "Maintenance-log: read existing flat array, appended maint-259 (fresh flat array write via Python)."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 3.6,
+      "pre_heal_age_min": 4.0,
       "heal_attempted": false,
       "heal_succeeded": false,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 3.6,
+      "post_heal_age_min": 4.0,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
         "old_pid": null,
         "new_pid": null,
-        "reason": "No restart -- mirror HEALTHY (published_at 03:00:47 EDT, age ~3.6min). Gate requires consecutive_heals>=3 which is 0.",
+        "reason": "No restart -- mirror HEALTHY (published_at 04:01:22 EDT, age ~4min). Gate requires consecutive_heals>=3 which is 0.",
         "post_restart_verified": null
       },
-      "note": "Cache-busted probe. published_at 2026-06-07 03:00:47 EDT, ~3.6min old, HTTP 200. Mirror healthy, publisher alive."
+      "note": "Cache-busted probe. published_at 2026-06-07 04:01:22 EDT, ~4min old, HTTP 200. Mirror healthy, publisher alive."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -434,7 +438,7 @@
       },
       "fired_this_run": false,
       "skip_reason": "not_triggered",
-      "summary": "hyp 42/60, lessons 19/50 (condensed_lessons.entries=19 keys), reqs 2/8, drift []. Directives v310. Lab status file never written (MISSING)."
+      "summary": "hyp 42/60, lessons 19/50 (condensed_lessons=19 keys), reqs 2/8, drift []. Directives v310. Lab status file never written (MISSING)."
     },
     "state_file_footprint": {
       "largest_state_file_mb": 1.16,
@@ -453,21 +457,21 @@
       "zombie_one_time_tasks": 0,
       "stuck_running_flags_fixed": 0,
       "stale_status_files": [
-        "brain running=False/idle (run-308 06-06 04:15)",
-        "research running=False (research-146 05-31, within weekly cadence)"
+        "brain running=False/idle (run-308 06-06 04:15); daily cron ~04:00 due/imminent",
+        "research running=False (research-146 05-31, weekly Sun noon = today 06-07)"
       ],
       "dormancy_escalation_filed": false,
       "memory_pressure_auto_trigger": false
     },
     "warnings": [
-      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto + run-306 anti-stacking WC gates + run-307 net-buy book findings + research-146 REQ-021 aged-livebook gate all still INACTIVE until bot PID restarts (still 11760, uptime since 2026-05-28 21:28, ~12.2d). Batch-activate at next natural restart. Maintenance does NOT restart for activation.",
+      "SHIPPED-BUT-DORMANT (unchanged): run-300 CWC veto + source_wallet logging + run-303 WC aged-livebook veto + run-306 anti-stacking WC gates + run-307 net-buy book findings + research-146 REQ-021 aged-livebook gate all still INACTIVE until bot PID restarts (still 11760, uptime since 2026-05-28 21:28, ~12.3d). Batch-activate at next natural restart. Maintenance does NOT restart for activation.",
       "CODE (for brain, not ops): bot.log may still show recurring FreshProfile _convergence_tracker AttributeError tied to pre-activation CWC convergence-tracker ship that long-lived PID 11760 never loaded. Bot continues past it (caught). Surfaced for survival brain.",
       "MINOR (unchanged): Google Sheets dashboard push may still fail on DNS per prior bot.err.log; secondary export, gracefully caught; mirror + local dashboard healthy. No action."
     ],
-    "next_run_focus": "1) DORMANCY (TRUE, continuation): INFO-level at ~36.6h. Do NOT append a new alert each hour -- update clock here only; re-append ONLY on material change (cross 168h/7d -> Section 9D operator todo, lockout >95%, or SIGNAL events disappear). Watch for a fresh WC/strategy buy clearing dormancy. 2) Cycle cadence healthy (250->251, +1/run); current cycle 252 ran long (~36min heartbeat age) -- if heartbeat stays frozen AND cycle_delta==0 next run with CYCLE_ERROR present, then restart; otherwise it's a long polling cycle. 3) 0 open positions. 4) Process bot=1/dash=1 stable. 5) Mirror HEALTHY -- keep cache-busting. 6) Brain next daily ~04:00 06-07 (~1h); research next weekly Sun 06-07 noon (today). 7) WC ships + _convergence_tracker remain pre-activation pending next bot restart (~12.2d uptime).",
+    "next_run_focus": "1) DORMANCY (TRUE, continuation): INFO-level at ~37.6h. Do NOT append a new alert each hour -- update clock here only; re-append ONLY on material change (cross 168h/7d -> Section 9D operator todo, lockout >95%, or SIGNAL events disappear). Watch for a fresh WC/strategy buy clearing dormancy. 2) BRAIN: daily cron ~04:00 was due/imminent at this run (still showed yesterday's run-308) -- next run confirm a fresh brain run-309 wrote status; if status mtime stale vs scheduled-task lastRunAt, flag possible truncation (Section 9C). 3) Cycle cadence healthy (251->252); cycle 253 running long (~42min heartbeat age) but events 9s fresh -- only restart if heartbeat frozen AND cycle_delta==0 next run WITH CYCLE_ERROR present. 4) 0 open positions. 5) Process bot=1/dash=1 stable. 6) Mirror HEALTHY -- keep cache-busting. 7) Research next weekly Sun 06-07 noon (today). 8) WC ships + _convergence_tracker remain pre-activation pending next bot restart (~12.3d uptime).",
     "log_truncations": [],
-    "elapsed_min": 3,
-    "file_age_min": 58.5,
+    "elapsed_min": 2,
+    "file_age_min": 4.8,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1897,7 +1901,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 252,
-    "age_min": 44.2,
+    "age_min": 49.2,
     "stale": false,
     "available": true
   },
@@ -1916,9 +1920,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3214.164731,
+  "maint_next_sec": 2911.179352,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:07 AM EST",
+  "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1933,122 +1937,17 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "bonding_curve_velocity_pregrad_snipe HIGH: still blocked on research-147 trades-to-vSol metric spec.",
-      "evidence_source": "followup"
+      "evidence_text": "Reviewed research-146's two proposals and one hypothesis: the wallet_convergence aged-token guard is already shipped (awaiting restart), the Believe-launch listener stays deferred as REQ-022, and the bonding-curve-velocity idea stays blocke",
+      "evidence_source": "action"
     },
     "tally": {
-      "implemented": 19,
+      "implemented": 20,
       "queued": 2,
       "rejected": 0,
-      "total": 21
+      "total": 22
     }
   },
   "events": [
-    {
-      "ts": "2026-06-07T02:23:44.752833",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 3Q2h4iXv sold BWvirFeE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:23:46.989030",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip DBT: h1=-32.7% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:23:47.021245",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 3Q2h4iXv sold FoygxJyR \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:24:34.165846",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7rbxsXch sold 2NK1zUAC \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:24:34.183898",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7rbxsXch sold 4EL7nmuU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:24:36.085241",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip Worlds: h6=594.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:24:36.091260",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7rbxsXch sold 7fMznrz7 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:24:36.111820",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7rbxsXch sold 3oL99tu2 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:25:21.649472",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: A8YvrQUZ sold 3oL99tu2 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:25:23.837695",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip BOUTYWORK: m5=13.6% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:25:23.841655",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: A8YvrQUZ sold J4x1EMmQ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:25:23.857424",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: A8YvrQUZ sold BgJb11D5 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:25:23.874981",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: A8YvrQUZ sold 3oL99tu2 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:26:19.797299",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip RPGKITTY: h1=-9.6% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-07T02:26:19.813361",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5tBTAtVB sold 6bXmxW5M \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-06-07T02:26:22.147821",
       "type": "BUY_SKIP",
@@ -2643,6 +2542,111 @@
       "color": "#d29922",
       "msg": "h6pump skip cotton : h6=21.6% (extended 6h pump >= 5%, early buyers distributing, run116)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:08:53.216266",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3Q2h4iXv sold vPqxCA5p \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:08:53.226283",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3Q2h4iXv sold 7gW8pDR1 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:08:53.242363",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3Q2h4iXv sold BgJb11D5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:08:55.451238",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip PHOTO: h1=-20.3% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:08:57.685512",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip BEPE: deep24h h24=-77.3% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:10:01.538538",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip BabyT: m5=-12.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:10:03.559171",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip GAY: h6=87.2% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:10:05.791454",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Presidents: downtrend h1=-25.0% h24=-21.5%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:10:08.074454",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip JACK: m5=-10.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:10:10.046427",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Hunterius: deep24h h24=-51.2% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:11:07.364848",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: A8YvrQUZ sold 3oL99tu2 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:11:07.377215",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: A8YvrQUZ sold J4x1EMmQ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:11:09.521886",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Bountywork: h1=-10.7% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:11:11.687501",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BOUTYWORK: m5=13.2% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-07T04:11:12.144726",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BOUTYWORK: m5=13.2% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2661,9 +2665,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:06:25",
+  "ts": "04:11:28",
   "__publish_meta": {
-    "published_at": "2026-06-07 04:06:25 EDT",
+    "published_at": "2026-06-07 04:11:28 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
