@@ -1,10 +1,10 @@
 {
-  "sol_price": 65.21053759727037,
+  "sol_price": 65.14109130817691,
   "bot_status": "RUNNING",
   "bot_last_seen": "11:29:36",
   "bot_cycles": 12,
   "bankroll": 1.0865,
-  "bankroll_usd": 70.85124909943427,
+  "bankroll_usd": 70.77579570633422,
   "budget": 0.1552405512,
   "pnl_today": 0.0,
   "deployed": 0,
@@ -133,79 +133,82 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-09 04:14:30 EDT",
+    "timestamp": "2026-06-10 11:37:32 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "Copy-trade remains the structural money pit (537 trades, 33.7% win rate, -0.83 SOL lifetime), but it is dormant right now and there is nothing new to act on there. The live issue this run was capability, not a fresh loss: a fully-specced, zero-risk observation tool was sitting un-built, and zero new trades happened in the last day, so the highest-value move was to build it. The standing structural issue: the bot has run on the same process for ~11.5 days, so the four wallet-convergence safety gates shipped over the last two weeks are all still inactive, waiting for the next automatic restart.",
-    "exit_analysis": "Last 7 days: 7 trades, 2 wins / 5 losses (29% win rate), average win +13.4%, average loss -11.3%, reward/risk 1.19, stop-loss rate 43%. Last 24 hours: no closed trades. Lifetime: 36% win rate, average win +13.0%, average loss -16.5%, reward/risk 0.79, stop-loss rate 50%. Reward/risk is healthy this week; win rate is the weak link, and the five recent losses are all wallet-convergence trades that the just-shipped (but not-yet-active) gate would have blocked.",
-    "strategy_work": "Built and shipped the bonding-curve velocity/diversity logger (research proposal #2) that last run deliberately held back for a careful dedicated pass. It is a pure observation tool: it watches brand-new pump.fun tokens, measures how fast each one raises money in its first 5 minutes and how many different wallets are buying (a real crowd versus a few wallets faking the move), flags the fastest-rising tokens, and records how they perform 10 and 30 minutes later. After it collects about 50 flagged tokens we can test whether 'fast AND many distinct buyers' actually predicts which tokens keep going up - and only then consider trading on it. No money is at risk while it just watches.",
-    "directives_changes": "Bumped version 312 to 313. Marked the velocity/diversity logger hypothesis as SHIPPED (Phase-1, log-only, awaiting restart to activate). Refreshed all the running stats. Added a lasting lesson recording that the feared per-event cost on this data feed does not apply to the free public stream we use, plus the safe-design template followed for adding live websocket code to the bot.",
+    "system_diagnosis": "The bot RESTARTED this run (process id changed, fresh cycle counter), which finally switched ON four copy-wallet entry filters and the new bonding-curve logger that had been sitting unused in the code for ~13 days. Verifying them in the live bot is the #1 finding: the copy-wallet filters work (see exit analysis), but the new bonding-curve logger is BROKEN -- it has written 2000 rows and not one of them recorded a single trade (every row shows zero buyers and zero price movement). The cause is that the logger opens a second live data connection to the pump.fun data feed, and that feed's provider explicitly allows only ONE connection per user at a time, so the second connection's per-token trade subscriptions are being silently ignored while the firehose of brand-new tokens still flows. The logger is therefore producing pure noise and cannot yet start its multi-week calibration.",
+    "exit_analysis": "Lifetime (1023 sells): avg win +13.03%, avg loss -16.44%, R/R 0.79, stop-loss rate 50.4%. Last 7 days (7 trades, 2 wins / 5 losses): avg win +13.43%, avg loss -10.08%, R/R 1.33, stop-loss rate 42.9%. Last 24h (2 trades, both losses): one copy-wallet emergency stop -12.42% on 'Bountywork' and one bear-strength rug/no-price exit at 0.0% on 'SPCX' (no real capital lost). The Bountywork loss was entered the day BEFORE the restart, so the filters were not yet live; the now-active aged-pump filter WOULD have blocked it (token was 119h old with a fresh +35% 1h pump) -- a clean confirmation that the filter catches real losses it has never seen before.",
+    "strategy_work": "Confirmed the four copy-wallet filters and the velocity/diversity logger went live at the restart. Validated the aged-pump/aged-bleed filter against the fresh Bountywork loss (out-of-sample: it was bought after the research that designed the filter, so it was not in the training set). Diagnosed the logger failure to root cause using the data provider's own documentation. Did not change any code -- the logger fix requires carefully reworking proven live-connection code, so it is queued for research to confirm the fix design first.",
+    "directives_changes": "Bumped to version 314. Rewrote current focus to the activation findings. Added research request REQ-024 (fix the broken logger: confirm the one-connection cause, specify multiplexing onto the single existing connection, verify the real cost, redesign the over-fast buffer). Added the logger as a pending idea marked BLOCKED/broken. Refreshed all stats. Logged a new lesson about verify-after-restart and the one-connection trap.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "Run-310's wallet-convergence gate (skip aged tokens that are pumping or bleeding): still in the code, still waiting for the next automatic restart to switch on - same as all four convergence gates. No new convergence trades fired this week to test it.",
-      "Run-310's BOUNTYWORK bear-strength win (+2.78%): aged out of the 24-hour window; bear-strength lifetime stays healthy at 39% win rate, reward/risk 1.94, profit-positive.",
-      "The velocity/diversity logger that run-310 queued as 'next run's focused build': built and shipped this run as promised."
+      "run-311 shipped the velocity/diversity logger: ACTIVATED this run by the restart, but found BROKEN in production (0 of 2000 rows captured any trade) -> REQ-024 filed to fix.",
+      "run-310 shipped the REQ-023 copy-wallet aged-pump/aged-bleed filter: ACTIVATED this run; validated out-of-sample by the Bountywork -12.42% loss it would have blocked.",
+      "The ~13-day pre-activation backlog (4 copy-wallet filters) is now CLEARED -- all live as of this run."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a wallet-convergence skip gate: skip an aged token (older than 30h) if it is either pumping hard on the hour or already down big on the day.",
+        "proposal": "Add the aged-token copy-wallet entry filter: skip if the token is over 30h old AND (1h up >25% OR 24h down >10%).",
         "from_research": "research-147",
         "status": "SHIPPED",
-        "why": "Already shipped last run (run-310). It is in the code, blocks all three seed losses and zero of nine historical wins, and switches on at the next automatic restart. Nothing more to do this run."
+        "why": "Shipped run-310, ACTIVATED this run by the restart, and validated out-of-sample: the new Bountywork -12.42% loss (119h old, +35% 1h) is exactly the kind of trade it blocks, and it was bought after the research so it is a genuine fresh confirmation."
       },
       {
-        "proposal": "Build a log-only logger that measures new pump.fun tokens' 5-minute money-raising speed and buyer diversity, then records their forward returns - to calibrate a future entry rule.",
+        "proposal": "Add the bonding-curve velocity + buyer-diversity logger (log-only) to calibrate a future entry rule.",
         "from_research": "research-147",
         "status": "SHIPPED",
-        "why": "Built it this run as a separate, isolated, free websocket listener. Pure observation, no trading. Re-mine the data once it has logged 50+ flagged tokens; abandon if it captures fewer than 30 flagged tokens in two weeks."
+        "why": "Shipped run-311 and ACTIVATED this run -- but verification found it BROKEN in production (0 trades captured across 2000 rows; second data connection violates the provider's one-connection rule). Filed REQ-024 to fix; no calibration data yet."
       },
       {
-        "proposal": "Shelve building the Believe-launchpad listener because its launch volume collapsed and its config can't be validated.",
+        "proposal": "Shelve / deprioritize building the Believe launchpad listener.",
         "from_research": "research-147",
         "status": "KILLED",
-        "why": "Accepted and recorded as shelved last run (run-310). Believe launches fell from ~4000/day to under 100/day and the validation path is unreachable. Only revisit if Believe daily volume recovers above ~500/day for a sustained week."
+        "why": "Accepted and shelved in runs 310/311: Believe daily launches collapsed to <100/day and its config could not be validated. No change this run; remains shelved."
       }
     ],
-    "code_changes_this_run": [
-      "Added a new always-on observation tool: the bot now opens a second, separate connection to the pump.fun data feed and watches every brand-new token. For each one it measures, over the first 5 minutes, how fast it raised money and how many distinct wallets bought it, then flags the fastest-rising tokens and records how their price moved 10 and 30 minutes after the flag. All of this is written to a new log file. It places no trades and cannot affect any trade - it only watches and records, so we can later test whether fast-plus-broad buying predicts which new tokens keep climbing."
-    ],
+    "code_changes_this_run": [],
+    "no_code_change_reason": "The only code work indicated is fixing the broken velocity/diversity logger, and its fix requires carefully reworking proven live-data-connection code (merging the logger onto the single existing pump.fun data connection). The root cause is high-confidence but not 100% proven, and the logger is log-only (zero capital risk), so the disciplined move is to confirm the fix design via research (REQ-024) and ship a correct v2 next, rather than blind-patch async connection code on a bot that just regained a clean, healthy process. The money-affecting copy-wallet filters just activated and need their first post-restart trades as evidence before any further tuning.",
     "changelog": [
-      "Shipped the new velocity/diversity observation tool for brand-new pump.fun tokens (log-only, no trading).",
-      "Confirmed the data feed it uses is free - the cost warning in the research write-up applies to a different, paid trading endpoint we do not use.",
-      "Refreshed all running statistics and the brain's notes; bumped the brain version to 313.",
-      "No new trades happened in the last day, so trading results are unchanged from yesterday."
+      "The bot restarted, which turned ON four copy-wallet safety filters and the new bonding-curve logger that had been waiting ~13 days to go live.",
+      "Confirmed one of those filters would have blocked yesterday's -12.4% Bountywork loss -- a real loss it had never seen before.",
+      "Found the new bonding-curve logger is broken: it has written 2000 rows but recorded zero trades, because it opens a second connection to a data feed that only allows one connection at a time.",
+      "Filed a research request to fix the logger the right way (share the bot's single existing connection) instead of patching it blindly.",
+      "No code changed this run."
     ],
     "actions_taken": [
-      "Built and shipped the bonding-curve velocity/diversity logger (research-147 proposal #2) as a separate, memory-bounded, crash-isolated background listener; compile-checked clean.",
-      "Confirmed and recorded that the velocity/diversity logger's data feed carries no per-event cost (the free public stream, not the paid trading API).",
-      "Re-confirmed the Believe-launchpad listener stays shelved (research-147 proposal #3).",
-      "Verified the run-310 wallet-convergence gate and all four convergence gates remain in the code, waiting for the next automatic restart to activate."
+      "Verified the four wallet_convergence gates (CWC veto, source_wallet logging, REQ-021 aged-net-sell, REQ-023 aged-pump/aged-bleed) activated at the restart.",
+      "Ran the REQ-023 gate counterfactual on the new Bountywork wallet_convergence -12.42% loss -- confirmed it would have been blocked (out-of-sample).",
+      "Diagnosed the bonding_curve_velocity_diversity_logger as broken in production (0/2000 rows captured trades) and traced it to a second simultaneous PumpPortal websocket connection.",
+      "Filed REQ-024 (HIGH) asking research to confirm the one-connection root cause, specify multiplexing onto the existing graduation-listener connection, verify real metering cost, and redesign the 2h-churn buffer.",
+      "Marked the bonding_curve_velocity_diversity_logger hypothesis BLOCKED and recorded a verify-after-restart lesson."
     ],
     "next_priorities": [
-      "Once the bot restarts and the velocity logger runs, confirm it is capturing flagged tokens (target: 30+ flagged in two weeks; abandon if fewer).",
-      "After ~50 flagged tokens have closed 30-minute returns, test whether high-buyer-diversity flagged tokens beat low-diversity ones at equal speed - the core question before any live entry rule.",
-      "After the next restart activates the four wallet-convergence gates, watch the next 8 convergence trades to confirm the run-310 age-and-pump gate holds out of sample.",
-      "Keep routing any new convergence counter-examples to the research lab rather than hand-patching."
+      "Watch the next wallet_convergence fires now that all 4 gates are live; formally evaluate the REQ-023 gate at N=8 post-activation WC fires (research-147 next_focus).",
+      "When research returns REQ-024, ship the corrected velocity/diversity logger (single shared connection + flagged-only persistence) and re-verify it captures non-null trades after the next restart.",
+      "Monitor bear_strength after the SPCX rug exit; if a 2nd post-restart rug/0% exit appears, characterize the entry (h24 +301% macro outlier) -- N=1 not actionable yet.",
+      "Confirm the freshly-restarted bot stays healthy (cycle counter climbing) over the next day."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1021,
-      "win_rate": 35.6,
+      "total_sells": 1023,
+      "win_rate": 35.5,
       "avg_win_pct": 13.03,
-      "avg_loss_pct": -16.47,
+      "avg_loss_pct": -16.44,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.0885,
-      "pnl_today": 0.0
+      "bankroll": 1.0865,
+      "pnl_today": -0.003869
     },
     "active_strategies": [
-      "wallet_convergence",
-      "bear_strength",
-      "consensus_boost",
-      "fresh_profile",
-      "chop_momentum_scalp"
+      "fresh_profile (PROVEN)",
+      "bear_strength (TESTING)",
+      "consensus_boost (TESTING)",
+      "wallet_convergence (TESTING, 4 gates now ACTIVE)",
+      "chop_momentum_scalp (TESTING)",
+      "fresh_boost (TESTING)",
+      "copy_trade (KILLED/watch-only)"
     ]
   },
   "wallet_scan": {
@@ -213,16 +216,16 @@
     "result": "Saved 20 wallets in 33m 54s",
     "completed": "2026-06-09T01:49:34.377368"
   },
-  "brain_next_sec": 59378.458638,
+  "brain_next_sec": 59075.100736,
   "brain_next_str": "Thu 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 462.541362,
-  "brain_last_run_str": "Tue 4:14 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "11:37 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:35 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 320138.458638,
+  "research_next_sec": 319835.100736,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -375,7 +378,7 @@
     "bot_events_age_sec": 45.7,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 7.42,
+    "hours_since_last_trade": 7.5,
     "hours_since_last_buy": 7.31,
     "trades_last_24h": {
       "buys": 1,
@@ -486,7 +489,7 @@
     "next_run_focus": "1) Brain run-312 in progress (started 11:26:39) -- next run, confirm it finished (running:false) and note its outcome + whether it logged the activation/new PID. 2) Verify the 5 ships + bonding-velocity logger are behaving post-activation; watch bot.log for any errors the new code paths surface (esp. _convergence_tracker). 3) Watch buy cadence -- flat now, +2 trades today, normal; only re-open dormancy on >168h quiet / skip>95pct. 4) Confirm maintenance hourly cadence resumed (this run broke a ~10.4h gap) and brain returns to ~04:03 daily; if the gap recurs, escalate scheduler/host-sleep to operator. 5) Mirror HEALTHY (consecutive_heals=0); auto-restart gate only reachable on 3x consecutive stale. 6) lessons 21/50, hyp 42/60 -- eff-lab still well clear. 7) PATH GUARD: always pass ABSOLUTE bot paths to Python writes.",
     "log_truncations": [],
     "elapsed_min": 3,
-    "file_age_min": 3.5,
+    "file_age_min": 8.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1934,15 +1937,15 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 12,
-    "age_min": 4.7,
+    "age_min": 9.8,
     "stale": false,
     "available": true
   },
   "brain_queue": {
-    "requests_pending": 0,
+    "requests_pending": 1,
     "requests_acknowledged": 0,
-    "hypotheses_pending": 42,
-    "lessons_count": 21,
+    "hypotheses_pending": 43,
+    "lessons_count": 22,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1953,7 +1956,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 1538.458638,
+  "maint_next_sec": 1235.100736,
   "maint_next_str": "12:00 PM EST",
   "maint_last_run_str": "11:30 AM EST",
   "maint_stale": false,
@@ -1970,8 +1973,8 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "Built and shipped the bonding-curve velocity/diversity logger (research-147 proposal #2) as a separate, memory-bounded, crash-isolated background listener; compile-checked clean.",
-      "evidence_source": "action"
+      "evidence_text": "run-310 ingested research-147 (Sunday noon). SHIPPED the REQ-023 clean WC separator: skip wallet_convergence if pair_age>30h AND (h1>+25% OR h24<-10%) - blocks 6/12 lifetime WC losses (HUNTER/HENRY/BURNIE seeds + KINS/CWU/JTVO = -56.63% ret",
+      "evidence_source": "summary"
     },
     "tally": {
       "implemented": 22,
@@ -2698,9 +2701,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "11:34:21",
+  "ts": "11:39:24",
   "__publish_meta": {
-    "published_at": "2026-06-10 11:34:21 EDT",
+    "published_at": "2026-06-10 11:39:24 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
