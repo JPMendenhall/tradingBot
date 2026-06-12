@@ -1,15 +1,15 @@
 {
-  "sol_price": 66.52938032466838,
+  "sol_price": 66.53586413217107,
   "bot_status": "RUNNING",
-  "bot_last_seen": "04:09:11",
-  "bot_cycles": 88,
+  "bot_last_seen": "04:10:00",
+  "bot_cycles": 89,
   "bankroll": 1.0713,
-  "bankroll_usd": 71.27292514181723,
+  "bankroll_usd": 71.27987124479486,
   "budget": 0.15319486905,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 3.8,
+  "hour": 3.9,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -133,82 +133,86 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-10 11:37:32 EDT",
+    "timestamp": "2026-06-12 04:04:35 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "The bot RESTARTED this run (process id changed, fresh cycle counter), which finally switched ON four copy-wallet entry filters and the new bonding-curve logger that had been sitting unused in the code for ~13 days. Verifying them in the live bot is the #1 finding: the copy-wallet filters work (see exit analysis), but the new bonding-curve logger is BROKEN -- it has written 2000 rows and not one of them recorded a single trade (every row shows zero buyers and zero price movement). The cause is that the logger opens a second live data connection to the pump.fun data feed, and that feed's provider explicitly allows only ONE connection per user at a time, so the second connection's per-token trade subscriptions are being silently ignored while the firehose of brand-new tokens still flows. The logger is therefore producing pure noise and cannot yet start its multi-week calibration.",
-    "exit_analysis": "Lifetime (1023 sells): avg win +13.03%, avg loss -16.44%, R/R 0.79, stop-loss rate 50.4%. Last 7 days (7 trades, 2 wins / 5 losses): avg win +13.43%, avg loss -10.08%, R/R 1.33, stop-loss rate 42.9%. Last 24h (2 trades, both losses): one copy-wallet emergency stop -12.42% on 'Bountywork' and one bear-strength rug/no-price exit at 0.0% on 'SPCX' (no real capital lost). The Bountywork loss was entered the day BEFORE the restart, so the filters were not yet live; the now-active aged-pump filter WOULD have blocked it (token was 119h old with a fresh +35% 1h pump) -- a clean confirmation that the filter catches real losses it has never seen before.",
-    "strategy_work": "Confirmed the four copy-wallet filters and the velocity/diversity logger went live at the restart. Validated the aged-pump/aged-bleed filter against the fresh Bountywork loss (out-of-sample: it was bought after the research that designed the filter, so it was not in the training set). Diagnosed the logger failure to root cause using the data provider's own documentation. Did not change any code -- the logger fix requires carefully reworking proven live-connection code, so it is queued for research to confirm the fix design first.",
-    "directives_changes": "Bumped to version 314. Rewrote current focus to the activation findings. Added research request REQ-024 (fix the broken logger: confirm the one-connection cause, specify multiplexing onto the single existing connection, verify the real cost, redesign the over-fast buffer). Added the logger as a pending idea marked BLOCKED/broken. Refreshed all stats. Logged a new lesson about verify-after-restart and the one-connection trap.",
+    "system_diagnosis": "Bot is healthy and the activated gate stack is verifying cleanly, so the #1 open problem is the broken pre-graduation velocity logger: across 2000 ring-buffer entries it has captured ZERO trade events (every entry shows zero buyers/zero velocity), confirming the run-312 root cause that it opened a second websocket connection PumpPortal silently refuses to serve per-token trades on. It is log-only with no capital at risk, and the fix (route velocity tracking through the bot's single existing graduation connection) is queued for the research brain this Sunday rather than blind-patched on a freshly-restarted bot.",
+    "exit_analysis": "Lifetime 1025 sells: avg win +12.99%, avg loss -16.44%, R/R 0.79, stop-loss rate 50.4%. Last 24h N=2: one flat win +0.45% (wallet_convergence) and one -15.22% emergency stop (bear_strength). 7-day N=6 R/R 0.12 is dragged down by two pre-restart wallet-convergence losses (HUNTER -28.4%, Bountywork -12.4%) aging into the window; the only trade entered under the now-active gates was the +0.45% win.",
+    "strategy_work": "Verified the first clean post-activation wallet_convergence fire: '1B' was a 21-hour-old token with 6 different wallets buying together, calm entry, and it exited flat-positive (+0.45%). This confirms two things at once -- the gate correctly lets healthy young convergence through (it only blocks older tokens), and the wallet-attribution logging we shipped weeks ago is finally proven working in production (all 6 buyer addresses were recorded, where older trades showed a blank). On the loss side, 'BR\u00d6TCHEN' (bear_strength) stopped out -15.22% on a calm entry into a thin $60k-liquidity token. It is the 5th loss of this type, but bear_strength is still profitable over its lifetime (R/R ~2.0), so per anti-over-tuning discipline no new filter was added; a watch-trigger was recorded instead.",
+    "directives_changes": "Bumped to version 315 (run-313). Refreshed all rolling/lifetime stats; updated wallet_convergence (now 23 lifetime trades) and bear_strength notes; added one bear_strength condensed lesson (the BR\u00d6TCHEN low-liquidity stop and why no gate at N=1) and one ship-discipline lesson (a single post-activation fire closed two 'is it really working' questions). REQ-024 (logger fix) left pending for the Sunday research run. No new research requests filed.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-311 shipped the velocity/diversity logger: ACTIVATED this run by the restart, but found BROKEN in production (0 of 2000 rows captured any trade) -> REQ-024 filed to fix.",
-      "run-310 shipped the REQ-023 copy-wallet aged-pump/aged-bleed filter: ACTIVATED this run; validated out-of-sample by the Bountywork -12.42% loss it would have blocked.",
-      "The ~13-day pre-activation backlog (4 copy-wallet filters) is now CLEARED -- all live as of this run."
+      "Wallet-convergence gate (run-312 ship): VERIFIED again -- 1B (06-11) is the first clean post-activation fire, a 6-wallet calm convergence the gate correctly passed, exited +0.45%. Post-activation eval count 1 of 8.",
+      "Source-wallet logging (shipped run-300): now CONFIRMED working -- 1B recorded all 6 buyer addresses; the field was previously blank on pre-activation entries.",
+      "Velocity logger (run-311 ship): STILL BROKEN -- 0 of 2000 entries captured any trade; REQ-024 fix remains queued for research-148 (Sun 06-14).",
+      "bear_strength: BR\u00d6TCHEN -15.22% is the 5th calm-entry catastrophic stop, but strategy stays lifetime-positive; no change, watch-trigger recorded for a 2nd sub-$80k calm stop."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add the aged-token copy-wallet entry filter: skip if the token is over 30h old AND (1h up >25% OR 24h down >10%).",
+        "proposal": "Add the wallet-convergence age/momentum skip gate (skip aged tokens going vertical or already bleeding).",
         "from_research": "research-147",
         "status": "SHIPPED",
-        "why": "Shipped run-310, ACTIVATED this run by the restart, and validated out-of-sample: the new Bountywork -12.42% loss (119h old, +35% 1h) is exactly the kind of trade it blocks, and it was bought after the research so it is a genuine fresh confirmation."
+        "why": "Shipped and activated at the run-312 restart; this run is a second out-of-sample confirmation -- 1B was correctly NOT blocked (young, healthy) and won, while the gate's target losses (e.g. Bountywork) sit in the pre-activation window. Continuing to evaluate to N=8 post-activation fires (now at 1)."
       },
       {
-        "proposal": "Add the bonding-curve velocity + buyer-diversity logger (log-only) to calibrate a future entry rule.",
+        "proposal": "Add the pre-graduation velocity + buyer-diversity logger (log-only data collection).",
         "from_research": "research-147",
         "status": "SHIPPED",
-        "why": "Shipped run-311 and ACTIVATED this run -- but verification found it BROKEN in production (0 trades captured across 2000 rows; second data connection violates the provider's one-connection rule). Filed REQ-024 to fix; no calibration data yet."
+        "why": "Shipped run-311 but broken in production (0/2000 trades captured). Fix is queued as REQ-024 for research-148; superseded operationally by that fix request, no capital at risk meanwhile."
       },
       {
-        "proposal": "Shelve / deprioritize building the Believe launchpad listener.",
+        "proposal": "Shelve the Believe-launchpad listener (validation unreachable, launch volume collapsed).",
         "from_research": "research-147",
         "status": "KILLED",
-        "why": "Accepted and shelved in runs 310/311: Believe daily launches collapsed to <100/day and its config could not be validated. No change this run; remains shelved."
+        "why": "Accepted and shelved -- Believe daily volume fell below ~100/day and the payer signal is no longer queryable. Re-opens only if Believe volume recovers above ~500/day for a sustained week."
+      },
+      {
+        "proposal": "REQ-024: confirm logger root cause, specify single-connection multiplex fix, verify metering cost, redesign the buffer to keep only flagged tokens.",
+        "from_research": "research-148 (queued)",
+        "status": "PENDING",
+        "why": "Waiting on the weekly research run (Sunday 06-14). The logger's continued 0/2000 capture this run is additional confirming evidence for the request; no brain-side action possible until research delivers the corrected websocket architecture."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "The only code work indicated is fixing the broken velocity/diversity logger, and its fix requires carefully reworking proven live-data-connection code (merging the logger onto the single existing pump.fun data connection). The root cause is high-confidence but not 100% proven, and the logger is log-only (zero capital risk), so the disciplined move is to confirm the fix design via research (REQ-024) and ship a correct v2 next, rather than blind-patch async connection code on a bot that just regained a clean, healthy process. The money-affecting copy-wallet filters just activated and need their first post-restart trades as evidence before any further tuning.",
+    "no_code_change_reason": "Three reasons. (1) The broken velocity logger's fix is a careful async-websocket restructuring that is correctly queued for the research brain (REQ-024, Sunday 06-14) rather than blind-patched on a freshly-restarted bot. (2) The one new loss (BR\u00d6TCHEN -15.22%) is a single occurrence on a strategy that is still profitable over its lifetime, so adding a filter would be over-tuning. (3) The wallet-convergence gate is working as designed and needs more live fires to evaluate, not changes.",
     "changelog": [
-      "The bot restarted, which turned ON four copy-wallet safety filters and the new bonding-curve logger that had been waiting ~13 days to go live.",
-      "Confirmed one of those filters would have blocked yesterday's -12.4% Bountywork loss -- a real loss it had never seen before.",
-      "Found the new bonding-curve logger is broken: it has written 2000 rows but recorded zero trades, because it opens a second connection to a data feed that only allows one connection at a time.",
-      "Filed a research request to fix the logger the right way (share the bot's single existing connection) instead of patching it blindly.",
-      "No code changed this run."
+      "Confirmed the wallet-convergence safety gates are working: the one new convergence trade ('1B', 6 wallets buying a 21-hour-old token together) was correctly allowed through and finished slightly positive.",
+      "Confirmed the buyer-wallet recording feature is now working in real trading (all 6 buyer addresses were saved).",
+      "Noted one bad bear-strength trade ('BR\u00d6TCHEN', down 15%) but made no change because that strategy is still profitable overall and one loss is not enough to act on.",
+      "Re-checked the new-token speed tracker: still broken (collecting no useful data); the repair is scheduled with the research side for this Sunday."
     ],
     "actions_taken": [
-      "Verified the four wallet_convergence gates (CWC veto, source_wallet logging, REQ-021 aged-net-sell, REQ-023 aged-pump/aged-bleed) activated at the restart.",
-      "Ran the REQ-023 gate counterfactual on the new Bountywork wallet_convergence -12.42% loss -- confirmed it would have been blocked (out-of-sample).",
-      "Diagnosed the bonding_curve_velocity_diversity_logger as broken in production (0/2000 rows captured trades) and traced it to a second simultaneous PumpPortal websocket connection.",
-      "Filed REQ-024 (HIGH) asking research to confirm the one-connection root cause, specify multiplexing onto the existing graduation-listener connection, verify real metering cost, and redesign the 2h-churn buffer.",
-      "Marked the bonding_curve_velocity_diversity_logger hypothesis BLOCKED and recorded a verify-after-restart lesson."
+      "Verified the research-147 wallet_convergence gate on a fresh out-of-sample fire (1B +0.45%) and advanced its post-activation eval count to 1 of 8.",
+      "Confirmed the source_wallet logging (run-300) is functional in production via 1B's 6 captured addresses.",
+      "Recorded a bear_strength watch-trigger (2nd sub-$80k calm-entry catastrophic stop) and added a condensed lesson rather than gating on the BR\u00d6TCHEN N=1 loss.",
+      "Kept REQ-024 (velocity-logger fix) pending for research-148 after re-confirming the logger captured 0 of 2000 trades."
     ],
     "next_priorities": [
-      "Watch the next wallet_convergence fires now that all 4 gates are live; formally evaluate the REQ-023 gate at N=8 post-activation WC fires (research-147 next_focus).",
-      "When research returns REQ-024, ship the corrected velocity/diversity logger (single shared connection + flagged-only persistence) and re-verify it captures non-null trades after the next restart.",
-      "Monitor bear_strength after the SPCX rug exit; if a 2nd post-restart rug/0% exit appears, characterize the entry (h24 +301% macro outlier) -- N=1 not actionable yet.",
-      "Confirm the freshly-restarted bot stays healthy (cycle counter climbing) over the next day."
+      "Evaluate the wallet_convergence gate at N=8 post-activation fires (now 1) -- track each new convergence fire's age/h1/h24 and outcome.",
+      "Ingest research-148 (Sun 06-14) REQ-024 response and ship the single-connection velocity-logger fix if the corrected architecture is specified.",
+      "Watch bear_strength: if a 2nd sub-$80k calm-entry catastrophic stop occurs, file a research request to test a bear_strength entry-liquidity floor (target separating BR\u00d6TCHEN $60k-class losses from $100k+ wins)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1023,
+      "total_sells": 1025,
       "win_rate": 35.5,
-      "avg_win_pct": 13.03,
+      "avg_win_pct": 12.99,
       "avg_loss_pct": -16.44,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.0865,
-      "pnl_today": -0.003869
+      "bankroll": 1.0713,
+      "pnl_today": -0.004594
     },
     "active_strategies": [
-      "fresh_profile (PROVEN)",
-      "bear_strength (TESTING)",
-      "consensus_boost (TESTING)",
-      "wallet_convergence (TESTING, 4 gates now ACTIVE)",
-      "chop_momentum_scalp (TESTING)",
-      "fresh_boost (TESTING)",
-      "copy_trade (KILLED/watch-only)"
+      "fresh_profile",
+      "bear_strength",
+      "consensus_boost",
+      "wallet_convergence",
+      "chop_momentum_scalp",
+      "bounce_hunter",
+      "gecko_breadth_burst"
     ]
   },
   "wallet_scan": {
@@ -216,16 +220,16 @@
     "result": "Saved 20 wallets in 33m 54s",
     "completed": "2026-06-09T01:49:34.377368"
   },
-  "brain_next_sec": 86079.584571,
+  "brain_next_sec": 85776.575436,
   "brain_next_str": "Sat 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 285.415429,
-  "brain_last_run_str": "Wed 11:37 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:11 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:35 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 174039.584571,
+  "research_next_sec": 173736.575436,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -375,7 +379,7 @@
     "bot_events_age_sec": 65.1,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 8.78,
+    "hours_since_last_trade": 8.86,
     "hours_since_last_buy": 8.71,
     "trades_last_24h": {
       "buys": 2,
@@ -478,12 +482,12 @@
     "next_run_focus": "1) Cadence steady (~58min) -- keep confirming hourly holds. 2) Bot quiet this hour (no new trade) but NOT dormant: trailing-24h anchored by the 19:22 buy (ages out ~19:22 EDT 06-12). If NO buy fires before ~19:22 06-12, the window tightens to 1 buy -- track. 3) LIVENESS healthy (cycle +2, events ~65s); restart only if events>300 AND heartbeat>1800 with CYCLE_ERROR, or cycle FREEZES (delta 0) two runs. 4) WC gates LIVE since 06-10 restart; watch post-activation fires through to exit (eval at N=8 WC fires). 5) Bonding-velocity logger BROKEN+brain-owned (REQ-024); do NOT ops-escalate while <2MB. 6) Mirror HEALTHY (consecutive_heals=0). 7) Eff-lab clear (hyp 43/60, lessons 22/50). 8) Research-147 idle; next weekly run due Sun 06-14 noon. 9) PATH GUARD: always pass ABSOLUTE bot paths to Python writes; lessons count = len(condensed_lessons.entries) only.",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 1.9,
+    "file_age_min": 6.9,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-06-12 03:47:03 EDT",
+    "timestamp": "2026-06-12 04:10:00 EDT",
     "computed_from_trades": 2070,
     "total_buys": 1024,
     "total_sells": 1025,
@@ -1907,7 +1911,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-06-11T19:22:32.891380",
-      "hours_ago": 8.41,
+      "hours_ago": 8.79,
       "symbol": "1B",
       "strategy": "wallet_convergence"
     },
@@ -1925,8 +1929,8 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 88,
-    "age_min": 22.3,
+    "cycle": 89,
+    "age_min": 4.4,
     "stale": false,
     "available": true
   },
@@ -1945,7 +1949,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3039.584571,
+  "maint_next_sec": 2736.575436,
   "maint_next_str": "5:00 AM EST",
   "maint_last_run_str": "4:07 AM EST",
   "maint_stale": false,
@@ -1962,31 +1966,17 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "run-310 ingested research-147 (Sunday noon). SHIPPED the REQ-023 clean WC separator: skip wallet_convergence if pair_age>30h AND (h1>+25% OR h24<-10%) - blocks 6/12 lifetime WC losses (HUNTER/HENRY/BURNIE seeds + KINS/CWU/JTVO = -56.63% ret",
-      "evidence_source": "summary"
+      "evidence_text": "Verified the research-147 wallet_convergence gate on a fresh out-of-sample fire (1B +0.45%) and advanced its post-activation eval count to 1 of 8.",
+      "evidence_source": "action"
     },
     "tally": {
       "implemented": 22,
-      "queued": 2,
+      "queued": 3,
       "rejected": 0,
-      "total": 24
+      "total": 25
     }
   },
   "events": [
-    {
-      "ts": "2026-06-12T03:42:40.763717",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F2SuErm4 sold H3LG8pZK \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-12T03:42:42.662512",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip Toast: h6=246.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
     {
       "ts": "2026-06-12T03:43:05.930650",
       "type": "SIGNAL",
@@ -2672,6 +2662,20 @@
       "color": "#d29922",
       "msg": "lp_concentration_skip: RITTER 100% in 1 pool n=1",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-12T04:10:00.771670",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 145 wallets (cycle #89)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-12T04:14:23.297517",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Mayhem: m5=225.0% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2690,9 +2694,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:09:20",
+  "ts": "04:14:23",
   "__publish_meta": {
-    "published_at": "2026-06-12 04:09:20 EDT",
+    "published_at": "2026-06-12 04:14:23 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
