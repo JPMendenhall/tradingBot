@@ -1,10 +1,10 @@
 {
-  "sol_price": 67.25263924339059,
+  "sol_price": 67.27322377034336,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:48:48",
   "bot_cycles": 165,
   "bankroll": 1.0709,
-  "bankroll_usd": 72.02085136574698,
+  "bankroll_usd": 72.0428953356607,
   "budget": 0.15313723769999998,
   "pnl_today": 0,
   "deployed": 0,
@@ -133,86 +133,84 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-12 04:04:35 EDT",
+    "timestamp": "2026-06-13 04:04:00 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "Bot is healthy and the activated gate stack is verifying cleanly, so the #1 open problem is the broken pre-graduation velocity logger: across 2000 ring-buffer entries it has captured ZERO trade events (every entry shows zero buyers/zero velocity), confirming the run-312 root cause that it opened a second websocket connection PumpPortal silently refuses to serve per-token trades on. It is log-only with no capital at risk, and the fix (route velocity tracking through the bot's single existing graduation connection) is queued for the research brain this Sunday rather than blind-patched on a freshly-restarted bot.",
-    "exit_analysis": "Lifetime 1025 sells: avg win +12.99%, avg loss -16.44%, R/R 0.79, stop-loss rate 50.4%. Last 24h N=2: one flat win +0.45% (wallet_convergence) and one -15.22% emergency stop (bear_strength). 7-day N=6 R/R 0.12 is dragged down by two pre-restart wallet-convergence losses (HUNTER -28.4%, Bountywork -12.4%) aging into the window; the only trade entered under the now-active gates was the +0.45% win.",
-    "strategy_work": "Verified the first clean post-activation wallet_convergence fire: '1B' was a 21-hour-old token with 6 different wallets buying together, calm entry, and it exited flat-positive (+0.45%). This confirms two things at once -- the gate correctly lets healthy young convergence through (it only blocks older tokens), and the wallet-attribution logging we shipped weeks ago is finally proven working in production (all 6 buyer addresses were recorded, where older trades showed a blank). On the loss side, 'BR\u00d6TCHEN' (bear_strength) stopped out -15.22% on a calm entry into a thin $60k-liquidity token. It is the 5th loss of this type, but bear_strength is still profitable over its lifetime (R/R ~2.0), so per anti-over-tuning discipline no new filter was added; a watch-trigger was recorded instead.",
-    "directives_changes": "Bumped to version 315 (run-313). Refreshed all rolling/lifetime stats; updated wallet_convergence (now 23 lifetime trades) and bear_strength notes; added one bear_strength condensed lesson (the BR\u00d6TCHEN low-liquidity stop and why no gate at N=1) and one ship-discipline lesson (a single post-activation fire closed two 'is it really working' questions). REQ-024 (logger fix) left pending for the Sunday research run. No new research requests filed.",
+    "system_diagnosis": "Lifetime P/L is still deeply negative (-1.194 SOL across 1026 sells, 35.6% win rate), and the single biggest historical money-loser remains the old copy-trade book (-0.83 SOL over 537 trades). That bleed is structural and already wound down. The live question is narrower and healthier: do the recently-activated wallet-convergence safety gates actually work? Two clean post-activation convergence trades in a row (1B +0.45%, Buttcoin +0.16%) both came in as small flat wins and were correctly let through, so early evidence says yes. The one genuine open defect is the new bonding-curve velocity logger, which is running but capturing zero trade data (0 of 2000 records) -- a data-collection bug, not a trading bug, so it costs no money while it waits for the fix.",
+    "exit_analysis": "Lifetime: avg win +12.96%, avg loss -16.44%, reward/risk 0.79, stop-loss rate 50.4%. Last 7 days: 6 trades, 50% win rate, avg win +1.13%, avg loss -9.21%, reward/risk 0.12, stop-loss rate 33.3% (wins are tiny flat convergence exits; losses are larger). Last 24h: 1 trade, the Buttcoin convergence flat win +0.16%. The 7-day P/L actually improved from -0.0166 to -0.0075 SOL this period simply because the big pre-gate HUNTER -28.4% loss rolled out of the 7-day window.",
+    "strategy_work": "Confirmed the wallet-convergence gate stack is behaving as designed on a fresh, out-of-sample trade. Buttcoin was a 3-wallet, very young pump.fun token -- exactly the kind of healthy young crowd the age-based gate is meant to allow -- and it exited flat-positive. That makes two clean post-activation convergence wins with zero losses so far. The research lab wants 8 such trades before formally re-scoring the gate; we are at 2. No new trade types fired (no bear-strength, no other strategies), so there was nothing else to advance this run.",
+    "directives_changes": "Refreshed all the running statistics to the latest numbers, recorded that the convergence gate now has 2 clean post-activation wins (tracking toward the lab's 8-trade review bar), and logged the confirmation that last week's convergence red ink was old pre-gate trades aging out rather than the new gate failing. Kept the one open research request (fix the velocity logger) as-is, pending tomorrow's research run. Bumped the directives version from 315 to 316.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "Wallet-convergence gate (run-312 ship): VERIFIED again -- 1B (06-11) is the first clean post-activation fire, a 6-wallet calm convergence the gate correctly passed, exited +0.45%. Post-activation eval count 1 of 8.",
-      "Source-wallet logging (shipped run-300): now CONFIRMED working -- 1B recorded all 6 buyer addresses; the field was previously blank on pre-activation entries.",
-      "Velocity logger (run-311 ship): STILL BROKEN -- 0 of 2000 entries captured any trade; REQ-024 fix remains queued for research-148 (Sun 06-14).",
-      "bear_strength: BR\u00d6TCHEN -15.22% is the 5th calm-entry catastrophic stop, but strategy stays lifetime-positive; no change, watch-trigger recorded for a 2nd sub-$80k calm stop."
+      "run-313 WC gate validation: HELD. Second post-activation convergence trade (Buttcoin) was another clean flat win (+0.16%), correctly not blocked; sample now 2 wins / 0 losses out of the 8 the lab wants.",
+      "run-313 prediction that the 7-day convergence red was legacy pre-gate trades aging through: CONFIRMED. 7-day P/L improved -0.0166 -> -0.0075 SOL as the HUNTER -28.4% loss aged out of the window.",
+      "run-313 velocity-logger-broken: UNCHANGED. Still 0 of 2000 records captured; root cause (a second simultaneous websocket connection) stands; fix stays with the research lab.",
+      "run-313 BROTCHEN bear-strength watch-trigger: still armed, no new bear-strength trades this run; strategy remains lifetime-positive (reward/risk 1.98)."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add the wallet-convergence age/momentum skip gate (skip aged tokens going vertical or already bleeding).",
+        "proposal": "Add a wallet-convergence skip gate: don't buy an aged token (over 30h old) that's either spiking on the hour or already bleeding on the day.",
         "from_research": "research-147",
         "status": "SHIPPED",
-        "why": "Shipped and activated at the run-312 restart; this run is a second out-of-sample confirmation -- 1B was correctly NOT blocked (young, healthy) and won, while the gate's target losses (e.g. Bountywork) sit in the pre-activation window. Continuing to evaluate to N=8 post-activation fires (now at 1)."
+        "why": "Already shipped and activated with the June 10 restart; now being validated live. Two clean post-activation convergence trades (1B, Buttcoin) were correctly allowed through and both won small. Validation continues toward the lab's 8-trade review bar (currently at 2); no further code change needed -- it needs more trades, not edits."
       },
       {
-        "proposal": "Add the pre-graduation velocity + buyer-diversity logger (log-only data collection).",
+        "proposal": "Add a log-only data collector that measures each new token's bonding-curve speed and buyer diversity to test a future edge.",
         "from_research": "research-147",
         "status": "SHIPPED",
-        "why": "Shipped run-311 but broken in production (0/2000 trades captured). Fix is queued as REQ-024 for research-148; superseded operationally by that fix request, no capital at risk meanwhile."
+        "why": "The collector is shipped and running but capturing zero trade data (0 of 2000 records). The fix -- routing the data through the bot's single existing websocket instead of a second one -- is filed as research request REQ-024 and is owned by the research run firing tomorrow (Sun June 14). No capital is at risk while it waits, so no blind patch today."
       },
       {
-        "proposal": "Shelve the Believe-launchpad listener (validation unreachable, launch volume collapsed).",
+        "proposal": "Shelve building the Believe-launchpad listener.",
         "from_research": "research-147",
         "status": "KILLED",
-        "why": "Accepted and shelved -- Believe daily volume fell below ~100/day and the payer signal is no longer queryable. Re-opens only if Believe volume recovers above ~500/day for a sustained week."
+        "why": "Accepted and acted on in prior runs: Believe daily launches collapsed from ~4000/day to under 100/day and its launch signer is now wrapped so it can't be validated to the required sample. Listener stays un-built; only revisit if Believe volume recovers above ~500/day for a sustained week."
       },
       {
-        "proposal": "REQ-024: confirm logger root cause, specify single-connection multiplex fix, verify metering cost, redesign the buffer to keep only flagged tokens.",
-        "from_research": "research-148 (queued)",
+        "proposal": "REQ-024: fix the broken bonding-curve velocity logger by multiplexing it onto the single existing graduation websocket connection.",
+        "from_research": "open request (filed run-312)",
         "status": "PENDING",
-        "why": "Waiting on the weekly research run (Sunday 06-14). The logger's continued 0/2000 capture this run is additional confirming evidence for the request; no brain-side action possible until research delivers the corrected websocket architecture."
+        "why": "Unblocks the moment the next research run executes -- research is weekly on Sundays and the next one fires tomorrow, Sun June 14 at noon. The request already specifies the exact fix, the metering-cost check, and the buffer redesign, so it is ready to action cold."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Three reasons. (1) The broken velocity logger's fix is a careful async-websocket restructuring that is correctly queued for the research brain (REQ-024, Sunday 06-14) rather than blind-patched on a freshly-restarted bot. (2) The one new loss (BR\u00d6TCHEN -15.22%) is a single occurrence on a strategy that is still profitable over its lifetime, so adding a filter would be over-tuning. (3) The wallet-convergence gate is working as designed and needs more live fires to evaluate, not changes.",
+    "no_code_change_reason": "This was a verification/monitoring run. The convergence gate is already shipped and is being validated by accruing live trades (needs more fires, not edits); the only open defect is the velocity logger, whose fix is research-owned (REQ-024) with the next research run firing tomorrow, so a blind websocket patch today would be the exact anti-pattern the last several runs established; and the one notable loss (BROTCHEN bear-strength) is a single data point on a strategy that is still lifetime-profitable, which does not justify changing it.",
     "changelog": [
-      "Confirmed the wallet-convergence safety gates are working: the one new convergence trade ('1B', 6 wallets buying a 21-hour-old token together) was correctly allowed through and finished slightly positive.",
-      "Confirmed the buyer-wallet recording feature is now working in real trading (all 6 buyer addresses were saved).",
-      "Noted one bad bear-strength trade ('BR\u00d6TCHEN', down 15%) but made no change because that strategy is still profitable overall and one loss is not enough to act on.",
-      "Re-checked the new-token speed tracker: still broken (collecting no useful data); the repair is scheduled with the research side for this Sunday."
+      "Logged the second post-activation convergence trade (Buttcoin, +0.16% flat win) and confirmed the safety gate correctly allowed this young, healthy trade through.",
+      "Confirmed last week's convergence losses were old pre-gate trades aging out of the window, not the new gate failing.",
+      "Refreshed all running statistics and bumped the brain's strategy notebook to version 316.",
+      "Kept the velocity-logger fix request open for tomorrow's research run; shipped no code."
     ],
     "actions_taken": [
-      "Verified the research-147 wallet_convergence gate on a fresh out-of-sample fire (1B +0.45%) and advanced its post-activation eval count to 1 of 8.",
-      "Confirmed the source_wallet logging (run-300) is functional in production via 1B's 6 captured addresses.",
-      "Recorded a bear_strength watch-trigger (2nd sub-$80k calm-entry catastrophic stop) and added a condensed lesson rather than gating on the BR\u00d6TCHEN N=1 loss.",
-      "Kept REQ-024 (velocity-logger fix) pending for research-148 after re-confirming the logger captured 0 of 2000 trades."
+      "Verified the research-147 wallet-convergence gate (REQ-023) on a fresh out-of-sample trade (Buttcoin): correctly not blocked, flat win; post-activation sample now 2 wins / 0 losses out of the lab's 8-trade target.",
+      "Confirmed the velocity-diversity logger is still capturing zero trade data and left REQ-024 pending for the research run firing tomorrow (Sun June 14).",
+      "Reaffirmed the Believe-launchpad listener stays shelved (research request REQ-022 closed; launchpad volume collapsed).",
+      "Re-armed (no change) the BROTCHEN bear-strength watch-trigger; bear-strength remains lifetime-positive so no gate was added."
     ],
     "next_priorities": [
-      "Evaluate the wallet_convergence gate at N=8 post-activation fires (now 1) -- track each new convergence fire's age/h1/h24 and outcome.",
-      "Ingest research-148 (Sun 06-14) REQ-024 response and ship the single-connection velocity-logger fix if the corrected architecture is specified.",
-      "Watch bear_strength: if a 2nd sub-$80k calm-entry catastrophic stop occurs, file a research request to test a bear_strength entry-liquidity floor (target separating BR\u00d6TCHEN $60k-class losses from $100k+ wins)."
+      "Triage tomorrow's research-148 output (Sun June 14), especially the velocity-logger fix (REQ-024) and any out-of-sample re-test of the convergence gate.",
+      "Keep accruing post-activation wallet-convergence trades toward the 8-trade review bar (currently 2 wins / 0 losses).",
+      "Watch for a 2nd sub-$80k-liquidity calm-entry bear-strength catastrophic stop -- that single recurrence re-opens a bear-strength entry-liquidity-floor decision."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1025,
-      "win_rate": 35.5,
-      "avg_win_pct": 12.99,
+      "total_sells": 1026,
+      "win_rate": 35.6,
+      "avg_win_pct": 12.96,
       "avg_loss_pct": -16.44,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.0713,
-      "pnl_today": -0.004594
+      "bankroll": 1.0709,
+      "pnl_today": 4.8e-05
     },
     "active_strategies": [
-      "fresh_profile",
+      "wallet_convergence",
       "bear_strength",
       "consensus_boost",
-      "wallet_convergence",
-      "chop_momentum_scalp",
-      "bounce_hunter",
-      "gecko_breadth_burst"
+      "fresh_profile",
+      "chop_momentum_scalp"
     ]
   },
   "wallet_scan": {
@@ -220,16 +218,16 @@
     "result": "Saved 20 wallets in 33m 43s",
     "completed": "2026-06-13T01:54:07.972908"
   },
-  "brain_next_sec": 4.195478,
-  "brain_next_str": "Sat 4:04 AM EST",
+  "brain_next_sec": 86100.913714,
+  "brain_next_str": "Sun 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Fri 4:11 AM EST",
+  "brain_last_run_str": "4:05 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:35 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 87964.195478,
+  "research_next_sec": 87660.913714,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -362,10 +360,10 @@
     "summary": "research-147 (2026-06-07 Sun noon, CHOP SOL ~4.75 ALTCOIN_CHOP). 4 subagents (1 re-dispatch). BOTH pending requests CLOSED. REQ-023 HIGH SOLVED: clean 2-feature WC gate skip if pair_age>30h AND (h1>+25% OR h24<-10%) blocks all 3 seed losses HUNTER -28.4/HENRY -17.0/BURNIE -9.6 plus KINS/CWU/JTVO (6/12 losses, -56.63% return) and kills 0/9 wins; age>30h arm spares young pumped winners Butt/TIMETRUMP/WINNING; DISJOINT from shipped REQ-021 gate. Full 7-field proposal filed w/ anti-stacking note (4th unactivated WC change, same PID since 05-28). Residual 6 losses (young-bundled-parabolic + SQUIRE-L) no clean gate -> recommend regime size-down. REQ-022 MEDIUM: config 7SXEnhGR reconfirmed real (owner dbcij3, 1048B) + matches N=1 Believe init, but universality UNREACHABLE to N>=5 (payer 5qWya6Uj now Squads-wrapped, not a queryable signer; Believe volume collapsed ~4000/day May -> <100/day June) -> proposal to DEPRIORITIZE the Believe listener. NEW HYPOTHESIS buyer_diversity_velocity_divergence (HIGH): at equal bonding-curve SOL-raise velocity, high distinct-buyer ratio beats low (organic vs bundled); Phase-1 LOG-ONLY via PumpPortal wss (vSolInBondingCurve/marketCapSol, grad ~85 SOL); grad rates collapsed <1% platform-wide sharpens it. 3 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-13 03:05:00 EDT",
-    "run_id": "maint-391",
-    "finished_at": "2026-06-13 03:05:00 EDT",
-    "run_outcome": "HEALTHY_BOT_ALIVE_CYCLE_PLUS3_NOT_DORMANT_1x1_24H_MIRROR_HEALTHY_0P5MIN_DASH_200_2P99S_BORDERLINE_NO_RESTART",
+    "timestamp": "2026-06-13 04:07:14 EDT",
+    "run_id": "maint-392",
+    "finished_at": "2026-06-13 04:07:14 EDT",
+    "run_outcome": "HEALTHY_BOT_ALIVE_CYCLE_PLUS2_NOT_DORMANT_1x1_24H_MIRROR_HEALTHY_0P1MIN_DASH_200_0P73S_FAST_NO_RESTART",
     "bot_status": "RUNNING",
     "bot_pid": 13624,
     "bot_pid_prior": 13624,
@@ -373,15 +371,15 @@
     "dashboard_status": "RUNNING",
     "dashboard_pid": 13728,
     "dashboard_curl": "200",
-    "dashboard_latency_ms": 2986,
-    "bot_cycle": 163,
-    "bot_cycle_prior": 160,
-    "bot_heartbeat_age_sec": 43.3,
-    "bot_events_age_sec": 43.2,
+    "dashboard_latency_ms": 734,
+    "bot_cycle": 165,
+    "bot_cycle_prior": 163,
+    "bot_heartbeat_age_sec": 921.1,
+    "bot_events_age_sec": 162.0,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 22.77,
-    "hours_since_last_buy": 21.77,
+    "hours_since_last_trade": 22.85,
+    "hours_since_last_buy": 22.82,
     "trades_last_24h": {
       "buys": 1,
       "sells": 1
@@ -390,46 +388,46 @@
     "total_trades_logged": 2072,
     "total_trades_prior": 2072,
     "dormancy_alert": false,
-    "dormancy_status": "NOT DORMANT. No NEW trade this run (trade_log holds at 2072, unchanged ~21.4h). Most-recent trade = sell 05:43:00 06-12 (~21.35h ago); last buy 05:17:51 06-12 (~21.77h ago). Both still inside the trailing-24h window -> 1 buy / 1 sell in 24h, above the 0-in-24h alert threshold. Buy ages out of window ~05:18 06-13; sell ~05:43 06-13 -- both around midday TODAY. If no new buy/sell fires before then, both counts drop to 0 and dormancy may trip next run.",
-    "filter_lockout_diagnosis": "NOT in lockout. Scanner live: cycle 160->163 (+3), events_age 43.2s (well under 120s). Event tail (last 60): CB_SKIP 20, BUY_SKIP 20, SIGNAL 10, BS_SKIP 5, SCAN 5 -> normal selectivity (10 signals seen, held, no buy fired). 0 CYCLE_ERROR. Healthy hold discipline, not filter-accumulation.",
-    "liveness_note": "ALIVE. cycle 160->163 (+3). events_age 43.2s (<120s), heartbeat_age 43.3s (fresh, mid-cycle write). 0 CYCLE_ERROR in last 60. No restart.",
+    "dormancy_status": "NOT DORMANT. No NEW trade this run (trade_log holds at 2072, unchanged ~22.4h). Most-recent trade = sell 05:43:00 06-12 (~22.4h ago); last buy 05:17:51 06-12 (~22.82h ago). Both STILL inside the trailing-24h window -> 1 buy / 1 sell in 24h, above the 0-in-24h alert threshold. Buy ages out ~05:18 06-13; sell ~05:43 06-13 -- both around midday TODAY (~1-1.5h from now). If no new buy/sell fires before then, both counts drop to 0 and dormancy may trip the NEXT run. Surface only; do not relax filters.",
+    "filter_lockout_diagnosis": "NOT in lockout. Scanner live: cycle 163->165 (+2), events_age 162s (mid-cycle, well under 300s stall gate). Event tail (last 60): BUY_SKIP 32, SIGNAL 23, SCAN 5 -> normal selectivity (23 signals seen, held, no buy fired). 0 CYCLE_ERROR. Healthy hold discipline, not filter-accumulation.",
+    "liveness_note": "ALIVE. cycle 163->165 (+2). events_age 162s (<300s), heartbeat_age 921s (~15min, normal ~15-20min cycle pace). 0 CYCLE_ERROR in last 60. No restart.",
     "coordination": {
       "brain_running": false,
       "research_running": false,
       "note": "CLEAR. Brain run-313 finished 2026-06-12 04:11:19 EDT (running:false, directives v315). research-147 idle (running:false, last 06-07 12:35, weekly Sun-noon, next due 06-14 noon). No live runs, no stale locks."
     },
     "actions_taken": [
-      "Cadence gate: maint-390 finished 2026-06-13 02:04:30, now ~03:05 06-13 (~60min >= 30min) -> proceeded.",
+      "Cadence gate: maint-391 finished 2026-06-13 03:05:00, now ~04:05 06-13 (~60min >= 30min) -> proceeded.",
       "Process: bot pid 13624 (pythonw degen_bot.py --continuous) + dash pid 13728 (pythonw dashboard.py), both unchanged. Exactly one each, no duplicates.",
-      "Liveness ALIVE: cycle 160->163 (+3). events_age 43.2s, heartbeat_age 43.3s (both fresh). 0 CYCLE_ERROR. No restart.",
+      "Liveness ALIVE: cycle 163->165 (+2). events_age 162s, heartbeat_age 921s (~15min, normal cadence). 0 CYCLE_ERROR. No restart.",
       "Coordination: brain run-313 idle (finished 04:11:19 06-12, v315), research idle (research-147, next Sun 06-14 noon). No stale locks to clear.",
-      "Dormancy NOT triggered: no NEW trade this run (holds at 2072, trade_log unchanged ~21.4h). Last sell 05:43 06-12 (~21.35h), last buy 05:17 06-12 (~21.77h). Trailing-24h holds 1 buy / 1 sell vs 0 alert threshold.",
-      "Dashboard: HTTP 200, 76KB payload, single probe 2.99s. Just under the 3s restart gate (gate is sustained warm >3s / non-200). Borderline-slow and creeping up (2.78s last run -> 2.99s) -> no restart, watch next run closely.",
-      "Mirror: published_at 2026-06-13 03:03:20 EDT, ~0.5min old (<15min). HEALTHY; no heal. consecutive_heals=0.",
+      "Dormancy NOT triggered: no NEW trade this run (holds at 2072, trade_log unchanged ~22.4h). Last sell 05:43 06-12 (~22.4h), last buy 05:17 06-12 (~22.82h). Trailing-24h holds 1 buy / 1 sell vs 0 alert threshold.",
+      "Dashboard: HTTP 200, single probe 0.73s -- fast and well under the 3s gate. Creep from prior runs (2.78->2.99s) has CLEARED; no restart.",
+      "Mirror: published_at 2026-06-13 04:03:55 EDT, ~0.1min old (<15min). HEALTHY; no heal. consecutive_heals=0.",
       "Eff-lab: hyp 43/60, lessons 22/50 (len(condensed_lessons.entries)=22), reqs 1/8 (REQ-024 broken-logger, brain-owned), drift [] -> triggered=False. Directives v315.",
       "State files: largest sol_trade_log.json 1.18MB; sol_bonding_velocity_log.json 0.83MB (REQ-024 broken logger, brain-owned, stable). No file >2MB. No bloat alert. Footprint unchanged vs prior run.",
-      "Log hygiene: bot.log 0.42MB, watchdog.log 0.15MB, dashboard.err.log 0.02MB, bot.err.log 0.01MB, dashboard.log ~0MB -- all far under 50MB. No truncation.",
-      "Section 9 audit: one_time_tasks 0, brain_queue.overloaded=false, sol_positions []=0 open. Clean, no auto-fix.",
-      "Maintenance-log: appended maint-391 as fresh flat array via Python."
+      "Log hygiene: bot.log 0.43MB, watchdog.log 0.15MB, dashboard.err.log 0.02MB, bot.err.log 0.01MB, dashboard.log ~0MB -- all far under 50MB. No truncation.",
+      "Section 9 audit: one_time_tasks 0, brain_queue.overloaded=false, sol_positions {}=0 open. Clean, no auto-fix.",
+      "Maintenance-log: appended maint-392 as fresh flat array via Python."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 0.5,
+      "pre_heal_age_min": 0.1,
       "heal_attempted": false,
       "heal_succeeded": false,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 0.5,
+      "post_heal_age_min": 0.1,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
         "old_pid": null,
         "new_pid": null,
-        "reason": "Mirror HEALTHY (published 03:03:20 EDT, ~0.5min) and consecutive_heals=0.",
+        "reason": "Mirror HEALTHY (published 04:03:55 EDT, ~0.1min) and consecutive_heals=0.",
         "post_restart_verified": null
       },
-      "note": "Cache-busted probe succeeded first try. published_at 2026-06-13 03:03:20 EDT, ~0.5 min old. Publisher daemon healthy under PID 13624."
+      "note": "Cache-busted probe succeeded first try. published_at 2026-06-13 04:03:55 EDT, ~0.1 min old. Publisher daemon healthy under PID 13624."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -477,13 +475,12 @@
     },
     "warnings": [
       "CODE (for brain, already owned): bonding-velocity logger BROKEN in production (0/2072 trades captured). REQ-024 stays pending for research-148 (Sun 06-14). File 0.83MB (<2MB, no ops action). Maintenance only surfaces; brain owns the fix.",
-      "INFO: trailing-24h holds at 1 buy / 1 sell. Last buy 05:17 06-12 ages out ~05:18 06-13; last sell 05:43 06-12 ages out ~05:43 06-13 -- both around midday TODAY. If no new buy/sell by then both counts drop to 0 and dormancy may trip next run. Alert only at 0-trades-in-24h.",
-      "INFO: dashboard single probe 2.99s this run, up from 2.78s last run -- creeping toward the 3s gate. Still under it (gate = sustained warm >3s or non-200) so no restart. If next run sees >=3s warm or non-200, restart dashboard."
+      "INFO: trailing-24h holds at 1 buy / 1 sell. Last buy 05:17 06-12 ages out ~05:18 06-13; last sell 05:43 06-12 ages out ~05:43 06-13 -- BOTH around midday TODAY (~1-1.5h out). If no new buy/sell by then both counts drop to 0 and dormancy may trip the next run. Alert only at 0-trades-in-24h."
     ],
-    "next_run_focus": "1) Cadence: maint-390->391 gap ~60min. 2) DORMANCY WATCH (now urgent): trailing-24h still 1 buy/1 sell; last buy 05:17 06-12 ages out ~05:18 06-13, last sell 05:43 06-12 ages out ~05:43 06-13 -- BOTH age out around midday 06-13. If no new buy/sell fires before then, counts drop to 0 and dormancy_alert may trip; surface (do not relax filters). 3) LIVENESS healthy (cycle +3, 0 CYCLE_ERROR); restart only if events>300 AND heartbeat>1800 with CYCLE_ERROR, or cycle FREEZES two runs. 4) DASHBOARD creeping: 2.78s->2.99s over last two runs; restart on a run with sustained warm >=3s or non-200. 5) Bonding-velocity logger BROKEN+brain-owned (REQ-024 -> research-148 Sun 06-14); do NOT ops-escalate while <2MB. 6) Mirror HEALTHY (consecutive_heals=0). 7) Eff-lab clear (hyp 43/60, lessons 22/50). 8) Research-147 idle; next weekly run Sun 06-14 noon.",
+    "next_run_focus": "1) Cadence: maint-391->392 gap ~60min. 2) DORMANCY WATCH (imminent): trailing-24h still 1 buy/1 sell; last buy 05:17 06-12 ages out ~05:18 06-13, last sell 05:43 06-12 ages out ~05:43 06-13 -- BOTH age out within ~1-1.5h of this run. If no new buy/sell fires before then, counts drop to 0 and dormancy_alert may trip; surface (do not relax filters). 3) LIVENESS healthy (cycle +2, 0 CYCLE_ERROR); restart only if events>300 AND heartbeat>1800 with CYCLE_ERROR, or cycle FREEZES two runs. 4) DASHBOARD fast again (0.73s, creep cleared); restart only on sustained warm >=3s or non-200. 5) Bonding-velocity logger BROKEN+brain-owned (REQ-024 -> research-148 Sun 06-14); do NOT ops-escalate while <2MB. 6) Mirror HEALTHY (consecutive_heals=0). 7) Eff-lab clear (hyp 43/60, lessons 22/50). 8) Research-147 idle; next weekly run Sun 06-14 noon.",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 57.4,
+    "file_age_min": 1.7,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1927,7 +1924,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 165,
-    "age_min": 15.1,
+    "age_min": 20.2,
     "stale": false,
     "available": true
   },
@@ -1946,9 +1943,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3364.195478,
+  "maint_next_sec": 3060.913714,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:06 AM EST",
+  "maint_last_run_str": "4:07 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1963,332 +1960,17 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "Verified the research-147 wallet_convergence gate on a fresh out-of-sample fire (1B +0.45%) and advanced its post-activation eval count to 1 of 8.",
+      "evidence_text": "Verified the research-147 wallet-convergence gate (REQ-023) on a fresh out-of-sample trade (Buttcoin): correctly not blocked, flat win; post-activation sample now 2 wins / 0 losses out of the lab's 8-trade target.",
       "evidence_source": "action"
     },
     "tally": {
       "implemented": 22,
       "queued": 3,
-      "rejected": 0,
-      "total": 25
+      "rejected": 1,
+      "total": 26
     }
   },
   "events": [
-    {
-      "ts": "2026-06-13T03:33:11.714924",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7pDhG6Nq sold J6t49YdU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:33:11.727765",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7pDhG6Nq sold J6t49YdU \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:33:41.777602",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Knickelback: m5=8.9% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:33:42.219349",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Knickelback: m5=8.9% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:33:42.235215",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: PMJA8UQD sold FvhygmWQ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:33:42.693238",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Knickelback: m5=8.9% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:33:43.134384",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Knickelback: m5=8.9% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:34:12.721934",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Fable: m5=16.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:34:42.943397",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EDXHdSFd sold fxahEm5t \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:35:15.376996",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8DGbkGgQ sold 7bK4jRMa \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:37:55.435609",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 6QymgajG \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:37:55.446038",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 6QymgajG \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:37:55.461783",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold 6QymgajG \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:37:56.068907",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Knickelback: h1=-9.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:37:56.557506",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Knickelback: h1=-9.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:39:55.157410",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EjtQrPTb sold 9Skqo2JR \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:39:57.340283",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ELVES: m5=21.2% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:39:57.783207",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip ELVES: m5=21.2% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:39.843662",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6EDaVsS6 sold 9feR86Fc \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:42.048977",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Anthropic: m5=18.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:42.064682",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6EDaVsS6 sold HZYin6DH \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:44.219132",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip BOT: downtrend h1=-15.8% h24=-15.8%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:44.227831",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 6EDaVsS6 sold 49f6qJw9 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:50.229410",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7tiRXPM4 sold 6QymgajG \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:50.941923",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Knickelback: downtrend h1=-60.6% h24=-60.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:51.618785",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Knickelback: downtrend h1=-60.6% h24=-60.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:52.231389",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Knickelback: downtrend h1=-60.6% h24=-60.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:41:52.886863",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Knickelback: downtrend h1=-60.6% h24=-60.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:43:17.829669",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Durio: m5=-14.5% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:43:18.414889",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Durio: m5=-14.5% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:43:18.951977",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Durio: m5=-14.5% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:25.637280",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Es688WD5 sold 88gKZC3r \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:25.645650",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Es688WD5 sold 2akXpuyF \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:25.669005",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Es688WD5 sold H3pH7frV \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:25.683068",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Es688WD5 sold DqBjJEh6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:25.693070",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Es688WD5 sold DAYiaV6r \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:55.553533",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip POKE: downtrend h1=-17.5% h24=-35.4%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:58.370460",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip MAXIM: h1=-8.7% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:58.397362",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 45Sn4KL1 sold 2APfuDUo \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:58.401123",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 45Sn4KL1 sold FGzARwu4 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:44:58.417182",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 45Sn4KL1 sold C1mw32Re \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:45:04.563243",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip goblintown: deep24h h24=-55.6% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:45:07.178185",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip GYM: h1=-7.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:45:09.590904",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip MAGIC: m5=8.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-13T03:45:12.108320",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip EUROSUMMER: h1=-6.1% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
     {
       "ts": "2026-06-13T03:45:12.115711",
       "type": "SIGNAL",
@@ -2673,6 +2355,321 @@
       "color": "#d29922",
       "msg": "m5 pump skip banana: m5=392.0% (already ran, we are exit liq, run95)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:04:43.528781",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4sAUSQFd sold DGCAB8CJ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:04:44.051958",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip banana: m5=61.9% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:09.579712",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold BBQ7oeC3 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:10.093716",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip HOPE: downtrend h1=-88.7% h24=-88.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:10.104657",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6EDaVsS6 sold 9TRoZfW4 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:16.137636",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7tiRXPM4 sold 6cuj6DvP \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:18.309938",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip SFC: downtrend h1=-57.0% h24=-57.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:18.753887",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip SFC: downtrend h1=-57.0% h24=-57.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:19.267824",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip SFC: downtrend h1=-57.0% h24=-57.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:19.796207",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip SFC: downtrend h1=-57.0% h24=-57.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:26.024283",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JDd3hy3g sold BBQ7oeC3 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:26.469879",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip HOPE: downtrend h1=-88.7% h24=-88.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:05:26.912129",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip HOPE: downtrend h1=-88.7% h24=-88.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:07:25.044548",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip GULAG: h6=55.8% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:07:36.678021",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Es688WD5 sold AKUYQxit \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:07:36.696094",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Es688WD5 sold 5vAExw5R \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:07:36.705988",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Es688WD5 sold 9W1taLLw \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:07:36.726488",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Es688WD5 sold BnXWvsVZ \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:07:36.738210",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Es688WD5 sold Se2HT3A2 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:00.253804",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked C1mw32Re",
+      "detail": "Insider network detected (coordinated pre-launch buying)"
+    },
+    {
+      "ts": "2026-06-13T04:08:02.660878",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip POCAHONTAS: downtrend h1=-17.5% h24=-36.5%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:04.626752",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip SPACEXIPO: deep24h h24=-45.1% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:04.636838",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 45Sn4KL1 sold 6p3Y3WBX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:04.654117",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 45Sn4KL1 sold 7fj6vT1H \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:07.549855",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AxQRySJb sold 25JUPL6k \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:07.562960",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AxQRySJb sold ANP1wJHY \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:07.587117",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AxQRySJb sold 8cgLWkoH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:09.551416",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Nong Yan: deep24h h24=-67.8% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:12.165579",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip silversurfer: m5=-12.5% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:15.366331",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3fuga4fD sold 25JUPL6k \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:15.807353",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Nong Yan: deep24h h24=-67.8% (absolute floor)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:16.291138",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip silversurfer: m5=-12.5% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:16.308397",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3fuga4fD sold 8cgLWkoH \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:16.318350",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 3fuga4fD sold AzeNfRi7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:40.368428",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HK7ThLpY sold 4mm7Z8Xk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:40.384421",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HK7ThLpY sold AviKHWoX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:40.400138",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HK7ThLpY sold 6EW2c3Pi \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:40.415824",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HK7ThLpY sold AtKAGvx1 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:40.423999",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HK7ThLpY sold 8AdsF2QX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:43.377574",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold BtYtzaUP \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:43.393505",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold 8Bdum5DB \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:43.409336",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold 7pZsRp86 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:43.429119",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold AviKHWoX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:43.440975",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: HcLMmNx9 sold 6EW2c3Pi \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-13T04:08:43.440975",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Early gate GWM5CZhJ: WR 20% (1/5) WR-only gate (5T, small-size blind zone), PnL=-0.0023 SOL",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2691,9 +2688,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:03:55",
+  "ts": "04:08:59",
   "__publish_meta": {
-    "published_at": "2026-06-13 04:03:55 EDT",
+    "published_at": "2026-06-13 04:08:59 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
