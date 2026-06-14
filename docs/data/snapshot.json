@@ -1,15 +1,15 @@
 {
-  "sol_price": 68.08067883685068,
+  "sol_price": 68.2189078062477,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:54:06",
   "bot_cycles": 235,
   "bankroll": 1.0382,
-  "bankroll_usd": 70.68136076841837,
+  "bankroll_usd": 70.82487008444636,
   "budget": 0.15313723769999998,
   "pnl_today": 0,
   "deployed": 0.030627447539999995,
   "trades_today": 1,
-  "hour": 3.8,
+  "hour": 3.9,
   "positions": [
     {
       "token_mint": "7bK4jRMa3aY85wJMQEQqWsmY9mmrRT32AFWZ23cBpump",
@@ -155,66 +155,64 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-13 04:04:00 EDT",
+    "timestamp": "2026-06-14 04:05:00 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "Lifetime P/L is still deeply negative (-1.194 SOL across 1026 sells, 35.6% win rate), and the single biggest historical money-loser remains the old copy-trade book (-0.83 SOL over 537 trades). That bleed is structural and already wound down. The live question is narrower and healthier: do the recently-activated wallet-convergence safety gates actually work? Two clean post-activation convergence trades in a row (1B +0.45%, Buttcoin +0.16%) both came in as small flat wins and were correctly let through, so early evidence says yes. The one genuine open defect is the new bonding-curve velocity logger, which is running but capturing zero trade data (0 of 2000 records) -- a data-collection bug, not a trading bug, so it costs no money while it waits for the fix.",
-    "exit_analysis": "Lifetime: avg win +12.96%, avg loss -16.44%, reward/risk 0.79, stop-loss rate 50.4%. Last 7 days: 6 trades, 50% win rate, avg win +1.13%, avg loss -9.21%, reward/risk 0.12, stop-loss rate 33.3% (wins are tiny flat convergence exits; losses are larger). Last 24h: 1 trade, the Buttcoin convergence flat win +0.16%. The 7-day P/L actually improved from -0.0166 to -0.0075 SOL this period simply because the big pre-gate HUNTER -28.4% loss rolled out of the 7-day window.",
-    "strategy_work": "Confirmed the wallet-convergence gate stack is behaving as designed on a fresh, out-of-sample trade. Buttcoin was a 3-wallet, very young pump.fun token -- exactly the kind of healthy young crowd the age-based gate is meant to allow -- and it exited flat-positive. That makes two clean post-activation convergence wins with zero losses so far. The research lab wants 8 such trades before formally re-scoring the gate; we are at 2. No new trade types fired (no bear-strength, no other strategies), so there was nothing else to advance this run.",
-    "directives_changes": "Refreshed all the running statistics to the latest numbers, recorded that the convergence gate now has 2 clean post-activation wins (tracking toward the lab's 8-trade review bar), and logged the confirmation that last week's convergence red ink was old pre-gate trades aging out rather than the new gate failing. Kept the one open research request (fix the velocity logger) as-is, pending tomorrow's research run. Bumped the directives version from 315 to 316.",
+    "system_diagnosis": "No new closed trades since run-314 (rolling_24h N=0, rolling_7d unchanged 6T 3W/3L pnl -0.007547 SOL). The one live event is a brand-new OPEN wallet_convergence position, TinyWorld, bought 03:52 EDT with 3 distinct source wallets and $70k entry liquidity -- a young healthy convergence that the REQ-023 age>30h gate correctly let through. The standing #1 structural problem is still lifetime exits (avg loss -16.44% vs avg win +12.96%, R/R 0.79, stop rate 50.4%), but with zero closed trades to act on this run there is nothing new to diagnose; the active WC gate is doing its job and the sample needs fires, not changes.",
+    "exit_analysis": "Lifetime N=1026: avg win +12.96%, avg loss -16.44%, R/R 0.79, stop-loss rate 50.4%. Rolling_7d N=6: avg win +1.13%, avg loss -9.21%, R/R 0.12, stop rate 33.3% (exit mix: 3 flat/other, 2 stop, 1 time). bear_strength remains the only lifetime-positive R/R strategy at 1.98 (N=35, pnl +0.003083). No new exits executed this run.",
+    "strategy_work": "Confirmed the REQ-023 WC age-gate continues to behave as designed on a fresh live fire: TinyWorld (young, 3-wallet, $70k liq) was correctly PASSED -- the 3rd young healthy convergence in a row to fire post-activation, all of which the gate is meant to spare. WC closed post-activation sample holds at N=2 (both small flat wins, 0 losses); TinyWorld becomes #3 when it closes. Independently re-verified the velocity logger is still broken (2000 entries, 0 captured trade events) -- unchanged since run-311, root cause still the second simultaneous PumpPortal websocket connection.",
+    "directives_changes": "Bumped to version 317. Refreshed track_record (lifetime as-of, rolling_24h/7d, regime, bankroll 1.0382 + ~0.031 open, SOL $68.16). Recorded the TinyWorld open position as the 3rd post-activation WC fire under a new wc_post_activation_open_run315 note. REQ-024 left PENDING for research-148. No hypotheses advanced (top hypothesis, the velocity logger, is research-blocked).",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-313 WC gate validation: HELD. Second post-activation convergence trade (Buttcoin) was another clean flat win (+0.16%), correctly not blocked; sample now 2 wins / 0 losses out of the 8 the lab wants.",
-      "run-313 prediction that the 7-day convergence red was legacy pre-gate trades aging through: CONFIRMED. 7-day P/L improved -0.0166 -> -0.0075 SOL as the HUNTER -28.4% loss aged out of the window.",
-      "run-313 velocity-logger-broken: UNCHANGED. Still 0 of 2000 records captured; root cause (a second simultaneous websocket connection) stands; fix stays with the research lab.",
-      "run-313 BROTCHEN bear-strength watch-trigger: still armed, no new bear-strength trades this run; strategy remains lifetime-positive (reward/risk 1.98)."
+      "REQ-023 WC age>30h gate (shipped/activated 06-10): still validating. 3rd post-activation fire (TinyWorld) correctly passed as a young convergence; closed sample N=2 both flat wins, 0 losses. Eval at N=8.",
+      "Velocity diversity logger (REQ-024): still broken, 0/2000 trade events captured, unchanged. Fix is research-owned; research-148 fires today noon.",
+      "bear_strength BROTCHEN watch-trigger: armed, no new BS fire this run; strategy stays lifetime-positive (RR 1.98, pnl +0.003083)."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a wallet-convergence skip gate: don't buy an aged token (over 30h old) that's either spiking on the hour or already bleeding on the day.",
+        "proposal": "Add a wallet_convergence skip gate: skip aged tokens (>30h old) that are either pumping hard on the hour or already bleeding on the day.",
         "from_research": "research-147",
         "status": "SHIPPED",
-        "why": "Already shipped and activated with the June 10 restart; now being validated live. Two clean post-activation convergence trades (1B, Buttcoin) were correctly allowed through and both won small. Validation continues toward the lab's 8-trade review bar (currently at 2); no further code change needed -- it needs more trades, not edits."
+        "why": "Shipped and activated at the 06-10 restart; now live and accruing its post-activation sample (N=2 closed, both flat wins; TinyWorld is the 3rd open fire and was correctly passed as young). Needs more fires, not changes, to reach the N=8 eval bar."
       },
       {
-        "proposal": "Add a log-only data collector that measures each new token's bonding-curve speed and buyer diversity to test a future edge.",
+        "proposal": "Build a log-only pump.fun bonding-curve velocity + buyer-diversity logger to calibrate a future entry edge.",
         "from_research": "research-147",
-        "status": "SHIPPED",
-        "why": "The collector is shipped and running but capturing zero trade data (0 of 2000 records). The fix -- routing the data through the bot's single existing websocket instead of a second one -- is filed as research request REQ-024 and is owned by the research run firing tomorrow (Sun June 14). No capital is at risk while it waits, so no blind patch today."
-      },
-      {
-        "proposal": "Shelve building the Believe-launchpad listener.",
-        "from_research": "research-147",
-        "status": "KILLED",
-        "why": "Accepted and acted on in prior runs: Believe daily launches collapsed from ~4000/day to under 100/day and its launch signer is now wrapped so it can't be validated to the required sample. Listener stays un-built; only revisit if Believe volume recovers above ~500/day for a sustained week."
-      },
-      {
-        "proposal": "REQ-024: fix the broken bonding-curve velocity logger by multiplexing it onto the single existing graduation websocket connection.",
-        "from_research": "open request (filed run-312)",
         "status": "PENDING",
-        "why": "Unblocks the moment the next research run executes -- research is weekly on Sundays and the next one fires tomorrow, Sun June 14 at noon. The request already specifies the exact fix, the metering-cost check, and the buffer redesign, so it is ready to action cold."
+        "why": "The logger is shipped but broken in production (0 of 2000 entries captured any trade event due to a second simultaneous websocket connection). The corrected single-connection architecture is research-owned via REQ-024; research-148 fires today at noon and will return it. No blind websocket patch will be attempted in the meantime."
+      },
+      {
+        "proposal": "Shelve building the Believe launchpad listener (config could not be validated and Believe volume collapsed).",
+        "from_research": "research-147",
+        "status": "SHIPPED",
+        "why": "Accepted the shelve recommendation -- nothing was built and the listener stays un-built. Re-open only if Believe daily launch volume recovers above ~500/day for a sustained week."
+      },
+      {
+        "proposal": "REQ-024: confirm the two-websocket root cause, specify the corrected multiplexed single-connection architecture, re-verify metering cost, and redesign the buffer to persist only flagged tokens.",
+        "from_research": "requests_for_research (pending)",
+        "status": "PENDING",
+        "why": "Filed for the research brain; research-148 fires today (Sunday) at noon, just hours after this 04:05 run. The unblock trigger is research-148 returning the confirmed architecture; only then ships a corrected v2 logger."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "This was a verification/monitoring run. The convergence gate is already shipped and is being validated by accruing live trades (needs more fires, not edits); the only open defect is the velocity logger, whose fix is research-owned (REQ-024) with the next research run firing tomorrow, so a blind websocket patch today would be the exact anti-pattern the last several runs established; and the one notable loss (BROTCHEN bear-strength) is a single data point on a strategy that is still lifetime-profitable, which does not justify changing it.",
+    "no_code_change_reason": "Pure monitoring run. No new closed trades to act on; the active REQ-023 WC gate needs fires not changes; the only pending code item (the velocity logger fix) is research-owned via REQ-024 and research-148 fires today at noon, so a blind websocket patch would repeat the anti-pattern of runs 310-314.",
     "changelog": [
-      "Logged the second post-activation convergence trade (Buttcoin, +0.16% flat win) and confirmed the safety gate correctly allowed this young, healthy trade through.",
-      "Confirmed last week's convergence losses were old pre-gate trades aging out of the window, not the new gate failing.",
-      "Refreshed all running statistics and bumped the brain's strategy notebook to version 316.",
-      "Kept the velocity-logger fix request open for tomorrow's research run; shipped no code."
+      "Confirmed the bot is healthy and actively trading (fresh heartbeat, new buy at 03:53, live filter skips observed).",
+      "Logged a new open copy-of-convergence position (TinyWorld) and confirmed the new wallet-convergence safety gate correctly let it through because it is a young, healthy 3-wallet token.",
+      "Re-confirmed the bonding-curve velocity logger is still capturing nothing and left the fix request open for the research lab, which runs later today.",
+      "Refreshed the brain stats and notes; shipped no code changes."
     ],
     "actions_taken": [
-      "Verified the research-147 wallet-convergence gate (REQ-023) on a fresh out-of-sample trade (Buttcoin): correctly not blocked, flat win; post-activation sample now 2 wins / 0 losses out of the lab's 8-trade target.",
-      "Confirmed the velocity-diversity logger is still capturing zero trade data and left REQ-024 pending for the research run firing tomorrow (Sun June 14).",
-      "Reaffirmed the Believe-launchpad listener stays shelved (research request REQ-022 closed; launchpad volume collapsed).",
-      "Re-armed (no change) the BROTCHEN bear-strength watch-trigger; bear-strength remains lifetime-positive so no gate was added."
+      "Verified the REQ-023 wallet_convergence age-gate passed the young TinyWorld convergence correctly (3rd clean post-activation fire).",
+      "Re-verified the bonding_curve_velocity_diversity_logger is still broken (0/2000 events) and kept REQ-024 pending for research-148.",
+      "Updated brain directives to version 317 with fresh stats and the TinyWorld open-position note; left bear_strength BROTCHEN watch-trigger armed."
     ],
     "next_priorities": [
-      "Triage tomorrow's research-148 output (Sun June 14), especially the velocity-logger fix (REQ-024) and any out-of-sample re-test of the convergence gate.",
-      "Keep accruing post-activation wallet-convergence trades toward the 8-trade review bar (currently 2 wins / 0 losses).",
-      "Watch for a 2nd sub-$80k-liquidity calm-entry bear-strength catastrophic stop -- that single recurrence re-opens a bear-strength entry-liquidity-floor decision."
+      "Ingest research-148 (fires today noon) and act on its REQ-024 answer: ship the corrected single-connection velocity logger if the architecture is delivered.",
+      "Watch TinyWorld to close -> WC post-activation closed sample becomes N=3 (target N=8 to evaluate the REQ-023 gate out-of-sample).",
+      "If a new bear_strength fire occurs, treat a 2nd sub-$80k calm-entry catastrophic stop as the trigger to re-open the entry-liquidity-floor decision (BROTCHEN watch)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -224,8 +222,8 @@
       "avg_loss_pct": -16.44,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.0709,
-      "pnl_today": 4.8e-05
+      "bankroll": 1.0382,
+      "pnl_today": 0.0
     },
     "active_strategies": [
       "wallet_convergence",
@@ -240,16 +238,16 @@
     "result": "Saved 20 wallets in 33m 43s",
     "completed": "2026-06-13T01:54:07.972908"
   },
-  "brain_next_sec": 86354.753928,
+  "brain_next_sec": 86051.639861,
   "brain_next_str": "Mon 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Sat 4:05 AM EST",
+  "brain_last_run_str": "4:06 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:35 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 1514.753928,
+  "research_next_sec": 1211.639861,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -382,9 +380,9 @@
     "summary": "research-147 (2026-06-07 Sun noon, CHOP SOL ~4.75 ALTCOIN_CHOP). 4 subagents (1 re-dispatch). BOTH pending requests CLOSED. REQ-023 HIGH SOLVED: clean 2-feature WC gate skip if pair_age>30h AND (h1>+25% OR h24<-10%) blocks all 3 seed losses HUNTER -28.4/HENRY -17.0/BURNIE -9.6 plus KINS/CWU/JTVO (6/12 losses, -56.63% return) and kills 0/9 wins; age>30h arm spares young pumped winners Butt/TIMETRUMP/WINNING; DISJOINT from shipped REQ-021 gate. Full 7-field proposal filed w/ anti-stacking note (4th unactivated WC change, same PID since 05-28). Residual 6 losses (young-bundled-parabolic + SQUIRE-L) no clean gate -> recommend regime size-down. REQ-022 MEDIUM: config 7SXEnhGR reconfirmed real (owner dbcij3, 1048B) + matches N=1 Believe init, but universality UNREACHABLE to N>=5 (payer 5qWya6Uj now Squads-wrapped, not a queryable signer; Believe volume collapsed ~4000/day May -> <100/day June) -> proposal to DEPRIORITIZE the Believe listener. NEW HYPOTHESIS buyer_diversity_velocity_divergence (HIGH): at equal bonding-curve SOL-raise velocity, high distinct-buyer ratio beats low (organic vs bundled); Phase-1 LOG-ONLY via PumpPortal wss (vSolInBondingCurve/marketCapSol, grad ~85 SOL); grad rates collapsed <1% platform-wide sharpens it. 3 proposals + 1 hypothesis filed."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-14 03:05:50 EDT",
-    "run_id": "maint-415",
-    "run_outcome": "HEALTHY_BOT_ALIVE_CYCLE229to232_PLUS3_EVENTS_FRESH_5.7s_HB822s_NORMAL_DORMANCY_ONGOING_-007_0x0_24H_45.8H_NOT_LOCKOUT_64PCT_29SIGNAL_MIRROR_HEALTHY_1min_DASH_200_COLD3009_THEN_82to99_NOT_SUSTAINED_NO_RESTART_NO_NEW_ALERT",
+    "timestamp": "2026-06-14 04:06:19 EDT",
+    "run_id": "maint-416",
+    "run_outcome": "HEALTHY_BOT_ALIVE_CYCLE232to235_PLUS3_DORMANCY_CLEARED_NEW_BUY_TinyWorld_WC_0.18H_AGO_TRADE2072to2073_EVENTS_FRESH_25.9s_HB627s_NORMAL_MIRROR_HEALTHY_4min_DASH_200_962ms_EFFLAB_43of60_v316_NO_RESTART",
     "bot_status": "RUNNING",
     "bot_pid": 13624,
     "bot_pid_prior": 13624,
@@ -392,64 +390,65 @@
     "dashboard_status": "RUNNING",
     "dashboard_pid": 13728,
     "dashboard_curl": "200",
-    "dashboard_latency_ms": 99,
-    "dashboard_latency_note": "First probe 3009ms (cold/warming, 76KB payload), re-probes 2263ms/82ms/99ms. NOT sustained >=3s. Healthy, no restart.",
-    "bot_cycle": 232,
-    "bot_cycle_prior": 229,
-    "bot_heartbeat_age_sec": 822.2,
-    "bot_events_age_sec": 5.7,
+    "dashboard_latency_ms": 962,
+    "dashboard_latency_note": "Single probe 962ms HTTP 200. Under 3s, healthy, no restart.",
+    "bot_cycle": 235,
+    "bot_cycle_prior": 232,
+    "bot_heartbeat_age_sec": 627.6,
+    "bot_events_age_sec": 25.9,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 0.19,
-    "hours_since_last_buy": 45.8,
+    "hours_since_last_trade": 0.28,
+    "hours_since_last_buy": 0.22,
     "trades_last_24h": {
-      "buys": 0,
+      "buys": 1,
       "sells": 0
     },
-    "open_positions": 0,
-    "total_trades_logged": 2072,
+    "open_positions": "see positions file; new buy TinyWorld may be open",
+    "total_trades_logged": 2073,
     "total_trades_prior": 2072,
     "dormancy_alert": false,
-    "dormancy_status": "DORMANCY ONGOING (episode -007, tripped maint-394). trade_log holds at 2072 (unchanged vs maint-414). Last buy 2026-06-12T05:17:51 (~45.8h) and last sell 2026-06-12T05:43:00 (~45.38h), both outside trailing-24h -> 0 buys/0 sells. UNCHANGED disposition vs maint-414 (was 44.x, now 45.x, same 0/0). Did NOT re-append to alerts (INFO/unchanged; re-append only on >7d dormancy, >95pct skip, or SIGNAL events disappearing). DORMANCY_ALERT-007 already on file (maint-394). 45.8h far under 168h Section-9D bar; no operator to-do. Surface only; survival brain owns filter-relaxation.",
-    "filter_lockout_diagnosis": "NOT in lockout. Scanner live: cycle 229->232 (+3), events_age 5.7s. Last 100 events: 42 BUY_SKIP, 29 SIGNAL, 20 CB_SKIP, 7 SCAN, 2 BS_SKIP -> 64 skips vs 36 non-skip = skip rate 64pct, well below 95pct lockout leg. 29 SIGNAL confirm candidate generation. BUY_SKIP/CB_SKIP are legit per-wallet WR-gate/CHOP-gate rejections under live WC gates. Healthy gate discipline, not filter-accumulation.",
-    "liveness_note": "ALIVE. cycle 229->232 (+3). events_age 5.7s (<120s), heartbeat_age 822.2s (~13.7min, NORMAL mid-cycle; cycle pace ~15-20min). No restart.",
+    "dormancy_status": "DORMANCY CLEARED. Episode -007 (tripped maint-394, ongoing through maint-415 at ~45.8h) is RESOLVED: a new WC buy fired. trade_log 2072->2073. New buy TinyWorld (wallet_convergence, 3 wallets/24h WC N=10 fast-track) at 2026-06-14T03:53:12 EDT, ~0.18h (~11min) ago -> now WITHIN trailing-24h. BUY_OK present in last-100 events. This is exactly the 'new WC fire clears it' outcome maint-415 next_run_focus was watching for. Did NOT append to alerts (clearing is good news/INFO; DORMANCY_ALERT-007 stays on file from maint-394, brain owns disposition).",
+    "filter_lockout_diagnosis": "NOT in lockout (never was). Scanner live: cycle 232->235 (+3), events_age 25.9s. Last 100 events: 42 BUY_SKIP, 29 SIGNAL, 18 CB_SKIP, 6 SCAN, 2 WC_SKIP, 1 BS_SKIP, 1 SIZING_FLOOR, 1 BUY_OK -> 63 skips vs 37 non-skip = 63pct skip, well below 95pct lockout leg. 1 BUY_OK confirms gates are passable. Healthy gate discipline.",
+    "liveness_note": "ALIVE. cycle 232->235 (+3). events_age 25.9s (<120s), heartbeat_age 627.6s (~10.5min, NORMAL mid-cycle). No restart.",
     "coordination": {
       "brain_running": false,
       "research_running": false,
-      "note": "CLEAR. Brain run-314 finished 2026-06-13 04:05:30 EDT (running:false, directives v316). research-147 idle (last 06-07 12:35, weekly Sun-noon, next due TODAY 06-14 noon). No live runs, no stale locks. Both running:false -> nothing to clear."
+      "note": "CLEAR. Brain run-314 finished 2026-06-13 04:05:30 EDT (running:false, directives v316). research-147 idle (last 06-07 12:35, weekly Sun-noon, next due TODAY 06-14 noon -- not yet fired as of this 04:04 run). No live runs, no stale locks."
     },
     "actions_taken": [
-      "Cadence gate: prior maint-414 ts 2026-06-14 02:06:47, now 2026-06-14 03:05:50 (~59min >= 30min) -> proceeded.",
+      "Cadence gate: prior maint-415 ts 2026-06-14 03:05:50, now 2026-06-14 04:06:19 EDT (~58min >= 30min) -> proceeded.",
       "Process: bot pid 13624 (pythonw degen_bot.py --continuous) + dash pid 13728 (pythonw dashboard.py), both unchanged. Exactly one each, no duplicates.",
-      "Liveness ALIVE: cycle 229->232 (+3). events_age 5.7s, heartbeat_age 822.2s NORMAL mid-cycle. No restart.",
-      "Coordination: brain run-314 idle (finished 04:05:30 06-13, directives v316), research idle (next Sun 06-14 noon TODAY). running:false on both -> no stale locks to clear.",
-      "DORMANCY ONGOING (episode -007, unchanged): trade_log holds at 2072. Last buy 05:17 06-12 (~45.8h), last sell 05:43 06-12 (~45.38h), both aged out of 24h -> 0/0. INFO/unchanged -> did NOT re-append to alerts. NOT lockout (skip 64pct, 29 SIGNAL).",
-      "Dashboard: first probe 3009ms (cold), re-probes 2263/82/99ms, all HTTP 200. NOT sustained >=3s. Healthy, no restart.",
-      "Mirror: published_at 2026-06-14 03:04:09 EDT, ~1min old (<15min). HEALTHY; no heal. consecutive_heals=0.",
-      "Eff-lab: hyp 43/60, lessons 22/50 (condensed_lessons.entries keys, 22), reqs 1/8 (REQ-024 broken-logger, brain-owned), drift [] -> triggered=False. Directives v316.",
-      "State files: largest sol_trade_log.json 1.18MB; sol_bonding_velocity_log.json 0.82MB (REQ-024 broken logger, brain-owned, stable). No file >2MB. No bloat alert.",
-      "Log hygiene: bot.log 0.56MB, dashboard.log 0.00MB, watchdog.log 0.16MB. Well under 50MB. No truncation.",
-      "Section 9 audit: open_positions 0, dormancy 45.8h<<168h (no escalation). research-147 next weekly run TODAY 06-14 noon. Clean.",
-      "Maintenance-log: appended maint-415 as fresh flat array via Python."
+      "Liveness ALIVE: cycle 232->235 (+3). events_age 25.9s, heartbeat_age 627.6s NORMAL mid-cycle. No restart.",
+      "Coordination: brain idle (run-314 finished 04:05:30 06-13, v316), research idle (next Sun 06-14 noon TODAY, not yet fired). No stale locks.",
+      "DORMANCY CLEARED: episode -007 resolved by a new WC buy. trade_log 2072->2073. TinyWorld buy (wallet_convergence) at 03:53:12 EDT ~0.18h ago, now within 24h. BUY_OK in events. Did NOT append to alerts (clearing is INFO/good-news).",
+      "Dashboard: single probe 962ms HTTP 200. Under 3s, healthy, no restart.",
+      "Mirror: published_at 2026-06-14 03:59:42 EDT, ~4min old (<15min). HEALTHY; no heal. consecutive_heals=0.",
+      "Eff-lab: hyp 43/60, lessons 22/50 (condensed_lessons.entries=22), reqs 1/8 (REQ-024 broken-logger, brain-owned), drift [] -> triggered=False. Directives v316.",
+      "State files: largest sol_trade_log.json 1.18MB; sol_bonding_velocity_log.json 0.82MB (REQ-024 broken logger, brain-owned, stable). No file >2MB. No new files. No bloat alert.",
+      "Log hygiene: bot.log 0.57MB, watchdog.log 0.16MB, dashboard.log 0.00MB. Well under 50MB. No truncation.",
+      "Section 9 audit: one_time_tasks 0, brain_queue.overloaded false, dormancy CLEARED (no escalation). research-147 next weekly run TODAY 06-14 noon. Clean.",
+      "Maintenance-log: appended maint-416 as fresh flat array via Python.",
+      "Cleanup: removed temp probe scripts (_maint_probe.py, _maint_efflab.py, _maint_write.py)."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 1.0,
+      "pre_heal_age_min": 4.0,
       "heal_attempted": false,
       "heal_succeeded": false,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 1.0,
+      "post_heal_age_min": 4.0,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
         "old_pid": null,
         "new_pid": null,
-        "reason": "Mirror HEALTHY (published 03:04:09 EDT, ~1min) and consecutive_heals=0.",
+        "reason": "Mirror HEALTHY (published 03:59:42 EDT, ~4min) and consecutive_heals=0.",
         "post_restart_verified": null
       },
-      "note": "Cache-busted probe succeeded. published_at 2026-06-14 03:04:09 EDT, ~1min old. Publisher daemon healthy under PID 13624."
+      "note": "Cache-busted probe succeeded. published_at 2026-06-14 03:59:42 EDT, ~4min old. Publisher daemon healthy under PID 13624."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -467,7 +466,7 @@
       },
       "fired_this_run": false,
       "skip_reason": "not_triggered",
-      "summary": "hyp 43/60, lessons 22/50 (condensed_lessons.entries keys), reqs 1/8 (REQ-024), drift []. Trigger never fired. Directives v316."
+      "summary": "hyp 43/60, lessons 22/50 (condensed_lessons.entries), reqs 1/8 (REQ-024), drift []. Trigger never fired. Directives v316."
     },
     "state_file_footprint": {
       "largest_state_file_mb": 1.18,
@@ -493,17 +492,16 @@
         "brain run-314 running=False FINISHED 2026-06-13 04:05:30 -- clean"
       ],
       "dormancy_escalation_filed": false,
-      "memory_pressure_auto_trigger": false,
-      "brain_queue_overloaded": false
+      "memory_pressure_auto_trigger": false
     },
     "warnings": [
-      "CODE (for brain, already owned): bonding-velocity logger BROKEN in production (0/2072 trades captured). REQ-024 pending for research-148 (TODAY Sun 06-14 noon). File 0.82MB (<2MB, no ops action).",
-      "INFO: DORMANCY ongoing (0 buys/0 sells trailing 24h), episode -007, unchanged vs maint-414 (44.x -> 45.x). NOT lockout (skip 64pct, scanner live cycle +3, 29 SIGNAL). 45.x << 168h. Not re-appended to alerts."
+      "CODE (for brain, already owned): bonding-velocity logger BROKEN in production (0/2073 trades captured). REQ-024 pending for research-148 (TODAY Sun 06-14 noon). File 0.82MB (<2MB, no ops action).",
+      "INFO: DORMANCY episode -007 CLEARED this run by a new WC buy (TinyWorld, 03:53:12 EDT). trailing-24h now 1 buy / 0 sells. Watch for follow-through."
     ],
-    "next_run_focus": "1) DORMANCY WATCH (active, episode -007): trailing-24h 0/0, now ~45.8h. Track whether a new WC fire clears it; continue to NOT re-append to alerts while INFO/unchanged. Surface, do NOT relax filters. Watch research-148 (TODAY Sun 06-14 noon) for any filter-relaxation proposal. 2) LIVENESS healthy (cycle +3); restart only if events>300 AND heartbeat>1800 with CYCLE_ERROR, or cycle FREEZES two runs. 3) DASHBOARD 200; first probe was a cold 3009ms then 82-99ms warm. Restart only on SUSTAINED >=3s across re-probes or non-200. 4) Bonding-velocity logger BROKEN+brain-owned (REQ-024 -> research-148 TODAY 06-14 noon); no ops-escalate while <2MB. 5) Mirror HEALTHY (consecutive_heals=0). 6) Eff-lab clear (hyp 43/60, lessons 22/50, v316). 7) RESEARCH-147 idle; next weekly run TODAY Sun 06-14 noon -- watch for it to fire and write running:true (brief lock OK).",
+    "next_run_focus": "1) DORMANCY just CLEARED (new WC buy TinyWorld 03:53:12). Confirm the position is tracked in sol_positions.json and watch for the exit; verify trade cadence resumes (was a 45.8h gap). If trades stall again >24h a new dormancy episode (-008) would arm. 2) LIVENESS healthy (cycle +3); restart only if events>300 AND heartbeat>1800 with CYCLE_ERROR, or cycle FREEZES two runs. 3) DASHBOARD 200 @962ms; restart only on SUSTAINED >=3s or non-200. 4) Bonding-velocity logger BROKEN+brain-owned (REQ-024 -> research-148 TODAY 06-14 noon); no ops-escalate while <2MB. 5) Mirror HEALTHY (consecutive_heals=0). 6) Eff-lab clear (hyp 43/60, lessons 22/50, v316). 7) RESEARCH-147 idle; next weekly run TODAY Sun 06-14 noon -- watch for it to fire and write running:true (brief lock OK), and for any REQ-024 disposition.",
     "log_truncations": [],
     "elapsed_min": 3,
-    "file_age_min": 58.1,
+    "file_age_min": 3.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1942,7 +1940,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 235,
-    "age_min": 10.6,
+    "age_min": 15.7,
     "stale": false,
     "available": true
   },
@@ -1961,9 +1959,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3314.753928,
+  "maint_next_sec": 3011.639861,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:06 AM EST",
+  "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1975,34 +1973,20 @@
     "latest": {
       "hypothesis_name": "buyer_diversity_velocity_divergence",
       "run_id": "research-147",
-      "status": "queued",
-      "status_label": "\ud83d\udfe1 Queued",
-      "status_color": "#ffaa00",
-      "evidence_text": "Verified the research-147 wallet-convergence gate (REQ-023) on a fresh out-of-sample trade (Buttcoin): correctly not blocked, flat win; post-activation sample now 2 wins / 0 losses out of the lab's 8-trade target.",
-      "evidence_source": "action"
+      "status": "not_acknowledged",
+      "status_label": "\u2753 Not acknowledged",
+      "status_color": "#ff9933",
+      "evidence_text": "",
+      "evidence_source": ""
     },
     "tally": {
-      "implemented": 22,
-      "queued": 3,
+      "implemented": 21,
+      "queued": 4,
       "rejected": 1,
       "total": 26
     }
   },
   "events": [
-    {
-      "ts": "2026-06-14T03:38:48.973864",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WORLDCUP: m5=20.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-14T03:39:25.825340",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 9f5ywdCD sold 7mPpsELD \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-06-14T03:39:27.684388",
       "type": "BUY_SKIP",
@@ -2688,6 +2672,20 @@
       "color": "#d29922",
       "msg": "m5 pump skip $1: m5=47.5% (already ran, we are exit liq, run95)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-14T04:07:30.674796",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Sendoor: m5=51.8% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-14T04:07:31.173808",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Sendoor: m5=51.8% (already ran, we are exit liq, run95)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2706,9 +2704,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:04:45",
+  "ts": "04:09:48",
   "__publish_meta": {
-    "published_at": "2026-06-14 04:04:45 EDT",
+    "published_at": "2026-06-14 04:09:48 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
