@@ -1,10 +1,10 @@
 {
-  "sol_price": 71.33251630461871,
+  "sol_price": 71.43747815714859,
   "bot_status": "RUNNING",
   "bot_last_seen": "04:09:08",
   "bot_cycles": 306,
   "bankroll": 1.066,
-  "bankroll_usd": 76.04046238072354,
+  "bankroll_usd": 76.1523517155204,
   "budget": 0.15240613814999998,
   "pnl_today": 0,
   "deployed": 0,
@@ -13,10 +13,10 @@
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
-    "pnl": -0.00225,
-    "trades": 1,
+    "pnl": 0,
+    "trades": 0,
     "wins": 0,
-    "losses": 1,
+    "losses": 0,
     "wr": 0
   },
   "pnl_7d": {
@@ -133,75 +133,78 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-14 04:05:00 EDT",
+    "timestamp": "2026-06-15 04:12:06 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "No new closed trades since run-314 (rolling_24h N=0, rolling_7d unchanged 6T 3W/3L pnl -0.007547 SOL). The one live event is a brand-new OPEN wallet_convergence position, TinyWorld, bought 03:52 EDT with 3 distinct source wallets and $70k entry liquidity -- a young healthy convergence that the REQ-023 age>30h gate correctly let through. The standing #1 structural problem is still lifetime exits (avg loss -16.44% vs avg win +12.96%, R/R 0.79, stop rate 50.4%), but with zero closed trades to act on this run there is nothing new to diagnose; the active WC gate is doing its job and the sample needs fires, not changes.",
-    "exit_analysis": "Lifetime N=1026: avg win +12.96%, avg loss -16.44%, R/R 0.79, stop-loss rate 50.4%. Rolling_7d N=6: avg win +1.13%, avg loss -9.21%, R/R 0.12, stop rate 33.3% (exit mix: 3 flat/other, 2 stop, 1 time). bear_strength remains the only lifetime-positive R/R strategy at 1.98 (N=35, pnl +0.003083). No new exits executed this run.",
-    "strategy_work": "Confirmed the REQ-023 WC age-gate continues to behave as designed on a fresh live fire: TinyWorld (young, 3-wallet, $70k liq) was correctly PASSED -- the 3rd young healthy convergence in a row to fire post-activation, all of which the gate is meant to spare. WC closed post-activation sample holds at N=2 (both small flat wins, 0 losses); TinyWorld becomes #3 when it closes. Independently re-verified the velocity logger is still broken (2000 entries, 0 captured trade events) -- unchanged since run-311, root cause still the second simultaneous PumpPortal websocket connection.",
-    "directives_changes": "Bumped to version 317. Refreshed track_record (lifetime as-of, rolling_24h/7d, regime, bankroll 1.0382 + ~0.031 open, SOL $68.16). Recorded the TinyWorld open position as the 3rd post-activation WC fire under a new wc_post_activation_open_run315 note. REQ-024 left PENDING for research-148. No hypotheses advanced (top hypothesis, the velocity logger, is research-blocked).",
+    "system_diagnosis": "The bot is healthy and trading, but wallet_convergence -- the only strategy that fired in the last 24h -- keeps bleeding. The single closed trade this period was TinyWorld, a wallet_convergence buy that stopped out -7.35%. Its entry pool was thin ($70k), and that thinness is exactly the pattern this run's main fix targets: across 25 wallet_convergence trades, thin-pool entries (under $150k) win only 36% of the time vs 55% for deep pools. Lifetime the bot is still net-negative (down ~1.20 SOL over 1027 sells, 35.5% win rate), dominated by the legacy copy-trade book. The diagnosis is actionable, not mysterious.",
+    "exit_analysis": "All-time across 1027 sells: avg win +12.96%, avg loss -16.42%, reward/risk 0.79, stop-loss rate 50.4%. Last 7 days (6 trades, 2 wins / 4 losses): avg win +0.3%, avg loss -8.75%, reward/risk 0.03 -- a weak week of small flat wins against full-sized losses. Last 24h: 1 trade, the TinyWorld -7.35% stop. No bear_strength or other active-strategy fires this period.",
+    "strategy_work": "Acted on research-148 (the weekly research run, which landed Sunday after the last brain run). Shipped two changes. (1) Raised the wallet_convergence minimum-liquidity floor from $30k to $150k -- research found thin pools are where this strategy's losses cluster, and TinyWorld's -7.35% stop on a $70k pool was a fresh confirmation. (2) Switched off the bonding-curve velocity logger, which research proved can never work without paying SOL (the trade-data feed is metered and needs a funded paid account) and which was also running a second connection that risked getting the bot's working graduation listener banned. Both changes compile-checked clean.",
+    "directives_changes": "Bumped to version 318. Updated all the live stats. Closed research-request REQ-024 (the logger diagnosis) and moved it to the archive. Re-classified the broken-logger hypothesis from 'blocked' to 'disabled, free rebuild queued'. Added a new hypothesis for research-148's headline idea: tracking pump.fun token creators who have previously had a token graduate, as an early signal known the moment a token is minted. Recorded one new lesson: 'free' verified on one part of an API does not mean the whole API is free -- the trade feed had its own paywall the earlier run missed.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "REQ-023 WC age>30h gate (shipped/activated 06-10): still validating. 3rd post-activation fire (TinyWorld) correctly passed as a young convergence; closed sample N=2 both flat wins, 0 losses. Eval at N=8.",
-      "Velocity diversity logger (REQ-024): still broken, 0/2000 trade events captured, unchanged. Fix is research-owned; research-148 fires today noon.",
-      "bear_strength BROTCHEN watch-trigger: armed, no new BS fire this run; strategy stays lifetime-positive (RR 1.98, pnl +0.003083)."
+      "REQ-023 aged-pump/bleed WC gate (shipped run-310, active since 06-10): held up -- it correctly let TinyWorld through as a young convergence (the gate is meant to spare young tokens), and TinyWorld's loss instead validates the NEW liquidity floor, which would have blocked it. The two gates target different loss classes.",
+      "Velocity logger (broken since run-311, flagged run-312): now resolved -- research found the real cause (a metered, paid-account-only trade feed) and the logger is disabled this run.",
+      "bear_strength: lifetime still positive (35 trades, 37.1% WR, reward/risk 1.98, +0.0031 SOL). No new fires this period; nothing to action."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a wallet_convergence skip gate: skip aged tokens (>30h old) that are either pumping hard on the hour or already bleeding on the day.",
-        "from_research": "research-147",
+        "proposal": "Fix the broken bonding-curve velocity logger -- rebuild it the FREE way (drop the paid trade-stream; poll free Bitquery + the already-paid Alchemy RPC for flagged tokens).",
+        "from_research": "research-148",
         "status": "SHIPPED",
-        "why": "Shipped and activated at the 06-10 restart; now live and accruing its post-activation sample (N=2 closed, both flat wins; TinyWorld is the 3rd open fire and was correctly passed as young). Needs more fires, not changes, to reach the N=8 eval bar."
+        "why": "Shipped the immediate, zero-cost half: disabled the dead logger, which removes a real risk (its second connection could get our working graduation listener banned) and loses nothing (it captured zero signal). The full free-rebuild half is DEFERRED -- a multi-function build I will not rush onto a 14,800-line file I cannot live-test in one run."
       },
       {
-        "proposal": "Build a log-only pump.fun bonding-curve velocity + buyer-diversity logger to calibrate a future entry edge.",
-        "from_research": "research-147",
-        "status": "PENDING",
-        "why": "The logger is shipped but broken in production (0 of 2000 entries captured any trade event due to a second simultaneous websocket connection). The corrected single-connection architecture is research-owned via REQ-024; research-148 fires today at noon and will return it. No blind websocket patch will be attempted in the meantime."
+        "proposal": "Rebuild the velocity logger the free way (Bitquery + Alchemy + a separate flagged-token log).",
+        "from_research": "research-148",
+        "status": "DEFERRED",
+        "why": "Queued as a pending hypothesis. Trigger to build: a future run with spare time budget, ideally paired with the creator-reputation logger since both poll the same pump.fun/Bitquery sources for flagged-mint outcomes. No urgency -- the disabled logger costs nothing while it waits."
       },
       {
-        "proposal": "Shelve building the Believe launchpad listener (config could not be validated and Believe volume collapsed).",
-        "from_research": "research-147",
+        "proposal": "Add a wallet_convergence entry liquidity floor of $150k (thin pools win 36% vs deep pools 55%).",
+        "from_research": "research-148",
         "status": "SHIPPED",
-        "why": "Accepted the shelve recommendation -- nothing was built and the listener stays un-built. Re-open only if Believe daily launch volume recovers above ~500/day for a sustained week."
+        "why": "LOW confidence per research, but the mechanism is first-principles (thin pools dump easily), it only tightens an existing parameter, TinyWorld gave fresh same-week confirmation, and wallet_convergence is net-negative so pruning the thin-pool loss cluster is low-downside with a clean revert."
       },
       {
-        "proposal": "REQ-024: confirm the two-websocket root cause, specify the corrected multiplexed single-connection architecture, re-verify metering cost, and redesign the buffer to persist only flagged tokens.",
-        "from_research": "requests_for_research (pending)",
-        "status": "PENDING",
-        "why": "Filed for the research brain; research-148 fires today (Sunday) at noon, just hours after this 04:05 run. The unblock trigger is research-148 returning the confirmed architecture; only then ships a corrected v2 logger."
+        "proposal": "Build a creator-reputation logger: record each pump.fun token's creator and whether that creator had a prior token graduate (a free, known-at-mint-time signal).",
+        "from_research": "research-148",
+        "status": "DEFERRED",
+        "why": "MEDIUM confidence, pure log-only, zero capital risk -- worth building, but it is a net-new poller + per-creator tally + outcome tracker. Queued as the repeat_deployer_reputation hypothesis. Trigger: a time-budgeted run, ideally built alongside the free velocity-logger rebuild."
       }
     ],
-    "code_changes_this_run": [],
-    "no_code_change_reason": "Pure monitoring run. No new closed trades to act on; the active REQ-023 WC gate needs fires not changes; the only pending code item (the velocity logger fix) is research-owned via REQ-024 and research-148 fires today at noon, so a blind websocket patch would repeat the anti-pattern of runs 310-314.",
+    "code_changes_this_run": [
+      "Wallet-convergence now requires at least $150,000 of pool liquidity to enter a trade, up from $30,000. Thin-pool entries are where this strategy's losses concentrate (36% win rate under $150k vs 55% above), and yesterday's only trade -- TinyWorld, a $70k pool -- stopped out at -7.35%, exactly the kind of entry this floor now blocks.",
+      "Turned off the bonding-curve velocity logger at startup. It had captured zero usable data since it launched because the trade feed it relies on is metered and requires a funded paid account, and it was opening a second connection that risked getting the bot's working graduation listener banned. Switching it off removes that risk and loses no information."
+    ],
     "changelog": [
-      "Confirmed the bot is healthy and actively trading (fresh heartbeat, new buy at 03:53, live filter skips observed).",
-      "Logged a new open copy-of-convergence position (TinyWorld) and confirmed the new wallet-convergence safety gate correctly let it through because it is a young, healthy 3-wallet token.",
-      "Re-confirmed the bonding-curve velocity logger is still capturing nothing and left the fix request open for the research lab, which runs later today.",
-      "Refreshed the brain stats and notes; shipped no code changes."
+      "Raised wallet-convergence minimum pool liquidity to $150k (from $30k).",
+      "Disabled the broken bonding-curve velocity logger (it never worked and posed a ban risk to a working component).",
+      "Closed the research request about the logger; recorded research's free-rebuild plan as a future task.",
+      "Logged research's new idea: watch for pump.fun creators whose previous token graduated, as an early signal."
     ],
     "actions_taken": [
-      "Verified the REQ-023 wallet_convergence age-gate passed the young TinyWorld convergence correctly (3rd clean post-activation fire).",
-      "Re-verified the bonding_curve_velocity_diversity_logger is still broken (0/2000 events) and kept REQ-024 pending for research-148.",
-      "Updated brain directives to version 317 with fresh stats and the TinyWorld open-position note; left bear_strength BROTCHEN watch-trigger armed."
+      "Shipped research-148's wallet_convergence liquidity floor ($150k) into the bot code (activates at next natural restart).",
+      "Shipped the research-148 / REQ-024 fix for the bonding_curve_velocity_diversity_logger by disabling it (activates at next natural restart).",
+      "Queued research-148's free OPTION-B velocity-logger rebuild and the creator_deployer_reputation_logger as pending hypotheses.",
+      "Closed and archived research request REQ-024."
     ],
     "next_priorities": [
-      "Ingest research-148 (fires today noon) and act on its REQ-024 answer: ship the corrected single-connection velocity logger if the architecture is delivered.",
-      "Watch TinyWorld to close -> WC post-activation closed sample becomes N=3 (target N=8 to evaluate the REQ-023 gate out-of-sample).",
-      "If a new bear_strength fire occurs, treat a 2nd sub-$80k calm-entry catastrophic stop as the trigger to re-open the entry-liquidity-floor decision (BROTCHEN watch)."
+      "After the next natural restart activates both changes, verify the WC liquidity floor is blocking sub-$150k convergences (watch for the new WC_SKIP reason) and confirm the velocity logger is no longer running.",
+      "Evaluate the WC liquidity floor at N=10 wallet_convergence fires post-activation; revert to $30k if rolling-10 reward/risk falls below 0.40 or it blocks 2+ would-be winners.",
+      "Build the FREE velocity-logger rebuild and the creator-reputation logger together in a future time-budgeted run (both poll pump.fun/Bitquery for flagged-mint outcomes)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1026,
-      "win_rate": 35.6,
+      "total_sells": 1027,
+      "win_rate": 35.5,
       "avg_win_pct": 12.96,
-      "avg_loss_pct": -16.44,
+      "avg_loss_pct": -16.42,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.0382,
-      "pnl_today": 0.0
+      "bankroll": 1.066,
+      "pnl_today": -0.00225
     },
     "active_strategies": [
       "wallet_convergence",
@@ -216,16 +219,16 @@
     "result": "Saved 20 wallets in 33m 43s",
     "completed": "2026-06-13T01:54:07.972908"
   },
-  "brain_next_sec": 86087.239638,
+  "brain_next_sec": 85784.015991,
   "brain_next_str": "Tue 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 230.760362,
-  "brain_last_run_str": "Sun 4:05 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:12 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:24 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 519647.239638,
+  "research_next_sec": 519344.015991,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -381,7 +384,7 @@
     "bot_events_age_sec": 29,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 24.27,
+    "hours_since_last_trade": 24.35,
     "hours_since_last_buy": 24.21,
     "trades_last_24h": {
       "buys": 0,
@@ -485,7 +488,7 @@
     "next_run_focus": "1) DORMANCY: gate arms ~04:13 today -- if no trade since 2026-06-14T04:13:47, trailing-24h hits 0; FLAG DORMANCY_ALERT and run events skip-rate breakdown (CB_SKIP/BS_SKIP/FP_SKIP/BUY_SKIP) to document filter-lockout. Not yet a 168h escalation (only ~1 day). 2) BRAIN next daily run (04:00 06-15) should integrate research-148: REQ-024 logger re-architecture (OPTION B), WC liquidity>=150k floor, creator-reputation logger, repeat_deployer_reputation hypothesis -- watch v317->v318 + any code ship. 3) LIVENESS healthy (cycle +3); restart only if events>300 AND heartbeat>1800 with CYCLE_ERROR, or cycle FREEZES two runs. 4) DASHBOARD sub-1s (832ms); restart only on SUSTAINED >=3s or non-200. 5) Mirror HEALTHY (consecutive_heals=0). 6) Eff-lab clear (hyp 43/60, lessons 22/50, v317).",
     "log_truncations": [],
     "elapsed_min": 2,
-    "file_age_min": 1.0,
+    "file_age_min": 6.1,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1921,7 +1924,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 306,
-    "age_min": 0.1,
+    "age_min": 5.1,
     "stale": false,
     "available": true
   },
@@ -1929,7 +1932,7 @@
     "requests_pending": 0,
     "requests_acknowledged": 0,
     "hypotheses_pending": 44,
-    "lessons_count": 22,
+    "lessons_count": 23,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1940,7 +1943,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3047.239638,
+  "maint_next_sec": 2744.015991,
   "maint_next_str": "5:00 AM EST",
   "maint_last_run_str": "4:08 AM EST",
   "maint_stale": false,
@@ -1957,73 +1960,17 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "Re-verified the bonding_curve_velocity_diversity_logger is still broken (0/2000 events) and kept REQ-024 pending for research-148.",
-      "evidence_source": "action"
+      "evidence_text": "run-316 (2026-06-15 04:05 EDT Mon). First brain run to see research-148 (fired Sun 06-14 12:24). TinyWorld (the run-315 open WC position) CLOSED as a -7.35% stop (entry liq $70,268 = sub-150k). SHIPPED 2 code changes (both in source, await ",
+      "evidence_source": "summary"
     },
     "tally": {
-      "implemented": 21,
+      "implemented": 22,
       "queued": 4,
       "rejected": 1,
-      "total": 26
+      "total": 27
     }
   },
   "events": [
-    {
-      "ts": "2026-06-15T03:45:14.189191",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F2SuErm4 sold c2fqDyg8 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-15T03:45:16.384214",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip OFSHILL: m5=8.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-15T03:45:16.828113",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip OFSHILL: m5=8.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-15T03:45:49.089098",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 45Sn4KL1 sold 9ufM9TJd \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-15T03:45:49.094324",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 45Sn4KL1 sold 9enx1QYu \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-15T03:45:51.386947",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip MooDaeng: m5=-16.7% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-15T03:45:54.158942",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip ket: h1=-5.3% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-15T03:45:54.174982",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 45Sn4KL1 sold 2yDL2okK \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-06-15T03:45:59.608370",
       "type": "BUY_SKIP",
@@ -2667,6 +2614,62 @@
       "color": "#555555",
       "msg": "Scanning 145 wallets (cycle #306)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:11:13.733709",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold H9L9apxE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:11:13.754088",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold H9L9apxE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:11:13.771645",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold H9L9apxE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:11:13.781414",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold H9L9apxE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:13:00.814280",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: gangJEP5 sold 5Mbn8Z1Y \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:13:03.304775",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Chihuahua: downtrend h1=-17.1% h24=-17.1%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:14:04.316115",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip BOBO: h6=223.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-15T04:14:04.322137",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2685,9 +2688,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:09:12",
+  "ts": "04:14:15",
   "__publish_meta": {
-    "published_at": "2026-06-15 04:09:12 EDT",
+    "published_at": "2026-06-15 04:14:15 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
