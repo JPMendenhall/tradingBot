@@ -1,15 +1,15 @@
 {
-  "sol_price": 74.53787684267311,
+  "sol_price": 74.74909293389427,
   "bot_status": "RUNNING",
   "bot_last_seen": "04:00:06",
   "bot_cycles": 374,
   "bankroll": 1.0496,
-  "bankroll_usd": 78.23495553406971,
+  "bankroll_usd": 78.45664794341543,
   "budget": 0.15033119835,
   "pnl_today": -0.00013242006812219642,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 4.1,
+  "hour": 4.2,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -133,85 +133,89 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-15 04:12:06 EDT",
+    "timestamp": "2026-06-16 04:11:08 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "The bot is healthy and trading, but wallet_convergence -- the only strategy that fired in the last 24h -- keeps bleeding. The single closed trade this period was TinyWorld, a wallet_convergence buy that stopped out -7.35%. Its entry pool was thin ($70k), and that thinness is exactly the pattern this run's main fix targets: across 25 wallet_convergence trades, thin-pool entries (under $150k) win only 36% of the time vs 55% for deep pools. Lifetime the bot is still net-negative (down ~1.20 SOL over 1027 sells, 35.5% win rate), dominated by the legacy copy-trade book. The diagnosis is actionable, not mysterious.",
-    "exit_analysis": "All-time across 1027 sells: avg win +12.96%, avg loss -16.42%, reward/risk 0.79, stop-loss rate 50.4%. Last 7 days (6 trades, 2 wins / 4 losses): avg win +0.3%, avg loss -8.75%, reward/risk 0.03 -- a weak week of small flat wins against full-sized losses. Last 24h: 1 trade, the TinyWorld -7.35% stop. No bear_strength or other active-strategy fires this period.",
-    "strategy_work": "Acted on research-148 (the weekly research run, which landed Sunday after the last brain run). Shipped two changes. (1) Raised the wallet_convergence minimum-liquidity floor from $30k to $150k -- research found thin pools are where this strategy's losses cluster, and TinyWorld's -7.35% stop on a $70k pool was a fresh confirmation. (2) Switched off the bonding-curve velocity logger, which research proved can never work without paying SOL (the trade-data feed is metered and needs a funded paid account) and which was also running a second connection that risked getting the bot's working graduation listener banned. Both changes compile-checked clean.",
-    "directives_changes": "Bumped to version 318. Updated all the live stats. Closed research-request REQ-024 (the logger diagnosis) and moved it to the archive. Re-classified the broken-logger hypothesis from 'blocked' to 'disabled, free rebuild queued'. Added a new hypothesis for research-148's headline idea: tracking pump.fun token creators who have previously had a token graduate, as an early signal known the moment a token is minted. Recorded one new lesson: 'free' verified on one part of an API does not mean the whole API is free -- the trade feed had its own paywall the earlier run missed.",
+    "system_diagnosis": "Recent results are soft and the worst losses are coming from two strategies whose entry filters are not catching this failure shape. In the last day the bot closed 4 trades and lost about 0.0069 SOL: the two copy-the-wallet-convergence trades were harmless (one tiny +0.9% win, one tiny -0.4% loss), but two trades took big hits -- a bear-strength trade called WOC dropped 13.7% and a chop-scalp trade called TURTLE dropped 9.3%. Both of those losers had healthy trading liquidity and both showed MORE sellers than buyers in the live order book at the moment we bought. The single most useful finding: WOC's pool was a healthy $109k (the same size as our best past bear-strength winner), which proves these blow-up losses are NOT caused by thin/small pools -- so the 'only buy if the pool is big enough' idea I was watching for is dead. The real common thread is the live order book leaning toward selling at entry, which I've sent to the research lab to study properly rather than guess at.",
+    "exit_analysis": "Last 24h: 4 closed trades, 1 win / 3 losses, win rate 25%. Average win +0.9%, average loss -7.8%, reward/risk 0.11, half the exits were hard stop-losses. The two damaging exits were emergency/stop exits on WOC (-13.7%) and TURTLE (-9.3%). Lifetime reward/risk holds at 0.79 (big average wins of +12.9% vs average losses -16.4%), stop-loss rate 50.4%. Exits remain the #1 leak: when an entry is wrong, the loss is large because the price gaps down through the stop in one move on a thinning book.",
+    "strategy_work": "Focused on the bear-strength blow-up cluster. WOC is the 2nd big bear-strength stop since the bot last restarted (after BROTCHEN -15.2% on June 11). Both passed every filter we added in May (enough recent trades, non-negative 6h trend). I checked whether low pool size was the cause -- it is NOT: BROTCHEN's pool was $60k but WOC's was $109k, and both still blew up, so a minimum-pool-size rule would not have helped. What both losers DID share was an order book with more sellers than buyers right when we bought, while our bear-strength winner (BOUNTYWORK) had an all-buyers book. Rather than bolt on a rule from just two examples (that exact mistake produced repeated counter-examples on the wallet-convergence strategy earlier), I sent the research lab a precise request (REQ-025) to test the 'more-sellers-than-buyers at entry' signal across all 36 bear-strength trades and decide whether it should apply to several strategies at once. I kept bear-strength running at its current minimum size (its lifetime results are still roughly break-even with large wins), and I wrote down a firm rule: if a 3rd big bear-strength loss lands before research answers, I pause that strategy.",
+    "directives_changes": "Recorded that the sub-$80k bear-strength liquidity-floor idea is FALSIFIED (closed it out). Filed research request REQ-025 about the order-book-leaning-to-sell entry signal. Refreshed all the running stats. Added a written pre-commitment to pause bear-strength if the losses continue before research replies. Logged a new lesson capturing why I routed this to research instead of guessing.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "REQ-023 aged-pump/bleed WC gate (shipped run-310, active since 06-10): held up -- it correctly let TinyWorld through as a young convergence (the gate is meant to spare young tokens), and TinyWorld's loss instead validates the NEW liquidity floor, which would have blocked it. The two gates target different loss classes.",
-      "Velocity logger (broken since run-311, flagged run-312): now resolved -- research found the real cause (a metered, paid-account-only trade feed) and the logger is disabled this run.",
-      "bear_strength: lifetime still positive (35 trades, 37.1% WR, reward/risk 1.98, +0.0031 SOL). No new fires this period; nothing to action."
+      "run-316 ship #1 (wallet-convergence min-liquidity raised to $150k): STILL not live -- the bot has not restarted since June 10, so this change sits in the code waiting. No wallet-convergence trade this run was the kind it targets (both were flat), so no harm from the delay.",
+      "run-316 ship #2 (turn off the broken bonding-velocity logger): STILL not live for the same reason; the broken logger's extra connection remains active until the next restart. I did not force a restart (that is handled automatically and is not my job).",
+      "Bear-strength May gates (enough recent trades + non-negative 6h trend): now active, but they did NOT catch WOC -- confirming they only filter a narrow earlier failure type, not this order-book one."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Fix the broken bonding-curve velocity logger -- rebuild it the FREE way (drop the paid trade-stream; poll free Bitquery + the already-paid Alchemy RPC for flagged tokens).",
-        "from_research": "research-148",
-        "status": "SHIPPED",
-        "why": "Shipped the immediate, zero-cost half: disabled the dead logger, which removes a real risk (its second connection could get our working graduation listener banned) and loses nothing (it captured zero signal). The full free-rebuild half is DEFERRED -- a multi-function build I will not rush onto a 14,800-line file I cannot live-test in one run."
-      },
-      {
-        "proposal": "Rebuild the velocity logger the free way (Bitquery + Alchemy + a separate flagged-token log).",
+        "proposal": "Rebuild the bonding-velocity/diversity logger the free way (no paid streaming): keep the free new-token feed, and for flagged tokens pull buyer counts from a free query plus read curve velocity from the RPC we already pay for.",
         "from_research": "research-148",
         "status": "DEFERRED",
-        "why": "Queued as a pending hypothesis. Trigger to build: a future run with spare time budget, ideally paired with the creator-reputation logger since both poll the same pump.fun/Bitquery sources for flagged-mint outcomes. No urgency -- the disabled logger costs nothing while it waits."
+        "why": "The June-16 disable of the old broken logger is itself not live yet (bot has not restarted since June 10). Building the replacement now would leave the old broken logger and the new one running side by side. Concrete unlock: the next natural restart activates the disable, THEN I build the free rebuild in a dedicated time-budgeted pass. It is a multi-function build, not a quick edit."
       },
       {
-        "proposal": "Add a wallet_convergence entry liquidity floor of $150k (thin pools win 36% vs deep pools 55%).",
+        "proposal": "Add a $150k minimum-liquidity floor to the wallet-convergence strategy.",
         "from_research": "research-148",
         "status": "SHIPPED",
-        "why": "LOW confidence per research, but the mechanism is first-principles (thin pools dump easily), it only tightens an existing parameter, TinyWorld gave fresh same-week confirmation, and wallet_convergence is net-negative so pruning the thin-pool loss cluster is low-downside with a clean revert."
+        "why": "Already shipped last run (run-316); it sits in the code awaiting the next restart. Nothing further to do this run."
       },
       {
-        "proposal": "Build a creator-reputation logger: record each pump.fun token's creator and whether that creator had a prior token graduate (a free, known-at-mint-time signal).",
+        "proposal": "Add a log-only 'repeat-deployer reputation' logger: record each new token's creator wallet and whether that creator has launched a token that graduated before.",
         "from_research": "research-148",
         "status": "DEFERRED",
-        "why": "MEDIUM confidence, pure log-only, zero capital risk -- worth building, but it is a net-new poller + per-creator tally + outcome tracker. Queued as the repeat_deployer_reputation hypothesis. Trigger: a time-budgeted run, ideally built alongside the free velocity-logger rebuild."
+        "why": "Same reason as the velocity-logger rebuild -- it is a multi-function build that polls external APIs, best built together with the free velocity rebuild AFTER the next restart clears the old logger. Zero capital risk, so no urgency; queued as a high-priority pending idea."
+      },
+      {
+        "proposal": "REQ-025 (filed this run): test whether a 'more sellers than buyers at entry' order book separates bear-strength blow-up losses from wins, and whether it should apply across several strategies.",
+        "from_research": "filed-by-brain run-317",
+        "status": "PENDING",
+        "why": "Just filed; the research lab runs weekly on Sundays, so the next answer arrives on or after June 21. Bear-strength stays live at minimum size until then, with a written pause-trigger if losses continue."
       }
     ],
-    "code_changes_this_run": [
-      "Wallet-convergence now requires at least $150,000 of pool liquidity to enter a trade, up from $30,000. Thin-pool entries are where this strategy's losses concentrate (36% win rate under $150k vs 55% above), and yesterday's only trade -- TinyWorld, a $70k pool -- stopped out at -7.35%, exactly the kind of entry this floor now blocks.",
-      "Turned off the bonding-curve velocity logger at startup. It had captured zero usable data since it launched because the trade feed it relies on is metered and requires a funded paid account, and it was opening a second connection that risked getting the bot's working graduation listener banned. Switching it off removes that risk and loses no information."
-    ],
+    "code_changes_this_run": [],
+    "no_code_change_reason": "The only actionable signal this run -- a 2nd big bear-strength loss (WOC) -- FALSIFIED its candidate fix (a minimum-pool-size rule), because WOC lost at a healthy $109k pool. The promising new pattern (order book leaning to sell at entry) is only 2 examples and the history shows guessing a rule from 2 examples backfires, so I sent it to the research lab (REQ-025) instead of shipping. The other queued work (free velocity-logger rebuild, creator-reputation logger) are bigger builds that must wait for the next restart to first clear the old broken logger.",
     "changelog": [
-      "Raised wallet-convergence minimum pool liquidity to $150k (from $30k).",
-      "Disabled the broken bonding-curve velocity logger (it never worked and posed a ban risk to a working component).",
-      "Closed the research request about the logger; recorded research's free-rebuild plan as a future task.",
-      "Logged research's new idea: watch for pump.fun creators whose previous token graduated, as an early signal."
+      "Diagnosed the two big losses this run (WOC bear-strength -13.7%, TURTLE chop-scalp -9.3%) and found both had order books leaning toward selling at the moment of entry.",
+      "Closed out the 'small-pool bear-strength' theory: WOC lost at a healthy $109k pool, so pool size is not the cause.",
+      "Filed a precise research request (REQ-025) to study the order-book signal across all bear-strength trades and decide if it should protect multiple strategies.",
+      "Kept bear-strength running at minimum size and wrote a firm rule to pause it if a third big loss lands before research answers.",
+      "Refreshed all the tracking stats and noted that last run's two code changes are still waiting for the bot to restart before they take effect."
     ],
     "actions_taken": [
-      "Shipped research-148's wallet_convergence liquidity floor ($150k) into the bot code (activates at next natural restart).",
-      "Shipped the research-148 / REQ-024 fix for the bonding_curve_velocity_diversity_logger by disabling it (activates at next natural restart).",
-      "Queued research-148's free OPTION-B velocity-logger rebuild and the creator_deployer_reputation_logger as pending hypotheses.",
-      "Closed and archived research request REQ-024."
+      "Filed REQ-025 to the research lab: test the 'more sellers than buyers at entry' signal as a separator for bear-strength blow-up losses, with two seed losses (BROTCHEN, WOC) and a winner contrast (BOUNTYWORK), plus whether it should apply to chop-scalp and wallet-convergence too.",
+      "Marked the bear-strength minimum-pool-size idea as falsified (WOC lost at a $109k pool).",
+      "Held bear-strength at current minimum size and set a written pause-trigger (3rd big loss, or 5 fires with under 20% win rate).",
+      "Confirmed last run's wallet-convergence $150k liquidity floor and the broken-logger shutoff are both still pending the next restart."
     ],
     "next_priorities": [
-      "After the next natural restart activates both changes, verify the WC liquidity floor is blocking sub-$150k convergences (watch for the new WC_SKIP reason) and confirm the velocity logger is no longer running.",
-      "Evaluate the WC liquidity floor at N=10 wallet_convergence fires post-activation; revert to $30k if rolling-10 reward/risk falls below 0.40 or it blocks 2+ would-be winners.",
-      "Build the FREE velocity-logger rebuild and the creator-reputation logger together in a future time-budgeted run (both poll pump.fun/Bitquery for flagged-mint outcomes)."
+      "When the bot next restarts: confirm the wallet-convergence $150k floor and the broken-logger shutoff actually take effect, then build the free velocity-logger rebuild + creator-reputation logger together.",
+      "Act on research REQ-025 when it returns (on/after June 21): ship the order-book entry gate if research finds a clean separator across the ~36 bear-strength trades.",
+      "Watch bear-strength: pause it to zero size if a 3rd big stop (worse than -12%) lands before REQ-025 returns, or if it reaches 5 post-restart fires with under 20% win rate.",
+      "Keep monitoring wallet-convergence -- its gates are active and producing harmless flat trades; no catastrophic loss this run."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1027,
+      "total_sells": 1031,
       "win_rate": 35.5,
-      "avg_win_pct": 12.96,
-      "avg_loss_pct": -16.42,
+      "avg_win_pct": 12.93,
+      "avg_loss_pct": -16.38,
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 50.4,
-      "bankroll": 1.066,
-      "pnl_today": -0.00225
+      "bankroll": 1.0496,
+      "pnl_today": -0.00685
     },
     "active_strategies": [
-      "wallet_convergence",
+      "fresh_profile",
       "bear_strength",
       "consensus_boost",
-      "fresh_profile",
-      "chop_momentum_scalp"
+      "chop_momentum_scalp",
+      "wallet_convergence",
+      "fresh_boost",
+      "bounce_hunter",
+      "anchor_derivative_snipe",
+      "gecko_breadth_burst"
     ]
   },
   "wallet_scan": {
@@ -219,16 +223,16 @@
     "result": "Saved 20 wallets in 33m 43s",
     "completed": "2026-06-13T01:54:07.972908"
   },
-  "brain_next_sec": 86079.252876,
+  "brain_next_sec": 85776.196887,
   "brain_next_str": "Wed 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 58.747124,
-  "brain_last_run_str": "Mon 4:12 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:11 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:24 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 433239.252876,
+  "research_next_sec": 432936.196887,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -382,7 +386,7 @@
     "bot_events_age_sec": 224.4,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 3.44,
+    "hours_since_last_trade": 3.52,
     "hours_since_last_buy": ">3 (last logged action was a sell 01:04:34; last buy earlier)",
     "trades_last_24h": {
       "note": "total_trades 2082, FLAT vs maint-463 (still 2082; no new trade across maint-461..464). Last activity sell 06-16 01:04:34, now ~3h quiet. Event composition last100: SIGNAL 47, BUY_SKIP 36, CB_SKIP 9, BS_SKIP 3, SCAN 5. Signals flowing and being evaluated -- candidate selectivity in ALTCOIN_CHOP, NOT filter lockout."
@@ -484,7 +488,7 @@
     "log_truncations": [],
     "finished_at": "2026-06-16 04:06:08 EDT",
     "elapsed_min": 2,
-    "file_age_min": 3.2,
+    "file_age_min": 8.3,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1929,15 +1933,15 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 374,
-    "age_min": 9.2,
+    "age_min": 14.3,
     "stale": false,
     "available": true
   },
   "brain_queue": {
-    "requests_pending": 0,
+    "requests_pending": 1,
     "requests_acknowledged": 0,
     "hypotheses_pending": 44,
-    "lessons_count": 23,
+    "lessons_count": 24,
     "killed_ideas_count": 18,
     "drift_keys": [],
     "active_strategies_count": 11,
@@ -1948,7 +1952,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3039.252876,
+  "maint_next_sec": 2736.196887,
   "maint_next_str": "5:00 AM EST",
   "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
@@ -1969,34 +1973,13 @@
       "evidence_source": "summary"
     },
     "tally": {
-      "implemented": 22,
+      "implemented": 21,
       "queued": 4,
       "rejected": 1,
-      "total": 27
+      "total": 26
     }
   },
   "events": [
-    {
-      "ts": "2026-06-16T03:36:21.954959",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "OLIVER: h24=-94% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-16T03:36:21.954959",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "ConsensusBoost: 1 signal(s)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-16T03:36:21.980912",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "ConsensusBoost: 1 signal(s)",
-      "detail": ""
-    },
     {
       "ts": "2026-06-16T03:36:21.986598",
       "type": "SCAN",
@@ -2675,6 +2658,27 @@
       "color": "#58a6ff",
       "msg": "WalletSell: PMJA8UQD sold GG2xZF5A \u2014 may trigger exit",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-16T04:12:22.054222",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold 6VaDeWCC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-16T04:12:22.078322",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold 6VaDeWCC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-16T04:12:22.081895",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold 6VaDeWCC \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2693,9 +2697,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:09:20",
+  "ts": "04:14:23",
   "__publish_meta": {
-    "published_at": "2026-06-16 04:09:20 EDT",
+    "published_at": "2026-06-16 04:14:23 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
