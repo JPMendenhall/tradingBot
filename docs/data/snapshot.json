@@ -1,15 +1,15 @@
 {
-  "sol_price": 68.30713995186449,
+  "sol_price": 68.27053276681622,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:55:20",
   "bot_cycles": 565,
   "bankroll": 1.0538,
-  "bankroll_usd": 71.9820640812748,
+  "bankroll_usd": 71.94348742967094,
   "budget": 0.150242262,
   "pnl_today": 0.0046491302696699145,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 3.9,
+  "hour": 4.0,
   "positions": [],
   "num_positions": 0,
   "pnl_24h": {
@@ -133,82 +133,86 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-18 04:09:00 EDT",
+    "timestamp": "2026-06-19 04:12:00 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "No problem requiring action this run. The bot is healthy (PID 13624, cycle 501, fresh heartbeat 03:56 EDT) and BOTH active strategies produced positive or benign closes in the last 24h. The standing structural issue is unchanged: the bot has run on the same process ~8 days, so the two code ships from 06-09 (the tighter wallet-convergence liquidity floor and the disable of the dead momentum-velocity logger) are still sitting in source waiting for the next natural restart to take effect. The lifetime book is still red (-1.19 SOL over 1035 sells), driven almost entirely by the retired copy-trade strategy (-0.83 SOL of it); the strategies actually firing now (wallet-convergence and bear-strength) are both improving.",
-    "exit_analysis": "Last 24h: 2 closes, 1 win / 1 flat. JOBY (bear-strength) exited +15.99% on a stall-exit after 47 minutes (+0.0048 SOL). FRAG (chop momentum scalp) exited essentially flat at -0.05% after 25 minutes (-0.000015 SOL). No stop losses in 24h. Rolling 7-day: 12 trades, 41.7% win rate, average win +7.66% vs average loss -6.68%, reward/risk 1.15, stop-loss rate 33%. Lifetime reward/risk 0.79, stop-loss rate 50.2%.",
-    "strategy_work": "No hypothesis advanced via code this run by design. Key observation: the JOBY win is the first bear-strength winner since VIRL on May 20 and it flips bear-strength's all-time profit positive (37 trades, +0.0037 SOL, reward/risk 1.93). This is live confirmation that the bear-strength entry gates installed earlier (minimum recent trade activity + non-negative 6h trend) are selecting tradeable setups. Because JOBY was a win, the pre-committed bear-strength pause trigger (which only fires on a third catastrophic stop or a run of sub-20% win-rate fires) moves further from tripping and stays armed-but-quiet.",
-    "directives_changes": "Refreshed the running stats (lifetime, 24h, 7d), bankroll, SOL price and regime. Rewrote the current-priority and reasoning to record the JOBY bear-strength win and the no-ship decision. No hypotheses moved stage; no new research request filed; the requests-for-research queue still holds only REQ-025 (the bear-strength net-sell-book question) pending Sunday's research run.",
+    "system_diagnosis": "The #1 lifetime problem is unchanged and historical: 1037 sells, 35.6% WR, avg loss -16.31% vs avg win +12.96%, R/R 0.79, lifetime P/L -1.188551 SOL -- still dominated by the KILLED copy-trade book (537 trades, -0.830 SOL) and old high-variance strategies. But the LIVE picture is healthy and improving: the 7-day P/L flipped POSITIVE (+0.005891 SOL, 5W/7L) and 24h is positive (+0.004146), both driven by wallet-convergence (7d R/R 3.68, +0.008092). No new failure mode this window -- the only loss was a benign -1.67% flat exit.",
+    "exit_analysis": "Live picture (7d): 12 trades, avg win +10.66%, avg loss -4.74%, R/R 2.25, stop-loss rate 25% (3 of 12). 24h: avg win +15.47%, avg loss -1.67%, R/R 9.26 (inflated by the tiny loss), 0% stop-loss. Wallet-convergence 7d: avg win +9.33% vs avg loss -2.54%, R/R 3.68, only 12.5% stops -- exits closing cleanly via target/time/flat. Lifetime (historical drag): avg win +12.96% vs avg loss -16.31%, R/R 0.79, 50.1% stop-rate. Live R/R is well above the 2:1 SURVIVE target.",
+    "strategy_work": "No hypothesis advanced to a new code stage -- this was a monitoring run. Verified run-319's core call (leave WC and BS untouched): WC responded with a +15.47% target-exit win and a benign -1.67% flat loss, net +0.004146 SOL, confirming the no-tune decision. bear_strength produced zero new fires, so its all-time stays positive (37 trades, R/R 1.93). The two Phase-1 log-only loggers (free velocity rebuild, creator-reputation) remain queued and deferred.",
+    "directives_changes": "Bumped version 321->322 (updated_by run-320). Refreshed the rolling 24h/7d/lifetime stats and bankroll/price/regime to current numbers. Rewrote the current-priority and reasoning to document the two new wallet-convergence closes, WC's strengthened 7-day edge, and the no-code-ship rationale. Added a run-320 note to the wallet-convergence strategy block. No hypotheses changed stage; nothing added to the permanent killed list; REQ-025 left pending.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "Run-318 left wallet-convergence untouched as a winning strategy: confirmed correct, WC 7d still 57.1% win rate, reward/risk 1.97, +0.0041 SOL (no new WC closes this window).",
-      "Run-318 kept the bear-strength pause watch armed: this run a bear-strength WIN (JOBY +16%) arrived, so the watch stays armed but is further from its loss-based trigger; bear-strength all-time flipped profit-positive.",
-      "Run-318 deferred the two research loggers on restart sequencing: still deferred this run, now with a sharpened build trigger (the next natural bot restart) and an honest note that the real reason is regression-avoidance on a healthy bot, not a hard blocker."
+      "run-319 said leave WC untouched (best strategy): CONFIRMED RIGHT -- WC added a +15.47% win and a benign -1.67% loss, net +0.004146 SOL, and its 7d R/R rose to 3.68.",
+      "run-319 said the JOBY win flipped bear_strength all-time positive and the BS pause watch stays armed: HELD -- no new BS fires, all-time still 37T R/R 1.93 +0.003738, watch un-fed.",
+      "run-319 deferred both research loggers to the next natural restart: STILL DEFERRED -- bot has not restarted (~9 days same process), so the trigger has not arrived.",
+      "run-319 left REQ-025 pending for Sunday research: STILL PENDING -- no new bear-strength loss this window means no new seed data to add."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Rebuild the dead momentum-velocity logger the free way (stop paying-for streaming, poll free data sources instead) so it captures real buyer-velocity data.",
+        "proposal": "Rebuild the broken pump.fun bonding-velocity logger the free way (drop the paid trade-stream, poll free data for buyer counts) instead of paying SOL to stream.",
         "from_research": "research-148",
         "status": "DEFERRED",
-        "why": "It is a zero-profit research logger whose payoff is a dataset that needs 2-4 weeks to mature, and the bot has run 8 days on one process so the earlier 'disable the old logger' ship hasn't taken effect yet. Building now risks a regression on a healthy, currently-profitable-week bot for no near-term gain. Concrete unlock: the next natural restart, which clears the stale logger and lets the disable and the rebuild land together."
+        "why": "It is a multi-function data-pipeline build with zero near-term P/L and a 2-4 week payoff; on a healthy, profitable bot the disciplined trigger is a future run with real time budget paired with the next natural restart, so the run-316 logger-disable co-activates and the old/new sockets never overlap."
       },
       {
-        "proposal": "Add a $150k minimum-liquidity entry floor to the wallet-convergence strategy.",
+        "proposal": "Add a $150k minimum-liquidity floor to the wallet-convergence entry filter.",
+        "from_research": "research-148",
+        "status": "SHIPPED",
+        "why": "Already written into the code in run-316 and waiting for the next restart to activate. Not stacking it harder this run because wallet-convergence is currently winning (7-day R/R 3.68) WITHOUT it active and the floor would block ~40% of its fires -- research itself rated this LOW confidence and said ship only if comfortable."
+      },
+      {
+        "proposal": "Build a logger that records each pump.fun token's creator wallet and whether that creator had a prior graduated token (a leading 'who-made-this' edge).",
         "from_research": "research-148",
         "status": "DEFERRED",
-        "why": "Research itself tagged this LOW confidence (only 8 post-gate trades support it) and said to ship only if comfortable stacking a fifth change onto wallet-convergence. Wallet-convergence just posted a positive 7-day window (57% win rate), so the disciplined call is to leave a winner alone. Concrete unlock: re-evaluate once wallet-convergence accrues 10+ more post-gate trades to test the liquidity split out-of-sample."
+        "why": "Net-new poller + per-creator tally + forward-outcome tracker with zero P/L at the logging stage and a 2-4 week payoff; deferred to a future run with time budget, naturally paired with the free velocity-logger rebuild since both poll the same pump.fun/Bitquery data."
       },
       {
-        "proposal": "Add a new logger that records each pump.fun token's creator wallet and whether that creator previously graduated a token (repeat-deployer reputation signal).",
-        "from_research": "research-148",
-        "status": "DEFERRED",
-        "why": "Same reasoning as the velocity logger: a zero-profit observation feature with a 2-4 week payoff, not worth a code change on a healthy bot this run. Concrete unlock: build alongside the velocity logger at the next natural restart window."
-      },
-      {
-        "proposal": "REQ-025 - have research test whether a net-sell live order book at entry separates the catastrophic bear-strength stops from the winners, and propose a skip gate.",
-        "from_research": "requests_for_research (filed run-317)",
+        "proposal": "REQ-025: test whether a net-sell live order book at entry separates the catastrophic bear-strength stops from the winners, and whether it is a universal entry-safety filter across strategies.",
+        "from_research": "requests_for_research REQ-025 (pending)",
         "status": "PENDING",
-        "why": "Owned by the weekly research brain, which next runs Sunday June 21. No new bear-strength catastrophic stop occurred this window (JOBY was a win), so there is no fresh loss data to add to the seed set; the request stands as-is."
+        "why": "Owned by the weekly research run on Sunday 06-21. No bear-strength trade closed this window, so there is no new loss data to add to the seed set; the decision unblocks when research returns the net-sell-book stratification across all ~37 BS trades with the 7-field completeness packet."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Good-news monitoring run on a healthy bot. The one new bear-strength trade was a +16% WIN that validates the existing gates (nothing to fix), wallet-convergence is winning and should not be tuned, and the three open research proposals are all zero-profit loggers/low-confidence tweaks best built at the next natural restart rather than shipped speculatively now.",
+    "no_code_change_reason": "Nothing met the bar for a code change. Wallet-convergence is winning and must not be tuned; bear-strength had no new fires; the two outstanding research loggers are zero-P/L multi-function builds whose disciplined trigger is a future run with time budget plus the next natural restart; and REQ-025's bear-strength gate is still pending Sunday's research run with no new loss data this window.",
     "changelog": [
-      "Recorded a bear-strength win: JOBY exited +16% after 47 minutes - the first bear-strength winner in about four weeks - which pushed the bear-strength strategy's all-time profit into the black for the first time.",
-      "Recorded a flat exit: FRAG (momentum scalp) closed essentially at break-even (-0.05%).",
-      "Updated the running scorecard, bankroll, SOL price and market regime in the brain's memory.",
-      "Left all strategy code unchanged on purpose."
+      "Checked the bot: healthy and actively trading (one win, one small loss, and a completed round-trip in the last day); no restart possible from here and none needed.",
+      "Two trades closed since yesterday, both from the wallet-convergence strategy: one +15.5% win and one tiny -1.7% loss, for a net gain on the day.",
+      "Wallet-convergence is now clearly the best strategy (winning over the past week); decided to leave it completely alone rather than risk breaking a winner.",
+      "Made no code changes. Updated the brain's notes and statistics only."
     ],
     "actions_taken": [
-      "Held wallet-convergence untouched (winning strategy, 57% win rate over 7 days).",
-      "Kept the bear-strength pause-watch armed but did not pause bear-strength - the new JOBY win moves it away from its trigger.",
-      "Deferred all three research-148 proposals (free velocity-logger rebuild, wallet-convergence liquidity floor, creator-reputation logger) with concrete unlock triggers noted.",
-      "Left REQ-025 pending for Sunday's research run."
+      "Confirmed wallet-convergence's two new closes (+15.5% win, -1.7% flat loss) and recorded that it is now the bot's strongest strategy over the past week.",
+      "Left wallet-convergence untouched and chose NOT to tighten the proposed $150k liquidity floor any further, because the strategy is winning without it and the floor would block ~40% of its trades.",
+      "Kept the two pump.fun research loggers (free velocity rebuild and creator-reputation) deferred until a future run with spare time and the next bot restart.",
+      "Left the bear-strength net-sell-book research request (REQ-025) pending for Sunday's research run; no new bear-strength loss occurred to add to it."
     ],
     "next_priorities": [
-      "Watch for the next natural bot restart; when it happens, the 06-09 ships activate and it becomes the right window to build the free velocity-logger rebuild and the creator-reputation logger.",
-      "Confirm bear-strength's improvement holds: target 3-5 more bear-strength fires to see if win-rate stays above breakeven now that all-time profit flipped positive.",
-      "On Sunday June 21, ingest research's REQ-025 answer on the bear-strength net-sell-book gate and decide whether to ship it.",
-      "Re-check the wallet-convergence $150k liquidity floor once 10+ more post-gate wallet-convergence trades accumulate."
+      "Keep monitoring wallet-convergence; if its 7-day R/R holds above ~2.0 over the next ~10 fires, consider a small size increase rather than any new gate.",
+      "On the next natural bot restart, verify the run-316 ships activate (WC liquidity floor + velocity-logger disable) and watch the first post-activation WC fires (eval at N=8).",
+      "Act on REQ-025 when Sunday 06-21 research returns the net-sell-book separator with the full 7-field packet; ship a BS skip-gate only if it cleanly splits catastrophic stops from winners.",
+      "When a future run has real time budget AND the bot has restarted, build the OPTION-B free velocity logger and the creator-reputation logger together."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1035,
+      "total_sells": 1037,
       "win_rate": 35.6,
       "avg_win_pct": 12.96,
-      "avg_loss_pct": -16.34,
+      "avg_loss_pct": -16.31,
       "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 50.2,
-      "bankroll": 1.0522,
-      "pnl_today": 0.004784
+      "stop_loss_rate_pct": 50.1,
+      "bankroll": 1.0538,
+      "pnl_today": 0.004146
     },
     "active_strategies": [
-      "wallet_convergence",
-      "bear_strength",
-      "chop_momentum_scalp"
+      "wallet_convergence (TESTING -- 7d best: 4W/4L RR 3.68 +0.008092 SOL; all-time 31T 45.2%WR RR 0.73 -0.011777)",
+      "bear_strength (TESTING -- all-time 37T 37.8%WR RR 1.93 +0.003738; pause watch ARMED, no new fires)",
+      "consensus_boost (TESTING -- all-time 47T 46.8%WR RR 1.22 -0.000559)",
+      "fresh_profile (PROVEN -- all-time 15T 60%WR RR 1.17 +0.002865; dormant)",
+      "chop_momentum_scalp (TESTING -- all-time 23T 34.8%WR RR 1.04 -0.004904)",
+      "copy_trade (KILLED watch-only -- 537T -0.830272 SOL)"
     ]
   },
   "wallet_scan": {
@@ -216,16 +220,16 @@
     "result": "Saved 20 wallets in 36m 38s",
     "completed": "2026-06-17T01:37:04.902796"
   },
-  "brain_next_sec": 86253.485672,
+  "brain_next_sec": 85950.381749,
   "brain_next_str": "Sat 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 116.514328,
-  "brain_last_run_str": "Thu 4:09 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:24 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 174213.485672,
+  "research_next_sec": 173910.381749,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -362,9 +366,9 @@
     "summary": "research-148 (2026-06-14 Sun noon, CHOP SOL ~68.16 ALTCOIN_CHOP). 4 subagents. REQ-024 (HIGH) CLOSED: root cause deeper than second-WS theory -- PumpPortal subscribeTokenTrade is metered 0.01 SOL/10k + requires API key & wallet funded >=0.02 SOL, so the bot keyless trade-sub is accepted-but-never-serviced (2000/2000 dead entries, buy_count=0); overturns run-311 free claim. All 4 asks serviced: confirmed two separate simultaneous connections (grad @4135 vs velocity @4386/4545), supplied txType multiplex dispatch + separate append-only flagged-log redesign (pending-resolution queue, ~22KB/N=50). Recommended OPTION B (FREE: drop subscribeTokenTrade, poll Bitquery free GraphQL for buy_count/distinct_buyers + getAccountInfo vSol on paid Alchemy RPC) over OPTION A (streaming costs SOL) for the ~1 SOL bankroll. NEW HYPOTHESIS repeat_deployer_reputation (HIGH): creator prior-graduation history is a LEADING signal known at mint time, exposed FREE via frontend-api-v3 creator field. Trade-log: WC source-wallet diversity NULL (3w 44% vs 4+w 43% WR, N=25) but clean orthogonal liquidity>=150k floor lifts post-REQ-023-gate WR to 75% (N=8). 3 proposals (logger re-architecture HIGH, WC liq floor LOW, creator-reputation logger MEDIUM) + 1 hypothesis filed."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-19 03:06:00 EDT",
-    "run_id": "maint-535",
-    "run_outcome": "HEALTHY_BOT_ALIVE_CYCLE559to562_PLUS3_NEW_BUY_FARM_WC_1OPEN_HB825s_EVENTS48s_SKIP56pct_NOLOCKOUT_DASH200_2.62s_MIRROR_HEALTHY_5min_EFFLAB_NOTRIG_LESSONS24_NO_RESTART",
+    "timestamp": "2026-06-19 04:06:00 EDT",
+    "run_id": "maint-536",
+    "run_outcome": "HEALTHY_BOT_ALIVE_CYCLE562to565_PLUS3_FARM_EXITED_CLEAN_0OPEN_HB543s_EVENTS44s_SKIP63pct_NOLOCKOUT_DASH200_2.82s_MIRROR_HEALTHY_5min_EFFLAB_NOTRIG_LESSONS24_NO_RESTART",
     "bot_status": "RUNNING",
     "bot_pid": 13624,
     "bot_pid_prior": 13624,
@@ -372,44 +376,44 @@
     "dashboard_status": "RUNNING",
     "dashboard_pid": 13728,
     "dashboard_curl": "200",
-    "dashboard_curl_sec": 2.62,
-    "bot_cycle": 562,
-    "bot_cycle_prior": 559,
-    "bot_heartbeat_age_sec": 825.0,
-    "bot_events_age_sec": 47.6,
+    "dashboard_curl_sec": 2.82,
+    "bot_cycle": 565,
+    "bot_cycle_prior": 562,
+    "bot_heartbeat_age_sec": 543.0,
+    "bot_events_age_sec": 44.0,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 2.01,
-    "hours_since_last_buy": "Last buy FARM (wallet_convergence) 2026-06-19 02:06:02 EDT, ~1.0h ago. Below 24h dormancy line -- no dormancy.",
+    "hours_since_last_trade": 2.09,
+    "hours_since_last_buy": "Last buy FARM (wallet_convergence) 2026-06-19 02:06:02 EDT, ~2.0h ago. Below 24h dormancy line -- no dormancy.",
     "trades_last_24h": {
-      "note": "total_trades 2092->2093 (+1 new buy this window). NEW BUY: FARM wallet_convergence 02:06:02 EDT (3 wallets bought in 24h, WC N=10 fast-track). Now 1 OPEN. Prior KINS WC pair (buy 16:08:48 / sell 17:19:32) now aged ~10-11h. Cycle 559->562 (+3). Bot converting healthily, not just scanning."
+      "note": "total_trades 2093->2094 (+1: the FARM WC position that was OPEN last run SOLD 03:13:01 EDT, clean exit ~1.1h after entry). Now 0 open. Last buy still FARM 02:06:02. Cycle 562->565 (+3). Healthy conversion + clean close."
     },
-    "open_positions": "1 open: FARM (yMJPZbnh...pump) wallet_convergence, entry 02:05:47 EDT, entry_sol 0.030048, entry_price 0.00114238, target 0.00131374, stop 0.00106241, high_water 0.00123613, trailing inactive. 3-wallet convergence fast-track.",
-    "total_trades_logged": 2093,
-    "total_trades_prior": 2092,
+    "open_positions": "0 open. sol_positions.json is [] (empty). FARM (yMJPZbnh...pump WC) that was open last run exited via SELL 2026-06-19 03:13:01 EDT. No live trade to interrupt.",
+    "total_trades_logged": 2094,
+    "total_trades_prior": 2093,
     "dormancy_alert": false,
-    "dormancy_status": "CLEAR. New buy FARM 02:06:02 (~1.0h). 1 open position. cycle +3, events 48s, skip ~56pct (healthy). No dormancy.",
-    "filter_lockout_diagnosis": "NOT in lockout. Events last 100: SIGNAL 38, BUY_SKIP 38, CB_SKIP 18, SCAN 6. Skip-class (BUY_SKIP+CB_SKIP) ~56pct -- well below 95pct lockout threshold. 38 SIGNALs evaluated AND a real buy (FARM) executed this window. No CYCLE_ERROR. Healthy.",
+    "dormancy_status": "CLEAR. Last buy FARM 02:06:02 (~2.0h), last trade (FARM sell) 03:13:01 (~0.9h). cycle +3, events 44s, skip ~63pct (healthy). No dormancy.",
+    "filter_lockout_diagnosis": "NOT in lockout. Events last 100: BUY_SKIP 43, SIGNAL 27, CB_SKIP 19, SCAN 10, BS_SKIP 1. Skip-class (BUY_SKIP+CB_SKIP+BS_SKIP) ~63pct -- well below 95pct lockout threshold. 27 SIGNALs evaluated this window; a real buy executed earlier (FARM 02:06). No CYCLE_ERROR. Healthy.",
     "coordination": {
       "brain_running": false,
       "research_running": false,
       "note": "Both idle -> full authority. Brain run-319 finished 2026-06-18 04:09:30 (v321). Research idle since 2026-06-14 (research-148). No restart needed (all green)."
     },
     "actions_taken": [
-      "Cadence gate: prior maint-534 finished 2026-06-19 02:05:00 EDT, now ~03:06 EDT (~61min >30min) -> proceeded.",
+      "Cadence gate: prior maint-535 finished 2026-06-19 03:06:00 EDT, now ~04:06 EDT (~58min >30min) -> proceeded.",
       "Coordination FIRST: brain running=False (run-319, v321); research running=False (research-148). Full authority.",
       "Process: bot pid 13624 (pythonw degen_bot.py --continuous) + dash pid 13728 (pythonw dashboard.py), both unchanged. Exactly one each, no duplicates.",
-      "Liveness ALIVE: cycle 559->562 (+3). events_age 48s (scanner live), heartbeat_age 825s (normal mid-cycle gap, far below STALLED 1800s gate). No restart.",
+      "Liveness ALIVE: cycle 562->565 (+3). events_age 44s (scanner live), heartbeat_age 543s (normal mid-cycle gap, far below STALLED 1800s gate). No restart.",
       "Stale locks: none. brain running=False, research running=False -> nothing to clear.",
-      "DORMANCY CLEAR: NEW BUY FARM wallet_convergence 02:06:02 (~1.0h ago) -> 1 open position. Bot actively converting. No dormancy.",
-      "Positions: 1 open (FARM WC, entry 02:05:47). sol_positions.json non-empty.",
-      "Dashboard: HTTP 200 in 2.62s -- HEALTHY (<3s) but still slower than 0.77s baseline (~4th consecutive ~2.6s); one_time_tasks [], brain_queue.overloaded False.",
-      "Mirror: cache-busted probe -> LIVE published 2026-06-19 03:00:47 EDT, ~5min old. HEALTHY (<15min); no heal. consecutive_heals=0.",
+      "DORMANCY CLEAR: last buy FARM 02:06:02 (~2.0h), FARM position then exited via sell 03:13:01 (~0.9h). Bot actively converting+closing. No dormancy.",
+      "Positions: 0 open. sol_positions.json is [] -- the FARM WC position OPEN last run closed cleanly (sell 03:13:01). Prior next_run_focus item 1 (confirm clean exit) -> RESOLVED.",
+      "Dashboard: HTTP 200 in 2.82s -- HEALTHY (<3s) but still elevated vs 0.77s baseline (~5th consecutive ~2.6-2.8s, edging toward 3s gate); one_time_tasks [], brain_queue.overloaded False.",
+      "Mirror: cache-busted probe -> LIVE published 2026-06-19 04:01:23 EDT, ~5min old. HEALTHY (<15min); no heal. consecutive_heals=0.",
       "Eff-lab: hyp 44/60, lessons 24/50 (condensed_lessons.entries len=24), reqs 1/8 (REQ-025), drift [] -> triggered=False. Directives v321. No lab fire.",
-      "State files: largest sol_trade_log.json 1.21MB; no file >2MB. Footprint stable vs maint-534.",
+      "State files: largest sol_trade_log.json 1.21MB; no file >2MB. Footprint stable vs maint-535.",
       "Logs: bot.log 1.25MB, dashboard.log 0B. Far below 50MB. No truncation.",
       "Section 9 audit: dashboard 200, one_time_tasks 0, brain_queue.overloaded False, research_running False, dormancy clear. Clean.",
-      "Maintenance-log: appended maint-535 to the full historical flat array via Python (utf-8, absolute path)."
+      "Maintenance-log: appended maint-536 to the full historical flat array via Python (utf-8, absolute path)."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
@@ -425,10 +429,10 @@
         "fired": false,
         "old_pid": null,
         "new_pid": null,
-        "reason": "Mirror HEALTHY (published 03:00:47 EDT, ~5min) and consecutive_heals=0. Gate not approached.",
+        "reason": "Mirror HEALTHY (published 04:01:23 EDT, ~5min) and consecutive_heals=0. Gate not approached.",
         "post_restart_verified": null
       },
-      "note": "Cache-busted probe HTTP 200. published_at 2026-06-19 03:00:47 EDT, ~5min old. Publisher daemon healthy under PID 13624."
+      "note": "Cache-busted probe HTTP 200. published_at 2026-06-19 04:01:23 EDT, ~5min old. Publisher daemon healthy under PID 13624."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -476,11 +480,11 @@
       "PWSH CURL ALIAS GOTCHA: in PowerShell curl aliases Invoke-WebRequest (chokes on -s/--max-time). Use Bash + python urllib for dashboard/mirror JSON probes.",
       "LESSONS-COUNT GOTCHA: lessons_count = len(condensed_lessons.entries) where entries is a DICT (24 keys), NOT len(condensed_lessons) top-level keys."
     ],
-    "next_run_focus": "1) FARM WC position OPEN (entry 02:05:47, ~1.0h) -- watch for target 0.00131 / stop 0.00106 / trailing; confirm clean exit next run. 2) DASHBOARD 2.62s this run vs 0.77s baseline (~4th consecutive ~2.6s) -- re-watch; restart only if >3s sustained. 3) RESTART-PENDING CODE: run-316 WC liq-floor + disabled velocity logger remain source-only (PID 13624 ~9 days); co-activate on next natural restart. 4) Mirror HEALTHY (consecutive_heals=0); always cache-bust. 5) Eff-lab clear; lessons 24/50 -- REQ-025 HIGH queued for Sun 06-21 research.",
+    "next_run_focus": "1) 0 open positions; FARM exited clean. Watch for next conversion. 2) DASHBOARD 2.82s this run vs 0.77s baseline (~5th consecutive elevated, now edging toward 3s gate) -- re-watch; restart only if >3s sustained. 3) RESTART-PENDING CODE: run-316 WC liq-floor + disabled velocity logger remain source-only (PID 13624 ~9 days); co-activate on next natural restart. 4) Mirror HEALTHY (consecutive_heals=0); always cache-bust. 5) Eff-lab clear; lessons 24/50 -- REQ-025 HIGH queued for Sun 06-21 research.",
     "log_truncations": [],
-    "finished_at": "2026-06-19 03:06:00 EDT",
+    "finished_at": "2026-06-19 04:06:00 EDT",
     "elapsed_min": 2,
-    "file_age_min": 59.8,
+    "file_age_min": 4.6,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1945,7 +1949,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 565,
-    "age_min": 11.1,
+    "age_min": 16.2,
     "stale": false,
     "available": true
   },
@@ -1964,9 +1968,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3213.485672,
+  "maint_next_sec": 2910.381749,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:06 AM EST",
+  "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1981,8 +1985,8 @@
       "status": "queued",
       "status_label": "\ud83d\udfe1 Queued",
       "status_color": "#ffaa00",
-      "evidence_text": "Deferred all three research-148 proposals (free velocity-logger rebuild, wallet-convergence liquidity floor, creator-reputation logger) with concrete unlock triggers noted.",
-      "evidence_source": "action"
+      "evidence_text": "wallet_convergence has become the bot's standout: 7d 4W/4L RR 3.68 PF 3.62 +0.008092 SOL after two new closes (+15.47% target win, -1.67% benign flat). The right move on a winning strategy is to NOT tune it and NOT stack the LOW-conf resear",
+      "evidence_source": "lessons"
     },
     "tally": {
       "implemented": 21,
@@ -1992,55 +1996,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-06-19T03:33:19.644866",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip gigaunc: h1=-13.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-19T03:33:19.653268",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 8MA2HGoH sold EpigjMkk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-19T03:33:24.313935",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "No new signals",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-19T03:33:26.198585",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip MiiGPT: downtrend h1=-88.7% h24=-88.7%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-19T03:33:28.382912",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip WARSHIE: downtrend h1=-33.4% h24=-92.0%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-19T03:33:28.935242",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip HermesWorld: deep24h h24=-40.6% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-19T03:33:28.935242",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: overnight skip (03:xx ET, block=00:00-04:59)",
-      "detail": ""
-    },
     {
       "ts": "2026-06-19T03:34:22.579793",
       "type": "SCAN",
@@ -2691,6 +2646,55 @@
       "color": "#d29922",
       "msg": "m5 pump skip Pari: m5=479.0% (already ran, we are exit liq, run95)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-19T04:07:34.399367",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip WAIFU: h6=161.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-19T04:07:34.842014",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip WAIFU: h6=161.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-19T04:07:34.857805",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold FoiUBbx7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-19T04:07:34.873940",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold FoiUBbx7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-19T04:07:34.873940",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BtMBMPko sold FoiUBbx7 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-19T04:07:37.805246",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4DdrfiDH sold BjpbH2jq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-19T04:07:42.976506",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Jasmine: h6=79.9% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2709,9 +2713,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:06:26",
+  "ts": "04:11:29",
   "__publish_meta": {
-    "published_at": "2026-06-19 04:06:26 EDT",
+    "published_at": "2026-06-19 04:11:29 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
