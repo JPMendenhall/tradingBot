@@ -97,10 +97,14 @@ def write_snapshot() -> tuple[Path, int]:
 # ────────────────────────────────────────────────────────────────────────────
 
 
+_CREATE_NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
+
+
 def _run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     return subprocess.run(
         cmd, cwd=ROOT, check=check,
         capture_output=True, text=True,
+        creationflags=_CREATE_NO_WINDOW,
     )
 
 
@@ -144,7 +148,7 @@ def git_push_snapshot(dry_run: bool = False) -> bool:
 
 def one_shot(no_push: bool = False, dry_run: bool = False):
     path, size = write_snapshot()
-    print(f"✓ wrote {path} ({size:,} bytes)")
+    print(f"[OK] wrote{path} ({size:,} bytes)")
     if no_push and not dry_run:
         return
     git_push_snapshot(dry_run=dry_run)
