@@ -231,9 +231,10 @@
       <div class="sec-t">P/L Summary</div>
       <table>
         <tr><th></th><th>P/L</th><th>Trades</th><th>W/L</th></tr>
-        <tr id="pnl-24h"><td>24h</td><td>--</td><td>--</td><td>--</td></tr>
-        <tr id="pnl-7d"><td>7d</td><td>--</td><td>--</td><td>--</td></tr>
-        <tr id="pnl-all"><td>All</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr id="pnl-7d"><td>Week</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr id="pnl-30d"><td>Month</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr id="pnl-365d"><td>Year</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr id="pnl-all"><td>All Time</td><td>--</td><td>--</td><td>--</td></tr>
       </table>
       <div id="pnl-extremes" style="margin-top:6px;font-size:9px;line-height:1.6;letter-spacing:0;text-transform:none">--</div>
     </div>
@@ -368,10 +369,10 @@ document.querySelectorAll('.tog').forEach(el=>{
 });
 
 /* P/L rows */
-function renderPnlRow(id,data,sp){
+function renderPnlRow(id,data,sp,label){
   const row=document.getElementById(id);if(!row)return;
   const u=data.pnl*sp;
-  row.innerHTML=`<td>${row.id.replace('pnl-','')}</td>
+  row.innerHTML=`<td>${label}</td>
     <td class="${pc(data.pnl)}">${dual(u,data.pnl)}</td>
     <td>${data.trades}</td><td>${data.wins}W/${data.losses}L</td>`;
 }
@@ -1285,9 +1286,10 @@ async function refresh(){
 
     document.getElementById('deployed').textContent=d.trades_today+' trades \u00b7 $'+(d.deployed*sp).toFixed(2)+' deployed';
 
-    renderPnlRow('pnl-24h',d.pnl_24h,sp);
-    renderPnlRow('pnl-7d',d.pnl_7d,sp);
-    renderPnlRow('pnl-all',d.pnl_all,sp);
+    renderPnlRow('pnl-7d',d.pnl_7d,sp,'Week');
+    renderPnlRow('pnl-30d',d.pnl_30d,sp,'Month');
+    renderPnlRow('pnl-365d',d.pnl_365d,sp,'Year');
+    renderPnlRow('pnl-all',d.pnl_all,sp,'All Time');
     (function(){
       const ex=d.pnl_extremes||{}, el=document.getElementById('pnl-extremes');
       if(!el)return;
