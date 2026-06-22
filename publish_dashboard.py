@@ -148,7 +148,7 @@ def git_push_snapshot(dry_run: bool = False) -> bool:
 
 def one_shot(no_push: bool = False, dry_run: bool = False):
     path, size = write_snapshot()
-    print(f"[OK] wrote{path} ({size:,} bytes)")
+    print(f"[OK] wrote {path} ({size:,} bytes)")
     if no_push and not dry_run:
         return
     git_push_snapshot(dry_run=dry_run)
