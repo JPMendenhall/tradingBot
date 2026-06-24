@@ -1,10 +1,10 @@
 {
-  "sol_price": 69.31667907729778,
+  "sol_price": 69.26336721865889,
   "bot_status": "RUNNING",
   "bot_last_seen": "04:01:42",
   "bot_cycles": 133,
   "bankroll": 1.0457,
-  "bankroll_usd": 72.48445131113029,
+  "bankroll_usd": 72.4287031005516,
   "budget": 0.14938469564999998,
   "pnl_today": 2.138385450714849e-05,
   "deployed": 0,
@@ -140,61 +140,74 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-23 04:04:30 EDT",
+    "timestamp": "2026-06-24 04:06:23 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "No problem demanding action this run. The bot naturally restarted (PID 13624 cycle 749 -> PID 1944 cycle 66) for the first time in ~12 days, which finally ACTIVATED the turnover-froth-ceiling safety filter shipped last run. The only structural negative remains the legacy lifetime record (1043 sells, 35.6% WR, -1.184 SOL) dominated by the long-dead copy_trade book (-0.83 SOL of it); current trading is small, disciplined, and 7-day profitable.",
-    "exit_analysis": "Rolling 7d: 12 trades, 41.7% WR, avg win +15.6%, avg loss -1.9%, R/R 8.22, profit factor 5.85, stop-loss rate just 8.3% -- losses are tiny flats, not catastrophic stops. Rolling 24h: 2 trades, both benign flat exits (-0.49% and -0.03%), no stops. Lifetime R/R 0.80, stop rate 50% (legacy book).",
-    "strategy_work": "Confirmed the froth ceiling is genuinely live in the running process: the new PID's source carries FROTH_CEILING_VOL_LIQ=12.0 wired into the universal entry path with would-have-skip logging to a 300-entry ring file. No skips have fired yet (no over-frothy candidate has passed upstream filters since the restart), so the 15-skip evaluation clock has not started. Set the kill-criteria watch.",
-    "directives_changes": "Bumped to version 326. Refreshed all track-record stats from the fresh stats file. Recorded the natural restart and the froth-ceiling activation in current_priority, and armed the post-activation skip-audit watch (revert if after 15 logged skips the blocked names win as often as the kept names, or rolling-15 win rate drops below 33%). requests_for_research left empty.",
+    "system_diagnosis": "The live book is healthy; the only 'problem' is the legacy dead weight. Lifetime is still deeply red (1045 sells, RR 0.80, profit factor 0.44, -1.184 SOL) but ~0.83 SOL of that is the long-killed copy_trade strategy (537 trades, watch-only since run-32) -- it is not an active leak. The currently-active mix (wallet_convergence + bear_strength) is the edge: rolling 7-day is strongly positive at +0.0133 SOL, 6.16 reward/risk, and only 8.3% of trades hit a stop. Exits -- historically the #1 money destroyer -- are well-behaved this window (1 stop in the last 12 trades, average loss just -1.86%). No active failure mode to fix.",
+    "exit_analysis": "Rolling 7d: avg win +11.47%, avg loss -1.86%, reward/risk 6.16, stop-loss rate 8.3% (1 of 12 trades). Rolling 24h: 2 trades, +0.07% win and -0.42% loss, both near-breakeven flats, no stops. Lifetime (drags in dead copy_trade): avg win +12.93%, avg loss -16.21%, reward/risk 0.80, stop rate 49.9%.",
+    "strategy_work": "Monitored the turnover_froth_ceiling experiment, now live in production since the run-324 restart. It logged its FIRST real would-have skip this window: POKEFIGHT, a bear_strength candidate at a turnover-to-liquidity ratio of 18.45 (well above the 12 ceiling) -- exactly the frothy, parabolic name the ceiling is meant to block. This confirms the gate is wired and firing in the live process, not just present in the source. The kill-clock that decides whether the ceiling helps or hurts does not start until 15 such skips accumulate; we are at 1 of 15, so the only correct action is to keep accumulating.",
+    "directives_changes": "Refreshed the track record (lifetime 1045 sells, rolling 7d +0.0133 SOL, rolling 24h -0.000105 SOL, bankroll 1.0457 SOL, regime CHOP). Recorded the froth-ceiling skip counter at 1 of 15 with the POKEFIGHT first-fire detail, and added a condensed lesson noting the ceiling is confirmed firing live. Set the run-325 current priority. Bumped version 326 to 327.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-323 shipped the froth ceiling pre-activation; this run it ACTIVATED via the natural restart and is now blocking over-churned entries in production (0 fires so far).",
-      "run-323 predicted WC would stay the edge: confirmed, WC 7d R/R 7.03, profit factor 4.67, +0.0146 SOL.",
-      "REQ-025 and REQ-026 were both closed NULL by research-149 last run and remain removed from the queue -- no regression."
+      "Run-324 activated the froth ceiling via the natural restart -- VERIFIED working: 1 would-have skip logged (POKEFIGHT, ratio 18.45), gate is firing in production as designed.",
+      "Run-324 noted WC as the clear edge (7d +0.0146) -- HOLDS: WC 7d still positive at +0.0085 SOL, 4.78 reward/risk, the dominant contributor.",
+      "Run-324 expected only benign activity -- CONFIRMED: 2 new trades, both near-breakeven flats, net -0.000105 SOL, no stops."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a universal entry skip that blocks tokens being churned far faster than their pool depth can absorb (turnover-froth ceiling).",
+        "proposal": "Add a universal froth ceiling that skips any entry whose 24h-volume-to-liquidity ratio is 12 or higher, with would-have-outcome logging on each skip.",
         "from_research": "research-149",
         "status": "SHIPPED",
-        "why": "Shipped to source in run-323 and ACTIVATED this run by the natural bot restart. Now live with would-have logging; entering the monitoring phase (need 15 logged skips before judging)."
+        "why": "Shipped run-323, activated at the run-324 restart, and now confirmed firing live (1 skip logged: POKEFIGHT at ratio 18.45). Holding for the research-defined evaluation at 15 logged skips before any tuning; currently 1 of 15."
+      },
+      {
+        "proposal": "Add a net-sell-book skip gate for bear_strength (or universally).",
+        "from_research": "research-149 (REQ-025)",
+        "status": "KILLED",
+        "why": "Research returned a NULL verdict -- the net-sell signal is falsified by JOBY (+15.99% win on a net-sell book) and the sign inverts on other strategies. Closed at run-324; no gate. The froth ceiling is the cleaner cross-strategy axis that likely subsumes these losses."
+      },
+      {
+        "proposal": "Raise the wallet_convergence minimum-liquidity floor somewhere between $35k and $85k.",
+        "from_research": "research-149 (REQ-026)",
+        "status": "KILLED",
+        "why": "Research returned a NULL verdict -- no clean liquidity floor exists (the $30-50k bucket is 50% win-rate and holds the biggest small-cap winner). Closed at run-324; floor left at $30k."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "The froth ceiling only just went live via the restart and must accumulate ~15 would-have skips before any tuning is data-justified; no new research proposal is pending (research-149 fully processed, request queue empty); the two new trades were benign breakeven flats with no failure mode to fix.",
+    "no_code_change_reason": "Monitoring run. The one live experiment (froth ceiling) needs 15 logged skips before any tuning decision and is only at 1; the two new trades were benign near-breakeven flats with no new failure mode; research-149 is fully processed and there are no pending proposals or research requests.",
     "changelog": [
-      "Bot restarted on its own for the first time in about 12 days, which switched on the turnover-froth safety filter that had been waiting in the code since yesterday.",
-      "Checked the filter is really running and writing its 'would-have-skipped' log; it is, and it hasn't had to block anything yet.",
-      "Logged the two newest trades (both tiny near-breakeven exits) and refreshed all the performance numbers."
+      "Confirmed the froth ceiling is firing in the live bot -- it logged its first real skip (a frothy parabolic token called POKEFIGHT).",
+      "Refreshed the brain's stats and recorded the froth-ceiling skip counter at 1 of the 15 needed to judge it.",
+      "Made no code changes -- nothing in the data called for one."
     ],
     "actions_taken": [
-      "Verified the turnover_froth_ceiling filter is active in the freshly-restarted bot and armed its revert-watch (undo it if, after 15 blocked entries, the blocked names win as often as the ones we kept).",
-      "Refreshed track-record stats and current priority in the brain directives; left the research request queue empty."
+      "Verified the turnover_froth_ceiling is live and firing (POKEFIGHT skip logged) and recorded it at 1 of 15 skips toward its evaluation point.",
+      "Confirmed wallet_convergence remains the dominant edge (7d +0.0085 SOL) and left it untouched.",
+      "Noted both research-149 NULL findings (the bear_strength net-sell gate and the wallet_convergence liquidity floor) stay closed with no gate."
     ],
     "next_priorities": [
-      "Accumulate froth-ceiling skips: once 15 entries have been blocked, compare blocked-vs-kept forward win rates and either keep, retune the 12x threshold, or revert.",
-      "Keep watching wallet_convergence (the only clear edge); do not tune it while it is 7d-positive (R/R 7.03).",
-      "If SOL stays below -5% h24 into next run, hold to the bear playbook -- fresh_profile/proven only, no forced trades."
+      "Keep accumulating froth-ceiling would-have skips; at 15 logged skips, compare the blocked-set win-rate against the kept-set win-rate -- revert only if the ceiling is blocking winners or rolling-15 win-rate drops below 0.33.",
+      "Watch wallet_convergence: if 7d reward/risk and P/L stay positive over the next several trades, consider whether it has earned a size increase past the current 0.15x toward proven status.",
+      "If a bear_strength catastrophic stop (worse than -12%) recurs, check whether the froth ceiling would have caught it (it is the cross-strategy axis research-149 expects to explain those losses)."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1043,
+      "total_sells": 1045,
       "win_rate": 35.6,
-      "avg_win_pct": 12.96,
-      "avg_loss_pct": -16.23,
+      "avg_win_pct": 12.93,
+      "avg_loss_pct": -16.21,
       "rr_ratio": 0.8,
-      "stop_loss_rate_pct": 50.0,
-      "bankroll": 1.0467,
-      "pnl_today": -0.000156
+      "stop_loss_rate_pct": 49.9,
+      "bankroll": 1.0457,
+      "pnl_today": -0.000105
     },
     "active_strategies": [
       "wallet_convergence",
       "bear_strength",
-      "consensus_boost",
       "fresh_profile",
+      "consensus_boost",
       "chop_momentum_scalp"
     ]
   },
@@ -203,16 +216,16 @@
     "result": "Saved 20 wallets in 34m 31s",
     "completed": "2026-06-21T01:36:34.504181"
   },
-  "brain_next_sec": 20.551288,
-  "brain_next_str": "Wed 4:04 AM EST",
-  "brain_running": false,
-  "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Tue 4:09 AM EST",
+  "brain_next_sec": 86117.274526,
+  "brain_next_str": "Thu 4:04 AM EST",
+  "brain_running": true,
+  "brain_elapsed_sec": 139.725474,
+  "brain_last_run_str": "4:06 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:21 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 347180.551288,
+  "research_next_sec": 346877.274526,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -324,9 +337,9 @@
     "summary": "research-149 (2026-06-21 Sun noon, CHOP SOL ~$73 BTC.D 56%). 4 subagents. BOTH pending requests CLOSED NULL: REQ-025 (HIGH) net-sell book is NOT a separator -- falsified by JOBY +15.99% net-sell WIN (net+4, same as catastrophic WOC), sign inverts on WC/CMS, only 13/37 BS gt-populated; no gate. REQ-026 (MEDIUM) no monotonic WC liquidity floor -- $30-50k bucket is 50%WR and holds biggest small-cap winner Butt +17.4%@$44k, real garbage is $50-85k mid-band PF 0.06; leave WC_MIN_LIQ at 30k. NOVEL HYPOTHESIS turnover_froth_ceiling (HIGH): vol_liq_ratio is a monotonic cross-strategy CEILING no gate uses (<4 73%WR +3.7% n=15 / 4-10 38% / >=10 24%WR -6.4% n=29 half the book; consistent inside WC/BS/CB), already-logged field, corroborated by arXiv trades-to-graduation literature -- filed as 1 MEDIUM-conf universal new_filter proposal (vol_liq>=12 skip + would-have logging, full 7-field packet). Likely subsumes both NULLs. Narratives: AI-agent tokens (34% of vol), brainrot, bitFlyer SOL listing 6/24. 6 tokens scouted (mints mostly unverified)."
   },
   "maintenance_status": {
-    "timestamp": "2026-06-24 03:06:48 EDT",
-    "run_id": "maint-655",
-    "run_outcome": "HEALTHY_NO_RESTART_BOTPID1944_CYCLE127to130_NODORMANCY_18.6h_HB672s_EVENTS64s_DASH200_0.82s_MIRROR_HEALTHY_1.4min_EFFLAB_NOTRIG_HYP45_LESSONS25_DASHPID11896_FROTHSKIPS_1",
+    "timestamp": "2026-06-24 04:06:56 EDT",
+    "run_id": "maint-656",
+    "run_outcome": "HEALTHY_NO_RESTART_BOTPID1944_CYCLE130to133_NEWROUNDTRIP_NODORMANCY_0.4h_DASH200_0.93s_MIRROR_HEALTHY_1.5min_EFFLAB_NOTRIG_HYP45_LESSONS25_FROTHSKIPS_1",
     "bot_status": "RUNNING",
     "bot_pid": 1944,
     "bot_pid_prior": 1944,
@@ -335,64 +348,64 @@
     "dashboard_pid": 11896,
     "dashboard_pid_prior": 11896,
     "dashboard_curl": "200",
-    "dashboard_curl_note": "Valid HTTP 200 in 0.82s. PID 11896 unchanged.",
-    "bot_cycle": 130,
-    "bot_cycle_prior": 127,
-    "bot_cycle_note": "cycle_delta +3 (127->130) on PID 1944. Cycle advancing => ALIVE. events_age 64s (<120s) confirms live scanner. heartbeat 672s normal between-cycle. Not STALLED.",
-    "bot_heartbeat_age_sec": 672,
-    "bot_events_age_sec": 64,
+    "dashboard_curl_note": "Valid HTTP 200 in 0.93s. PID 11896 unchanged.",
+    "bot_cycle": 133,
+    "bot_cycle_prior": 130,
+    "bot_cycle_note": "cycle_delta +3 (130->133) on PID 1944. Cycle advancing => ALIVE. events_age caught mid-cycle between heartbeat writes. heartbeat fresh 04:01:42. Not STALLED.",
+    "bot_heartbeat_age_sec": 314,
+    "bot_events_age_sec": 71,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 0.78,
-    "hours_since_last_buy": "Last BUY 2026-06-23T08:28:58 (~18.6h ago). Last trade overall SELL 08:50:10 (~18.3h ago). Within 24h dormancy window. Not dormant.",
+    "hours_since_last_trade": 0.86,
+    "hours_since_last_buy": "Last BUY 2026-06-24T03:16:54 (~0.8h ago). Last trade SELL 03:39:20 (~0.4h ago). NEW round-trip overnight. Bot actively trading. No dormancy.",
     "trades_last_24h": {
-      "note": "total_trades 2108, UNCHANGED vs maint-654. No new round-trip since 08:28 buy / 08:50 sell. Quiet ALTCOIN_CHOP (BTC.D 56.2%, SOL $69.67). Scanner active (cycle 127->130, events fresh, no CYCLE_ERROR)."
+      "note": "total_trades 2108->2110, buys 1043->1044. One new round-trip: BUY 03:16:54 + SELL 03:39:20. Scanner active (cycle 130->133). Quiet ALTCOIN_CHOP (BTC.D 56.2%, SOL ~69.31)."
     },
     "open_positions": "0 open (sol_positions.json = [], flat).",
-    "total_trades_logged": 2108,
-    "total_buys": 1043,
+    "total_trades_logged": 2110,
+    "total_buys": 1044,
     "dormancy_alert": false,
-    "dormancy_status": "NO DORMANCY. Last buy 08:28:58 (~18.6h ago). Approaching but inside 24h window; would only flag ~08:29 today if buys ceased entirely.",
-    "filter_lockout_diagnosis": "NOT in lockout. Bot scanning normally (cycle 127->130 advancing, events fresh). No buys in ~18.6h is normal quiet-chop, not lockout.",
+    "dormancy_status": "NO DORMANCY. New buy 03:16:54 (~0.8h ago) + sell 03:39:20. Bot trading normally.",
+    "filter_lockout_diagnosis": "NOT in lockout. Bot scanning (cycle 130->133) and executed a fresh round-trip in the last hour.",
     "coordination": {
       "research_running": false,
       "brain_running": false,
-      "note": "Brain run-324 done 2026-06-23 04:09:10 (running=false, directives v326). Research-149 done 06-21 12:21 (running=false). No coordination block. Bot NOT restarted this run."
+      "note": "Brain run-324 done 2026-06-23 04:09:10 (running=false, directives v326). Research-149 done 06-21 12:21 (running=false). No coordination block. Brain next daily due ~06-24 04:04 (not running at read time). Bot NOT restarted this run."
     },
     "actions_taken": [
-      "Cadence gate: prior maint-654 finished mtime ~57min ago (>30min) -> proceeded.",
+      "Cadence gate: prior maint-655 finished 03:06:48 (~57min ago, >30min) -> proceeded.",
       "Coordination FIRST: brain run-324 running=false, research-149 running=false. No block.",
-      "Process: bot pid 1944 (pythonw degen_bot.py --continuous) + dash pid 11896 (pythonw dashboard.py). Exactly one each, no duplicates. Same PIDs as maint-654 (no restart).",
-      "Liveness ALIVE: cycle_delta +3 (127->130) on PID 1944. events_age 64s (<120s) => live scanner. heartbeat 672s normal between-cycle. No maintenance restart.",
+      "Process: bot pid 1944 (pythonw degen_bot.py --continuous) + dash pid 11896 (pythonw dashboard.py). Exactly one each, no duplicates. Same PIDs as maint-655 (no restart).",
+      "Liveness ALIVE: cycle_delta +3 (130->133) on PID 1944. heartbeat fresh 04:01:42. events_age caught mid-cycle. No restart.",
       "Stale locks: brain running=false, research running=false. Nothing to clear.",
-      "Dormancy: NONE. Last buy 08:28:58 (~18.6h). No new trade but inside 24h window. dormancy_alert false.",
+      "Dormancy: NONE. NEW round-trip overnight: BUY 03:16:54 + SELL 03:39:20 (~0.4h ago). total 2108->2110. dormancy_alert false.",
       "Positions: 0 open (flat, sol_positions.json = []).",
-      "Logs: bot.log 0.26MB / dashboard.log ~0MB -- far under 50MB. No truncation.",
-      "Dashboard: valid HTTP 200 in 0.82s.",
-      "Mirror: cache-busted probe -> published 03:03:01 (machine-local), ~1.4min old. HEALTHY (<15min); no heal. consecutive_heals=0.",
-      "Eff-lab: hyp 45/60, lessons 25/50 (canonical condensed_lessons.entries=25), reqs 0/8, drift none -> triggered=False. No lab fire. Directives v326 confirmed.",
-      "FROTH CEILING: sol_froth_skips.json N=1 (unchanged vs maint-654). N=1 of 15-skip kill clock. Surface to brain; do not act.",
-      "State files: largest sol_trade_log.json 1.22MB; no file >2MB. No oversized. No new bloat.",
-      "Section 9 audit: dashboard 200, dormancy false, brain/research running=false, one_time_tasks=0, brain_queue.overloaded=false -> no 9A-9E action. Clean."
+      "Logs: bot.log 0.27MB / dashboard.log ~0MB -- far under 50MB. No truncation.",
+      "Dashboard: valid HTTP 200 in 0.93s.",
+      "Mirror: cache-busted probe -> published 04:03:39 (machine-local), ~1.5min old. HEALTHY (<15min); no heal. consecutive_heals=0.",
+      "Eff-lab: hyp 45/60, lessons 25/50 (canonical condensed_lessons.entries=25), reqs 0/8, drift none -> triggered=False. No lab fire. Directives v326.",
+      "FROTH CEILING: sol_froth_skips.json N=1 (unchanged). N=1 of 15-skip kill clock. Surface to brain; do not act.",
+      "State files: largest sol_trade_log.json 1.23MB; no file >2MB. No oversized. No new bloat.",
+      "Section 9 audit: dashboard 200, one_time_tasks=0, brain_queue.overloaded=false, brain/research running=false -> no 9A-9E action. Clean."
     ],
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 1.4,
+      "pre_heal_age_min": 1.5,
       "heal_attempted": false,
       "heal_succeeded": false,
       "heal_output": null,
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 1.4,
+      "post_heal_age_min": 1.5,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
         "old_pid": null,
         "new_pid": null,
         "post_restart_verified": null,
-        "reason": "Mirror HEALTHY (published 03:03:01, ~1.4min) and consecutive_heals=0. Gate not approached."
+        "reason": "Mirror HEALTHY (published 04:03:39, ~1.5min) and consecutive_heals=0. Gate not approached."
       },
-      "note": "Cache-busted probe returned valid JSON. published_at 2026-06-24 03:03:01 (machine-local), ~1.4min old. Publisher daemon healthy under PID 1944."
+      "note": "Cache-busted probe returned valid JSON. published_at 2026-06-24 04:03:39 (machine-local), ~1.5min old. Publisher daemon healthy under PID 1944."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -414,11 +427,11 @@
     },
     "state_file_footprint": {
       "top_files": {
-        "sol_trade_log.json": 1.22,
+        "sol_trade_log.json": 1.23,
         "sol_bonding_velocity_log.json": 0.83,
         "sol_dex_boosts_velocity_log.json": 0.75
       },
-      "largest_state_file_mb": 1.22,
+      "largest_state_file_mb": 1.23,
       "oversized_files": [],
       "new_files_since_last_run": [],
       "new_bloat_escalated": []
@@ -441,11 +454,11 @@
       "LESSONS-COUNT: canonical lessons_count = len(condensed_lessons[entries]) = 25.",
       "FROTH CEILING LIVE: sol_froth_skips.json N=1. Surface to brain; do not act. Kill clock at N>=15."
     ],
-    "next_run_focus": "1) PID 1944 stable, cycle advancing (127->130); confirm it keeps climbing. 2) No new trade in ~18.6h (total still 2108); dormancy would flag if buys cease 24h (~08:29 today). 3) DASH steady ~0.8s. 4) FROTH CEILING: sol_froth_skips.json N=1 of 15-skip kill clock; brain owns. 5) Mirror HEALTHY (consecutive_heals=0). 6) Brain next daily ~06-24 04:04. 7) lessons=25 canonical.",
+    "next_run_focus": "1) PID 1944 stable, cycle advancing (130->133); confirm climb. 2) NEW round-trip at 03:16/03:39 broke the overnight quiet; watch for more trades. 3) DASH steady ~0.9s. 4) FROTH CEILING: N=1 of 15-skip kill clock; brain owns. 5) Mirror HEALTHY (consecutive_heals=0). 6) Brain daily due ~06-24 04:04 -- next run confirm it ran & wrote status. 7) lessons=25 canonical.",
     "log_truncations": [],
-    "finished_at": "2026-06-24 03:06:48 EDT",
+    "finished_at": "2026-06-24 04:06:56 EDT",
     "elapsed_min": 2,
-    "file_age_min": 56.8,
+    "file_age_min": 1.8,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1898,7 +1911,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 133,
-    "age_min": 2.0,
+    "age_min": 7.0,
     "stale": false,
     "available": true
   },
@@ -1917,9 +1930,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3380.551288,
+  "maint_next_sec": 3077.274526,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:06 AM EST",
+  "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -1931,10 +1944,10 @@
     "latest": {
       "hypothesis_name": "turnover_froth_ceiling",
       "run_id": "research-149",
-      "status": "queued",
-      "status_label": "\ud83d\udfe1 Queued",
-      "status_color": "#ffaa00",
-      "evidence_text": "Verified the turnover_froth_ceiling filter is active in the freshly-restarted bot and armed its revert-watch (undo it if, after 15 blocked entries, the blocked names win as often as the ones we kept).",
+      "status": "implemented",
+      "status_label": "\u2705 Implemented",
+      "status_color": "#00ff88",
+      "evidence_text": "Verified the turnover_froth_ceiling is live and firing (POKEFIGHT skip logged) and recorded it at 1 of 15 skips toward its evaluation point.",
       "evidence_source": "action"
     },
     "tally": {
@@ -1945,90 +1958,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-06-24T03:43:09.036750",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5ZuV8eqk sold EJKbQX8d \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:43:11.413718",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip harold: m5=-42.3% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:43:11.424532",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5ZuV8eqk sold 8Gsn9gXz \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:43:48.193110",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ASVzakeP sold TPBZ4LBa \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:43:48.208800",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: ASVzakeP sold TPBZ4LBa \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:43:48.869863",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip TAG: downtrend h1=-78.9% h24=-78.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:43:51.992455",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: gangJEP5 sold FA3P6nok \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:43:54.238027",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip COLER: downtrend h1=-17.1% h24=-17.1%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:44:35.549195",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DNfuF1L6 sold 9fURVh8Y \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:45:03.982268",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:45:09.695770",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip PLUSH: m5=631.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-24T03:45:09.695770",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: AGqjivJr sold 4fHfajCk \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-06-24T03:45:12.102771",
       "type": "BUY_SKIP",
@@ -2644,6 +2573,90 @@
       "color": "#555555",
       "msg": "Scanning 148 wallets (cycle #133)",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:05:03.017338",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5ZuV8eqk sold 6vdJfngk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:05:05.833782",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Catcoin: h6=49.3% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:05:06.482467",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Catcoin: h6=49.3% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:05:06.496689",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 5ZuV8eqk sold 6vdJfngk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:05:40.334285",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ASVzakeP sold 54XZxuhb \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:05:45.369649",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Yippee: m5=241.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:07:03.763089",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:07:07.274900",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold 24dzjDrC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:07:07.290574",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold 24dzjDrC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:07:07.301579",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold 24dzjDrC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:07:07.306735",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: AGqjivJr sold 24dzjDrC \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-24T04:07:09.589519",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip PLUSH: m5=-10.3% (active sell-off at execution, run79)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2662,9 +2675,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:03:39",
+  "ts": "04:08:42",
   "__publish_meta": {
-    "published_at": "2026-06-24 04:03:39 EDT",
+    "published_at": "2026-06-24 04:08:42 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
