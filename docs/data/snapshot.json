@@ -1,15 +1,15 @@
 {
-  "sol_price": 72.65876293582822,
+  "sol_price": 72.66431796422847,
   "bot_status": "RUNNING",
-  "bot_last_seen": "04:10:24",
-  "bot_cycles": 169,
+  "bot_last_seen": "04:11:13",
+  "bot_cycles": 170,
   "bankroll": 1.0359,
-  "bankroll_usd": 75.26721252522445,
+  "bankroll_usd": 75.27296697914429,
   "budget": 0.14788653375,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 2.4,
+  "hour": 2.5,
   "positions": [],
   "num_positions": 0,
   "pnl_7d": {
@@ -140,76 +140,79 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-28 04:06:30 EDT",
+    "timestamp": "2026-06-29 04:06:00 EST",
     "market_regime": "CHOP",
-    "system_diagnosis": "No active problem this run. The only structural negative is the lifetime book (1047 sells, win rate 35.6%, reward/risk 0.80, profit factor 0.44, minus 1.18 SOL), which is dominated by the long-dead copy_trade strategy (537 trades, minus 0.83 SOL). Among LIVE strategies, wallet_convergence is the sole edge and is positive over the last 7 days (plus 0.0046 SOL). The bot restarted onto a fresh, healthy process since the last run (fresh heartbeat about 13 minutes old, cycle 76).",
-    "exit_analysis": "Rolling 7d (all wallet_convergence, 8 trades, 3 wins / 5 losses): average win plus 6.15%, average loss only minus 0.64% (tiny flat exits), reward/risk 9.61, profit factor 5.77, stop-loss rate 0% -- strongly positive. Lifetime: average win plus 12.9%, average loss minus 16.19%, reward/risk 0.80, stop-loss rate 49.8% (the legacy book). The two closes since last run were ANSEM (flat minus 1.3%) and KINS (time-exit win plus 2.8%).",
-    "strategy_work": "No hypothesis advanced this run -- correctly. The live experiment (turnover-froth ceiling) is in its evidence-accumulation phase: it has logged only 2 of the 15 would-have skips it needs before its block-versus-keep performance can be judged, and zero new skips fired in the last roughly 48 hours. The only edge strategy (wallet_convergence) just produced a small win and a benign flat loss, so the disciplined move is to leave it untouched.",
-    "directives_changes": "Refreshed the running stats (lifetime now 1047 sells; 7-day still plus 0.0046 SOL and strongly positive; 24h flat tape with zero closes), recorded the bot restart onto the new process, and confirmed the froth-ceiling kill clock is unchanged at 2 of 15 logged skips. Bumped the brain memory version 329 to 330. No strategy, threshold, or gate was changed.",
+    "system_diagnosis": "WC -- the bot's ONLY edge -- just flipped 7d-NEGATIVE (8 trades, 37.5% win rate, profit factor 0.37, -0.0021 SOL) as its prior winners aged out of the 7-day window; all-time WC is 43 trades 44.2% WR -0.0092 SOL. The #1 actionable lever this run is research-150's finding that WC outcomes are inverted by the number of converging wallets: lean 3-wallet convergences win (53% WR) while crowded 4+ wallet convergences lose badly (-3.65% avg, -7.56% at 5+). I shipped the gate to cut the loss-heavy crowded cohort.",
+    "exit_analysis": "All-time avg win +12.87%, avg loss -16.18%, R/R 0.80, stop-loss rate 49.8%. WC-specific: avg win +6.29%, avg loss -7.09%, R/R 0.89, stop rate 30.2%. Last 24h: 2 closes, 1 win +1.26% / 1 stop -8.96%, net -0.0023 SOL. No new exit-mechanism failure mode this run; the loss was a normal WC stop.",
+    "strategy_work": "Advanced lean_convergence_edge from research proposal to SHIPPED. Added WC_MAX_WALLETS=3 gate (skip WC entry when distinct converging-wallet count >= 4) plus count/span observability tokens in the WC reasoning field. With WC_MIN_WALLETS=3 already in force, WC now fires only on exactly-3-wallet convergences -- the research-verified positive cohort (N=30, 53% WR). Evidence verified two independent ways across WR, mean, and median on the full 42-trade WC history. Compile-check passed; activates at next natural restart.",
+    "directives_changes": "Bumped version 330->331, updated_by run-329. Rewrote current_priority for the ship (archived run-328). Added note_run329 to wallet_convergence. Added two pending_hypotheses: lean_convergence_edge (SHIPPED_AWAITS_RESTART, with kill criteria) and cented_wallet_shadow_add (DEFERRED, LOW). Added condensed lesson wc_crowd_size_inverted_separator_shipped_run329. requests_for_research left empty.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "Froth ceiling kill clock: still 2 of 15 would-have skips (POKEFIGHT turnover 18.45x, WORLD 13.63x); no new skip in about 48h. Hold and accumulate -- evaluation unlocks at 15 skips (about 2-3 weeks out at the current roughly 1-per-1-to-2-days rate).",
-      "wallet_convergence (only edge): 7d 8 trades 3 wins / 5 losses, plus 0.0046 SOL, profit factor 5.77 -- held positive. Left untouched.",
-      "bear_strength: no trades in 7d; lifetime 37 trades, reward/risk 1.93, still net positive. No action.",
-      "ANSEM (the position open at last run): closed flat minus 1.3% at 59 minutes -- benign, no new failure mode."
+      "run-328 froth ceiling kill-clock: was N=2/15, now N=4/15 (+2 would-have skips this ~24h). Still below the N>=15 research-149 needs; fires ~1-2/day so ~1-2 weeks out. HOLD, keep accumulating.",
+      "run-328 WC sole-edge watch: WC flipped from 7d-positive (PF 5.77 +0.0046) to 7d-NEGATIVE (PF 0.37 -0.0021) as the KINS +2.8% win and others aged out -- this run's count gate directly targets that degradation."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Add a universal turnover-froth ceiling: skip any buy where 1-hour volume is at least about 12 times the pool liquidity (churned-too-fast froth that dumps on late entries).",
-        "from_research": "research-149",
+        "proposal": "Skip wallet-convergence entries where 4 or more tracked wallets converged (crowded convergences are late exit-liquidity traps; only lean 3-wallet ones win).",
+        "from_research": "research-150",
         "status": "SHIPPED",
-        "why": "Already live in the bot since the late-June restart and firing in production. Now in its measurement window -- it has logged 2 of the 15 would-have skips needed before we can confirm it is blocking losers (not winners). No change needed this run; just accumulating evidence."
+        "why": "Strongest separator ever found inside the bot's only edge, verified two independent ways with consistent direction across win-rate/mean/median on the full 42-trade history; skip-only so it cannot add a loss; WC just went 7d-negative so acting now is correct. Full 7-field completeness packet present."
       },
       {
-        "proposal": "Add a net-sell-book skip gate for bear_strength (block entries when more sellers than buyers in the last 5 minutes).",
-        "from_research": "research-149",
-        "status": "KILLED",
-        "why": "Research closed this NULL: a plus-15.99% winner (JOBY) had the exact same net-sell book as the catastrophic losers, and the signal flips sign on other strategies. Permanently not actionable; no gate."
+        "proposal": "Log the converged-wallet count, the convergence time-span, and the converging wallet addresses as data fields on WC trades.",
+        "from_research": "research-150",
+        "status": "SHIPPED",
+        "why": "Addresses already logged via source_wallet since run-300; added clean 'count=N span=Ns' regex tokens to the WC reasoning field (which research already mines by regex). Chose not to add dedicated schema fields -- that risks a regression on a 14,800-line bot for zero behavior gain, and the reasoning tokens give research identical evaluability."
       },
       {
-        "proposal": "Add a minimum-liquidity floor for wallet_convergence between 35k and 85k dollars to prune thin-pool losses.",
-        "from_research": "research-149",
-        "status": "KILLED",
-        "why": "Research closed this NULL: the 30-50k band is 50% win-rate and holds the single biggest small-cap winner (Butt plus 17.4% at 44k liquidity); any floor would block that winner. Leave the liquidity floor at 30k."
+        "proposal": "Add the Cented wallet to the target list to feed more convergence candidates.",
+        "from_research": "research-150",
+        "status": "DEFERRED",
+        "why": "LOW confidence; research itself recommends shadow-first because Cented trades ~6,457 times per week (bot-like nano-cap volume) that could flood WC with low-quality convergences. Unlock trigger: after 12 post-gate WC closes confirm the new count gate holds (WR>=40%, PF>=0.85), then add Cented at reduced weight in shadow mode."
       }
     ],
-    "code_changes_this_run": [],
-    "no_code_change_reason": "Clean monitoring run: the only live experiment (froth ceiling) needs more would-have-skip data before it can be judged (2 of 15), the sole edge strategy just produced a win and a benign flat loss so it should be left alone, and both research proposals that could have driven code were already closed NULL. Nothing met the bar to ship.",
+    "code_changes_this_run": [
+      "The bot now skips wallet-convergence buys whenever 4 or more tracked smart-money wallets piled into the same token -- it only buys when exactly 3 wallets converged. Reason: 3-wallet convergences historically won about 53% of the time while 4+ wallet convergences lost about 3.7% on average (and 5+ lost 7.6%), because by the time a 4th wallet buys, the move is already crowded and those wallets become the sellers you would be buying from.",
+      "The bot now records two extra numbers on every convergence buy -- how many wallets converged and how many seconds passed between the first and last of them -- so the research lab can study convergence timing without guessing."
+    ],
     "changelog": [
-      "Confirmed the bot restarted onto a fresh, healthy process and is trading normally.",
-      "Logged two new closed trades (one tiny flat loss, one plus-2.8% win), net slightly positive.",
-      "Confirmed the froth-protection filter is live and still gathering evidence (2 of 15 examples).",
-      "Updated the brain memory stats; made no strategy or threshold changes."
+      "Shipped a new wallet-convergence filter: only buy when exactly 3 smart wallets converge, skip when 4 or more do (the crowded ones lose money).",
+      "Added convergence count + timing to the trade notes for future research.",
+      "Held off on adding the high-volume 'Cented' wallet until the new filter is proven, to avoid drowning the signal in noise.",
+      "Froth-skip safety counter ticked up from 2 to 4 of the 15 needed before that experiment can be judged -- still waiting."
     ],
     "actions_taken": [
-      "Reviewed wallet_convergence after its ANSEM flat loss and KINS plus-2.8% win -- left it untouched as the only profitable strategy.",
-      "Held the turnover-froth ceiling in its measurement window (2 of 15 would-have skips logged, no new skip in about 48h).",
-      "Marked the bear_strength net-sell-book and wallet_convergence liquidity-floor proposals as closed NULL per research-149.",
-      "Left requests-for-research empty -- the froth sample is too small for research to re-mine yet."
+      "Shipped research-150 proposal #1 (lean_convergence_edge count>=4 skip) into the wallet_convergence entry path; compile-check passed.",
+      "Shipped research-150 proposal #2 observability (converged-count + span tokens in WC reasoning).",
+      "Deferred research-150 proposal #3 (Cented wallet) with a concrete unlock trigger of 12 confirmed post-gate WC closes.",
+      "Recorded the WC 7d edge flipping negative and tied this run's gate directly to that degradation."
     ],
     "next_priorities": [
-      "Keep accumulating froth-ceiling would-have skips toward 15, then verify the blocked trades were losers (not winners) before tuning the exact ceiling (10 vs 12 vs 15).",
-      "Watch for research-150 (fires today Sunday at noon) and triage any new proposals next run against the completeness gate.",
-      "Keep wallet_convergence live and untouched while 7-day profit/loss stays positive; route any new loss pattern to research rather than hand-gating."
+      "After the next natural restart, watch the first 10-12 WC fires: confirm they are all exactly-3-wallet convergences and that WR>=40% / PF>=0.85 / cumulative pnl positive. If the kill criteria trip, revert WC_MAX_WALLETS.",
+      "Once ~12 post-gate WC closes confirm the gate holds, revisit adding Cented in shadow/reduced-weight mode (proposal #3 unlock).",
+      "Keep accumulating froth would-have skips toward N=15 (now 4) before evaluating the froth ceiling kill-clock."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1047,
-      "win_rate": 35.6,
-      "avg_win_pct": 12.9,
-      "avg_loss_pct": -16.19,
+      "total_sells": 1049,
+      "win_rate": 35.7,
+      "avg_win_pct": 12.87,
+      "avg_loss_pct": -16.18,
       "rr_ratio": 0.8,
       "stop_loss_rate_pct": 49.8,
-      "bankroll": 1.0433,
-      "pnl_today": 0
+      "bankroll": 0.9859,
+      "pnl_today": 0.0
     },
     "active_strategies": [
-      "wallet_convergence",
-      "bear_strength",
-      "turnover_froth_ceiling (universal entry skip, live, measuring)"
+      "wallet_convergence (TESTING, sole edge, now 3-wallet-only)",
+      "bear_strength (TESTING, +0.0037 all-time, 0 trades 7d)",
+      "consensus_boost (TESTING)",
+      "fresh_profile (PROVEN, dormant)",
+      "chop_momentum_scalp (TESTING)",
+      "gecko_breadth_burst (TESTING, N=0 buys)"
     ]
   },
   "wallet_scan": {
@@ -217,16 +220,16 @@
     "result": "Saved 20 wallets in 32m 3s",
     "completed": "2026-06-29T01:45:02.017599"
   },
-  "brain_next_sec": 85994.550735,
+  "brain_next_sec": 85691.445707,
   "brain_next_str": "Tue 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 405.449265,
-  "brain_last_run_str": "Sun 4:06 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:07 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:15 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 519554.550735,
+  "research_next_sec": 519251.445707,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -370,7 +373,7 @@
     "bot_events_age_sec": 26,
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "hours_since_last_trade": 10.48,
+    "hours_since_last_trade": 10.57,
     "hours_since_last_buy": "Last buy 2026-06-28T17:41:53 (~10.4h ago), sold 18:42:07 at -8.96pct stop-loss. 0 open now. Active scanning/signaling, NOT dormant.",
     "trades_last_24h": {
       "note": "No NEW round-trip since maint-752/753 (CS buy 17:41:53 -> stop-loss 18:42:07). Last 100 events: BUY_SKIP 40, SIGNAL 25, CB_SKIP 20, SCAN 10, BS_SKIP 5 -- healthy signal gen, normal gating, 0 CYCLE_ERROR."
@@ -468,12 +471,12 @@
     "log_truncations": [],
     "finished_at": "2026-06-29 04:06:23 EDT",
     "elapsed_min": 2,
-    "file_age_min": 4.4,
+    "file_age_min": 9.4,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-06-29 03:55:52 EDT",
+    "timestamp": "2026-06-29 04:11:13 EDT",
     "computed_from_trades": 2118,
     "total_buys": 1048,
     "total_sells": 1049,
@@ -1888,7 +1891,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-06-28T17:41:53.985893",
-      "hours_ago": 10.23,
+      "hours_ago": 10.49,
       "symbol": "CS",
       "strategy": "wallet_convergence"
     },
@@ -1906,8 +1909,8 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 169,
-    "age_min": 14.9,
+    "cycle": 170,
+    "age_min": 4.6,
     "stale": false,
     "available": true
   },
@@ -1926,7 +1929,7 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 2954.550735,
+  "maint_next_sec": 2651.445707,
   "maint_next_str": "5:00 AM EST",
   "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
@@ -1940,11 +1943,11 @@
     "latest": {
       "hypothesis_name": "lean_convergence_edge",
       "run_id": "research-150",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "queued",
+      "status_label": "\ud83d\udfe1 Queued",
+      "status_color": "#ffaa00",
+      "evidence_text": "Shipped research-150 proposal #1 (lean_convergence_edge count>=4 skip) into the wallet_convergence entry path; compile-check passed.",
+      "evidence_source": "action"
     },
     "tally": {
       "implemented": 20,
@@ -1954,55 +1957,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-06-29T03:53:41.303043",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Davinci: h1=-26.2% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-29T03:53:41.314487",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EDTm6vom sold 8PiU98Xj \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-29T03:53:41.333644",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EDTm6vom sold 9qwxahBx \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-29T03:53:41.343204",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EDTm6vom sold 3d1qHSAk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-29T03:53:56.475478",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Fishcoin: h1=1.8% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-29T03:53:58.923637",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip bitcuin: deep24h h24=-50.6% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-06-29T03:53:58.923637",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5RTwgpPc sold 2aKTUD6u \u2014 may trigger exit",
-      "detail": ""
-    },
     {
       "ts": "2026-06-29T03:53:58.939353",
       "type": "SIGNAL",
@@ -2653,6 +2607,55 @@
       "color": "#d29922",
       "msg": "lp_concentration_skip: spurdo 92% in 1 pool n=2",
       "detail": ""
+    },
+    {
+      "ts": "2026-06-29T04:11:13.905838",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Macro overlay: ALTCOIN_CHOP(55.8%) | SOL h24=2.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-29T04:11:13.915147",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 153 wallets (cycle #170)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-29T04:14:00.835705",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: ASVzakeP sold GqehzCHp \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-29T04:14:02.500684",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip GqehzCHp: tracked wallet sold this token 168s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-29T04:14:02.513224",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip GqehzCHp: tracked wallet sold this token 168s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-29T04:15:03.937088",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip bopdog: h6=445.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-06-29T04:15:03.937088",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2671,9 +2674,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:10:45",
+  "ts": "04:15:48",
   "__publish_meta": {
-    "published_at": "2026-06-29 04:10:45 EDT",
+    "published_at": "2026-06-29 04:15:48 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
