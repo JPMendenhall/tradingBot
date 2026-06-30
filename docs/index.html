@@ -258,6 +258,12 @@
     <!-- Per-strategy stats (populated by renderStrategyStats) -->
     <div id="strategy-stats-section"></div>
 
+    <!-- Shadow book paper-trade stats (populated by renderShadowStats) -->
+    <div id="shadow-stats-section"></div>
+
+    <!-- Ghost runs: live + recent paper trades (populated by renderGhostRuns) -->
+    <div id="ghost-runs-section"></div>
+
     <!-- Brain memory pressure (populated by renderBrainQueue) -->
     <div id="brain-queue-section"></div>
 
@@ -808,6 +814,86 @@ function renderStrategyStats(s){
   host.innerHTML=x;
 }
 
+/* --- Shadow book: paper-traded strategy performance (zero real money).
+   Profit factor is the headline fund/don't-fund signal: >1 = the strategy
+   would have made money unthrottled; <1 = it would have lost. --- */
+function renderShadowStats(s){
+  const host=document.getElementById('shadow-stats-section');
+  if(!host)return;
+  if(!s||!s.updated){host.style.display='none';host.innerHTML='';return;}
+  host.style.display='';
+  const border='#b07cff';
+  const ov=s.overall||{};
+  const pfColor=v=>v>=1.5?'#00ff88':v>=1.0?'#7cd3ff':v>0?'#ff6b35':'#888';
+  const pfFmt=v=>(v>=999?'∞':(v||0).toFixed(2));
+  let x=`<div class="sec neon" style="border:1px solid ${border}">`;
+  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">🌑 Shadow Book — paper trades (no real $)</div>`;
+  x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">updated ${esc(s.updated)} · ${s.open_count||0}/${s.max_open||60} open · profit factor &gt;1 = would-be profitable unthrottled</div>`;
+  // Overall pill
+  const oc=pfColor(ov.profit_factor);
+  x+=`<div style="font-size:11px;color:${oc};margin-bottom:8px;padding:5px 7px;background:#120a18;border-left:2px solid ${oc};border-radius:3px">`;
+  x+=`<b>ALL:</b> PF <b>${pfFmt(ov.profit_factor)}</b> · ${ov.trades||0}T · WR ${((ov.win_rate||0)*100).toFixed(0)}% · avg ${(ov.avg_pnl_pct||0).toFixed(1)}% · ${(ov.pnl_sol||0)>=0?'+':''}${(ov.pnl_sol||0).toFixed(4)} SOL`;
+  x+=`</div>`;
+  // Per-strategy rows — sorted by pnl_sol desc by the writer; show closed-trade strategies first
+  const bs=s.by_strategy||{};
+  const obs=s.open_by_strategy||{};
+  const rows=Object.entries(bs).filter(([n,v])=>(v.trades||0)>0);
+  if(!rows.length){
+    x+=`<div style="font-size:10px;color:#888">Accumulating — no closed shadow trades yet. ${s.open_count||0} paper position(s) open.</div>`;
+  } else {
+    rows.forEach(([name,v])=>{
+      const c=pfColor(v.profit_factor);
+      const openN=obs[name]||0;
+      x+=`<div style="font-size:11px;display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #1a1a1a">`;
+      x+=`<span style="color:#ccc">${esc(name)}${openN?` <span style="color:#666">(${openN} open)</span>`:''}</span>`;
+      x+=`<span style="color:${c}">PF <b>${pfFmt(v.profit_factor)}</b> · ${v.trades}T · WR ${((v.win_rate||0)*100).toFixed(0)}% · ${(v.pnl_sol||0)>=0?'+':''}${(v.pnl_sol||0).toFixed(4)}</span>`;
+      x+=`</div>`;
+    });
+  }
+  x+='</div>';
+  host.innerHTML=x;
+}
+
+/* --- Ghost Runs: the actual paper trades behind the Shadow Book scoreboard.
+   Open positions (live P&L) on top, recent completed ones below. Brief by
+   design — a glanceable feed of what the strategies are "doing" risk-free. --- */
+function ghostReason(r){
+  const m={stop_loss:'stop',trailing_stop:'trail',target:'🎯 target',time_exit:'time',
+           time_exit_noprice:'time',flat_exit:'flat',emergency_stop:'emergency',
+           no_price:'dead',qa_midcut:'cut',stall_exit:'stall'};
+  return m[r]||r||'';
+}
+function renderGhostRuns(g){
+  const host=document.getElementById('ghost-runs-section');
+  if(!host)return;
+  if(!g || ((g.open_total||0)===0 && (g.closed_total||0)===0)){host.style.display='none';host.innerHTML='';return;}
+  host.style.display='';
+  const border='#8a8aff';
+  const pc=v=>v>0?'#00ff88':v<0?'#ff6b35':'#888';
+  let x=`<div class="sec neon" style="border:1px solid ${border}">`;
+  x+=`<div class="sec-t" style="font-size:11px;color:${border};text-transform:uppercase;letter-spacing:1.5px">👻 Ghost Runs — paper trades (no real $)</div>`;
+  x+=`<div style="font-size:10px;color:#666;margin-bottom:6px">${g.open_total||0} open · ${g.closed_total||0} completed</div>`;
+  (g.open||[]).forEach(r=>{
+    const c=pc(r.pnl_pct);
+    x+=`<div style="font-size:11px;display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #1a1a1a">`;
+    x+=`<span style="color:#ccc">🟢 ${esc(r.symbol)} <span style="color:#777">${esc(r.strategy)}</span></span>`;
+    x+=`<span style="color:${c}">${(r.pnl_pct||0)>=0?'+':''}${(r.pnl_pct||0).toFixed(1)}% · ${r.age_min||0}m</span>`;
+    x+=`</div>`;
+  });
+  if((g.closed||[]).length){
+    x+=`<div style="font-size:9px;color:#555;margin:6px 0 2px;text-transform:uppercase;letter-spacing:1px">recent completed</div>`;
+    (g.closed||[]).forEach(r=>{
+      const c=pc(r.pnl_pct);
+      x+=`<div style="font-size:11px;display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #141414">`;
+      x+=`<span style="color:#aaa">${esc(r.symbol)} <span style="color:#666">${esc(r.strategy)}</span></span>`;
+      x+=`<span style="color:${c}">${(r.pnl_pct||0)>=0?'+':''}${(r.pnl_pct||0).toFixed(1)}% <span style="color:#555">${esc(ghostReason(r.reason))}</span></span>`;
+      x+=`</div>`;
+    });
+  }
+  x+='</div>';
+  host.innerHTML=x;
+}
+
 /* --- Brain memory pressure panel — only surfaces when overloaded or drifting.
      When pressure is normal the tile is hidden; nothing useful to show. --- */
 function renderBrainQueue(q){
@@ -1311,6 +1397,8 @@ async function refresh(){
     applyDashboardHints(d.survival_report);
     renderMaintenance(d.maintenance_status);
     renderStrategyStats(d.strategy_stats);
+    renderShadowStats(d.shadow_stats);
+    renderGhostRuns(d.ghost_runs);
     renderBrainQueue(d.brain_queue);
     _brainQueueOverloaded = (d.brain_queue||{}).overloaded === true;
     renderMemoryKeeper(d.memory_keeper_status);
