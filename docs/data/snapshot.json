@@ -1,15 +1,15 @@
 {
-  "sol_price": 74.7569531279703,
+  "sol_price": 74.79928295164893,
   "bot_status": "RUNNING",
   "bot_last_seen": "03:59:26",
   "bot_cycles": 118,
   "bankroll": 1.0278,
-  "bankroll_usd": 76.83519642492789,
+  "bankroll_usd": 76.87870301770478,
   "budget": 0.14666787359999997,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 4.0,
+  "hour": 4.1,
   "positions": [],
   "num_positions": 0,
   "pnl_7d": {
@@ -140,73 +140,74 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-06-30 04:07:51 EDT",
+    "timestamp": "2026-07-01 04:06:00 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "The bot's only edge (wallet_convergence) remains marginally negative on a 7d basis -- 7T 57.1%WR but pnl -0.001896 SOL because wins are micro-flats (avg +1.07%) while losses run -3.56%. The structural fix (run-329's WC count gate, which skips crowded 4+ wallet convergences) JUST went live this run via a bot restart (PID 7752->8276), but it has had 0 post-restart WC entries to act on -- every recent WC candidate (ANSEM, 6 fires) was caught upstream by the froth ceiling first. So the #1 problem is real but the remedy is now armed and waiting for fresh data.",
-    "exit_analysis": "Lifetime 1050 sells: avg_win +12.84%, avg_loss -16.18%, R/R 0.79, stop-loss rate 49.7%. Rolling_7d (all WC): avg_win +1.07%, avg_loss -3.56%, R/R 0.30, stop rate 14.3% -- losses small, wins smaller; no catastrophic stops this window. Only 1 closed trade in 24h (Goblin WC +0.16%).",
-    "strategy_work": "Verified that run-329's WC count gate (WC_MIN_WALLETS=3 + WC_MAX_WALLETS=3) and the count=N span=Ns observability tokens are present in source (lines 11651/11656/11820) AND now active in the running process (fresh PID 8276). Confirmed no post-gate WC entry has fired yet (zero count= tokens in the trade log; the lone new close, Goblin, was a pre-restart entry). The count-gate kill clock therefore starts at the first post-gate WC close, not yet reached. No hypothesis could be advanced with new data this run.",
-    "directives_changes": "Bumped version 331->332, updated_by run-330. Rewrote current_priority to record the restart/gate-activation milestone, the froth N=4->8 update (with the ANSEM-concentration caveat), the 1 new Goblin WC close, and the 0-post-gate-closes state. Archived run-329 priority inline. requests_for_research left empty.",
+    "system_diagnosis": "The wallet_convergence count gate (only enter on exactly-3-wallet convergences) just recorded its FIRST post-gate close and it was a loss: APU emergency-stopped -18.6% in 31 minutes. This is a single data point (N=1 of the 12 the kill rule needs). The gate itself behaved perfectly -- it let in only a lean 3-wallet convergence that also passed the froth ceiling, liquidity, security and holder checks; APU then gapped straight down (a rug-shaped move) that no live filter could have caught. The honest #1 problem is unchanged: WC wins are tiny flats and its losses are occasional sharp gap-downs, so its all-time profit factor stays below 1 (0.67). But the count gate's edge was proven on 30 historical count=3 trades at 53% win rate; one live -18.6% is normal tail variance, not evidence the gate is wrong.",
+    "exit_analysis": "This window: 1 close, a -18.6% emergency stop (APU wallet_convergence, 0.52h hold). WC rolling_7d: 6 trades, 50% win rate, avg win +1.41% vs avg loss -9.63%, R/R 0.15, PF 0.15, -0.007299 SOL, stop-loss rate 33%. WC all-time: 45 trades, 44.4% win rate, R/R 0.79, PF 0.67, -0.014701 SOL. Global lifetime: 1051 sells, 35.7% win rate, R/R 0.79, PF 0.44, stop-loss rate 49.8%.",
+    "strategy_work": "Confirmed the count gate and its observability logging are live and working: APU's record carried the clean 'count=3 span=17220s' marker plus all three converging wallet addresses, so converged-count is now numerically recoverable for the research brain's planned re-mine. Advanced the count-gate evaluation: kill clock now at N=1 of 12 post-gate closes (0 wins so far). Held the gate rather than reacting to the single loss, consistent with the anti-overfit lesson. bear_strength remains dormant but all-time positive (PF 1.13).",
+    "directives_changes": "Rewrote current_priority for run-331 (first post-gate WC close = APU -18.6% stop, count-gate kill clock started at 1/12, observability ship confirmed live, hold-not-revert decision with reasoning). Refreshed track_record totals (1051 sells, bankroll 1.0278 SOL, SOL ~$74.77). Archived run-330 priority inline. Version 332 -> 333. requests_for_research left empty.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-329 WC count gate: SHIPPED then, now ACTIVE this run after the bot restarted to PID 8276 -- 0 post-gate WC closes so far, kill clock not started.",
-      "run-329 observability (count=N span=Ns in WC reasoning): ACTIVE in source, will populate on the next post-restart WC entry (none yet).",
-      "Froth ceiling (research-149): kill clock N=4->N=8, still below N>=15 needed; 6/8 skips are the same token ANSEM."
+      "Run-330 predicted the count gate's first post-restart close was still pending (0 post-gate closes). CONFIRMED and advanced: the first one arrived this window -- APU count=3 -18.6% stop. Kill clock now 1/12, WR 0/1; still far below the rolling-10 / next-12 sample the kill rule requires.",
+      "Run-330 froth ceiling kill clock was N=8 (6/8 ANSEM). UNCHANGED at N=8 this window -- zero new would-have-skips; still below the N>=15 research-149 needs.",
+      "Run-330 kept Cented wallet (research-150 proposal #3) DEFERRED pending N>=12 post-gate closes. Still DEFERRED; now 1/12."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Skip wallet_convergence trades when 4 or more tracked wallets have converged (count<=3 only).",
+        "proposal": "Skip wallet_convergence entries with 4 or more converging wallets (only trade lean 3-wallet convergences).",
         "from_research": "research-150",
         "status": "SHIPPED",
-        "why": "Shipped to source at run-329; this run the bot restarted (new PID 8276) so the gate is now LIVE in production. 0 post-gate WC closes yet, so its kill clock has not started."
+        "why": "Shipped in run-329, activated at the run-330 restart. First post-gate close (APU) landed this window as a -18.6% loss. Holding the gate -- one loss is tail variance against the 30-trade backtest that showed 53% win rate; the kill rule needs rolling-10 or the next-12 closes, currently only 1."
       },
       {
-        "proposal": "Log the converged-wallet count, convergence speed, and converging wallet identities on WC trades.",
+        "proposal": "Log a clean numeric converged-wallet count, convergence time-span, and wallet addresses on each convergence trade.",
         "from_research": "research-150",
         "status": "SHIPPED",
-        "why": "The count=N span=Ns tokens are in the WC reasoning string (live in PID 8276) and wallet identity persists via source_wallet; these populate on the next post-restart WC entry, which has not occurred yet."
+        "why": "Confirmed working live: APU's record carried 'count=3 span=17220s' and all three wallet addresses. The research brain can now re-mine the count split on clean data next run."
       },
       {
-        "proposal": "Add the Cented wallet to the pinned list to feed wallet_convergence.",
+        "proposal": "Add the Cented wallet to the tracked list, feeding convergence signals -- but shadow it first because of its bot-like high-frequency nano-cap volume.",
         "from_research": "research-150",
         "status": "DEFERRED",
-        "why": "Research itself recommends shadow-first (Cented runs ~6457 bot-like nano-cap trades/7d that could flood WC). Unlock trigger: 12+ post-gate WC closes confirm the count gate holds; currently at 0 post-gate closes."
+        "why": "Unlocks only after 12 post-gate convergence closes confirm the count gate holds up live; we now have exactly 1. Adding a noisy high-frequency wallet before the gate is validated would muddy the very signal we are trying to measure."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Monitoring run. Run-329's WC count gate and observability only just became active this run (the bot restarted onto a fresh process); the disciplined move is to let the freshly-armed gate accumulate post-gate WC closes before any further tuning. No new failure mode, no new research, and no proposal met a fresh actionable trigger this run.",
+    "no_code_change_reason": "Monitoring run. The only new event was the count gate's first post-gate close (APU, a -18.6% loss). That is a single data point; the gate's revert rule explicitly requires 10-12 closes, and reverting a backtest-proven filter on one live loss is the overfitting mistake prior runs were burned by. No research proposal is pending action, no new failure mode appeared, and the bot is healthy -- nothing warranted a code change.",
     "changelog": [
-      "Confirmed the bot restarted onto a fresh process, which turned on last run's two changes: the bot now only copies a convergence when exactly 3 tracked wallets agree (it skips when 4 or more pile in), and it now records how many wallets converged and how fast.",
-      "Noted that the new 3-wallet rule hasn't actually filtered a live trade yet -- the recent convergence candidates (all on the ANSEM token) were already being blocked earlier by the froth/over-heated filter.",
-      "Logged one new closed trade since yesterday: Goblin, a near-flat tiny win (+0.16%)."
+      "The bot's first trade under the new 'only-lean-convergence' rule closed as a sharp loss (APU, down 18.6% in half an hour). Recorded it, but did not change anything -- one trade is nowhere near enough to judge the rule, which was built on 30 historical trades that won 53% of the time.",
+      "Confirmed the new convergence-logging feature is working: the APU trade correctly recorded that exactly 3 wallets converged over about 4.8 hours, plus which wallets they were.",
+      "No new frothy-token skips this day (still 8 total, mostly the same ANSEM token). Nothing to evaluate yet.",
+      "Bot is running normally on a healthy process; bankroll about 1.03 SOL, no open positions."
     ],
     "actions_taken": [
-      "Verified run-150's wallet_convergence count gate and observability are both live in the running bot (fresh process) and recorded the activation milestone in the brain directives.",
-      "Updated the froth/over-heated-token skip count from 4 to 8 and flagged that 6 of the 8 are the same token (ANSEM), so the sample is less diverse than the raw number implies.",
-      "Left the Cented-wallet proposal deferred (shadow-first) and the research request queue empty."
+      "Evaluated the count gate's first post-gate close (APU wallet_convergence, -18.6% emergency stop) and chose to HOLD the gate rather than revert -- N=1 vs a 12-close kill rule.",
+      "Verified the research-150 observability ship is live (APU logged count=3, span, and the three converging wallet addresses).",
+      "Kept the Cented wallet proposal DEFERRED (unlock at 12 post-gate closes, now 1).",
+      "Refreshed brain directives track record and current priority; version 332 to 333."
     ],
     "next_priorities": [
-      "Watch for the FIRST post-restart wallet_convergence entry -- confirm it carries a count=N span=Ns token and that any 4+ wallet convergence is actually skipped. Start the count-gate kill clock at the first post-gate WC close.",
-      "Accumulate toward 12 post-gate WC closes to evaluate the count gate (kill if rolling-10 WR<0.40 OR PF<0.85 OR cumulative pnl negative over 12 closes).",
-      "Froth ceiling: accumulate toward N>=15 logged skips (now 8) -- but watch the ANSEM concentration; research-149 needs a more diverse blocked set to compare BLOCKED-vs-KEPT win rates."
+      "Accumulate post-gate wallet_convergence closes toward the 10-12 the kill rule needs. Watch for rolling-10 win rate below 40% or profit factor below 0.85 -- if either trips, revert the count gate. Currently 1 close, 0 wins.",
+      "Watch the froth ceiling skip count toward 15 (now 8, mostly ANSEM); only then can blocked-vs-kept win rates be compared.",
+      "At 12 post-gate closes with the gate holding, revisit adding the Cented wallet in shadow mode."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1050,
+      "total_sells": 1051,
       "win_rate": 35.7,
       "avg_win_pct": 12.84,
       "avg_loss_pct": -16.18,
       "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 49.7,
-      "bankroll": 1.036,
-      "pnl_today": 0.0
+      "stop_loss_rate_pct": 49.8,
+      "bankroll": 1.0278,
+      "pnl_today": -0.005508
     },
     "active_strategies": [
-      "wallet_convergence",
-      "bear_strength",
-      "fresh_profile"
+      "wallet_convergence (sole edge; count=3-only gate live, kill clock 1/12, all-time 45T 44.4%WR PF 0.67)",
+      "bear_strength (dormant, all-time 37T 37.8%WR PF 1.13 positive)"
     ]
   },
   "wallet_scan": {
@@ -214,16 +215,16 @@
     "result": "Saved 20 wallets in 32m 3s",
     "completed": "2026-06-29T01:45:02.017599"
   },
-  "brain_next_sec": 86384.97139,
+  "brain_next_sec": 86082.021274,
   "brain_next_str": "Thu 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 41.02861,
-  "brain_last_run_str": "Tue 4:07 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:06 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:15 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 347144.97139,
+  "research_next_sec": 346842.021274,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -347,53 +348,53 @@
     "summary": "research-150 (2026-06-28 Sun noon, CHOP SOL ~$71 BTC.D 56%). 3 subagents, requests_for_research EMPTY. NOVEL HYPOTHESIS lean_convergence_edge (HIGH): converged-wallet COUNT is INVERTED inside WC (sole edge) -- ==3 N=30 53%WR +0.12% median, >=4 N=12 25%WR -3.65% avg, >=5 -7.56%; crowded convergences are late exit-liquidity traps. Verified 2 ways (brain+subagent), direction consistent across WR/mean/median. 3 proposals: #1 new_filter skip WC count>=4 (MEDIUM, full 7-field packet, blocks ~29% of WC fires); #2 data_source_add log converged_wallet_count+convergence_span_sec+converging_wallets numeric (HIGH, zero risk -- count only in free-text now, speed+addresses NEVER logged); #3 add Cented CyaE1Vxv...54o (LOW, ~61%WR multi-source but bot-like nano-cap volume, shadow first). Narratives: AI-agent memes/Fartcoin, Elon-birthday micro-caps. Unused data source: pump.fun migration via PumpPortal WS. MAINT: heartbeat ~12min stale at write (likely backtest stall, not escalated)."
   },
   "maintenance_status": {
-    "timestamp": "2026-07-01 03:06:01 EDT",
-    "run_id": "maint-805",
-    "run_outcome": "HEALTHY_NODUP_NORESTART_BOTPID8276_CYCLE110to114_DASH13152_HTTP200_0OPEN_1BUY1SELL_24H_NOTDORMANT_MIRROR_HEALTHY_7.6MIN_CONSECHEALS0_EFFLAB_NOTRIG_HYP47_LESSONS26_BRAINv332",
+    "timestamp": "2026-07-01 04:05:00 EDT",
+    "run_id": "maint-806",
+    "run_outcome": "HEALTHY_NODUP_NORESTART_BOTPID8276_CYCLE114to118_DASH13152_HTTP200_0OPEN_1BUY1SELL_24H_NOTDORMANT_MIRROR_HEALTHY_5.3MIN_CONSECHEALS0_EFFLAB_NOTRIG_HYP47_LESSONS26_BRAINv332",
     "bot_status": "RUNNING",
     "bot_pid": 8276,
     "bot_pid_prior": 8276,
     "bot_restarted_since_last_run": false,
-    "bot_restart_note": "No restart. Bot PID 8276 stable since maint-780..804; cycle 110->114 (delta +4), events_age 94s + heartbeat_age 383s confirm healthy loop.",
+    "bot_restart_note": "No restart. Bot PID 8276 stable since maint-780..805; cycle 114->118 (delta +4), events_age 27s + heartbeat_age 278s confirm healthy loop.",
     "dashboard_status": "RUNNING",
     "dashboard_pid": 13152,
     "dashboard_pid_prior": 13152,
     "dashboard_pid_note": "Dashboard PID 13152 stable since maint-797. Exactly ONE dashboard, sole owner of port 5555, HTTP 200.",
     "dashboard_curl": "200",
-    "dashboard_curl_note": "HTTP 200 in 0.95s (under 3s budget). PID 13152 sole owner of port 5555. No dup. No restart.",
+    "dashboard_curl_note": "HTTP 200 in 0.94s (under 3s budget). PID 13152 sole owner of port 5555. No dup. No restart.",
     "duplicates_killed": [],
     "stale_locks_cleared": [],
-    "bot_cycle": 114,
-    "bot_cycle_prior": 110,
-    "bot_cycle_note": "Cycle 110->114 (delta +4) since maint-804. events_age 94s (<120s) + heartbeat_age 383s => ALIVE. Both fresh, no CYCLE_ERROR.",
-    "bot_heartbeat_age_sec": 383,
-    "bot_events_age_sec": 94,
-    "hours_since_last_trade": 6.52,
-    "hours_since_last_buy": "APU wallet_convergence buy 2026-06-30 21:32:55 (5.55h ago), sell 22:03:41 @ -18.62pct EMERGENCY STOP (5.04h ago). Same APU round-trip as maint-800..804, still inside trailing-24h window => 1 buy / 1 sell. No NEW trade this run.",
+    "bot_cycle": 118,
+    "bot_cycle_prior": 114,
+    "bot_cycle_note": "Cycle 114->118 (delta +4) since maint-805. events_age 27s (<120s) + heartbeat_age 278s => ALIVE. Both fresh, no CYCLE_ERROR.",
+    "bot_heartbeat_age_sec": 278,
+    "bot_events_age_sec": 27,
+    "hours_since_last_trade": 6.61,
+    "hours_since_last_buy": "APU wallet_convergence buy 2026-06-30 21:32:55 (~6.5h ago), sell 22:03:41 @ -18.62pct EMERGENCY STOP (6.01h ago). Same APU round-trip as maint-800..805, still inside trailing-24h window => 1 buy / 1 sell. No NEW trade this run.",
     "trades_last_24h": {
       "buys": 1,
       "sells": 1,
-      "note": "APU (wallet_convergence, exactly-3-wallet) buy 21:32:55, EMERGENCY STOP sell 22:03:41 @ -18.62pct. First post-count-gate WC close; it lost. No new trades since maint-800 (~5h ago). Bot scanning healthy (events 94s fresh, cycle +4, SIGNAL gen active)."
+      "note": "APU (wallet_convergence, exactly-3-wallet) buy 21:32:55, EMERGENCY STOP sell 22:03:41 @ -18.62pct. First post-count-gate WC close; it lost. No new trades since maint-800 (~6h ago). Bot scanning healthy (events 27s fresh, cycle +4)."
     },
     "open_positions": "0 open. sol_positions.json is an empty LIST [] (APU sold 22:03).",
     "dormancy_alert": false,
-    "dormancy_status": "NOT DORMANT. APU round-trip (buy 21:32:55 / sell 22:03:41) still inside trailing-24h => 1 buy / 1 sell. hours_since_last_trade ~5.04h. Next zero-trade boundary ~21:32 EDT 07-01 (last buy) / ~22:03 (last sell) if no new trade before then. Brain owns interpreting the WC loss.",
-    "filter_lockout_diagnosis": "NOT in lockout. Cycle advancing (+4), events fresh (94s), heartbeat fresh (383s), 0 CYCLE_ERROR. Last-100 events: SIGNAL 29, SECURITY_BLOCK 29, BUY_SKIP 28, SCAN 9, CB_SKIP 4, BS_SKIP 1 -- healthy scan/signal generation, skips are normal candidate rejection not a frozen loop.",
+    "dormancy_status": "NOT DORMANT. APU round-trip (buy 21:32:55 / sell 22:03:41) still inside trailing-24h => 1 buy / 1 sell. hours_since_last_trade ~6.01h. Next zero-trade boundary ~21:32 EDT 07-01 (last buy) / ~22:03 (last sell) if no new trade before then. Brain owns interpreting the WC loss.",
+    "filter_lockout_diagnosis": "NOT in lockout. Cycle advancing (+4), events fresh (27s), heartbeat fresh (278s), 0 CYCLE_ERROR. Healthy scan/signal generation; skips are normal candidate rejection not a frozen loop.",
     "coordination": {
       "research_running": false,
       "brain_running": false,
       "note": "BRAIN run-330 FINISHED clean (finished_at 2026-06-30 04:07:51, directives v332). research-150 idle since 2026-06-28 12:15:57. No coordination block."
     },
     "actions_taken": [
-      "Cadence gate: prior maint-804 finished 02:06:07 (~57min ago) => proceeded.",
+      "Cadence gate: prior maint-805 finished 03:06:01 (~58min ago) => proceeded.",
       "Coordination FIRST: brain run-330 FINISHED clean (directives v332); research idle. No coordination block.",
       "Process: exactly ONE bot (PID 8276 pythonw degen_bot.py --continuous) and ONE dashboard (PID 13152 dashboard.py). No duplicates.",
-      "Liveness ALIVE: cycle 110->114 (delta +4), events fresh 94s, heartbeat fresh 383s, 0 CYCLE_ERROR => ALIVE. No restart.",
+      "Liveness ALIVE: cycle 114->118 (delta +4), events fresh 27s, heartbeat fresh 278s, 0 CYCLE_ERROR => ALIVE. No restart.",
       "Stale locks: brain running=false, research running=false. Nothing to clear.",
       "Dormancy: NOT dormant. APU round-trip still in trailing-24h (1 buy/1 sell). No new trade since maint-800. No alert.",
-      "Logs: bot.log ~1MB / dashboard.log ~1MB / watchdog.log ~1MB all far under 50MB. No truncation.",
-      "Dashboard: PID 13152 sole owner of port 5555. HTTP 200 in 0.95s. No restart.",
-      "Mirror HEALTHY: published 02:58:25, ~7.6min fresh (<15min). No heal. consecutive_heals=0.",
+      "Logs: bot.log 0.28MB / dashboard.log ~0MB / watchdog.log 0.24MB all far under 50MB. No truncation.",
+      "Dashboard: PID 13152 sole owner of port 5555. HTTP 200 in 0.94s. No restart.",
+      "Mirror HEALTHY: published 03:59:12, ~5.3min fresh (<15min). No heal. consecutive_heals=0.",
       "Eff-lab: hyp 47 of 60, lessons 26 of 50, reqs 0 of 8, drift none -> triggered=False. No fire. Directives v332.",
       "State files: largest sol_trade_log.json 1.24MB (no file >2MB). No oversized. No new bloat.",
       "Section 9 audit: one_time_tasks=0, brain_queue overloaded=false, dormancy false => no 9A-9E action."
@@ -401,12 +402,12 @@
     "github_mirror": {
       "url": "https://JPMendenhall.github.io/tradingBot/",
       "pre_heal_status": "HEALTHY",
-      "pre_heal_age_min": 7.6,
+      "pre_heal_age_min": 5.3,
       "heal_attempted": false,
       "heal_succeeded": null,
-      "heal_output": "Not needed -- mirror published 02:58:25, ~7.6min fresh under 15min HEALTHY threshold.",
+      "heal_output": "Not needed -- mirror published 03:59:12, ~5.3min fresh under 15min HEALTHY threshold.",
       "post_heal_status": "NOT_NEEDED",
-      "post_heal_age_min": 7.6,
+      "post_heal_age_min": 5.3,
       "consecutive_heals": 0,
       "auto_restart": {
         "fired": false,
@@ -415,7 +416,7 @@
         "post_restart_verified": null,
         "reason": "Mirror HEALTHY, no heal needed. consecutive_heals stays 0. Publisher alive (daemon thread on bot PID 8276)."
       },
-      "note": "Mirror healthy and fresh (published 02:58:25, ~7.6min)."
+      "note": "Mirror healthy and fresh (published 03:59:12, ~5.3min)."
     },
     "efficiency_lab": {
       "triggered": false,
@@ -466,11 +467,11 @@
       "LESSONS METRIC GOTCHA: canonical lessons_count = len(condensed_lessons.entries)=26; use .entries.",
       "WC COUNT GATE: APU (exactly-3-wallet) was the FIRST convergence to pass the run-329/330 count gate and it lost -18.62pct. Brain (not maintenance) owns whether this single post-gate data point matters."
     ],
-    "next_run_focus": "1) NOT dormant now; APU round-trip ages out of trailing-24h at ~21:32 (buy)/~22:03 (sell) EDT 07-01. If no new trade before then, dormancy re-onsets -- watch for it. 2) APU -18.62pct first post-count-gate WC close -- flagged for brain run-331 (froth kill-clock / lean_convergence_edge). 3) Confirm bot PID 8276 keeps climbing cycles (was 114). 4) Confirm dashboard single-PID (13152). 5) Mirror healthy, consecutive_heals=0.",
+    "next_run_focus": "1) NOT dormant now; APU round-trip ages out of trailing-24h at ~21:32 (buy)/~22:03 (sell) EDT 07-01. If no new trade before then, dormancy re-onsets -- watch for it. 2) APU -18.62pct first post-count-gate WC close -- flagged for brain run-331 (froth kill-clock / lean_convergence_edge). 3) Confirm bot PID 8276 keeps climbing cycles (was 118). 4) Confirm dashboard single-PID (13152). 5) Mirror healthy, consecutive_heals=0.",
     "log_truncations": [],
-    "finished_at": "2026-07-01 03:06:01 EDT",
+    "finished_at": "2026-07-01 04:05:00 EDT",
     "elapsed_min": 2,
-    "file_age_min": 58.2,
+    "file_age_min": 3.0,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1905,7 +1906,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 118,
-    "age_min": 4.8,
+    "age_min": 9.9,
     "stale": false,
     "available": true
   },
@@ -1980,7 +1981,7 @@
         "symbol": "Udin",
         "strategy": "wallet_convergence",
         "pnl_pct": -3.84,
-        "age_min": 6
+        "age_min": 11
       }
     ],
     "open_total": 1,
@@ -2045,9 +2046,9 @@
     "ever_ran": false,
     "source": "none"
   },
-  "maint_next_sec": 3344.97139,
+  "maint_next_sec": 3042.021274,
   "maint_next_str": "5:00 AM EST",
-  "maint_last_run_str": "3:06 AM EST",
+  "maint_last_run_str": "4:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
@@ -2059,11 +2060,11 @@
     "latest": {
       "hypothesis_name": "lean_convergence_edge",
       "run_id": "research-150",
-      "status": "not_acknowledged",
-      "status_label": "\u2753 Not acknowledged",
-      "status_color": "#ff9933",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "implemented",
+      "status_label": "\u2705 Implemented",
+      "status_color": "#00ff88",
+      "evidence_text": "Verified the research-150 observability ship is live (APU logged count=3, span, and the three converging wallet addresses).",
+      "evidence_source": "action"
     },
     "tally": {
       "implemented": 21,
@@ -2073,48 +2074,6 @@
     }
   },
   "events": [
-    {
-      "ts": "2026-07-01T03:58:29.651610",
-      "type": "WC_SKIP",
-      "color": "#8b949e",
-      "msg": "8pGWyByG: 5 converging wallets > 3 (research-150 lean-convergence: crowded=late exit-liquidity)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-01T03:58:29.663531",
-      "type": "WC_SKIP",
-      "color": "#8b949e",
-      "msg": "7wBNDH3d: 4 converging wallets > 3 (research-150 lean-convergence: crowded=late exit-liquidity)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-01T03:58:29.663531",
-      "type": "WC_SKIP",
-      "color": "#8b949e",
-      "msg": "51xtAhpY: 5 converging wallets > 3 (research-150 lean-convergence: crowded=late exit-liquidity)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-01T03:58:29.667345",
-      "type": "WC_SKIP",
-      "color": "#8b949e",
-      "msg": "5eE9B3KV: 5 converging wallets > 3 (research-150 lean-convergence: crowded=late exit-liquidity)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-01T03:58:29.667345",
-      "type": "WC_SKIP",
-      "color": "#8b949e",
-      "msg": "3JHgosXW: 7 converging wallets > 3 (research-150 lean-convergence: crowded=late exit-liquidity)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-01T03:58:29.667345",
-      "type": "WC_SKIP",
-      "color": "#8b949e",
-      "msg": "A4iZ1ZBj: 5 converging wallets > 3 (research-150 lean-convergence: crowded=late exit-liquidity)",
-      "detail": ""
-    },
     {
       "ts": "2026-07-01T03:58:29.667345",
       "type": "WC_SKIP",
@@ -2772,6 +2731,48 @@
       "color": "#f85149",
       "msg": "Blocked EQ8jK746",
       "detail": "Security check failed \u2014 both APIs unreachable"
+    },
+    {
+      "ts": "2026-07-01T04:04:42.505049",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: J6TDXvar sold 6r2yHVov \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-01T04:08:12.429661",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Fartcoin: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-01T04:08:12.882564",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Fartcoin: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-01T04:08:13.368963",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Fartcoin: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-01T04:08:13.822221",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Fartcoin: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-01T04:08:14.292607",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Fartcoin: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2790,9 +2791,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:04:15",
+  "ts": "04:09:17",
   "__publish_meta": {
-    "published_at": "2026-07-01 04:04:15 EDT",
+    "published_at": "2026-07-01 04:09:18 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
