@@ -1,15 +1,15 @@
 {
-  "sol_price": 78.01118081109786,
+  "sol_price": 78.09714817746129,
   "bot_status": "RUNNING",
   "bot_last_seen": "04:00:14",
   "bot_cycles": 17,
   "bankroll": 3.5402,
-  "bankroll_usd": 276.17518230744867,
+  "bankroll_usd": 276.4795239778485,
   "budget": 0.52353240225,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 4.0,
+  "hour": 4.1,
   "positions": [],
   "num_positions": 0,
   "pnl_7d": {
@@ -140,74 +140,86 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-07-01 04:06:00 EDT",
+    "timestamp": "2026-07-02 04:05:00 EDT",
     "market_regime": "CHOP",
-    "system_diagnosis": "The wallet_convergence count gate (only enter on exactly-3-wallet convergences) just recorded its FIRST post-gate close and it was a loss: APU emergency-stopped -18.6% in 31 minutes. This is a single data point (N=1 of the 12 the kill rule needs). The gate itself behaved perfectly -- it let in only a lean 3-wallet convergence that also passed the froth ceiling, liquidity, security and holder checks; APU then gapped straight down (a rug-shaped move) that no live filter could have caught. The honest #1 problem is unchanged: WC wins are tiny flats and its losses are occasional sharp gap-downs, so its all-time profit factor stays below 1 (0.67). But the count gate's edge was proven on 30 historical count=3 trades at 53% win rate; one live -18.6% is normal tail variance, not evidence the gate is wrong.",
-    "exit_analysis": "This window: 1 close, a -18.6% emergency stop (APU wallet_convergence, 0.52h hold). WC rolling_7d: 6 trades, 50% win rate, avg win +1.41% vs avg loss -9.63%, R/R 0.15, PF 0.15, -0.007299 SOL, stop-loss rate 33%. WC all-time: 45 trades, 44.4% win rate, R/R 0.79, PF 0.67, -0.014701 SOL. Global lifetime: 1051 sells, 35.7% win rate, R/R 0.79, PF 0.44, stop-loss rate 49.8%.",
-    "strategy_work": "Confirmed the count gate and its observability logging are live and working: APU's record carried the clean 'count=3 span=17220s' marker plus all three converging wallet addresses, so converged-count is now numerically recoverable for the research brain's planned re-mine. Advanced the count-gate evaluation: kill clock now at N=1 of 12 post-gate closes (0 wins so far). Held the gate rather than reacting to the single loss, consistent with the anti-overfit lesson. bear_strength remains dormant but all-time positive (PF 1.13).",
-    "directives_changes": "Rewrote current_priority for run-331 (first post-gate WC close = APU -18.6% stop, count-gate kill clock started at 1/12, observability ship confirmed live, hold-not-revert decision with reasoning). Refreshed track_record totals (1051 sells, bankroll 1.0278 SOL, SOL ~$74.77). Archived run-330 priority inline. Version 332 -> 333. requests_for_research left empty.",
+    "system_diagnosis": "The bot's only edge (wallet_convergence) is going through its first out-of-sample test of the new lean-3-wallet count gate, and it is 0-for-2 so far: APU -18.6% and drooling -6.8%, both count=3 entries exactly as the gate intends. This is the real #1 issue to watch, but it is NOT yet a real problem -- N=2 losses (one a -18.6% tail) sit inside the tail variance of research-150's proven N=30 53%-win backtest, and the standing lesson forbids reverting a backtested gate on a two-trade sample. Separately, an operator deposit tripled the bankroll to ~3.54 SOL, which raises absolute per-trade risk (a 3% entry is now ~$8 vs ~$3) but changes nothing about the (still-negative) edge -- so we stay in SURVIVE.",
+    "exit_analysis": "Rolling 7d (all wallet_convergence): 7 trades, 42.9% win rate, avg win +1.41% vs avg loss -8.91%, R/R 0.16, PF 0.12, stop-loss rate 28.6%. The two post-gate losses drive this: one time-exit -6.76% and one emergency -18.62%. Exit mix 7d: 3 flat/other, 2 time-exit, 2 stop-loss. All-time WC: 46 trades, 43.5% WR, R/R 0.80, PF 0.64. No exit-logic change warranted -- the losses were fast gap-downs no live exit rule could have caught earlier.",
+    "strategy_work": "Advanced the lean_convergence_edge count-gate evaluation. Confirmed via the trade log that the one new close since run-331 (drooling) was a genuine count=3 gated entry (reasoning logged 'count=3 span=20731s'), so the post-gate kill clock legitimately advances to 2/12 (WR 0/2, PF 0, cumulative -0.007489 SOL). Held the gate rather than reverting -- N=2 is well inside the variance of the N=30/53%WR edge it was built on. New observation: both post-gate count=3 losers had wide convergence spans (~4.8h and ~5.8h); filed REQ-027 asking the research brain to split the count==3 cohort by convergence span (tight vs wide) on its Sunday run, since span is now logged and could refine the gate further.",
+    "directives_changes": "Rewrote current_priority from a ~15KB multi-run essay down to a lean 3.2KB briefing (honoring the byte budget), archiving the run-331 essay to the archive file; this trimmed the whole directives file from 97.8KB to 87KB, back off the 100KB ceiling. Refreshed track_record with current stats, the new WC all-time line, the post-gate kill clock (2/12), and the new bankroll/deposit. Filed REQ-027 (MEDIUM). Updated the lean_convergence_edge and Cented hypotheses and the wallet_convergence strategy note. Version 333->334.",
     "self_audit": {
       "checked_last_change": true,
-      "code_verified": true
+      "code_verified": true,
+      "note": "No code shipped this run; verified prior count gate is live by confirming both post-gate entries logged count=3 tokens in the trade log."
     },
     "previous_followups": [
-      "Run-330 predicted the count gate's first post-restart close was still pending (0 post-gate closes). CONFIRMED and advanced: the first one arrived this window -- APU count=3 -18.6% stop. Kill clock now 1/12, WR 0/1; still far below the rolling-10 / next-12 sample the kill rule requires.",
-      "Run-330 froth ceiling kill clock was N=8 (6/8 ANSEM). UNCHANGED at N=8 this window -- zero new would-have-skips; still below the N>=15 research-149 needs.",
-      "Run-330 kept Cented wallet (research-150 proposal #3) DEFERRED pending N>=12 post-gate closes. Still DEFERRED; now 1/12."
+      "Count gate (run-329): now LIVE and firing correctly -- 2 post-gate closes, both count=3, kill clock 2/12 WR 0/2, HOLD (tail variance).",
+      "Observability tokens (run-329): CONFIRMED working -- both post-gate entries logged clean 'count=3 span=Ns' tokens plus converging wallet addresses.",
+      "Froth ceiling clock: UNCHANGED at N=8, zero new would-have-skips this ~24h window (last 06-30 01:16 ANSEM); still below the N>=15 research needs.",
+      "Cented wallet (research-150 #3): still DEFERRED, unlock is N>=12 post-gate WC closes -- now only 2/12 and WR 0/2, nowhere near.",
+      "Deposit auto-logger race (fixed 07-01): held -- the 2.512416 SOL deposit is correctly present in the deposits file."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Skip wallet_convergence entries with 4 or more converging wallets (only trade lean 3-wallet convergences).",
+        "proposal": "Skip wallet_convergence entries with 4+ converging wallets; trade only lean 3-wallet convergences.",
         "from_research": "research-150",
         "status": "SHIPPED",
-        "why": "Shipped in run-329, activated at the run-330 restart. First post-gate close (APU) landed this window as a -18.6% loss. Holding the gate -- one loss is tail variance against the 30-trade backtest that showed 53% win rate; the kill rule needs rolling-10 or the next-12 closes, currently only 1."
+        "why": "Shipped run-329, now live. First two post-gate closes are both losses (kill clock 2/12), but holding per research-150's own kill criteria (need rolling-10 / next-12 before reverting); N=2 is inside the backtest's tail variance."
       },
       {
-        "proposal": "Log a clean numeric converged-wallet count, convergence time-span, and wallet addresses on each convergence trade.",
+        "proposal": "Log numeric converged-wallet count, convergence span, and converging wallet addresses on WC trades.",
         "from_research": "research-150",
         "status": "SHIPPED",
-        "why": "Confirmed working live: APU's record carried 'count=3 span=17220s' and all three wallet addresses. The research brain can now re-mine the count split on clean data next run."
+        "why": "Shipped run-329 as clean regex tokens in WC reasoning; confirmed working on both post-gate entries ('count=3 span=17220s' / 'span=20731s'). This directly enabled REQ-027's span analysis."
       },
       {
-        "proposal": "Add the Cented wallet to the tracked list, feeding convergence signals -- but shadow it first because of its bot-like high-frequency nano-cap volume.",
+        "proposal": "Add the Cented wallet as a new convergence source (shadow/reduced-weight first).",
         "from_research": "research-150",
         "status": "DEFERRED",
-        "why": "Unlocks only after 12 post-gate convergence closes confirm the count gate holds up live; we now have exactly 1. Adding a noisy high-frequency wallet before the gate is validated would muddy the very signal we are trying to measure."
+        "why": "Concrete unlock trigger: N>=12 post-gate WC closes confirming the count gate holds (WR>=0.40, PF>=0.85). Currently 2/12 with WR 0/2 -- adding a high-frequency nano-cap wallet now would only add noise to an unproven funnel."
+      },
+      {
+        "proposal": "REQ-027 (filed this run): split the count==3 WC cohort by convergence span (tight vs wide) to test whether wide-span 3-wallet convergences should also be skipped.",
+        "from_research": "run-332 -> research (Sunday)",
+        "status": "PENDING",
+        "why": "Research brain runs Sunday 2026-07-05; needs to accumulate N>=15 count==3 closes with span logged before a span gate can be proposed. Motivated by both post-gate losers being wide-span (~5h)."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Monitoring run. The only new event was the count gate's first post-gate close (APU, a -18.6% loss). That is a single data point; the gate's revert rule explicitly requires 10-12 closes, and reverting a backtest-proven filter on one live loss is the overfitting mistake prior runs were burned by. No research proposal is pending action, no new failure mode appeared, and the bot is healthy -- nothing warranted a code change.",
+    "no_code_change_reason": "Monitoring run. The only live experiment (the lean-3-wallet count gate) is at N=2 post-gate closes, and the standing discipline forbids reverting or tuning a backtested gate on a two-trade sample. No new research proposal is pending (all research-150 proposals already processed), and regime is a calm CHOP with no forced trades.",
     "changelog": [
-      "The bot's first trade under the new 'only-lean-convergence' rule closed as a sharp loss (APU, down 18.6% in half an hour). Recorded it, but did not change anything -- one trade is nowhere near enough to judge the rule, which was built on 30 historical trades that won 53% of the time.",
-      "Confirmed the new convergence-logging feature is working: the APU trade correctly recorded that exactly 3 wallets converged over about 4.8 hours, plus which wallets they were.",
-      "No new frothy-token skips this day (still 8 total, mostly the same ANSEM token). Nothing to evaluate yet.",
-      "Bot is running normally on a healthy process; bankroll about 1.03 SOL, no open positions."
+      "Noted the operator deposit of about 2.51 SOL on July 1 -- bankroll went from about 1.03 to about 3.54 SOL. It is correctly recorded and needs no action; trade sizes scale up automatically.",
+      "Recorded the second live test of the new 'lean 3-wallet only' convergence rule: a token called drooling lost 6.8% on a time-based exit. Combined with the earlier APU loss the rule is now 0 wins in 2 tries.",
+      "Decided to keep the rule rather than undo it -- two losses is too small a sample to overturn a rule that won 53% of the time across 30 past trades.",
+      "Filed a research request: both losing trades were 'slow' convergences (wallets piling in over ~5 hours). Asked the research brain to check whether only FAST convergences carry the edge.",
+      "Trimmed the brain's strategy notes back down from ~98KB to ~87KB so they stay under the size ceiling."
     ],
     "actions_taken": [
-      "Evaluated the count gate's first post-gate close (APU wallet_convergence, -18.6% emergency stop) and chose to HOLD the gate rather than revert -- N=1 vs a 12-close kill rule.",
-      "Verified the research-150 observability ship is live (APU logged count=3, span, and the three converging wallet addresses).",
-      "Kept the Cented wallet proposal DEFERRED (unlock at 12 post-gate closes, now 1).",
-      "Refreshed brain directives track record and current priority; version 332 to 333."
+      "Held the lean_convergence_edge count gate live (did not revert) after confirming its second post-gate close, drooling, was a genuine count=3 entry and a -6.8% loss -- kill clock advanced to 2/12.",
+      "Filed REQ-027 (MEDIUM) asking research to split the count==3 convergence cohort by convergence span (tight vs wide), motivated by both post-gate losers being wide-span.",
+      "Kept research-150's Cented-wallet proposal DEFERRED, with unlock explicitly at N>=12 post-gate WC closes (now 2/12).",
+      "Verified the July 1 operator deposit (2.512416 SOL) is correctly logged in the deposits file; no operator todo needed.",
+      "Rewrote current_priority to a lean briefing and refreshed track_record; trimmed the directives file back under the size ceiling."
     ],
     "next_priorities": [
-      "Accumulate post-gate wallet_convergence closes toward the 10-12 the kill rule needs. Watch for rolling-10 win rate below 40% or profit factor below 0.85 -- if either trips, revert the count gate. Currently 1 close, 0 wins.",
-      "Watch the froth ceiling skip count toward 15 (now 8, mostly ANSEM); only then can blocked-vs-kept win rates be compared.",
-      "At 12 post-gate closes with the gate holding, revisit adding the Cented wallet in shadow mode."
+      "Accumulate post-gate WC closes toward N=12. Revert the count gate only if rolling-10 WR<0.40 OR PF<0.85 OR cumulative pnl stays negative across the next 12 closes.",
+      "On Sunday's research run, get REQ-027 answered: does splitting count==3 by convergence span (tight <1h vs wide >3h) separate winners from losers at N>=15?",
+      "Watch that per-trade sizing behaves correctly at the new ~3.54 SOL bankroll (3% base ~0.106 SOL/trade); flag if any throttle shrinks trades below the economic floor.",
+      "Froth ceiling: keep accumulating would-have-skips toward N>=15 (now 8) for the blocked-vs-kept WR test."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1051,
-      "win_rate": 35.7,
+      "total_sells": 1052,
+      "win_rate": 0.356,
       "avg_win_pct": 12.84,
-      "avg_loss_pct": -16.18,
+      "avg_loss_pct": -16.17,
       "rr_ratio": 0.79,
-      "stop_loss_rate_pct": 49.8,
-      "bankroll": 1.0278,
-      "pnl_today": -0.005508
+      "stop_loss_rate_pct": 49.7,
+      "bankroll": 3.5402,
+      "pnl_today": 0.0
     },
     "active_strategies": [
-      "wallet_convergence (sole edge; count=3-only gate live, kill clock 1/12, all-time 45T 44.4%WR PF 0.67)",
-      "bear_strength (dormant, all-time 37T 37.8%WR PF 1.13 positive)"
+      "wallet_convergence (only active edge; count-gated to 3 wallets; 2/12 post-gate, HOLD)",
+      "bear_strength (dormant, all-time positive PF 1.13)"
     ]
   },
   "wallet_scan": {
@@ -215,16 +227,16 @@
     "result": "Saved 20 wallets in 32m 3s",
     "completed": "2026-06-29T01:45:02.017599"
   },
-  "brain_next_sec": 86316.203144,
+  "brain_next_sec": 86013.204933,
   "brain_next_str": "Fri 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Wed 4:06 AM EST",
+  "brain_last_run_str": "4:06 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:15 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 260676.203144,
+  "research_next_sec": 260373.204933,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -370,7 +382,7 @@
     "bot_events_age_sec": 0,
     "sol_balance": 3.5402,
     "deposit_note": "Balance 3.5402 SOL steady (from heartbeat). No new deposit this window. Bankroll/budget are brain domain.",
-    "hours_since_last_trade": 14.18,
+    "hours_since_last_trade": 14.26,
     "hours_since_last_buy": "Last buy 2026-07-01 13:54:47 (~13.2h ago). trade_log 2124 entries, last event a sell 14:55:59 -6.76%.",
     "trades_last_24h": {
       "buys": 1,
@@ -496,7 +508,7 @@
     "log_truncations": [],
     "finished_at": "2026-07-02 03:05 EDT",
     "elapsed_min": 3,
-    "file_age_min": 58.5,
+    "file_age_min": 63.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
@@ -1931,7 +1943,7 @@
       "timestamp": "2026-03-23T01:41:52.639625"
     },
     "cycle": 17,
-    "age_min": 5.2,
+    "age_min": 10.2,
     "stale": false,
     "available": true
   },
@@ -2048,7 +2060,7 @@
     "closed_total": 53
   },
   "brain_queue": {
-    "requests_pending": 0,
+    "requests_pending": 1,
     "requests_acknowledged": 0,
     "hypotheses_pending": 47,
     "lessons_count": 24,
@@ -2082,20 +2094,20 @@
     "elapsed_min": 14,
     "plain_english": "First-ever Efficiency Lab fire. The brain directives file had grown to 118.7KB of daily reading context (over the 100KB bloat line). Cut it to 95.5KB (~4.5KB under the line) WITHOUT deleting any lesson or hypothesis: (1) rewrote all 26 condensed_lessons from forensic essays down to core-claim + numbers, merging the 3-part velocity-logger saga (runs 311/312/316) into one terminal entry -> 26 to 24 entries, 31.3KB to 12.2KB. (2) Trimmed only the re-derivable background prose of the 6 biggest DORMANT hypotheses (repeat_deployer, velocity logger, believe listener, pregrad snipe, jito tip floor, rug_guard extended) -> 30.6KB to 26.3KB, all 47 entries kept. Every live-gate KILL/EVAL/UNBLOCK clause preserved verbatim (lean_convergence_edge, convergence_without_chase, turnover_froth_ceiling). No protected keys touched (current_priority, track_record, active_strategies, version all untouched). Snapshot saved before editing.",
     "next_run_focus": "pending_hypotheses is still 26.3KB (over the 15KB byte-budget target). Getting it to 15KB means ARCHIVING shipped-and-long-activated hypotheses (runs 285/300/311/323 gates that activated many restarts ago) into a shipped/proven archive -- that is a STRATEGY-OWNERSHIP call for the BRAIN, not the librarian. Recommend the brain triage them. If the brain re-grows directives >100KB on its next daily write, the lab re-fires after the 24h throttle; condensed_lessons is already clean so the next trim lever is that hypothesis archival.",
-    "age_hours": 3.8,
+    "age_hours": 3.9,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 6876.203144,
+  "maint_next_sec": 6573.204933,
   "maint_next_str": "6:00 AM EST",
   "maint_last_run_str": "3:06 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "3.8h ago",
+  "memk_last_run_str": "3.9h ago",
   "memk_disabled": false,
   "one_time_tasks": [],
   "research_action_status": {
@@ -2105,94 +2117,17 @@
       "status": "implemented",
       "status_label": "\u2705 Implemented",
       "status_color": "#00ff88",
-      "evidence_text": "Verified the research-150 observability ship is live (APU logged count=3, span, and the three converging wallet addresses).",
+      "evidence_text": "Held the lean_convergence_edge count gate live (did not revert) after confirming its second post-gate close, drooling, was a genuine count=3 entry and a -6.8% loss -- kill clock advanced to 2/12.",
       "evidence_source": "action"
     },
     "tally": {
-      "implemented": 19,
+      "implemented": 20,
       "queued": 3,
       "rejected": 1,
-      "total": 23
+      "total": 24
     }
   },
   "events": [
-    {
-      "ts": "2026-07-02T03:43:14.092624",
-      "type": "BS_SKIP",
-      "color": "#8b949e",
-      "msg": "FROGBULL: h24=+7911% \u2014 h1=+56.5% (need 3-35%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:14.092624",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "FROGBULL: h24=+7911% > 200% CB cap",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:14.629393",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "MONK: h24=-28% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:15.175720",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "TRUCKERGUY: h24=-18% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:15.701029",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "CHOCTOPUS: h1=+0.0% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:16.250103",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "LAMBO: h24=-93% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:16.783928",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "DASHAN: h1=-13.2% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:17.303463",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "ANSEMJR: h1=-5.5% (need 3-15%)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:17.999402",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "ANSEMHOOD: h24=-97% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:18.474051",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "LAD: h24=+2% < 5% floor",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-02T03:43:19.008833",
-      "type": "CB_SKIP",
-      "color": "#8b949e",
-      "msg": "PEPEBULL: h6=-41% < -10% floor",
-      "detail": ""
-    },
     {
       "ts": "2026-07-02T03:43:19.537435",
       "type": "CB_SKIP",
@@ -2815,6 +2750,83 @@
       "color": "#f85149",
       "msg": "Blocked EjTXs47G",
       "detail": "Creator has a history of rugging tokens., Top 5 holders own 80% (dump risk)"
+    },
+    {
+      "ts": "2026-07-02T04:05:57.085262",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Leenseyy sold B6f27ETG \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-02T04:08:31.137072",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: EjtQrPTb sold Fo32x3eh \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-02T04:08:35.572311",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked Fo32x3eh",
+      "detail": "Top 5 holders own 92% (dump risk)"
+    },
+    {
+      "ts": "2026-07-02T04:08:54.960082",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 6gdH2wQo",
+      "detail": "Top 5 holders own 46% (dump risk), Insider network detected (coordinated pre-launch buying)"
+    },
+    {
+      "ts": "2026-07-02T04:08:56.289665",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked Hgy84bUy",
+      "detail": "Top 5 holders own 77% (dump risk), Insider network detected (coordinated pre-launch buying)"
+    },
+    {
+      "ts": "2026-07-02T04:08:56.297249",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 6gdH2wQo",
+      "detail": "Top 5 holders own 46% (dump risk), Insider network detected (coordinated pre-launch buying)"
+    },
+    {
+      "ts": "2026-07-02T04:09:42.128129",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JDd3hy3g sold Hzow458m \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-02T04:09:46.718369",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked Hzow458m",
+      "detail": "Top 5 holders own 105% (dump risk)"
+    },
+    {
+      "ts": "2026-07-02T04:09:46.724391",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked Hzow458m",
+      "detail": "Top 5 holders own 105% (dump risk)"
+    },
+    {
+      "ts": "2026-07-02T04:09:46.737923",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked Hzow458m",
+      "detail": "Top 5 holders own 105% (dump risk)"
+    },
+    {
+      "ts": "2026-07-02T04:09:46.755467",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked Hzow458m",
+      "detail": "Top 5 holders own 105% (dump risk)"
     }
   ],
   "todos": [
@@ -2833,9 +2845,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:05:23",
+  "ts": "04:10:26",
   "__publish_meta": {
-    "published_at": "2026-07-02 04:05:23 EDT",
+    "published_at": "2026-07-02 04:10:26 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
