@@ -79,7 +79,7 @@ def rewrite_for_static(html: str) -> str:
         '<div style="background:#0a1422;border-bottom:1px solid #1f2c44;'
         'padding:6px 10px;font-size:11px;color:#7cd3ff;text-align:center;'
         'font-family:\'Cascadia Code\',monospace">'
-        'PUBLIC READ-ONLY SNAPSHOT &middot; pushed every ~5 min when bot is alive &middot; '
+        'PUBLIC READ-ONLY SNAPSHOT &middot; pushed every ~15 min when bot is alive &middot; '
         '<span id="snapshot-age" style="color:#888">checking…</span>'
         '</div>'
     )
@@ -105,7 +105,7 @@ def rewrite_for_static(html: str) -> str:
         const el=document.getElementById('snapshot-age');
         if(!el)return;
         el.textContent='snapshot '+(m>0?m+'m '+s+'s':s+'s')+' old';
-        el.style.color=m>=5?'#ff6b35':m>=2?'#ffaa00':'#00ff88';
+        el.style.color=m>=20?'#ff6b35':m>=15?'#ffaa00':'#00ff88';
       }).catch(()=>{});
   }
   updateAge();
