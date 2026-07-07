@@ -1,15 +1,15 @@
 {
-  "sol_price": 81.24085678704003,
+  "sol_price": 81.49729160015376,
   "bot_status": "RUNNING",
-  "bot_last_seen": "04:09:13",
-  "bot_cycles": 151,
+  "bot_last_seen": "04:23:43",
+  "bot_cycles": 152,
   "bankroll": 3.5099,
-  "bankroll_usd": 285.1472832368318,
+  "bankroll_usd": 286.0473437873797,
   "budget": 0.5202247374,
   "pnl_today": -0.0008440650494961536,
   "deployed": 0,
   "trades_today": 1,
-  "hour": 2.4,
+  "hour": 2.6,
   "positions": [],
   "num_positions": 0,
   "pnl_7d": {
@@ -140,84 +140,81 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-07-06 04:15:00 EST",
+    "timestamp": "2026-07-07 04:08:22 EST",
     "market_regime": "CHOP",
-    "system_diagnosis": "The security-check bug (REQ-028) was NOT actually fixed by run-334, even though the bot restarted and activated that fix. I verified live against RugCheck: the fix compared the wrong data field, so the pool-reserve exclusion still never worked, and fresh tokens were still getting falsely blocked for owning an 'impossible' 100-217% of their own supply. I traced it, confirmed it with real data from 25 live tokens, and shipped a corrected fix this run. Separately, two wallet_convergence trades closed since yesterday (JTVO -7.18%, BABYANSEM -9.0%), both entering on the same wide-timing pattern as every losing convergence trade so far this month.",
-    "exit_analysis": "All-time: average win +12.84%, average loss -16.14%, reward/risk ratio 0.80, 49.8% of trades hit a stop loss. Last 7 days: only 5 trades, 1 win, 4 losses (20% win rate), reward/risk 0.02 -- a rough week, all four losses were wallet_convergence stop-losses.",
-    "strategy_work": "Spent this run chasing down why the bot's security screen is still blocking almost everything even though a fix supposedly went live yesterday. Fetched live data straight from RugCheck for several fresh coins and proved the fix was comparing the wrong piece of information, so it was silently still broken. Corrected it and re-tested against 25 real coins: the false-block rate for fresh coins dropped from 96% to 48%, while a genuinely risky coin (one wallet owning 99.6% of supply) still correctly gets blocked. Also shipped a new rule from this week's research: certain hours of the day have historically produced much worse trades (24% win rate vs 43% in good hours) across 1,051 past trades, so the bot will now skip new entries during those specific hours.",
-    "directives_changes": "Updated the current priority to describe both fixes and their evidence. Updated the wallet_convergence strategy's running numbers to include the two new losses. Added the new hour-of-day rule and the GeckoTerminal buyer/seller idea to the hypothesis list. Added one lesson: don't trust a code comment that claims something was verified -- re-check it yourself with real data, because a previous fix claimed verification but was still wrong.",
+    "system_diagnosis": "The bot is mechanically healthy (PID 12308 unchanged since 2026-07-05, heartbeat and events fresh) but two important fixes from last run are still sitting unactivated: the corrected security-gate comparison and the entry-hour skip gate. Spot-checked bot.log directly this run and confirmed the security bug is still live in production -- impossible 'top 5 holders own 104%/113%/114%/118%' messages kept appearing minutes before this run, proving the fix has not gone live yet. Nothing to do about that except wait for the bot's next natural restart; forcing one is against policy. The other finding this run was a surprise: a paper-trading strategy (gecko_breadth_burst) that has never placed a single real trade turns out to have 113 simulated trades on record, and they lose money badly and consistently.",
+    "exit_analysis": "Very little exit data this window -- only one strategy (wallet_convergence) traded at all. Its one close this run (SWCH) exited flat at -0.81% after 47 minutes, which is a much gentler outcome than the last three wallet_convergence losses (-6.8% to -9.0%). All-time numbers across every strategy: average win +12.8%, average loss -16.1%, so winners are still smaller than losers on average (reward-to-risk ratio 0.8, still below the 2:1 target). 42% of all closed trades this whole project have ended in a stop-loss.",
+    "strategy_work": "Main piece of work was digging into the paper-trading (shadow) numbers for gecko_breadth_burst, a strategy that has never been allowed to make a real trade because every candidate token it finds gets blocked by the concentrated-ownership safety check. Since it never trades for real, the plan had been to wait until it racked up 10 blocked signals and then decide whether to build a special exception for it. But the paper-trading system already has 113 simulated trades for this strategy sitting in the data, and they are bad: it would have lost money on about 68 out of every 100 trades, and losers were nearly 50% underwater on average. That settles the question without needing to wait any longer -- there's no reason to keep planning an exception for this strategy's safety-check problem, because even with the exception it would lose money. I also glanced at a second, newer paper-trading strategy (anchor derivative sniping) which is showing a similarly bad early pattern, but it only has 6 simulated trades so far -- too few to act on yet, just flagged to watch.",
+    "directives_changes": "Retired the 'build a safety-check exception for gecko_breadth_burst' plan and recorded the paper-trading evidence permanently so it doesn't get re-proposed later. Added this run's wallet-convergence result to the running tally (4 losses out of a 12-loss review window since the crowd-size rule shipped). Updated the research request about tight-vs-wide-timing wallet convergence trades with the newest data point. No other strategy settings were changed.",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "Bot did restart since run-335 (PID 10036 -> 12308, 2026-07-05 11:45) -- but the security fix it activated turned out to still be broken; now genuinely fixed.",
-      "Research-151's weekly findings arrived on schedule 2026-07-05 12:31 -- acted on both proposals this run (one shipped, one deferred with a concrete reason).",
-      "Wallet_convergence count-gate kill clock advanced from 1/12 to 3/12 (two new losses), still too thin to decide anything."
+      "Security-gate fix (run-336): STILL NOT LIVE -- confirmed by reading tonight's bot activity log directly, which still shows the same impossible over-100% ownership numbers the fix was supposed to eliminate. Waiting on the bot's own automatic restart, not forced.",
+      "Entry-hour skip gate (run-336): also still not live, same reason -- same restart will activate both at once.",
+      "Wallet-convergence crowd-size rule (run-329): 4th post-gate close now in, still well short of the 12-close review point, no verdict yet."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Skip new trades during 5 specific hours of the day that have historically produced much worse results.",
+        "proposal": "Skip trades entirely during 5 specific hours of the day that have historically performed much worse than average, across every strategy.",
         "from_research": "research-151",
         "status": "SHIPPED",
-        "why": "Complete evidence packet, large effect size across 1,051 historical trades, and it's a pure skip (can't make anything worse). Shipped in code, waiting for the next bot restart to go live."
+        "why": "Already shipped last run (run-336); code is written and correct, just waiting on the bot's next automatic restart to take effect. Nothing new to decide this run."
       },
       {
-        "proposal": "Start logging how many distinct wallets are buying vs selling a coin (not just raw transaction counts) to catch early dumps.",
+        "proposal": "Start logging a free data source (GeckoTerminal) that can tell real buyers from real sellers, to help spot early rug-pulls before they fully play out.",
         "from_research": "research-151",
         "status": "DEFERRED",
-        "why": "This is just data-collection, not a trading change, so there's no rush. Waiting to build it together with the next review of the gecko_breadth_burst strategy, since both would share the same free data-provider's rate limit and should be planned together rather than bolted on separately."
+        "why": "Still no urgency -- it's just data-logging with no effect on trades, and it needs to share a rate limit with another logger already running. Waiting to build both together in one pass rather than adding a second consumer blind, per last run's decision. No new trigger has occurred."
       },
       {
-        "proposal": "Split wallet_convergence's 3-wallet trades into 'fast cluster' vs 'slow cluster' to see if fast convergence is the safer one.",
-        "from_research": "research-151 (carried request REQ-027)",
+        "proposal": "Split wallet-convergence closes by how spread-out in time the copying wallets were, to see if fast/tight clusters do better than slow/spread-out ones.",
+        "from_research": "research-151 (REQ-027)",
         "status": "PENDING",
-        "why": "Still not enough data -- only 4 trades have the timing information needed, and all 4 happen to be slow-cluster losses. Need at least 15 before this can be turned into an actual rule. Will keep tracking it every run."
+        "why": "One more data point came in this run (a near-breakeven close, milder than the prior three losses) but still zero examples of the 'fast cluster' side of the comparison -- the research team's own bar is 15 examples with timing data and we're still far short. Will stay pending until that sample builds up naturally (roughly one every couple of days)."
       }
     ],
-    "code_changes_this_run": [
-      "Fixed the coin-safety checker for real this time. Yesterday's fix was supposed to stop the bot from treating a coin's own liquidity pool as if it were a risky whale wallet, but it was checking the wrong piece of data and never actually worked -- fresh coins kept getting blocked as if a single wallet owned 100-200%+ of the supply (impossible, but that's what the broken math produced). Verified with live data that the new version drops the false-block rate roughly in half while still correctly blocking coins that really do have one wallet holding almost everything.",
-      "Added a new rule that skips new trades entirely during 5 specific hours of the day that have historically had a 24% win rate and lost money on average, versus 43% win rate and roughly breakeven in the other hours."
-    ],
+    "code_changes_this_run": [],
+    "no_code_change_reason": "Two changes from last run (the security-gate fix and the bad-hours skip gate) are both written into the code but haven't gone live yet because the bot hasn't restarted since they were written. Adding a third change on top before either of those has been confirmed working would make it hard to tell which change caused what when the bot finally does restart, so none was added this run.",
     "changelog": [
-      "Found and fixed a deeper bug behind the 'coin safety checker' problem flagged in recent runs -- the previous fix looked right on paper but was still broken in practice; now genuinely corrected and tested against real data.",
-      "Added a new rule to skip trading during historically bad hours of the day, based on this week's research.",
-      "Two more wallet-convergence trades closed since yesterday, both losses (-7.18% and -9.0%), continuing a pattern where slower-forming wallet clusters keep losing -- still too few trades to turn into a rule yet."
+      "No trading-behavior changes went live this run.",
+      "Confirmed (by reading the bot's own activity log) that last run's ownership-concentration bug fix has not taken effect yet -- still seeing the same impossible numbers.",
+      "Decided to stop planning a special exception for the gecko_breadth_burst strategy's safety-check problem, because its practice-trading history (113 simulated trades) shows it loses money badly even without that problem.",
+      "Logged one more real wallet-convergence trade (SWCH) that lost a tiny amount (-0.8%) -- much milder than the last three losses in this strategy."
     ],
     "actions_taken": [
-      "Shipped a corrected version of the coin-safety-checker fix (lp_owner_exclusion_broken) after proving the prior fix still didn't work.",
-      "Shipped the entry_hour_liquidity_regime bad-hours skip rule from research-151.",
-      "Deferred the GeckoTerminal buyer/seller logging idea from research-151, to be built alongside the next review of gecko_breadth_burst.",
-      "Updated the wallet_convergence tracking numbers with the two new losses (JTVO, BABYANSEM)."
+      "Retired the gecko_breadth_burst 'build an exception for the safety check' plan based on its 113-trade practice-trading track record (loses money on about 2 out of 3 trades).",
+      "Added the SWCH wallet-convergence loss to the ongoing 12-trade review of the crowd-size rule shipped in June (now 4 of 12 trades reviewed, all losses so far, though the most recent one was nearly breakeven).",
+      "Updated the research team's open question about trade timing with the newest wallet-convergence data point."
     ],
     "next_priorities": [
-      "After the next bot restart, confirm in the logs that impossible 100%+ ownership numbers have stopped appearing (target: near-zero occurrences in the next ~200 checks).",
-      "After the next bot restart, check whether the fresh_profile strategy starts finding more trades now that the safety-checker false-block bug is fixed -- it's been nearly silent since being loosened up on 2026-07-02.",
-      "Track wallet_convergence's next trade close toward the 12-trade evaluation point (currently 3 of 12, all losses).",
-      "Keep collecting the fast-vs-slow wallet-cluster timing data (currently 4 of the needed 15 samples)."
+      "Watch for the bot's next automatic restart, then confirm both pending fixes (ownership-concentration bug fix and bad-hours skip gate) are actually working by checking the activity log.",
+      "Continue tracking wallet-convergence closes toward the 12-trade review point (currently 4 of 12).",
+      "If the newer practice-trading strategy (anchor derivative sniping) reaches 10 simulated trades and is still losing badly, apply the same decision made for gecko_breadth_burst this run."
     ],
     "current_stage": "SURVIVE",
     "stats": {
-      "total_sells": 1054,
-      "win_rate": 0.356,
+      "total_sells": 1055,
+      "win_rate": 0.355,
       "avg_win_pct": 12.84,
-      "avg_loss_pct": -16.14,
+      "avg_loss_pct": -16.12,
       "rr_ratio": 0.8,
       "stop_loss_rate_pct": 49.8,
-      "bankroll": 3.5182,
-      "pnl_today": -0.016913
+      "bankroll": 3.4599,
+      "pnl_today": -0.000844
     },
     "active_strategies": [
-      "fresh_profile (PROVEN, watching for a fire-rate change post security-fix)",
-      "wallet_convergence (only currently-active edge, 3/12 post-gate kill clock, 0 wins so far)",
+      "wallet_convergence (only strategy trading recently)",
       "bear_strength",
       "consensus_boost",
-      "chop_momentum_scalp",
-      "gecko_breadth_burst",
-      "anchor_derivative_snipe",
+      "fresh_profile",
       "fresh_boost",
+      "chop_momentum_scalp",
       "bounce_hunter",
-      "flash_surge"
+      "flash_surge",
+      "anchor_derivative_snipe",
+      "gecko_breadth_burst (shadow-only, refuted)"
     ]
   },
   "wallet_scan": {
@@ -225,16 +222,16 @@
     "result": "Saved 20 wallets in 42m 41s",
     "completed": "2026-07-07T01:47:51.155485"
   },
-  "brain_next_sec": 86063.080525,
+  "brain_next_sec": 85159.896178,
   "brain_next_str": "Wed 4:04 AM EST",
-  "brain_running": true,
-  "brain_elapsed_sec": 298.919475,
-  "brain_last_run_str": "Mon 4:15 AM EST",
+  "brain_running": false,
+  "brain_elapsed_sec": 0,
+  "brain_last_run_str": "4:12 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:31 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 433223.080525,
+  "research_next_sec": 432319.896178,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -380,7 +377,7 @@
     "liveness_note": "heartbeat_age ~862s, events_age ~63s (well under 120s). Cycle 146 vs prior-run cycle 138 (maint-866) = +8 over ~3h gap, consistent with pace. Zero CYCLE_ERROR in last 100 events. Classified ALIVE.",
     "sol_balance": 3.4121,
     "deposit_note": "3.4121 SOL, down slightly from maint-866's 3.4682 -- reflects the new SWCH wallet_convergence buy (0.10404 SOL deployed), no new deposit.",
-    "hours_since_last_trade": 1.84,
+    "hours_since_last_trade": 2.09,
     "hours_since_last_buy": 0.78,
     "dormancy_alert": false,
     "trades_last_24h": {
@@ -443,12 +440,12 @@
       }
     },
     "elapsed_min": 5,
-    "file_age_min": 62.5,
+    "file_age_min": 77.5,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-07-07 04:09:13 EDT",
+    "timestamp": "2026-07-07 04:23:43 EDT",
     "computed_from_trades": 2130,
     "total_buys": 1054,
     "total_sells": 1055,
@@ -1859,7 +1856,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-07-07T02:19:21.801603",
-      "hours_ago": 1.83,
+      "hours_ago": 2.07,
       "symbol": "SWCH",
       "strategy": "wallet_convergence"
     },
@@ -1877,14 +1874,14 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 151,
-    "age_min": 0.4,
+    "cycle": 152,
+    "age_min": 0.9,
     "stale": false,
     "available": true
   },
   "shadow_stats": {
-    "updated": "2026-07-07 04:09:13",
-    "sol_price": 81.24645122526,
+    "updated": "2026-07-07 04:23:43",
+    "sol_price": 81.46847542140745,
     "open_count": 0,
     "max_open": 60,
     "open_by_strategy": {},
@@ -2007,8 +2004,8 @@
     "requests_pending": 0,
     "requests_acknowledged": 1,
     "hypotheses_pending": 50,
-    "lessons_count": 26,
-    "killed_ideas_count": 18,
+    "lessons_count": 27,
+    "killed_ideas_count": 19,
     "drift_keys": [],
     "active_strategies_count": 11,
     "overloaded": false
@@ -2038,13 +2035,13 @@
     "elapsed_min": 14,
     "plain_english": "First-ever Efficiency Lab fire. The brain directives file had grown to 118.7KB of daily reading context (over the 100KB bloat line). Cut it to 95.5KB (~4.5KB under the line) WITHOUT deleting any lesson or hypothesis: (1) rewrote all 26 condensed_lessons from forensic essays down to core-claim + numbers, merging the 3-part velocity-logger saga (runs 311/312/316) into one terminal entry -> 26 to 24 entries, 31.3KB to 12.2KB. (2) Trimmed only the re-derivable background prose of the 6 biggest DORMANT hypotheses (repeat_deployer, velocity logger, believe listener, pregrad snipe, jito tip floor, rug_guard extended) -> 30.6KB to 26.3KB, all 47 entries kept. Every live-gate KILL/EVAL/UNBLOCK clause preserved verbatim (lean_convergence_edge, convergence_without_chase, turnover_froth_ceiling). No protected keys touched (current_priority, track_record, active_strategies, version all untouched). Snapshot saved before editing.",
     "next_run_focus": "pending_hypotheses is still 26.3KB (over the 15KB byte-budget target). Getting it to 15KB means ARCHIVING shipped-and-long-activated hypotheses (runs 285/300/311/323 gates that activated many restarts ago) into a shipped/proven archive -- that is a STRATEGY-OWNERSHIP call for the BRAIN, not the librarian. Recommend the brain triage them. If the brain re-grows directives >100KB on its next daily write, the lab re-fires after the 24h throttle; condensed_lessons is already clean so the next trim lever is that hypothesis archival.",
-    "age_hours": 123.9,
+    "age_hours": 124.1,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 6623.080525,
+  "maint_next_sec": 5719.896178,
   "maint_next_str": "6:00 AM EST",
   "maint_last_run_str": "3:07 AM EST",
   "maint_stale": false,
@@ -2058,531 +2055,20 @@
     "latest": {
       "hypothesis_name": "entry_hour_liquidity_regime",
       "run_id": "research-151",
-      "status": "queued",
-      "status_label": "\ud83d\udfe1 Queued",
-      "status_color": "#ffaa00",
-      "evidence_text": "Shipped the entry_hour_liquidity_regime bad-hours skip rule from research-151.",
-      "evidence_source": "action"
+      "status": "not_acknowledged",
+      "status_label": "\u2753 Not acknowledged",
+      "status_color": "#ff9933",
+      "evidence_text": "",
+      "evidence_source": ""
     },
     "tally": {
       "implemented": 20,
-      "queued": 3,
+      "queued": 2,
       "rejected": 1,
-      "total": 24
+      "total": 23
     }
   },
   "events": [
-    {
-      "ts": "2026-07-07T03:57:16.747895",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked H5A21CcX",
-      "detail": "Top 5 holders own 89% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T03:58:09.862574",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: PMJA8UQD sold 4reoJiy3 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T03:58:09.878705",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked 4reoJiy3",
-      "detail": "Top 5 holders own 113% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:00:18.441641",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold 81WZXA3p \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:00:18.457595",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold 81WZXA3p \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:00:19.478720",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked 81WZXA3p",
-      "detail": "Top 5 holders own 114% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:00:19.486832",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked 81WZXA3p",
-      "detail": "Top 5 holders own 114% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:00:38.820097",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold jymBeC2k \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:00:38.838470",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Hw5UKBU5 sold jymBeC2k \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:01:44.051453",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HYSq1KBA sold H5A21CcX \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:01:44.069461",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HYSq1KBA sold H5A21CcX \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:01:44.073220",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked H5A21CcX",
-      "detail": "Top 5 holders own 89% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:01:44.089179",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked H5A21CcX",
-      "detail": "Top 5 holders own 89% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:01:44.104989",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked H5A21CcX",
-      "detail": "Top 5 holders own 89% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:03:05.680439",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip bcat: h6=70.6% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:03:06.330514",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip bcat: h6=70.6% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:03:06.346539",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: JDd3hy3g sold DsUkV9n6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:03:07.839884",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked DsUkV9n6",
-      "detail": "Top 5 holders own 83% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:03:07.868601",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked DsUkV9n6",
-      "detail": "Top 5 holders own 83% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:03:50.135728",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip \u8349\u5730\u725b: m5=93.3% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:03:50.147741",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DYAn4XpA sold CzRTwcKb \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:04:34.186210",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip \u00a9AT: h6=1273.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:04:34.723368",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip \u00a9AT: h6=1273.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:04:43.122059",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip \u8349\u5730\u725b: m5=-30.6% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:04:43.638836",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip \u8349\u5730\u725b: m5=-30.6% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:04:44.175740",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip \u8349\u5730\u725b: m5=-30.6% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:05:01.213689",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DwCp9GZw sold VxGc1Pad \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:05:01.245912",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DwCp9GZw sold VxGc1Pad \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:05:02.879729",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: GJA1HEbx sold 9y95p5jA \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:05:04.346545",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip SAKI: m5=139.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:13.323774",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked 6iaD6zDo",
-      "detail": "Top 5 holders own 72% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:06:13.323774",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EtA3HVQW sold 9WHXEcGp \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:14.724807",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Hard block h4 EtA3HVQW: blocked hour (data-proven -EV)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:14.724807",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: EtA3HVQW sold 6iaD6zDo \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:16.141617",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip BABYANSEM: h6=29.2% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:31.864250",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F7kbCxj5 sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:31.882390",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F7kbCxj5 sold CGEDT9QZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:31.896010",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F7kbCxj5 sold 3oBRGPMp \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:31.898988",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F7kbCxj5 sold 6ehEcTMC \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:31.927778",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: F7kbCxj5 sold Bqs76KAD \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:38.767984",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7ttQJ3mp sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:38.791009",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7ttQJ3mp sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:38.800324",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7ttQJ3mp sold CGEDT9QZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:38.816954",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7ttQJ3mp sold 4TyZGqRL \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:38.833726",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 7ttQJ3mp sold 6ehEcTMC \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:06:57.609751",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4bE5hKnk sold HtEy3hN8 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:08.595203",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 67YunUAL sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:08.611919",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 67YunUAL sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:08.627693",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 67YunUAL sold CGEDT9QZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:15.183944",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HbnEC9Yn sold BDdzUjks \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:15.203806",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HbnEC9Yn sold BcdMeuTY \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:16.632388",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked 8WriveNm",
-      "detail": "Top 5 holders own 71% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:07:17.469921",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked D71ZjzGK",
-      "detail": "Top 5 holders own 43% + insider network (APU profile)"
-    },
-    {
-      "ts": "2026-07-07T04:07:17.476930",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: HbnEC9Yn sold UprLUzkt \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:20.732913",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: FdXKoMFg sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:20.752298",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: FdXKoMFg sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:20.766672",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: FdXKoMFg sold CGEDT9QZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:35.687912",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G8iQvxSa sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:35.712387",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G8iQvxSa sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:35.724168",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: G8iQvxSa sold CGEDT9QZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:42.476049",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4e1k9MSh sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:42.510353",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4e1k9MSh sold HmTi3CQf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:42.525025",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4e1k9MSh sold CGEDT9QZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:07:42.540820",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4e1k9MSh sold F5hqdbyk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:08:00.783613",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "No new signals",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:08:01.366261",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip \u00a9AT: h6=1273.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:08:01.987062",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip bcat: h6=58.8% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:08:02.795814",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked 4reoJiy3",
-      "detail": "Top 5 holders own 113% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:08:04.250239",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Buttcoin: h1=-3.0% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:08:05.496426",
-      "type": "SECURITY_BLOCK",
-      "color": "#f85149",
-      "msg": "Blocked H5A21CcX",
-      "detail": "Top 5 holders own 97% (extreme dump risk)"
-    },
-    {
-      "ts": "2026-07-07T04:08:06.082506",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip \u8349\u5730\u725b: m5=-78.8% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:08:06.084522",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "BounceHunter: quiet hours skip (04:xx ET, block=23:00-05:00)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-07T04:08:06.084522",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: overnight skip (04:xx ET, block=00:00-04:59)",
-      "detail": ""
-    },
     {
       "ts": "2026-07-07T04:08:06.096820",
       "type": "SCAN",
@@ -2771,6 +2257,517 @@
       "color": "#555555",
       "msg": "Scanning 166 wallets (cycle #151)",
       "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:11:22.033855",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 2EHqmS6i",
+      "detail": "Top 5 holders own 76% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:11:22.043625",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 2EHqmS6i",
+      "detail": "Top 5 holders own 76% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:12:08.378189",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 719sfKUj sold E25ha1ws \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:12:09.194515",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip E25ha1ws: tracked wallet sold this token 175s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:12:31.222246",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip bcat: h6=48.9% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:12:31.720771",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip bcat: h6=48.9% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:12:31.736462",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:13:36.872018",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked DsUkV9n6",
+      "detail": "Top 5 holders own 64% + insider network (APU profile)"
+    },
+    {
+      "ts": "2026-07-07T04:13:36.878319",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: PMJA8UQD sold 5T7B2kmT \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:13:38.312258",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 5T7B2kmT",
+      "detail": "Top 5 holders own 109% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:13:38.312258",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 5T7B2kmT",
+      "detail": "Top 5 holders own 109% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:13:38.330478",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 5T7B2kmT",
+      "detail": "Top 5 holders own 109% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:15:34.007667",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BTf4A2ex sold 4a8nb3Qk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:15:35.707559",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip \u02b0\u1d52\u207f\u02e2\u1d49: m5=371.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:15:35.707559",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BTf4A2ex sold 6E9ZYCuX \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:15:37.705395",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 6E9ZYCuX",
+      "detail": "Top 5 holders own 108% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:15:37.705395",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BTf4A2ex sold GVCQ5tMR \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:15:48.907281",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Hw5UKBU5 sold 2WCrrVkT \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:17:44.452198",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JDd3hy3g sold 5whR534G \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:17:44.468020",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JDd3hy3g sold 5whR534G \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:18:26.136839",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DYAn4XpA sold 7WxSo5C2 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:07.685147",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 6HJetMbd sold F5hqdbyk \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:11.394824",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7mHqL9Gz sold 9rFuAStz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:11.408577",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7mHqL9Gz sold 9rFuAStz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:11.430708",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7mHqL9Gz sold 9rFuAStz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:21.059764",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 23wQ7bod sold 9rFuAStz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:21.072365",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 23wQ7bod sold 9rFuAStz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:21.088388",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 23wQ7bod sold 2TUZYzHT \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:22.523301",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 2TUZYzHT",
+      "detail": "Top 5 holders own 110% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:19:45.025254",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: GJA1HEbx sold 2TUZYzHT \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:19:45.057327",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 2TUZYzHT",
+      "detail": "Top 5 holders own 110% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:19:45.057327",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: GJA1HEbx sold 9y95p5jA \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:03.725389",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 6iaD6zDo",
+      "detail": "Top 5 holders own 72% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:21:03.737484",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: EtA3HVQW sold DLvuaz18 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:15.388852",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: A8nvFw2s sold 8riPXybB \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:24.630486",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TOESCOIN: softdown h1=-4.1% h24=-29.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:24.664254",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: F7kbCxj5 sold F6qoefQq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:29.837197",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TOESCOIN: softdown h1=-4.1% h24=-29.7%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:29.837197",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7ttQJ3mp sold F6qoefQq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:29.869061",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7ttQJ3mp sold HmTi3CQf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:29.869061",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 7ttQJ3mp sold HmTi3CQf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:49.840322",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Revenge: h1=-42.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:49.852088",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4bE5hKnk sold HtEy3hN8 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:21:58.726233",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip ALTSZN: h1=-9.5% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:00.055299",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip maxxing: h1=-9.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:00.658581",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TOESCOIN: softdown h1=-4.1% h24=-29.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:00.681159",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 67YunUAL sold F6qoefQq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:00.690222",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 67YunUAL sold HmTi3CQf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:04.692869",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked GPecvTob",
+      "detail": "Top 5 holders own 63% + insider network (APU profile)"
+    },
+    {
+      "ts": "2026-07-07T04:22:06.164088",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BULLTARDIO: m5=18.3% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:06.978601",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 4LpsbNmF",
+      "detail": "Top 5 holders own 72% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:22:08.271367",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wifout: downtrend h1=-24.2% h24=-69.8%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:09.070124",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 6mNBeqQJ",
+      "detail": "Top 5 holders own 70% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:22:12.631104",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip ALTSZN: h1=-9.5% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:13.089805",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TOESCOIN: softdown h1=-4.1% h24=-29.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:13.105600",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: FdXKoMFg sold F6qoefQq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:13.121264",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: FdXKoMFg sold HmTi3CQf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:22.849732",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip ALTSZN: h1=-9.5% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:23.457108",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TOESCOIN: softdown h1=-4.1% h24=-29.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:23.463130",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: G8iQvxSa sold F6qoefQq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:23.478229",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: G8iQvxSa sold HmTi3CQf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:30.353571",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip ALTSZN: h1=-8.7% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:30.832048",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TOESCOIN: softdown h1=-4.1% h24=-29.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:30.832048",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4e1k9MSh sold F6qoefQq \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:30.849303",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4e1k9MSh sold HmTi3CQf \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:46.656146",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "No new signals",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:46.656146",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked DsUkV9n6",
+      "detail": "Top 5 holders own 64% + insider network (APU profile)"
+    },
+    {
+      "ts": "2026-07-07T04:22:48.461395",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 7WxSo5C2",
+      "detail": "Top 5 holders own 106% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:22:48.461395",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked 2TUZYzHT",
+      "detail": "Top 5 holders own 110% (extreme dump risk)"
+    },
+    {
+      "ts": "2026-07-07T04:22:48.933744",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip TOESCOIN: softdown h1=-4.1% h24=-29.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:49.396519",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip ALTSZN: h1=-8.7% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:22:49.396519",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "FreshProfile: overnight skip (04:xx ET, block=00:00-04:59)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-07T04:23:43.520771",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 166 wallets (cycle #152)",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2789,9 +2786,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:09:36",
+  "ts": "04:24:40",
   "__publish_meta": {
-    "published_at": "2026-07-07 04:09:36 EDT",
+    "published_at": "2026-07-07 04:24:40 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
