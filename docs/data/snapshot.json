@@ -1,15 +1,15 @@
 {
-  "sol_price": 76.42711611247275,
+  "sol_price": 76.28395967904692,
   "bot_status": "RUNNING",
-  "bot_last_seen": "03:50:40",
-  "bot_cycles": 1034,
+  "bot_last_seen": "04:07:03",
+  "bot_cycles": 1035,
   "bankroll": 3.4685,
-  "bankroll_usd": 265.08745223611174,
+  "bankroll_usd": 264.59091414677425,
   "budget": 0.51277513245,
   "pnl_today": 0,
   "deployed": 0,
   "trades_today": 0,
-  "hour": 2.1,
+  "hour": 2.4,
   "positions": [],
   "num_positions": 0,
   "pnl_7d": {
@@ -140,43 +140,60 @@
     }
   ],
   "survival_report": {
-    "timestamp": "2026-07-26 04:10:14 EST",
+    "timestamp": "2026-07-27 04:10:00 EST",
     "market_regime": "CHOP",
-    "system_diagnosis": "consensus_boost has been quietly bleeding: all-time pnl fell from -0.0018 SOL (46 trades, last reviewed at run-284, ~70 runs / 3 months ago) to -0.037586 SOL now (50 trades) -- a huge move for just 4 new trades. Traced it to one token, HBULL, bought twice by consensus_boost 3 days apart (2026-07-16 EMERGENCY STOP -15.43%, 2026-07-19 stop loss -11.98%), losing a combined 0.0285 SOL (about $2.13 at current prices) -- roughly 76% of the entire pnl decline. Between the two purchases the token's own numbers were getting worse the whole time (its total value dropped by a third, its 6-hour and 24-hour price trend both flipped from rising to falling, and the top holders' share of supply grew, meaning insiders were accumulating more control while price fell) but the strategy re-bought anyway because the token was still officially 'boosted' and had 'survived' long enough to qualify. This is a real gap, not a system bug -- consensus_boost has no check comparing a token's current direction against how it performed the last time the bot itself traded it.",
-    "exit_analysis": "All-time (1067 closed trades): avg win +12.74%, avg loss -16.05%, R/R 0.79, stop-loss rate 49.6%. Rolling 7 days (6 trades): avg win +3.94%, avg loss -7.38%, R/R 0.53, stop-loss rate 50%. Today's only close (MEMIPEDE, consensus_boost) was a straightforward 33-minute stop-loss at -8.28%, no new exit-mechanism story.",
-    "strategy_work": "Investigated why consensus_boost's numbers had quietly gotten much worse since the last time anyone looked closely (run-284). Found the cause: the same token, HBULL, was bought twice and lost money both times, three days apart, while the token was visibly getting worse in between. The bot's normal safety systems (a one-day cooldown after a loss, then a three-day ban after a second loss on the same token) worked exactly as designed -- HBULL is now banned for three days -- so nothing is broken. The gap is that the strategy doesn't check whether a token it already lost money on has kept getting worse before considering a second try. Since this has only happened with one token so far at today's trade sizes, I did not write a new rule off a single example -- instead I asked the research team to check the pattern across all 12 tokens consensus_boost has ever re-bought, and to check whether the much older finding (from back when trades were 50-100x smaller) that 'buying a token a second time usually does better' still holds true now that trade sizes are bigger.",
-    "directives_changes": "Refreshed the performance numbers for the whole bot and for consensus_boost specifically (was badly out of date, from ~70 runs ago). Added one new research request (REQ-030, the HBULL repeat-buy investigation described above) and one new tracked idea (cb_repeat_mint_decline_check) documenting the finding until research reports back. No other strategy or filter behavior was changed.",
+    "system_diagnosis": "Nothing new to diagnose from live trading this run -- zero trades have closed since run-355 (the bot's last close, MEMIPEDE, is now about 32.6 hours old), so today's real work was digesting what the weekly research review (research-154) found. Two things stand out. First, the investigation into consensus_boost's HBULL double-loss (flagged last run) came back inconclusive-by-design: across all 12 tokens the strategy has ever re-bought, whether the token's fundamentals were improving or declining between the two buys did NOT predict whether the second buy won or lost -- so building a rule around 'don't re-buy a declining token' would likely have been fitting noise, not signal. Second, and more concerning long-term: the research team found that the brain's own running count of a key experiment (wallet_convergence trades grouped by how spread-out the buying wallets were) had silently undercounted by one -- an entire losing trade (APU, -18.62%) had never been folded into any prior tally, which made a losing bucket (wide-spread convergences) look meaningfully better than it actually is (was tracked as ~28.6% win rate, is really 25%, and the average loss got noticeably worse too). This isn't a live-money bug -- it's a bookkeeping gap in how the brain itself tracks its own evidence, now corrected.",
+    "exit_analysis": "No new closes this run to analyze (0 trades since run-355). All-time (1067 closed trades, unchanged): avg win +12.74%, avg loss -16.05%, R/R 0.79, stop-loss rate 49.6%. Rolling 7 days (4 trades, unchanged from last run's window): avg win +3.94%, avg loss -8.38% (this window rolled slightly since run-355), R/R 0.47, 50% stop-loss rate.",
+    "strategy_work": "Processed two findings the weekly research review delivered. (1) Asked last run whether consensus_boost's repeat-buys should be blocked when a token's numbers are visibly getting worse since the bot's own prior trade on it -- research checked all 12 historical cases and found no such pattern before the current bigger trade sizes started (the 11 old, tiny-size cases show no correlation between trend and outcome), and the one case at today's larger sizes (HBULL) is still just one example. Recommendation: do not build this rule; wait for at least 4 more similar cases before revisiting. (2) The ongoing wallet_convergence timing experiment (does how spread-out the converging wallets' buys were predict the outcome) got a correction, not new data: an old losing trade had been missing from every count taken so far, making the worst-performing bucket look better than it really was. The corrected count is 14 of the 15 samples needed before proposing any rule change -- still one short.",
+    "directives_changes": "Removed the HBULL repeat-buy research request (REQ-030) now that research answered it and closed out the related tracked idea with their recommendation (don't build a rule, not enough evidence). Updated the wallet_convergence timing research request (REQ-027) with the corrected counts. Logged research's new idea (checking whether independent buyers competing on transaction priority fees right after a bundled token launch signals real demand) as something to consider building later -- not started this run because three other small logging changes are already sitting in the code waiting for the bot's next automatic restart, and piling on a fourth before any of them get their first real test seemed unwise given there's no urgency (zero evidence exists either way on the new idea yet).",
     "self_audit": {
       "checked_last_change": true,
       "code_verified": true
     },
     "previous_followups": [
-      "run-354's Tilly wallet_convergence stop-loss (-8.49%) -- no new wallet_convergence trades since; the REQ-027 tally (span-bucket tracking) is unchanged at 13 of the 15 needed samples.",
-      "run-352's repeat_deployer_reputation logger and run-353's froth-skip mcap fix, run-354's GeckoTerminal buyer/seller logger -- all three are still sitting in the code waiting for the bot's next automatic restart (process ID hasn't changed since run-352); nothing to evaluate yet."
+      "run-355's MEMIPEDE consensus_boost stop-loss (-8.28%) -- still the most recent close, now ~32.6h ago; no new trades of any kind since.",
+      "run-352's repeat-buyer-history logger, run-353's froth-skip market-cap fix, run-354's buyer/seller uniqueness logger -- all three are still sitting in the code waiting for the bot's next automatic restart (process ID hasn't changed since run-352, now 4 runs / several days); nothing new to evaluate yet.",
+      "run-355's REQ-030 (HBULL repeat-buy investigation) -- research answered it this run: not enough evidence to build a rule, recommend waiting for more examples. Request closed.",
+      "run-355's REQ-027 (wallet-convergence timing tally, was 13 of 15) -- research corrected it to 14 of 15 (found an old missed losing trade), still one short of the target."
     ],
     "research_proposals_disposition": [
       {
-        "proposal": "Re-mine wallet_convergence's 3-wallet trades split by how spread out in time the converging wallets' buys were, to see if fast-clustered buys predict better outcomes than slow-clustered ones.",
-        "from_research": "research-153 (REQ-027)",
+        "proposal": "Check whether consensus_boost should skip re-buying a token if its numbers have gotten worse since the bot's own last trade on it (the HBULL double-loss investigation).",
+        "from_research": "research-154 (REQ-030)",
+        "status": "KILLED",
+        "why": "Full history check across all 12 repeat-buy cases found no link between a token's trend and the second buy's outcome in the 11 older, smaller-size cases; the one case at today's bigger trade size (HBULL) is still just one example. Research recommended against building this rule. Will only revisit if at least 4 more similar bigger-size cases appear."
+      },
+      {
+        "proposal": "Re-count wallet_convergence's 3-wallet trades split by how spread out in time the converging wallets' buys were, to see if fast-clustered buys predict better outcomes than slow-clustered ones.",
+        "from_research": "research-154 (REQ-027)",
         "status": "PENDING",
-        "why": "No new wallet_convergence trades closed this run, so the tally is unchanged at 13 of the 15 samples the research team said they'd need to make a call. Unblocks either when 2 more wallet_convergence trades close, or when today's weekly research run (fires ~noon) re-mines the full trade log independently."
+        "why": "Research's independent recount found and corrected a missing losing trade, bringing the tally to 14 of the 15 samples needed. Still one short. Unblocks when 1 more wallet_convergence trade with timing data closes, or the next weekly research review re-mines the full trade log again."
+      },
+      {
+        "proposal": "New idea: watch whether independent buyers competing on transaction priority fees in the ~90 seconds after a bundled token launch signals real organic demand (versus one bundler paying itself).",
+        "from_research": "research-154 (new_hypothesis)",
+        "status": "DEFERRED",
+        "why": "Cheap to build and record-only (no trading behavior would change), but three other small recording-only changes are already queued in the code waiting for the bot's next automatic restart. Adding a fourth before any of those three get their first real test increases the risk that a problem in the stack is harder to trace to its source. Will build once the bot has naturally restarted and the existing queue has had a chance to prove itself."
       }
     ],
     "code_changes_this_run": [],
-    "no_code_change_reason": "Only one new trade closed since the last run, and the one real finding this run (consensus_boost losing money twice on the same token, HBULL) is based on a single token at current trade sizes -- not enough evidence on its own to safely write a new rule without risking it being a coincidence. Sent it to the research team (who can check patterns across the bot's whole history) instead of guessing at a fix.",
+    "no_code_change_reason": "Zero new trades since the last run gave no fresh evidence to act on, and the one research finding that could have led to a code change (the consensus_boost repeat-buy check) came back as 'do not build this' rather than a ship-ready proposal. The one new idea from research (transaction-fee competition after bundled launches) was deliberately deferred rather than built, to avoid stacking a fourth unactivated change on top of three already waiting for the bot's next automatic restart.",
     "changelog": [
       "No trading rules were changed today.",
-      "Found and wrote up why consensus_boost has been losing more money lately: it bought the same declining token twice in one week and lost both times.",
-      "Asked the research team to check whether that's a real pattern worth building a rule around, or just bad luck on one token."
+      "The research team checked whether consensus_boost should avoid re-buying tokens that are visibly declining -- their answer was no, there isn't enough evidence yet to build that rule.",
+      "The research team also found and fixed a small counting mistake in an ongoing experiment (an old losing trade had been left out of the tally), which made one part of the wallet-following strategy look slightly better than it really has been.",
+      "A new idea from the research team (watching transaction-fee competition right after bundled token launches) was logged for later -- not built yet, since three other small data-recording changes are already waiting in line for the bot's next restart."
     ],
     "actions_taken": [
-      "Refreshed the bot's own performance tracking numbers, which had gone stale for about 70 runs on the consensus_boost strategy specifically.",
-      "Filed a research request (REQ-030) asking for a full history check on consensus_boost's repeat-token purchases, centered on the HBULL double-loss."
+      "Closed out the consensus_boost repeat-buy research request (REQ-030) with research's recommendation not to build a rule on the current evidence.",
+      "Updated the wallet-following timing research request (REQ-027) with research's corrected count (14 of 15 needed samples, up from 13, after they found a previously-missed losing trade).",
+      "Logged the new transaction-fee-competition idea from research as a candidate for a future run, deliberately not built yet."
     ],
     "next_priorities": [
-      "Watch consensus_boost: if 3 more of its trades close as stop-losses (would make 5 losses in a row over about 2 weeks), revisit its size or consider pausing it -- not warranted yet on today's evidence.",
-      "Once the bot's next automatic restart happens, check whether the three currently-queued logging changes (creator reputation, fixed froth-skip market-cap logging, buyer/seller uniqueness) start recording data as expected.",
-      "Watch for today's weekly research run (expected around midday) and act on whatever it returns, including hopefully an answer on REQ-030 and the wallet_convergence timing question (REQ-027)."
+      "Watch for the bot's next automatic restart -- once it happens, check whether the three queued logging changes (repeat-buyer history, fixed market-cap logging on the volume-churn filter, buyer/seller uniqueness) start recording data as expected.",
+      "Watch for 1 more wallet_convergence trade with timing data to close (would complete the 15-sample target for REQ-027) or for the next weekly research review to re-mine the full trade log.",
+      "If consensus_boost logs 3 more stop-loss trades (would make 5 losses in a row over about 2 weeks), revisit its size or consider pausing it -- not warranted yet.",
+      "Once the bot naturally restarts and the 3 queued changes get their first read, consider building the new transaction-fee-competition logger from research-154."
     ],
     "current_stage": "SURVIVE",
     "stats": {
@@ -187,7 +204,7 @@
       "rr_ratio": 0.79,
       "stop_loss_rate_pct": 49.6,
       "bankroll": 3.4685,
-      "pnl_today": -0.008526
+      "pnl_today": 0
     },
     "active_strategies": [
       "fresh_profile",
@@ -205,16 +222,16 @@
     "result": "Saved 20 wallets in 37m 58s",
     "completed": "2026-07-27T01:52:39.175617"
   },
-  "brain_next_sec": 200.613435,
-  "brain_next_str": "Mon 4:04 AM EST",
+  "brain_next_sec": 85697.339539,
+  "brain_next_str": "Tue 4:04 AM EST",
   "brain_running": false,
   "brain_elapsed_sec": 0,
-  "brain_last_run_str": "Sun 4:10 AM EST",
+  "brain_last_run_str": "4:10 AM EST",
   "brain_disabled": false,
   "research_running": false,
   "research_last_run_str": "12:21 PM EST",
   "research_next_str": "Sun 4:30 AM EST",
-  "research_next_sec": 520160.613435,
+  "research_next_sec": 519257.339539,
   "research_elapsed_sec": 0,
   "research_disabled": false,
   "research_findings": {
@@ -334,7 +351,7 @@
     "bot_events_age_sec": 0.4,
     "bot_cycle": 1031,
     "liveness_note": "ALIVE. cycle advanced 1022->1031 (+9) since maint-1017 (~3h gap). events_age 0.4s (<120s) confirms scanner alive. No CYCLE_ERROR in last 100 events.",
-    "hours_since_last_trade": 32.76,
+    "hours_since_last_trade": 33.01,
     "dormancy_alert": true,
     "trades_last_24h": {
       "buys": 0,
@@ -411,12 +428,12 @@
       }
     },
     "elapsed_min": 6,
-    "file_age_min": 54.7,
+    "file_age_min": 69.7,
     "watchdog_stale": false,
     "severely_stale": false
   },
   "strategy_stats": {
-    "timestamp": "2026-07-27 03:50:40 EDT",
+    "timestamp": "2026-07-27 04:07:03 EDT",
     "computed_from_trades": 2154,
     "total_buys": 1066,
     "total_sells": 1067,
@@ -1819,7 +1836,7 @@
     "strategies_seen_count": 29,
     "last_buy": {
       "timestamp": "2026-07-25T19:15:03.557203",
-      "hours_ago": 32.59,
+      "hours_ago": 32.87,
       "symbol": "MEMIPEDE",
       "strategy": "consensus_boost"
     },
@@ -1837,27 +1854,25 @@
       "strategy": "voldiv_v2",
       "timestamp": "2026-03-23T01:41:52.639625"
     },
-    "cycle": 1034,
-    "age_min": 10.0,
+    "cycle": 1035,
+    "age_min": 8.7,
     "stale": false,
     "available": true
   },
   "shadow_stats": {
-    "updated": "2026-07-27 03:50:41",
-    "sol_price": 76.52319701209032,
-    "open_count": 1,
+    "updated": "2026-07-27 04:07:04",
+    "sol_price": 76.33357862219475,
+    "open_count": 0,
     "max_open": 60,
-    "open_by_strategy": {
-      "gecko_breadth_burst": 1
-    },
+    "open_by_strategy": {},
     "overall": {
-      "trades": 743,
+      "trades": 744,
       "wins": 221,
-      "losses": 522,
-      "pnl_sol": -9.249876,
+      "losses": 523,
+      "pnl_sol": -9.279876,
       "win_rate": 0.297,
-      "avg_pnl_pct": -41.498,
-      "profit_factor": 0.203
+      "avg_pnl_pct": -41.577,
+      "profit_factor": 0.202
     },
     "by_strategy": {
       "chop_momentum_scalp": {
@@ -1906,27 +1921,27 @@
         "profit_factor": 0.511
       },
       "gecko_breadth_burst": {
-        "trades": 532,
+        "trades": 533,
         "wins": 135,
-        "losses": 397,
-        "pnl_sol": -8.931182,
-        "win_rate": 0.254,
-        "avg_pnl_pct": -55.96,
+        "losses": 398,
+        "pnl_sol": -8.961182,
+        "win_rate": 0.253,
+        "avg_pnl_pct": -56.042,
         "profit_factor": 0.185
       }
     }
   },
   "ghost_runs": {
-    "open": [
+    "open": [],
+    "open_total": 0,
+    "closed": [
       {
         "symbol": "Mee Hun",
         "strategy": "gecko_breadth_burst",
-        "pnl_pct": -1.26,
-        "age_min": 26
-      }
-    ],
-    "open_total": 1,
-    "closed": [
+        "pnl_pct": -100.0,
+        "reason": "no_price",
+        "hold_min": 32.9
+      },
       {
         "symbol": "Cate",
         "strategy": "gecko_breadth_burst",
@@ -1961,21 +1976,14 @@
         "pnl_pct": -100.0,
         "reason": "no_price",
         "hold_min": 19.3
-      },
-      {
-        "symbol": "neko",
-        "strategy": "gecko_breadth_burst",
-        "pnl_pct": -100.0,
-        "reason": "no_price",
-        "hold_min": 17.3
       }
     ],
-    "closed_total": 743
+    "closed_total": 744
   },
   "brain_queue": {
     "requests_pending": 0,
     "requests_acknowledged": 1,
-    "hypotheses_pending": 16,
+    "hypotheses_pending": 17,
     "lessons_count": 34,
     "killed_ideas_count": 21,
     "drift_keys": [],
@@ -2007,705 +2015,40 @@
     "requests_note": "REQ-027 (acknowledged) and REQ-030 (pending) -- neither status=completed, not eligible for archival.",
     "elapsed_min": 6,
     "next_run_focus": "sol_survival_history.json still 121.48KB, over the 100KB trigger, after archiving the 2 entries that aged out (run-326, run-327, both >30 days). This is now the 6th CONSECUTIVE efflab run (006 through 011) where 30-day rolling archival cannot durably hold history under 100KB -- recent daily entries run 6-9KB each (verbose per-run reports) vs ~1-2KB in June, so accrual now outpaces the ~1-2 entries/day that age out. Repeating the escalation from efflab-006 through 010: this needs an operator/brain policy decision (shorten retention window below 30 days, e.g. 21 days, OR compress the verbose report field in newly-written entries at the source). Efficiency lab does not have authority to change the retention window or touch report content -- flagging again, not auto-fixing.",
-    "age_hours": 21.9,
+    "age_hours": 22.1,
     "stale": false,
     "available": true,
     "ever_ran": true,
     "source": "sol_efficiency_lab_status.json"
   },
-  "maint_next_sec": 7160.613435,
+  "maint_next_sec": 6257.339539,
   "maint_next_str": "6:00 AM EST",
   "maint_last_run_str": "3:05 AM EST",
   "maint_stale": false,
   "maint_disabled": false,
   "memk_next_sec": null,
   "memk_next_str": "on-demand",
-  "memk_last_run_str": "21.9h ago",
+  "memk_last_run_str": "22.1h ago",
   "memk_disabled": false,
   "one_time_tasks": [],
   "research_action_status": {
     "latest": {
       "hypothesis_name": "post_bundle_priority_fee_dispersion",
       "run_id": "research-154",
-      "status": "pending_brain_run",
-      "status_label": "\u23f3 Pending next brain run",
-      "status_color": "#7cd3ff",
-      "evidence_text": "",
-      "evidence_source": ""
+      "status": "implemented",
+      "status_label": "\u2705 Implemented",
+      "status_color": "#00ff88",
+      "evidence_text": "Nothing new to diagnose from live trading this run -- zero trades have closed since run-355 (the bot's last close, MEMIPEDE, is now about 32.6 hours old), so today's real work was digesting what the weekly research review (research-154) fou",
+      "evidence_source": "diagnosis"
     },
     "tally": {
-      "implemented": 21,
+      "implemented": 22,
       "queued": 2,
       "rejected": 0,
-      "total": 23
+      "total": 24
     }
   },
   "events": [
-    {
-      "ts": "2026-07-27T03:47:27.347356",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: appLejqS sold 5Lpk4ein \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:27.379135",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: appLejqS sold 5Lpk4ein \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:27.392235",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: appLejqS sold 5Lpk4ein \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:30.436581",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip PENNY: h1=-9.2% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:34.840121",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Nongwan: m5=9.5% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:36.669783",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip WILLY: m5=-34.0% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:46.650333",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 2ybqZE2e sold GMicALFc \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:49.110647",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WIT: m5=8.2% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:51.575752",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip SCHR\u00d6DINGER: deep24h h24=-63.7% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:54.939609",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip Tsujicoin: h1=-18.6% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:47:54.945746",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 2ybqZE2e sold GMicALFc \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:12.203833",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip TAPBALL: h1=2.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:12.203833",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DZcyYa9a sold HZ8TNeoS \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:12.227702",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DZcyYa9a sold BsSD5wGd \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:12.235661",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DZcyYa9a sold 2FCerziZ \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:13.571013",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip DANNY: downtrend h1=-18.6% h24=-21.9%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:22.045033",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip BOB: deep24h h24=-68.9% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:22.052245",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DZbgq3yE sold GMicALFc \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:22.060834",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DZbgq3yE sold ExQUV8Gf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:22.084285",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: DZbgq3yE sold 4M9go1qf \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:25.542627",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip MrSue: m5=28.1% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:28.702282",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Crqevc1W sold 8vViqCjv \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:29.979449",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip miso: m5=12.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:30.011198",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: Crqevc1W sold 8vViqCjv \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:30.501784",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip miso: m5=12.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:40.525737",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CATCOIN: h1=-17.6% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:40.533529",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5R8Gje3A sold XkeTXo11 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:45.432997",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip CATE: h1=0.5% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:48:46.895624",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Jimothy: deep24h h24=-45.6% (absolute floor)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:27.129558",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "No new signals",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:27.656015",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip WILLY: m5=-27.2% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:29.518376",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Zhang An: downtrend h1=-92.5% h24=-92.5%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:30.098783",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip PENNY: h1=-9.2% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:31.408351",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip RAVEN: h6=484.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:33.717852",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip PENNY: m5=-18.9% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:35.461253",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Dinger: m5=-38.7% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:36.789509",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "h6pump skip Family: h6=627.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:40.001016",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Juan: m5=-31.4% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:40.628274",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "FreshProfile: 5 new profile(s) (11 young, 9 ready)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:41.258221",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "CHILLDOG: pair_age=1.0h < 2.0h H11 gate (operator-narrowed 2026-07-02, was 1-6h)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:42.020057",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "CXMT: liq=$0 < $2500",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:42.775612",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "RAVEN: liq=$0 < $2500",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:43.352762",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "Batman: liq=$0 < $2500",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:43.953741",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "\u25cecat: liq=$0 < $2500",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:44.588271",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "SICC: pair_age=0.5h < 1.0h min",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:45.267514",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": ":p: liq=$2103 < $2500",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:45.814376",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "Cap: liq=$0 < $2500",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:49:46.268554",
-      "type": "FP_SKIP",
-      "color": "#8b949e",
-      "msg": "c@: liq=$0 < $2500",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:50:41.099762",
-      "type": "SCAN",
-      "color": "#555555",
-      "msg": "Scanning 175 wallets (cycle #1034)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:06.131027",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 2e1w3Xo4 sold 6YrLHzGT \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:07.453401",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 6YrLHzGT: tracked wallet sold this token 86s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:18.952304",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Dinger: downtrend h1=-45.6% h24=-45.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:19.416467",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Dinger: downtrend h1=-45.6% h24=-45.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:19.874050",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Dinger: downtrend h1=-45.6% h24=-45.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:20.348928",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Dinger: downtrend h1=-45.6% h24=-45.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:20.809370",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Dinger: downtrend h1=-45.6% h24=-45.6%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:54.124950",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 6YrLHzGT: tracked wallet sold this token 133s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:54.141659",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 6YrLHzGT: tracked wallet sold this token 133s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:54.157910",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 6YrLHzGT: tracked wallet sold this token 133s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:54.173648",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Sell-conflict skip 6YrLHzGT: tracked wallet sold this token 133s ago",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:58.320831",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 9jyqFiLn sold 5yC9BM8K \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:52:58.338130",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 9jyqFiLn sold 5KKjCeFk \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:53:30.721918",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=834.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:53:31.290110",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=834.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:53:56.989744",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 5B52w1ZW sold 6YrLHzGT \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:53:57.518387",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip SCHR\u00d6DINGER: downtrend h1=-60.7% h24=-60.7%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:53:57.984240",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip SCHR\u00d6DINGER: downtrend h1=-60.7% h24=-60.7%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:53:57.984240",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:04.172432",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BAr5csYt sold b9B33dGK \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:04.689369",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Dinger: downtrend h1=-63.7% h24=-63.7%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:35.891428",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=27.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:36.397088",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=27.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:36.870475",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=27.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:36.870475",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BQVz7fQ1 sold 8wM1fAeE \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:37.360623",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=27.0% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:56.585221",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 9f5ywdCD sold b9B33dGK \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:54:56.599645",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 9f5ywdCD sold b9B33dGK \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:55:05.780842",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 dump skip Billy: m5=-39.8% (active sell-off at execution, run79)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:55:13.638244",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WILLY: m5=55.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:55:13.638244",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: J23qr98G sold J1eV7uR5 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:55:14.127328",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WILLY: m5=55.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:55:35.869475",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WILLY: m5=55.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:55:36.359221",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WILLY: m5=55.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:55:36.833757",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip WILLY: m5=55.4% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:14.185859",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: FsG3BaPm sold gB8hzbFm \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:25.613070",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold EosytMc6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:25.642052",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold EosytMc6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:25.642052",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: BTf4A2ex sold EosytMc6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:26.214102",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=43.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:26.685970",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "m5 pump skip Attlee: m5=43.8% (already ran, we are exit liq, run95)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:51.108135",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4yo9CUuT sold 2a8sV7GS \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:57:53.820794",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "midpump skip 3: h1=-9.9% (below 15% momentum threshold, run115)",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:59:30.234998",
-      "type": "SIGNAL",
-      "color": "#58a6ff",
-      "msg": "WalletSell: 4sAUSQFd sold EosytMc6 \u2014 may trigger exit",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:59:30.806919",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Attlee: downtrend h1=-62.5% h24=-62.5%",
-      "detail": ""
-    },
-    {
-      "ts": "2026-07-27T03:59:31.258329",
-      "type": "BUY_SKIP",
-      "color": "#d29922",
-      "msg": "Skip Attlee: downtrend h1=-62.5% h24=-62.5%",
-      "detail": ""
-    },
     {
       "ts": "2026-07-27T03:59:31.274462",
       "type": "SIGNAL",
@@ -2740,6 +2083,671 @@
       "color": "#d29922",
       "msg": "Skip Attlee: downtrend h1=-80.9% h24=-80.9%",
       "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:01:39.316450",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip LARRY: m5=-19.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:01:39.772607",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip LARRY: m5=-19.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:01:40.262556",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip LARRY: m5=-19.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:01:40.731540",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip LARRY: m5=-19.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:01:53.001870",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip gralkhoth: m5=252.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:01:53.469989",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip gralkhoth: m5=252.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:02:04.975690",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Momota: h1=-0.9% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:02:15.502859",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: JAunzNqs sold 351w1A78 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:02:18.380808",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip NERVOUSGUY: m5=38.1% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:03:11.228368",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8CLkTAHZ sold GNtTC2FA \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:03:11.782686",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip gralkhoth: m5=204.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:03:11.782686",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8CLkTAHZ sold 8wM1fAeE \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:03:12.384585",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Attlee: h6=47.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:03:12.843384",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Attlee: h6=47.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:03:39.713745",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Family: m5=46.1% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:03:40.185873",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Family: m5=46.1% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:02.879808",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip WILLY: h6=448.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:12.627041",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 2ybqZE2e sold 7u8jFCyp \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:15.560615",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked FBu5oW6c",
+      "detail": "Creator has a history of rugging tokens."
+    },
+    {
+      "ts": "2026-07-27T04:04:16.963560",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip NONGWAN: downtrend h1=-29.1% h24=-30.9%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:16.975374",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 2ybqZE2e sold AAX4mb5c \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:18.831000",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "copy_trade disabled (watch-only, brain run32) 2ybqZE2e",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:26.492184",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip Twin: h1=10.2% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:29.975837",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip ALBATROSS: h6=24.9% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:41.900464",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip SalaryCat: h1=3.6% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:41.906487",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZcyYa9a sold 41rsz6TV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:45.532561",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip BEL: h1=-18.8% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:45.564331",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZcyYa9a sold BgVMUdzz \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:45.580182",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZcyYa9a sold 8vViqCjv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:50.213248",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked b9B33dGK",
+      "detail": "Creator has a history of rugging tokens."
+    },
+    {
+      "ts": "2026-07-27T04:04:57.381917",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip cock: downtrend h1=-39.8% h24=-39.8%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:57.393031",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZbgq3yE sold Ai66LHZG \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:57.408988",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZbgq3yE sold HZ8TNeoS \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:57.426199",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZbgq3yE sold EosytMc6 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:04:57.440119",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DZbgq3yE sold 6YrLHzGT \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:04.631619",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip miso: m5=-11.5% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:05.108528",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip miso: m5=-11.5% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:05.108528",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Crqevc1W sold 8vViqCjv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:05.128575",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: Crqevc1W sold 8vViqCjv \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:05.612353",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip miso: m5=-11.5% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:15.762986",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "midpump skip CATCOIN: h1=-13.8% (below 15% momentum threshold, run115)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:52.537072",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "No new signals",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:53.157641",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip WILLY: m5=13.2% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:54.516152",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip RAVEN: m5=-18.9% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:54.516152",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked b9B33dGK",
+      "detail": "Creator has a history of rugging tokens."
+    },
+    {
+      "ts": "2026-07-27T04:05:55.039892",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "h6pump skip Family: h6=680.0% (extended 6h pump >= 5%, early buyers distributing, run116)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:05:58.636982",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip SCHR\u00d6DINGER: downtrend h1=-89.4% h24=-89.4%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:01.720916",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip Attlee: downtrend h1=-89.9% h24=-89.9%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:04.812345",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip Attlee: m5=-17.1% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:05.321457",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip gralkhoth: m5=-38.6% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:05.844462",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "FreshProfile: 6 new profile(s) (14 young, 4 ready)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:06.379265",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "CXMT: pair_age=1.3h < 2.0h H11 gate (operator-narrowed 2026-07-02, was 1-6h)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:06.904592",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": ":p: liq=$2017 < $2500",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:07.426273",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "\u25cecat: liq=$0 < $2500",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:06:08.001237",
+      "type": "FP_SKIP",
+      "color": "#8b949e",
+      "msg": "WOOV: h24=+1486.0% > 600.0% max",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:07:05.152969",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Macro overlay: ALTCOIN_CHOP(56.4%) | SOL h24=2.0%",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:07:05.167227",
+      "type": "SCAN",
+      "color": "#555555",
+      "msg": "Scanning 175 wallets (cycle #1035)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:08:56.726348",
+      "type": "SECURITY_BLOCK",
+      "color": "#f85149",
+      "msg": "Blocked CREDBHvV",
+      "detail": "More tokens can be minted by the owner"
+    },
+    {
+      "ts": "2026-07-27T04:08:56.741686",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold CREDBHvV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:08:56.756266",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold CREDBHvV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:08:56.769532",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold CREDBHvV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:08:56.785570",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4cXnf2z8 sold CREDBHvV \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:09:26.777886",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: DYmsQudN sold 4ErCLS4c \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:09:29.514912",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4ErCLS4c: tracked wallet sold this token 144s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:09:29.520929",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4ErCLS4c: tracked wallet sold this token 144s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:09:29.538050",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 4ErCLS4c: tracked wallet sold this token 144s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:09:57.780479",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 8MaVa9kd sold 35SKkhRm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:09:57.796528",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 35SKkhRm: tracked wallet sold this token 172s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:09:57.819614",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Sell-conflict skip 35SKkhRm: tracked wallet sold this token 172s ago",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:10:07.631110",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 719sfKUj sold HDC8x2hj \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:10:11.217205",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip freddy: m5=-15.2% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:10:22.179793",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 39q2g5tT sold EoqY8P2g \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:10:30.223886",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "Skip wallet 9c6StdpH: live WR 40% (12/30) below 44% gate, PnL=-0.0270 SOL",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:10:35.835303",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BAr5csYt sold bsroLAxa \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:10:37.235765",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip BBL: m5=85.1% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:03.510451",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: BQVz7fQ1 sold HDC8x2hj \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:04.063337",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip freddy: m5=-30.8% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:04.652313",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip freddy: m5=-30.8% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:05.141005",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip freddy: m5=-30.8% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:05.614292",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip freddy: m5=-30.8% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:29.383133",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold 35SKkhRm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:29.406959",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold 35SKkhRm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:29.422938",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold 35SKkhRm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:11:29.428801",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 9f5ywdCD sold 35SKkhRm \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:12:10.405700",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip WILLY: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:12:10.858669",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip WILLY: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:12:11.316187",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 dump skip WILLY: m5=-15.4% (active sell-off at execution, run79)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:05.148577",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CAPn1yH4 sold CiVEvx8V \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:07.959478",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip AWAA: m5=43.1% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:07.981564",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CAPn1yH4 sold 2g2pNXE5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:08.008493",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: CAPn1yH4 sold 2g2pNXE5 \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:11.092732",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip buttfart: m5=57.3% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:21.975884",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4yo9CUuT sold 6xjNAEtu \u2014 may trigger exit",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:23.287048",
+      "type": "BUY_SKIP",
+      "color": "#d29922",
+      "msg": "m5 pump skip Tortuga: m5=246.0% (already ran, we are exit liq, run95)",
+      "detail": ""
+    },
+    {
+      "ts": "2026-07-27T04:14:23.287048",
+      "type": "SIGNAL",
+      "color": "#58a6ff",
+      "msg": "WalletSell: 4yo9CUuT sold 6xjNAEtu \u2014 may trigger exit",
+      "detail": ""
     }
   ],
   "todos": [
@@ -2758,9 +2766,9 @@
       "auto_resolved": "auto-verified: file_recent=sol_research_status.json|10080"
     }
   ],
-  "ts": "04:00:39",
+  "ts": "04:15:42",
   "__publish_meta": {
-    "published_at": "2026-07-27 04:00:39 EDT",
+    "published_at": "2026-07-27 04:15:42 EDT",
     "publisher": "publish_dashboard.py"
   }
 }
